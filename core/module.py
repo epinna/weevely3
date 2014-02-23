@@ -3,6 +3,7 @@ from core import messages
 import logging
 import shlex
 import getopt
+import commons
 
 class Module:
 
@@ -49,7 +50,7 @@ class Module:
             self.terminal.session[self.name]['enabled'] = enabled
         
         if self.terminal.session[self.name]['enabled']:
-            return self.run(args)
+            return commons.stringify(self.run(args))
     
     def check(self, args):
         """ Override to implement module check """
@@ -88,3 +89,5 @@ class Module:
         
         return self.terminal.session[self.name]['results'].get(field)
     
+    
+   

@@ -2,6 +2,8 @@ import random
 import string
 import subprocess
 import itertools
+import types
+import prettytable
 
 def chunks_equal(l, n):
     """ Yield n successive chunks from l.
@@ -36,6 +38,61 @@ def divide(str, min_size, max_size, split_size):
         yield ''.join(itertools.islice(it,0,s))
         size -= s
     yield ''.join(it)
+ 
+ 
+def stringify(data):
+    
+    output = ''
+    
+    # Empty outputs. False is probably a good output value 
+    if data != False and not data:
+        output = ''
+    else:
+        
+        table = prettytable.PrettyTable()
+        
+        # List outputs.
+        if isinstance(data, types.ListType):
+            
+            if len(data) > 0:
+                
+                columns_num = 1
+                if isinstance(data[0], types.ListType):
+                    columns_num = len(data[0])
+                
+                for row in data:
+                    if isinstance(row, types.ListType):
+                        table.add_row(row)
+                    else:
+                        table.add_row([ row ])
+            
+                output = table.get_string()
+                
+        # Dict outputs are display as tables
+        elif isinstance(data, types.DictType) and data:
+    
+            # Populate the rows
+            randomitem = next(data.itervalues())
+            if isinstance(randomitem, types.ListType):
+                for field in data:
+                    table.add_row([field] + data[field])
+            else:
+                for field in data:
+                    table.add_row([field, str(data[field])])
+           
+        # Else, try to stringify
+        else:
+            output = str(data)
+            
+        if not output:
+            table.header = False
+            table.align = 'l'
+            output = table.get_string()
+
+    return output
+    
+ 
+ 
  
 def getstatusoutput(cmd): 
    """Return (status, output) of executing cmd in a shell."""
