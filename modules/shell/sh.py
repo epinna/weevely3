@@ -15,16 +15,26 @@ class Sh(Module):
     
     def initialize(self):
         
+        self._register_infos(
+                             {
+                             'name' : 'System Shell',
+                             'description' : __doc__,
+                             'author' : [ 
+                                         'Emilio Pinna' 
+                                         ],
+                              'license' : 'GPLv3'
+                              }
+                             )
+        
         self._register_arguments(
-         # Declare mandatory arguments
-         arguments = [ 
-                      'command' 
-                      ],
-         # Declare additional options               
-         options = {
-                    
-                    'stderr_redirection' : ' 2>&1',
-                    'vector' : ''
+            # Declare mandatory arguments
+            arguments = [ 
+                         'command' 
+                         ],
+            # Declare additional options               
+            options = {
+                       'stderr_redirection' : ' 2>&1',
+                       'vector' : ''
         })
 
         self._register_vectors([

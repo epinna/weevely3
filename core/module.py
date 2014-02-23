@@ -26,7 +26,7 @@ class Module:
         logging.info(self.run_module(shlex.split(line)))
 
     def run_module(self, argv):
-        """ Main function to run module. Accepts arguments lists. Calls check() and run() of module. """
+        """ Main function to run module. Parse arguments list with getopt. Calls check() and run() of module. """
         
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(argv, '', [ '%s=' % a for a in self.args_optional.keys() ])
@@ -55,9 +55,11 @@ class Module:
         """ Override to implement module check """
         
         return True
-       
+    
+    def _register_infos(self, infos):
+        self.infos = infos
         
-    def _register_arguments(self, arguments, options):
+    def _register_arguments(self, arguments = [], options = {}):
         """ Register additional modules options """ 
         
         self.args_mandatory = arguments

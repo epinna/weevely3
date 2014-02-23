@@ -16,6 +16,17 @@ class Php(Module):
     
     def initialize(self):    
 
+        self._register_infos(
+                             {
+                             'name' : 'PHP Shell',
+                             'description' : __doc__,
+                             'author' : [ 
+                                         'Emilio Pinna' 
+                                         ],
+                              'license' : 'GPLv3'
+                              }
+                             )
+
         self._register_arguments(
          # Declare mandatory commands
          arguments = [ 
