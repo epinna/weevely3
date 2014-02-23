@@ -2,7 +2,7 @@
 class generic:
     file_s_not_found = "file '%s' not found"
     error_creating_file_s_s = "error creating file '%s': %s"
-
+    error_missing_arguments_s = 'error missing arguments %s'
 
 class sessions:
     error_loading_sessions = 'error loading sessions'

@@ -3,22 +3,23 @@
 """Generate obfuscated backdoor.
 
 Usage:
-  generate.py <password> <output_file> 
-  generate.py <password> <output_file> [--obfuscator=<obfuscator> --agent=<agent>]
+  generate.py <password> <output file> 
+  generate.py <password> <output file> [--obfuscator=<obfuscator> --agent=<agent>]
   
 Options:
-  -h --help                    how this screen.
   --obfuscator=<obfuscator>    Backdoor obfuscator [default: obfusc1_php].
   --agent=<agent>              Backdoor agent [default: stegaref_php].
 
 """
 
-from docopt import docopt
 from mako.template import Template
 from core.weexceptions import FatalException
 from core import messages
-import core.log, logging
+import getopt
+import core.log
+import logging
 import os
+import sys
 
 agent_templates_folder_path = 'bd/agents/'
 obfuscators_templates_folder_path = 'bd/obfuscators/'
@@ -59,13 +60,22 @@ def save_generated(obfuscated, output):
         raise FatalException(messages.generic.error_creating_file_s_s % (output, e))
          
 if __name__ == '__main__':
-    arguments = docopt(__doc__)
-    password = arguments['<password>']
-    output = arguments['<output_file>']
     
-    obfuscated = generate(password, arguments['--obfuscator'], arguments['--agent'])
-    save_generated(obfuscated, output)
+    try:
+        line_args_optional, line_args_mandatory = getopt.getopt(sys.argv[1:], '', [ 'obfuscator=', 'agent=' ])
+    except getopt.GetoptError as e:
+        logging.info('%s\n%s' % (e, __doc__))
+    else:
     
-    logging.info(messages.generate.generated_backdoor_with_password_s_in_s % (password, output))
-    
-    
+        if len(line_args_mandatory) != 2:
+            logging.info('%s\n%s' % (messages.generic.error_missing_arguments_s % '', __doc__))
+        else:    
+            password, output = line_args_mandatory
+            dict_args_optionals = dict((key.strip('-'), value) for (key, value) in line_args_optional)
+            
+            obfuscated = generate(password, **dict_args_optionals)
+            save_generated(obfuscated, output)
+            
+            logging.info(messages.generate.generated_backdoor_with_password_s_in_s % (password, output))
+        
+        

@@ -15,19 +15,19 @@ class Php(Module):
     """
     
     def initialize(self):    
+
+        self._register_arguments(
+         # Declare mandatory commands
+         arguments = [ 
+                      'command' 
+                      ],
+         # Declare additional options               
+         options = {
+                      'prefix_string' : '',
+                      'post_data' : '',
+                      'postfix_string' : '',
+        })
         
-        self._register_options({
-                              # Redeclare command line options
-                              '<command>' : '',
-                              
-                              # Declare additional options
-                              'prefix_string' : '',
-                              'post_data' : '',
-                              'postfix_string' : '',
-                              })
-
-
-
         self.channel = get_channel(self.terminal.session['url'], self.terminal.session['password'])
 
     def check(self, args):
@@ -50,7 +50,7 @@ class Php(Module):
 
         command = Vector('php_request',
                          'php',
-                         "${args['prefix_string']}${args['<command>']}${args['postfix_string']}",
+                         "${args['prefix_string']}${args['command']}${args['postfix_string']}",
                          0).format(args)
 
         logging.debug(command)

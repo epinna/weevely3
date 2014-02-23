@@ -12,6 +12,26 @@ def session_save_atexit(session):
     path = session['path']
     json.dump(session, open(path, 'w'))
 
+def start_session_by_file(dbpath):
+    try:
+        sessiondb = json.load(open(dbpath,'r'))
+    except Exception as e:
+        logging.warn(messages.sessions.error_loading_file_s_s % (dbpath, str(e)))
+    else:
+        saved_url = sessiondb.get('url')
+        saved_password = sessiondb.get('password')
+        
+        if not saved_url or not saved_password:
+            logging.warn(messages.sessions.error_loading_file_s % (dbpath, 'no url or password'))
+        else:
+
+            # Register dump at exit and return
+            atexit.register(session_save_atexit, session=sessiondb)
+            return sessiondb 
+    
+    raise FatalException(messages.sessions.error_loading_sessions)
+        
+
 def start_session_by_url(url, password):
 
     if not os.path.isdir(sessions_path):
@@ -19,6 +39,9 @@ def start_session_by_url(url, password):
     
     # Guess a generic hostfolder/dbname
     hostname = urlparse.urlparse(url).hostname
+    if not hostname:
+        raise FatalException(messages.sessions.error_loading_sessions)
+    
     hostfolder = os.path.join(sessions_path, hostname)
     dbname = os.path.splitext(os.path.basename(urlparse.urlsplit(url).path))[0]
     

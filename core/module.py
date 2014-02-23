@@ -1,7 +1,8 @@
 from core.vectors import Os, Vectors
-from docopt import docopt, formal_usage
+from core import messages
 import logging
 import shlex
+import getopt
 
 class Module:
 
@@ -28,21 +29,25 @@ class Module:
         """ Main function to run module. Accepts arguments lists. Calls check() and run() of module. """
         
         try:
-            line_args = docopt(self.__doc__, argv=argv)
-        except SystemExit:
-            logging.info(self.__doc__)
+            line_args_optional, line_args_mandatory = getopt.getopt(argv, '', [ '%s=' % a for a in self.args_optional.keys() ])
+        except getopt.GetoptError as e:
+            logging.info('%s\n%s' % (e, self.__doc__))
             return
         
+        if len(line_args_mandatory) != len(self.args_mandatory):
+            logging.info('%s\n%s' % (messages.generic.error_missing_arguments_s % (' '.join(self.args_mandatory)), self.__doc__))
+            return
+            
         # Merge options with line arguments    
         args = self.terminal.session[self.name]['options'].copy()
-        args.update(line_args)
+        args.update(dict((key.strip('-'), value) for (key, value) in line_args_optional))
+        args.update(dict((key, line_args_mandatory.pop(0)) for key in self.args_mandatory))
 
         # If module is not already enable, launch check()
         if not self.terminal.session[self.name]['enabled']:
             enabled = self.check(args)
             self.terminal.session[self.name]['enabled'] = enabled
         
-            
         if self.terminal.session[self.name]['enabled']:
             return self.run(args)
     
@@ -50,15 +55,19 @@ class Module:
         """ Override to implement module check """
         
         return True
+       
         
-    def _register_options(self, options):
+    def _register_arguments(self, arguments, options):
         """ Register additional modules options """ 
+        
+        self.args_mandatory = arguments
+        self.args_optional = options
         
         # Options saved in session has more priority than registered
         # variables 
         
         options.update(self.terminal.session[self.name]['options'])
-        self.terminal.session[self.name]['options'] = options
+        self.terminal.session[self.name]['options'] = self.args_optional
         
 
     def _register_vectors(self, vectors):
