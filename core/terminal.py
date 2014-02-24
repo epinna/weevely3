@@ -1,3 +1,5 @@
+from core.weexceptions import FatalException
+from core import messages
 import readline
 import cmd
 import glob
@@ -12,6 +14,7 @@ class Terminal(cmd.Cmd):
     def __init__(self, session):
         
         self.session = session
+        self.prompt = 'weevely> '
         self._load_modules()
         
         logging.debug(pprint.pformat(dict(session)))
@@ -24,19 +27,56 @@ class Terminal(cmd.Cmd):
         
         pass
     
-    def default(self, line):
-        """ Direct command line send. """
+    def precmd(self, line):
+        """ Before to execute a line commands. Confirm shell availability and get basic system infos. """
         
-        # Probe shell_sh if is enabled or never tried
-        if self.session['shell_sh']['enabled'] in (True, None):
-            result = self.run_shell_sh([ line ])
+        # Probe shell_sh if is never tried
+        if not self.session['shell_sh']['enabled']:
+            self.session['shell_sh']['enabled'] = self.check_shell_sh()
+            self.run_default_shell = self.run_shell_sh
      
         # Probe shell_php if shell_sh failed
-        if self.session['shell_sh']['enabled'] == False:
-            result = self.run_shell_php([ line ])
-                 
-        if result:
-            logging.info(result)
+        if not self.session['shell_sh']['enabled']:
+            self.session['shell_php']['enabled'] = self.check_shell_php()
+            self.run_default_shell = self.run_shell_php
+            
+        # Check results
+        if not self.session['shell_sh']['enabled'] and not self.session['shell_php']['enabled']:
+            raise FatalException(messages.terminal.backdoor_unavailable)
+        
+        # Get current working directory if never tried
+        if self.session['file_cd']['results']['cw_basedir']:
+            self.run_file_cd(["."])
+
+        # Get hostname and whoami if never tried
+        if not self.session['system_info']['results']['hostname']:
+            self.run_system_info(["--info=hostname"])
+            
+        if not self.session['system_info']['results']['whoami']:
+            self.run_system_info(["--info=whoami"])
+            
+        return line
+
+    def postcmd(self, stop, line):
+        
+        # Build next prompt, last command could have changed the cwd
+        self.prompt = '{user}@{host}:{path} {prompt} '.format(
+                     user=self.session['system_info']['results']['whoami'], 
+                     host=self.session['system_info']['results']['hostname'], 
+                     path=self.session['file_cd']['results']['cw_basedir'], 
+                     prompt = 'PHP>' if (self.run_default_shell == self.run_shell_php) else '$' )
+ 
+        return stop
+
+    def default(self, line):
+        """ Direct command line send. """
+
+        if line:
+
+            result = self.run_default_shell([ line ])
+             
+            if result:
+                logging.info(result)
         
 
     def _load_modules(self):
@@ -55,12 +95,14 @@ class Terminal(cmd.Cmd):
             # Initialize class, passing current terminal instance and module name
             module_class = getattr(module, classname)(self, '%s_%s' % (module_group, module_name))
             
-            # Set module.run_terminal_module() function as terminal self.do_modulegroup_modulename()
+            # Set module.do_terminal_module() function as terminal self.do_modulegroup_modulename()
             class_do = getattr(module_class, 'do_module') 
             setattr(Terminal, 'do_%s_%s' % (module_group, module_name), class_do)
 
-            # Set module.run_terminal_module() function as terminal self.do_modulegroup_modulename()
+            # Set module.run_terminal_module() function as terminal self.run_modulegroup_modulename()
             class_run = getattr(module_class, 'run_module') 
             setattr(Terminal, 'run_%s_%s' % (module_group, module_name), class_run)
                         
-    
+            # Set module.check() function as terminal self.check_modulegroup_modulename()
+            class_check = getattr(module_class, 'check') 
+            setattr(Terminal, 'check_%s_%s' % (module_group, module_name), class_check)    

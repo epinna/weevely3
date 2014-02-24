@@ -1,6 +1,5 @@
 from core.vectors import Os, Vector
 from core.module import Module
-from core.weexceptions import InterpreterException
 from core import messages
 import logging, random
 
@@ -51,7 +50,7 @@ class Sh(Module):
 
         
         
-    def check(self, args):
+    def check(self, args = {}):
         """ Check if remote Sh interpreter works """
 
         rand = str(random.randint( 11111, 99999 ))
@@ -64,11 +63,11 @@ class Sh(Module):
             
             if output and output.strip() == rand:
                 self.vectors.save_default_vector(vector.name)
-                logging.debug(vector.name)
+                logging.debug('shell_sh check: enabled with %s' % vector.name)
                 
                 return True
             
-        logging.debug('no vector found')
+        logging.debug('shell_sh check: disabled, no vector found')
         return False
         
     def run(self, args):

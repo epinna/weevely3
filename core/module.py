@@ -52,7 +52,7 @@ class Module:
         if self.terminal.session[self.name]['enabled']:
             return commons.stringify(self.run(args))
     
-    def check(self, args):
+    def check(self, args = {}):
         """ Override to implement module check """
         
         return True
@@ -79,15 +79,31 @@ class Module:
         self.vectors.extend(vectors)
     
     
-    def _session_save(self, field, value):
+    def _store_result(self, field, value):
         """ Save persistent data """
         
         self.terminal.session[self.name]['results'][field] = value
         
-    def _session_get(self, field):
+    def _get_result(self, field):
         """ Recover saved data """
         
-        return self.terminal.session[self.name]['results'].get(field)
+        self._get_module_result(self.name, field)
     
+    def _get_module_result(self, module_name, field):
+        """ Recover another module saved data """
+        
+        return self.terminal.session[module_name]['results'].get(field)
     
+    def _register_storable_results(self, storable_results):
+        """ Register storable_results that should be saved. 
+        Only missing keys are modified. 
+        Storage procedure should be handled manually in run().
+        """
+        
+        self.storable_results = storable_results
+        
+        for key, value in storable_results.items():
+            if self.terminal.session[self.name]['results'].get('key') == None:
+                self.terminal.session[self.name]['results'][key] = value
+            
    

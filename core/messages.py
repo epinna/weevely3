@@ -10,6 +10,9 @@ class sessions:
     
 class channels:
     error_loading_channel_s = 'error loading channel \'%s\''
+
+class terminal:
+    backdoor_unavailable = 'backdoor is unavailable, please check if weevely3 agent is available at URL and if password is correct.'
     
 class stegareferrer:
     error_loading_referrers_s_s = 'error loading referrers templates \'%s\': %s' 
@@ -19,6 +22,10 @@ class vectors:
     wrong_target_type = 'wrong target operating system type'
     default_vector_not_set = 'default vector is not set'
     
+class module_file_cd:
+    error_folder_s_change_failed = "folder '%s' change failed, no such directory or permission denied"
+    error_getting_ossep = "error getting remote directory separator"
+
 class module_shell_php:
     error_php_remote_shell = 'error loading PHP remote shell'
     

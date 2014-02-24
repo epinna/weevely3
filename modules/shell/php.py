@@ -1,6 +1,5 @@
 from core.module import Module
 from core import messages
-from core.weexceptions import InterpreterException
 from core.channels.channels import get_channel
 from core.vectors import Vector
 import logging
@@ -41,7 +40,7 @@ class Php(Module):
         
         self.channel = get_channel(self.terminal.session['url'], self.terminal.session['password'])
 
-    def check(self, args):
+    def check(self, args = {}):
         """ Check if remote PHP interpreter works """
         
         enabled = True
@@ -49,19 +48,20 @@ class Php(Module):
         if rand != self.channel.send('echo(%s);' % rand):
             enabled = False
         
-        logging.debug(enabled)
+        logging.debug('shell_php check: %s' % enabled)
         
         return enabled
     
     def run(self, args):
-        
         """ Run module """
         
+        cwd = self._get_module_result('file_cd','cwd')
+        args.update({ 'cwd' : "@chdir('%s');" % cwd })
+        
         # Compose command with pre_command and post_command option
-
         command = Vector('php_request',
                          'php',
-                         "${args['prefix_string']}${args['command']}${args['postfix_string']}",
+                         "${args['cwd']}${args['prefix_string']}${args['command']}${args['postfix_string']}",
                          0).format(args)
 
         logging.debug(command)
