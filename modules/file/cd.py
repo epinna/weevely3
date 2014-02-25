@@ -32,7 +32,7 @@ class Cd(Module):
                          ])
 
         self._register_vectors([
-            Vector("chdir", 'shell.php', """chdir("${args['folder']}") && print(getcwd());"""),
+            Vector("chdir", 'shell.php', """@chdir("${args['folder']}") && print(getcwd());"""),
         ])
         
 

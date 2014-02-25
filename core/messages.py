@@ -23,7 +23,7 @@ class vectors:
     default_vector_not_set = 'default vector is not set'
     
 class module_file_cd:
-    error_folder_s_change_failed = "folder '%s' change failed, no such directory or permission denied"
+    error_folder_s_change_failed = "failed working directory change to '%s': no such directory or permission denied"
     error_getting_ossep = "error getting remote directory separator"
 
 class module_shell_php:
