@@ -20,8 +20,7 @@ class Terminal(cmd.Cmd):
         logging.debug(pprint.pformat(dict(session)))
         
         cmd.Cmd.__init__(self)
-    
-    
+
     def emptyline(self):
         """ Disable repetition of last command. """
         
@@ -33,15 +32,17 @@ class Terminal(cmd.Cmd):
         # Probe shell_sh if is never tried
         if not self.session['shell_sh']['enabled']:
             self.session['shell_sh']['enabled'] = self.check_shell_sh()
-            self.run_default_shell = self.run_shell_sh
      
         # Probe shell_php if shell_sh failed
         if not self.session['shell_sh']['enabled']:
             self.session['shell_php']['enabled'] = self.check_shell_php()
-            self.run_default_shell = self.run_shell_php
             
         # Check results
-        if not self.session['shell_sh']['enabled'] and not self.session['shell_php']['enabled']:
+        if self.session['shell_sh']['enabled']:
+            self.run_default_shell = self.run_shell_sh
+        elif self.session['shell_php']['enabled']:
+            self.run_default_shell = self.run_shell_php
+        else:
             raise FatalException(messages.terminal.backdoor_unavailable)
         
         # Get current working directory if not set
@@ -77,8 +78,11 @@ class Terminal(cmd.Cmd):
              
             if result:
                 logging.info(result)
-        
-
+   
+   
+    def do_cd(self, line):
+        self.do_file_cd(line) 
+       
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """
         

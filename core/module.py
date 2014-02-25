@@ -14,6 +14,8 @@ class Module:
         self.terminal = terminal
         self.vectors = Vectors(terminal, name)
 
+        self.__doc__ = self.__doc__.strip()
+
         # Initialize session db for current session
         if name not in self.terminal.session:
             self.terminal.session[self.name] = { 'options' : {}, 'results' : {}, 'enabled' : None}
@@ -49,8 +51,7 @@ class Module:
 
         # If module is not already enable, launch check()
         if not self.terminal.session[self.name]['enabled']:
-            enabled = self.check(args)
-            self.terminal.session[self.name]['enabled'] = enabled
+            self.terminal.session[self.name]['enabled'] = self.check(args)
         
         if self.terminal.session[self.name]['enabled']:
             return self.run(args)
