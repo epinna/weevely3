@@ -26,7 +26,9 @@ class Module:
     def do_module(self, line):
         """ Function called from terminal to run module. Accepts command line string. """
 
-        logging.info(commons.stringify(self.run_module(shlex.split(line))))
+        result = self.run_module(shlex.split(line))
+        if result != None:
+            logging.info(commons.stringify(result))
 
     def run_module(self, argv):
         """ Main function to run module. Parse arguments list with getopt. 
