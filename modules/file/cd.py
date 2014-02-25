@@ -8,7 +8,7 @@ class Cd(Module):
     """Change current working directory.
     
     Usage:
-      file_cd <folder>
+      file_cd <dir>
     
     """
     
@@ -28,20 +28,20 @@ class Cd(Module):
         self._register_arguments(
             # Declare mandatory arguments
             arguments = [ 
-                         'folder' 
+                         'dir' 
                          ])
 
         self._register_vectors([
-            Vector("chdir", 'shell.php', """@chdir("${args['folder']}") && print(getcwd());"""),
+            Vector("chdir", 'shell_php', """@chdir("${args['dir']}") && print(getcwd());"""),
         ])
         
 
     def run(self, args):
 
-        folder = self.terminal.run_shell_php([ self.vectors.get_by_name('chdir').format(args=args) ])
+        dir = self.terminal.run_shell_php([ self.vectors.get_by_name('chdir').format(args=args) ])
         
-        if folder:
+        if dir:
             # Store cwd used by other modules
-            self._store_result('cwd', folder)
+            self._store_result('cwd', dir)
         else:
-            logging.info(messages.module_file_cd.error_folder_s_change_failed % (args['folder']))
+            logging.info(messages.module_file_cd.error_folder_s_change_failed % (args['dir']))
