@@ -19,8 +19,8 @@ class Vector:
         self.payload = payload
         self.target = target
 
-    def format(self, arguments = {}):
-        return Template(self.payload).render(args=arguments)
+    def format(self, **arguments):
+        return Template(self.payload).render(**arguments)
 
 
 class Vectors(list):

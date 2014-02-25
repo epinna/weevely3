@@ -59,7 +59,7 @@ class Sh(Module):
 
         for vector in self.vectors:
             
-            output = self.terminal.run_shell_php([ vector.format(args_check) ])
+            output = self.terminal.run_shell_php([ vector.format(args=args_check) ])
             
             if output and output.strip() == rand:
                 self.vectors.save_default_vector(vector.name)
@@ -72,6 +72,6 @@ class Sh(Module):
         
     def run(self, args):
 
-        command = self.vectors.get_default_vector().format(args)
+        command = self.vectors.get_default_vector().format(args=args)
         return self.terminal.run_shell_php([ command ])
         

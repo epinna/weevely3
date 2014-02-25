@@ -38,7 +38,7 @@ class Cd(Module):
 
     def run(self, args):
 
-        folder = self.terminal.run_shell_php([ self.vectors.get_by_name('chdir').format(args) ])
+        folder = self.terminal.run_shell_php([ self.vectors.get_by_name('chdir').format(args=args) ])
         
         if folder:
             # Store cwd used by other modules
