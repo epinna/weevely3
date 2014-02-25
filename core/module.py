@@ -13,7 +13,6 @@ class Module:
         self.name = name
         self.terminal = terminal
         self.vectors = Vectors(terminal, name)
-        self.last_result = None
 
         # Initialize session db for current session
         if name not in self.terminal.session:
@@ -25,7 +24,7 @@ class Module:
     def do_module(self, line):
         """ Function called from terminal to run module. Accepts command line string. """
 
-        logging.info(self.run_module(shlex.split(line)))
+        logging.info(commons.stringify(self.run_module(shlex.split(line))))
 
     def run_module(self, argv):
         """ Main function to run module. Parse arguments list with getopt. 
@@ -54,8 +53,7 @@ class Module:
             self.terminal.session[self.name]['enabled'] = enabled
         
         if self.terminal.session[self.name]['enabled']:
-            self.last_result = self.run(args)
-            return commons.stringify(self.last_result)
+            return self.run(args)
     
     def check(self, args = {}):
         """ Override to implement module check """
