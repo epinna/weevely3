@@ -13,6 +13,7 @@ class Module:
         self.name = name
         self.terminal = terminal
         self.vectors = Vectors(terminal, name)
+        self.last_result = None
 
         # Initialize session db for current session
         if name not in self.terminal.session:
@@ -27,7 +28,10 @@ class Module:
         logging.info(self.run_module(shlex.split(line)))
 
     def run_module(self, argv):
-        """ Main function to run module. Parse arguments list with getopt. Calls check() and run() of module. """
+        """ Main function to run module. Parse arguments list with getopt. 
+        Calls check() and run() of module. 
+        Set self.last_result and return a stringified result.
+        """
         
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(argv, '', [ '%s=' % a for a in self.args_optional.keys() ])
@@ -50,7 +54,8 @@ class Module:
             self.terminal.session[self.name]['enabled'] = enabled
         
         if self.terminal.session[self.name]['enabled']:
-            return commons.stringify(self.run(args))
+            self.last_result = self.run(args)
+            return commons.stringify(self.last_result)
     
     def check(self, args = {}):
         """ Override to implement module check """
@@ -84,26 +89,17 @@ class Module:
         
         self.terminal.session[self.name]['results'][field] = value
         
-    def _get_result(self, field):
+    def _get_result(self, field, default = None):
         """ Recover saved data """
         
-        self._get_module_result(self.name, field)
+        self._get_module_result(self.name, field, default)
     
-    def _get_module_result(self, module_name, field):
+    def _get_module_result(self, module_name, field, default = None):
         """ Recover another module saved data """
-        
-        return self.terminal.session[module_name]['results'].get(field)
     
-    def _register_storable_results(self, storable_results):
-        """ Register storable_results that should be saved. 
-        Only missing keys are modified. 
-        Storage procedure should be handled manually in run().
-        """
-        
-        self.storable_results = storable_results
-        
-        for key, value in storable_results.items():
-            if self.terminal.session[self.name]['results'].get('key') == None:
-                self.terminal.session[self.name]['results'][key] = value
+        if module_name != None:    
+            return self.terminal.session[module_name]['results'].get(field, default)
+        else:
+            return self.terminal.session.get(field, default)
             
    

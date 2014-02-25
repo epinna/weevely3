@@ -55,13 +55,14 @@ class Php(Module):
     def run(self, args):
         """ Run module """
         
-        cwd = self._get_module_result('file_cd','cwd')
-        args.update({ 'cwd' : "@chdir('%s');" % cwd })
+        cwd = self._get_module_result('file_cd','cwd', default = '.')
+        args.update({ 'cwd' : cwd })
+        
         
         # Compose command with pre_command and post_command option
         command = Vector('php_request',
                          'php',
-                         "${args['cwd']}${args['prefix_string']}${args['command']}${args['postfix_string']}",
+                         "chdir('${args['cwd']}');${args['prefix_string']}${args['command']}${args['postfix_string']}",
                          0).format(args)
 
         logging.debug(command)

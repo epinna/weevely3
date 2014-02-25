@@ -13,4 +13,4 @@ class SpecialFormatter(logging.Formatter):
 hdlr = logging.StreamHandler(sys.stderr)
 hdlr.setFormatter(SpecialFormatter())
 logging.root.addHandler(hdlr)
-logging.root.setLevel(logging.INFO)
+logging.root.setLevel(logging.DEBUG)

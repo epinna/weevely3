@@ -44,24 +44,21 @@ class Info(Module):
             Vector('client_ip', 'shell.php', "@print($_SERVER['REMOTE_ADDR']);"),
             Vector('max_execution_time', 'shell.php', '@print(ini_get("max_execution_time"));'),
             Vector('php_self', 'shell.php', '@print($_SERVER["PHP_SELF"]);'),
+            Vector('dir_sep' , 'shell.php',  '@print(DIRECTORY_SEPARATOR);'),
             Vector('php_version' , 'shell.php',  "$v=''; if(function_exists( 'phpversion' )) { $v=phpversion(); } elseif(defined('PHP_VERSION')) { $v=PHP_VERSION; } elseif(defined('PHP_VERSION_ID')) { $v=PHP_VERSION_ID; } print($v);"),
         ])
-        
-        self._register_storable_results( { 
-                                          'hostname' : '', 
-                                          'whoami' : ''
-        })
+
 
     def run(self, args):
-        """ This module store results to avoid to duplicate requests """ 
         
         results = {}
         
         for vector in self.vectors:
             if args['info'] in ('all', vector.name):
-                
                 results[vector.name] = self.terminal.run_shell_php([ vector.format() ])
-                if vector.name in self.storable_results.keys():
+                
+                # Store "static" results used by other modules
+                if vector.name in ('whoami', 'hostname', 'dir_sep'):
                     self._store_result(vector.name, results[vector.name])
                 
         return results

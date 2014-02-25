@@ -44,15 +44,15 @@ class Terminal(cmd.Cmd):
         if not self.session['shell_sh']['enabled'] and not self.session['shell_php']['enabled']:
             raise FatalException(messages.terminal.backdoor_unavailable)
         
-        # Get current working directory if never tried
-        if self.session['file_cd']['results']['cw_basedir']:
+        # Get current working directory if not set
+        if not self.session['file_cd']['results'].get('cwd'):
             self.run_file_cd(["."])
 
-        # Get hostname and whoami if never tried
-        if not self.session['system_info']['results']['hostname']:
+        # Get hostname and whoami if not set
+        if not self.session['system_info']['results'].get('hostname'):
             self.run_system_info(["--info=hostname"])
             
-        if not self.session['system_info']['results']['whoami']:
+        if not self.session['system_info']['results'].get('whoami'):
             self.run_system_info(["--info=whoami"])
             
         return line
@@ -61,9 +61,9 @@ class Terminal(cmd.Cmd):
         
         # Build next prompt, last command could have changed the cwd
         self.prompt = '{user}@{host}:{path} {prompt} '.format(
-                     user=self.session['system_info']['results']['whoami'], 
-                     host=self.session['system_info']['results']['hostname'], 
-                     path=self.session['file_cd']['results']['cw_basedir'], 
+                     user=self.session['system_info']['results'].get('whoami', ''), 
+                     host=self.session['system_info']['results'].get('hostname', ''), 
+                     path=self.session['file_cd']['results'].get('cwd', '.'), 
                      prompt = 'PHP>' if (self.run_default_shell == self.run_shell_php) else '$' )
  
         return stop
