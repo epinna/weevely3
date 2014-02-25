@@ -3,12 +3,12 @@ from core.module import Module
 from core import messages
 import logging, random
 
-class Cd(Module):
+class Ls(Module):
 
-    """Change current working directory.
+    """List directory content (replacement)
     
     Usage:
-      file_cd <dir>
+      file_ls [--dir=./folder]
     
     """
     
@@ -16,7 +16,7 @@ class Cd(Module):
         
         self._register_infos(
                              {
-                             'name' : 'Change directory',
+                             'name' : 'List files',
                              'description' : __doc__,
                              'author' : [ 
                                          'Emilio Pinna' 
@@ -26,22 +26,16 @@ class Cd(Module):
                              )
         
         self._register_arguments(
-            # Declare mandatory arguments
-            arguments = [ 
-                         'dir' 
-                         ])
+            options = { 
+                         'dir' : '.' 
+                         })
 
         self._register_vectors([
-            Vector("chdir", 'shell_php', """@chdir("${args['dir']}") && print(getcwd());"""),
+            Vector("ls", 'shell_php', """$p="${args['dir']}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}"""),
         ])
         
 
     def run(self, args):
 
-        dir = self.terminal.run_shell_php([ self.vectors.get_by_name('chdir').format(args=args) ])
-        
-        if dir:
-            # Store cwd used by other modules
-            self._store_result('cwd', dir)
-        else:
-            logging.info(messages.module_file_cd.failed_directory_change_to_s % (args['dir']))
+        return self.terminal.run_shell_php([ self.vectors.get_by_name('ls').format(args=args) ])
+    

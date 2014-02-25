@@ -81,7 +81,19 @@ class Terminal(cmd.Cmd):
    
    
     def do_cd(self, line):
+        """ Command "cd" replacement """
+        
         self.do_file_cd(line) 
+        
+    def do_ls(self, line):
+        """ Command "ls" replacement, if shell_sh is not loaded """
+        
+        if self.run_default_shell == self.run_shell_sh:
+            self.default('ls %s' % line)
+        else:
+            self.do_file_ls(line) 
+        
+        
        
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """

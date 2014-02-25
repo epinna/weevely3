@@ -23,8 +23,12 @@ class vectors:
     default_vector_not_set = 'default vector is not set'
     
 class module_file_cd:
-    error_folder_s_change_failed = "failed working directory change to '%s': no such directory or permission denied"
+    failed_directory_change_to_s = "failed working directory change to '%s': no such directory or permission denied"
     error_getting_ossep = "error getting remote directory separator"
+
+class module_file_ls:
+    failed_list_file_in_directory_s = "failed list file in directory '%s': no such directory or permission denied"
+    failed_list_file_in_directory_s_unknown = "failed list file in directory '%s': unknown error"
 
 class module_shell_php:
     error_php_remote_shell = 'error loading PHP remote shell'
