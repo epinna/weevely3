@@ -35,7 +35,7 @@ if ($q) {
 		if (($ep !== false) || ($kp !== false)) {
 			@session_start();
 			$s=&$_SESSION["s"];
-			$s.=preg_replace(array("#$k#","#$e.*#","#_#"),array("","","+"),$p);
+			$s.=preg_replace(array("#$e.*#","#$k#","#_#"),array("","","+"),$p);
 			if($ep !== false) {
 				
 				ob_start();
