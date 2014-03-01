@@ -16,7 +16,8 @@ class terminal:
     
 class stegareferrer:
     error_loading_referrers_s_s = 'error loading referrers templates \'%s\': %s' 
-    error_conflict_url_key = 'conflict between encoded url and keys, skipping template' 
+    error_conflict_url_key = 'conflict between encoded url and keys, skipping template'
+    error_conflict_triggering = 'conflict adding trigger to string, re-triggering'  
     
 class vectors:
     wrong_target_type = 'wrong target operating system type'

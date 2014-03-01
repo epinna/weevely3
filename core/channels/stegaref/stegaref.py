@@ -25,6 +25,7 @@ class StegaRef:
         self.referrers = []
         self.useragents = []
 
+        self.password = password
         self.url = url
         self.key = hashlib.md5(password).hexdigest()
         self.trigger = self.key[:3]
@@ -80,8 +81,6 @@ class StegaRef:
             user_agent = random.choice(self.useragents)
             user_agent_xor = commons.sxor(user_agent, self.trigger)
             remaining_payload = base64.b64encode(commons.sxor(zlib.compress(payload), user_agent_xor)).replace('+', '_')
-     
-            logging.debug('trigger \'%s\', terminator \'%s\', payload \'%s\'' % (self.trigger, self.terminator, remaining_payload))
             
             #logging.debug('req_orig_len: %i, req_enc_len: %i' % (len(payload), len(remaining_payload)))
 
@@ -97,6 +96,9 @@ class StegaRef:
                 logging.debug(messages.stegareferrer.error_conflict_url_key)
             
             else:
+                
+                logging.debug('user_agent \'%s\', password \'%s\', trigger \'%s\', terminator \'%s\', original_payload: \'%s\', prepared_payload \'%s\'' % (user_agent, self.password, self.trigger, self.terminator, payload, remaining_payload))
+                
                 while formatter.terminator:
                     prepared_vectors.append(Template(template).render(tpl = formatter))
                                         

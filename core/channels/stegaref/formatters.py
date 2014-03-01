@@ -4,6 +4,7 @@ import string
 import urllib
 import logging
 from core import commons
+from core import messages
 
 class PayloadFormat:
     
@@ -23,8 +24,14 @@ class PayloadFormat:
         self.remaining_payload =  self.remaining_payload[payload_length:]
         #logging.debug('(remaining %i)' % len(self.remaining_payload))
 
-        position_random = random.randint(0, len(payload))
-        return payload[:position_random] + self.trigger + payload[position_random:]
+        while True:
+            position_random = random.randint(0, len(payload))
+            triggered = payload[:position_random] + self.trigger + payload[position_random:]
+            
+            if triggered.count(self.trigger) != 1 or triggered.count(self.terminator) != 0:
+                logging.debug(messages.stegareferrer.error_conflict_triggering)
+            else:
+                return triggered
         
     def _get_terminated(self):
         
@@ -46,13 +53,13 @@ class PayloadFormat:
             if self.terminator:
                 debug_string += 'terminator + padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len )
                 
-                return self._get_terminated() + commons.randstr(min_space_len - len(self.terminator), max_space_len, 'P') 
+                return self._get_terminated() + commons.randstr(min_space_len - len(self.terminator), max_space_len, string.ascii_letters) 
             else:
                  debug_string += 'just padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len )
             
             #logging.debug(debug_string)
             
-            return commons.randstr(min_space_len, max_space_len, 'P')            
+            return commons.randstr(min_space_len, max_space_len, string.ascii_letters)            
 
         # Terminated payload fits is less than min_space_len, adding padding
         elif remaining_payload_len + len(self.terminator) < min_space_len:
@@ -76,7 +83,7 @@ class PayloadFormat:
         # If it does not fits, just padding
         else:
             #logging.debug('Just padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len ))
-            return commons.randstr(min_space_len, max_space_len, 'P')            
+            return commons.randstr(min_space_len, max_space_len, string.ascii_letters)            
 
                 
              
