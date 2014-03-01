@@ -21,6 +21,7 @@ function x($t,$k) {
 
 
 $u = parse_url($_SERVER["HTTP_REFERER"]);
+$q=null;
 if(isset($u["query"])) parse_str($u["query"], $q);
 
 if ($q) {
