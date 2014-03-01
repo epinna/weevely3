@@ -24,7 +24,8 @@ class BaseDefaultChannel(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(cls.path)
+        #os.remove(cls.path)
+        pass
        
     def setUp(self):
         self.channel = get_channel(self.url, self.password)
