@@ -7,17 +7,23 @@ import hashlib
 import os
 import shutil
 import logging
+import random
 
 class BaseDefaultChannel(TestCase):
-    
-    password = randstr(10)
-    password_hash = hashlib.md5(password).hexdigest()
-    filename = '%s_%s_%s.php'% (__name__, password_hash[:3], password_hash[3:6])
-    url = os.path.join(script_folder_url, filename)
-    path = os.path.join(script_folder, filename)
    
     @classmethod
+    def _randomize_bd(cls):
+        cls.password = randstr(10)
+        password_hash = hashlib.md5(cls.password).hexdigest()
+        filename = '%s_%s_%s.php'% (__name__, password_hash[:3], password_hash[3:6])
+        cls.url = os.path.join(script_folder_url, filename)
+        cls.path = os.path.join(script_folder, filename)
+       
+    @classmethod
     def setUpClass(cls):
+        
+        cls._randomize_bd()
+        
         obfuscated = generate(cls.password)
         save_generated(obfuscated, cls.path)
 
@@ -31,8 +37,9 @@ class BaseDefaultChannel(TestCase):
         self.channel = get_channel(self.url, self.password)
         
     
-    def _multiple_requests(self, size, howmany):
+    def _incremental_requests(self, size_start, size_to, step_rand_start, step_rand_to):
         
-        for i in range(howmany):
-            payload = randstr(size)
+        for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
+            payload = randstr(i)
             self.assertEqual(self.channel.send('echo("%s");' % payload), payload)
+            
