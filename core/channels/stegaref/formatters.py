@@ -13,8 +13,9 @@ class PayloadFormat:
         self.remaining_payload = remaining_payload 
         self.trigger = trigger
         self.terminator = terminator
+        
+        self.terminated = False
 
-        self.state = 0
 
     def _get_triggered(self, payload_length = None):
         
@@ -35,11 +36,10 @@ class PayloadFormat:
         
     def _get_terminated(self):
         
+        self.terminated = True
         payload = self.remaining_payload[:]
-        terminator = self.terminator[:]
-        self.payload = self.terminator = ''
         
-        return payload + terminator
+        return payload + self.terminator
         
 
     def real_payload_chunk(self, min_space_len, max_space_len):

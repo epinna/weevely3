@@ -99,7 +99,7 @@ class StegaRef:
                 
                 logging.debug('user_agent \'%s\', password \'%s\', trigger \'%s\', terminator \'%s\', original_payload: \'%s\', prepared_payload \'%s\'' % (user_agent, self.password, self.trigger, self.terminator, payload, remaining_payload))
                 
-                while formatter.terminator:
+                while not formatter.terminated:
                     prepared_vectors.append(Template(template).render(tpl = formatter))
                                         
                 return prepared_vectors, user_agent, user_agent_xor
