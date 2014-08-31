@@ -14,8 +14,8 @@ class BaseDefaultChannel(TestCase):
     @classmethod
     def _randomize_bd(cls):
         cls.password = randstr(10)
-        password_hash = hashlib.md5(cls.password).hexdigest()
-        filename = '%s_%s_%s.php'% (__name__, password_hash[:3], password_hash[3:6])
+        password_hash = hashlib.md5(cls.password).hexdigest().lower()
+        filename = '%s_%s_%s.php'% (__name__, password_hash[:4], password_hash[4:8])
         cls.url = os.path.join(script_folder_url, filename)
         cls.path = os.path.join(script_folder, filename)
        
@@ -30,9 +30,9 @@ class BaseDefaultChannel(TestCase):
 
     @classmethod
     def tearDownClass(cls):
+		pass
         #os.remove(cls.path)
-        pass
-       
+        
     def setUp(self):
         self.channel = get_channel(self.url, self.password)
         
