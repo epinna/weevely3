@@ -16,7 +16,7 @@ def start_session_by_file(dbpath):
     try:
         sessiondb = json.load(open(dbpath,'r'))
     except Exception as e:
-        logging.warn(messages.sessions.error_loading_file_s_s % (dbpath, str(e)))
+        logging.warn(messages.generic.error_loading_file_s_s % (dbpath, str(e)))
     else:
         saved_url = sessiondb.get('url')
         saved_password = sessiondb.get('password')
@@ -53,13 +53,13 @@ def start_session_by_url(url, password):
         try:
             sessiondb = json.load(open(dbpath,'r'))
         except Exception as e:
-            logging.warn(messages.sessions.error_loading_file_s_s % (dbpath, str(e)))
+            logging.warn(messages.generic.error_loading_file_s_s % (dbpath, str(e)))
         else:
             saved_url = sessiondb.get('url')
             saved_password = sessiondb.get('password')
             
             if not saved_url or not saved_password:
-                logging.warn(messages.sessions.error_loading_file_s % (dbpath, 'no url or password'))
+                logging.warn(messages.generic.error_loading_file_s_s % (dbpath, 'no url or password'))
             if saved_url == url and saved_password == password:
     
                 # Register dump at exit and return

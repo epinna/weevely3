@@ -17,12 +17,10 @@ class terminal:
     
 class stegareferrer:
 	# TODO: review and delete unused ones
-    error_loading_referrers_s_s = 'error loading referrers templates \'%s\': %s' 
-    error_conflict_url_key = 'conflict between encoded url and keys, skipping template'
-    error_conflict_triggering = 'conflict adding trigger to string, regenerating'
-
+    error_generating_id = 'error generating id, payload too long?'
     error_password_hash = 'error generating trigger, please use another password'
     error_language_start_letter_s = 'error, at least one language must start with the letter \'%s\''
+    error_chunk_position_i_s = 'error chunk position %i is not indexable, delete template \'%s\''
     
 class vectors:
     wrong_target_type = 'wrong target operating system type'

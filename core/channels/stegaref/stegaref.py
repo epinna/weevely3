@@ -47,9 +47,8 @@ class StegaRef:
 
 		debug_mode = logging.getLogger().getEffectiveLevel()
 		
-		# Generate session id
-		session_id = ''.join(random.choice(string.ascii_lowercase) for x in range(2))
-		referrers_data = self._prepare(original_payload, session_id)
+		# Generate session id and referrers
+		session_id, referrers_data = self._prepare(original_payload)
 		
 		cj = cookielib.CookieJar()
 		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
@@ -59,7 +58,7 @@ class StegaRef:
 			accept_header = self._generate_header_accept_language(referrer_data[1], session_id)
 			opener.addheaders = [('Referer', referrer_data[0]), ('Accept', accept_header)]
 
-			logging.debug('[v:%i/%i] %s %s' % (referrer_index, len(referrers_data), accept_header, referrer_data[0]))
+			logging.debug('[v:%i/%i] %s %s %s' % (referrer_index, len(referrers_data), accept_header, referrer_data[0], referrer_data[1]))
 
 			response = opener.open(self.url).read()
 			
@@ -78,13 +77,27 @@ class StegaRef:
 				
 
 
-	def _prepare(self, payload, session_id):
+	def _prepare(self, payload):
 
-		# Generate 3-character urlsafe_b64encode header and footer checkable on server side
-		header = hashlib.md5(session_id + self.shared_key[:4]).hexdigest().lower()[:3] 
-		footer = hashlib.md5(session_id + self.shared_key[4:8]).hexdigest().lower()[:3]
+		obfuscated_payload = base64.urlsafe_b64encode(commons.sxor(zlib.compress(payload), self.shared_key)).rstrip('=')
 
-		remaining_payload = header + base64.urlsafe_b64encode(commons.sxor(zlib.compress(payload), self.shared_key)).rstrip('=') + footer
+		# Generate a randomic seession_id that does not conflicts with the payload chars
+
+		for i in range(30):
+			session_id = ''.join(random.choice(string.ascii_lowercase) for x in range(2))
+
+			# Generate 3-character urlsafe_b64encode header and footer checkable on server side
+			header = hashlib.md5(session_id + self.shared_key[:4]).hexdigest().lower()[:3] 
+			footer = hashlib.md5(session_id + self.shared_key[4:8]).hexdigest().lower()[:3]
+			
+			if (not header in obfuscated_payload and
+				not footer in obfuscated_payload and
+				not (obfuscated_payload + footer).find(footer) != len(obfuscated_payload)):
+				break
+			elif i == 30:
+				raise ChannelException(core.messages.stegareferrer.error_generating_id)
+
+		remaining_payload = header + obfuscated_payload + footer
 
 		logging.debug('DATA TO SEND: ' + remaining_payload)
 		logging.debug('HEADER: %s, FOOTER %s' % (header, footer))
@@ -121,6 +134,11 @@ class StegaRef:
 				if not value == '${ chunk }':
 					referrer += '%s=%s' % (param, value)
 				else:
+
+					# Since the parameters over the ninth can't be indexed, this
+					# Cause an error.
+					if parameter_index > 9:
+						raise ChannelException(core.messages.stegareferrer.error_chunk_position_i_s % (parameter_index, referrer_vanilla))
 					
 					# Pick a proper payload size
 					min_size, max_size = chunks_sizes.pop(0)
@@ -155,7 +173,7 @@ class StegaRef:
 			if not remaining_payload:
 				break
 
-		return referrers
+		return session_id, referrers
 		
 	def _load_referrers(self):
 
@@ -213,14 +231,15 @@ class StegaRef:
 		# Send session_id composing the two first languages
 		accept_language = '%s,' % (random.choice([l for l in self.languages if '-' in l and l.startswith(session_id[0])]))
 
-		accept_language += '%s;q=0.%i' % (random.choice([l for l in self.languages if '-' not in l and l.startswith(session_id[1])]), positions[0])
+		languages = [l for l in self.languages if '-' not in l and l.startswith(session_id[1])]
+		accept_language += '%s;q=0.%i' % (random.choice(languages), positions[0])
 
 		# Add remaining q= positions
 		for position in positions[1:]:
 
-			lang = random.choice(self.languages)
+			language = random.choice(languages)
 
-			accept_language += ',%s;q=0.%i' % (lang, position)
+			accept_language += ',%s;q=0.%i' % (language, position)
 
 		return accept_language
 		
