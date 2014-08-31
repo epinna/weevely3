@@ -3,10 +3,11 @@ class generic:
     file_s_not_found = "file '%s' not found"
     error_creating_file_s_s = "error creating file '%s': %s"
     error_missing_arguments_s = 'error missing arguments %s'
+    error_loading_file_s_s = 'error loading file \'%s\': %s'
 
 class sessions:
     error_loading_sessions = 'error loading sessions'
-    error_loading_file_s_s = 'error loading file \'%s\': %s'
+	# TODO: use generic one
     
 class channels:
     error_loading_channel_s = 'error loading channel \'%s\''
@@ -15,9 +16,13 @@ class terminal:
     backdoor_unavailable = 'backdoor is unavailable, please check if weevely3 agent is available at URL and if password is correct.'
     
 class stegareferrer:
+	# TODO: review and delete unused ones
     error_loading_referrers_s_s = 'error loading referrers templates \'%s\': %s' 
     error_conflict_url_key = 'conflict between encoded url and keys, skipping template'
-    error_conflict_triggering = 'conflict adding trigger to string, regenerating'  
+    error_conflict_triggering = 'conflict adding trigger to string, regenerating'
+
+    error_password_hash = 'error generating trigger, please use another password'
+    error_language_start_letter_s = 'error, at least one language must start with the letter \'%s\''
     
 class vectors:
     wrong_target_type = 'wrong target operating system type'

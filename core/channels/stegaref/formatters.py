@@ -6,90 +6,7 @@ import logging
 from core import commons
 from core import messages
 
-class PayloadFormat:
-    
-    def __init__(self, remaining_payload, trigger, terminator):
-        
-        self.remaining_payload = remaining_payload 
-        self.trigger = trigger
-        self.terminator = terminator
-        
-        self.terminated = False
-
-
-    def _get_triggered(self, payload_length = None):
-        
-        if payload_length == None: payload_length = len(self.remaining_payload) 
-
-        payload = self.remaining_payload[:payload_length]
-        self.remaining_payload =  self.remaining_payload[payload_length:]
-        #logging.debug('(remaining %i)' % len(self.remaining_payload))
-
-        while True:
-            position_random = random.randint(0, len(payload))
-            triggered = payload[:position_random] + self.trigger + payload[position_random:]
-            
-            if triggered.count(self.trigger) != 1 or triggered.count(self.terminator) != 0:
-                logging.debug(messages.stegareferrer.error_conflict_triggering)
-            else:
-                return triggered
-        
-    def _get_terminated(self):
-        
-        self.terminated = True
-        payload = self.remaining_payload[:]
-        
-        return payload + self.terminator
-        
-
-    def real_payload_chunk(self, min_space_len, max_space_len):
-        
-        remaining_payload_len = len(self.remaining_payload)
-        
-        # No payload, just padding
-        if not self.remaining_payload:
-            debug_string = 'No more payload, '
-            
-            if self.terminator:
-                debug_string += 'terminator + padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len )
-                
-                return self._get_terminated() + commons.randstr(min_space_len - len(self.terminator), max_space_len, string.ascii_letters) 
-            else:
-                 debug_string += 'just padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len )
-            
-            #logging.debug(debug_string)
-            
-            return commons.randstr(min_space_len, max_space_len, string.ascii_letters)            
-
-        # Terminated payload fits is less than min_space_len, adding padding
-        elif remaining_payload_len + len(self.terminator) < min_space_len:
-            #logging.debug('Payload + terminator + padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len ))
-            padding_len = min_space_len - remaining_payload_len + len(self.trigger) 
-            padding = commons.randstr(padding_len, padding_len, string.ascii_letters)
-            
-            return self._get_terminated() + padding
-
-        # Terminated payload fits in max_space_len
-        elif remaining_payload_len + len(self.terminator) < max_space_len:
-            #logging.debug('Payload + terminator %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len ))
-            return self._get_terminated()
-        
-        # Terminated payload does not fits, place here the trigger
-        elif len(self.terminator) < max_space_len:
-            #logging.debug('Cutted triggered payload %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len ))
-
-            return self._get_triggered(max_space_len - len(self.trigger))
-        
-        # If it does not fits, just padding
-        else:
-            #logging.debug('Just padding %i %i %i' % ( remaining_payload_len, min_space_len, max_space_len ))
-            return commons.randstr(min_space_len, max_space_len, string.ascii_letters)            
-
-                
-             
-
-
-class FirstFormat:
+class FirstRefererFormat:
     
     def __init__(self, url):
         
@@ -122,13 +39,13 @@ class FirstFormat:
 
         
     def payload_chunk(self, max_size, min_size = None):
-        
-        if min_size == None:
-            min_size = max_size
-        
-        self.chunks_sizes.append((min_size, max_size))
-        
-        return '${ tpl.real_payload_chunk(%i, %i) }' % (min_size, max_size)
+
+		if min_size == None:
+			min_size = max_size
+
+		self.chunks_sizes.append((min_size, max_size))
+		
+		return '${ chunk }'
 
         
 
@@ -179,5 +96,3 @@ class FirstFormat:
                    'com.tr', 'tt', 'com.tw', 'co.tz', 'com.ua', 'co.ug', 'co.uk', 
                    'com.uy', 'co.uz', 'com.vc', 'co.ve', 'vg', 'co.vi', 'com.vn', 
                    'vu', 'ws', 'rs', 'co.za', 'co.zm', 'co.zw', 'cat' ] )
-
-

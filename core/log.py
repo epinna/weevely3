@@ -1,7 +1,8 @@
 import logging, sys
 
 class SpecialFormatter(logging.Formatter):
-    FORMATS = {logging.DEBUG :"[D][%(module)s.%(funcName)s:%(lineno)d] %(message)s",
+    FORMATS = {#logging.DEBUG :"[D][%(module)s.%(funcName)s:%(lineno)d] %(message)s",
+			   logging.DEBUG :"[D][%(module)s] %(message)s",
                logging.ERROR : "[!][%(module)s] %(message)s",
                logging.INFO : "%(message)s",
                'DEFAULT' : "[%(levelname)s] %(message)s"}
@@ -13,4 +14,4 @@ class SpecialFormatter(logging.Formatter):
 hdlr = logging.StreamHandler(sys.stderr)
 hdlr.setFormatter(SpecialFormatter())
 logging.root.addHandler(hdlr)
-logging.root.setLevel(logging.INFO)
+logging.root.setLevel(logging.DEBUG)
