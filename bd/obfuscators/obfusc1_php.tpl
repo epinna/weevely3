@@ -39,6 +39,9 @@ agent_variables = list(string.letters[:])
 random.shuffle(agent_variables)
 agent_variables_references = agent_variables[:]
 
+# TODO: if a / is just before the endin quote, it will be uncorrectly escaped.
+# Fix this (wrap data between " and use json.dump?)
+
 agent_list = []
 for line in agent_splitted:
 	# Lines are quoted now and not before (could separate escape and quote on splitting) 

@@ -8,38 +8,37 @@ import commons
 
 class Module:
 
-    def __init__(self, terminal, name):
+    def __init__(self, session, name):
         """ Initialize module data structures. """
 
         self.name = name
-        self.terminal = terminal
-        self.vectors = Vectors(terminal, name)
+        self.session = session
+        self.vectors = Vectors(session, name)
 
         self.__doc__ = self.__doc__.strip()
 
         # Initialize session db for current session
-        if name not in self.terminal.session:
-            self.terminal.session[
-                self.name] = {
+        if name not in self.session:
+            self.session[self.name] = {
                 'options': {},
                 'results': {},
                 'enabled': None}
 
         self.initialize()
 
-    def do_module(self, line):
+    def run_cmdline(self, line):
         """ Function called from terminal to run module. Accepts command line string. """
 
-        result = self.run_module(shlex.split(line))
+        result = self.run(shlex.split(line))
         if result is not None:
             logging.info(commons.stringify(result))
 
-    def run_module(self, argv):
+    def run_argv(self, argv):
         """ Main function to run module. Parse arguments list with getopt.
         Calls check() and run() of module.
         Set self.last_result and return a stringified result.
         """
-
+        
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(
                 argv, '', [
@@ -59,21 +58,21 @@ class Module:
             return
 
         # Merge options with line arguments
-        args = self.terminal.session[self.name]['options'].copy()
+        args = self.session[self.name]['options'].copy()
         args.update(
-            dict(
-                (key.strip('-'),
-                 value) for (
-                    key,
-                    value) in line_args_optional))
+                dict(
+                    (key.strip('-'), value) for
+                    (key, value) in line_args_optional)
+                )
+                    
         args.update(dict((key, line_args_mandatory.pop(0))
                          for key in self.args_mandatory))
 
         # If module is not already enable, launch check()
-        if not self.terminal.session[self.name]['enabled']:
-            self.terminal.session[self.name]['enabled'] = self.check(args)
+        if not self.session[self.name]['enabled']:
+            self.session[self.name]['enabled'] = self.check(args)
 
-        if self.terminal.session[self.name]['enabled']:
+        if self.session[self.name]['enabled']:
             return self.run(args)
 
     def check(self, args={}):
@@ -93,8 +92,8 @@ class Module:
         # Options saved in session has more priority than registered
         # variables
 
-        options.update(self.terminal.session[self.name]['options'])
-        self.terminal.session[self.name]['options'] = self.args_optional
+        options.update(self.session[self.name]['options'])
+        self.session[self.name]['options'] = self.args_optional
 
     def _register_vectors(self, vectors):
         """ Add module vectors """
@@ -104,7 +103,7 @@ class Module:
     def _store_result(self, field, value):
         """ Save persistent data """
 
-        self.terminal.session[self.name]['results'][field] = value
+        self.session[self.name]['results'][field] = value
 
     def _get_result(self, field, default=None):
         """ Recover saved data """
@@ -115,7 +114,7 @@ class Module:
         """ Recover another module saved data """
 
         if module_name is not None:
-            return self.terminal.session[module_name][
+            return self.session[module_name][
                 'results'].get(field, default)
         else:
-            return self.terminal.session.get(field, default)
+            return self.session.get(field, default)

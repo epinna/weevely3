@@ -1,5 +1,7 @@
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
+from core import modules
+from core import commons
 from core import messages
 
 
@@ -11,8 +13,9 @@ class Os:
 
 class Vector:
 
-    def __init__(self, name, module, payload, target=0):
-        self.name = name
+    def __init__(self, payload, name = None, module = 'shell_php', target = 0):
+
+        self.name = name if name else commons.randstr()
 
         if not isinstance(target, int):
             raise DevException(core.messages.wrong_target_type)
@@ -21,15 +24,19 @@ class Vector:
         self.payload = payload
         self.target = target
 
-    def format(self, **arguments):
-        return Template(self.payload).render(**arguments)
+    def format(self, **args):
+        return Template(self.payload).render(**args)
+
+    def run(self, **args):
+        formatted = self.format(**args)
+        return modules.loaded[self.module].run_argv([formatted])
 
 
 class Vectors(list):
 
-    def __init__(self, terminal, module_name):
+    def __init__(self, session, module_name):
 
-        self.terminal = terminal
+        self.session = session
         self.module_name = module_name
 
         list.__init__(self)
@@ -43,7 +50,7 @@ class Vectors(list):
         """ Get default vector by name """
 
         default_vector = self.get_by_name(
-            self.terminal.session[
+            self.session[
                 self.module_name]['options']['vector'])
 
         if not default_vector:
@@ -54,5 +61,5 @@ class Vectors(list):
     def save_default_vector(self, vector_name):
         """ Save default vector name """
 
-        self.terminal.session[self.module_name][
+        self.session[self.module_name][
             'options']['vector'] = vector_name

@@ -41,8 +41,8 @@ class Php(Module):
             })
 
         self.channel = get_channel(
-            self.terminal.session['url'],
-            self.terminal.session['password'])
+            self.session['url'],
+            self.session['password'])
 
     def check(self, args={}):
         """ Check if remote PHP interpreter works """
@@ -63,10 +63,8 @@ class Php(Module):
 
         # Compose command with pre_command and post_command option
         command = Vector(
-            'php_request',
-            'php',
-            "chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}",
-            0).format(
+            "chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}"
+            ).format(
             args=args,
             cwd=cwd)
 

@@ -1,5 +1,6 @@
 from core.weexceptions import FatalException
 from core import messages
+from core import modules
 import readline
 import cmd
 import glob
@@ -39,12 +40,13 @@ class Terminal(cmd.Cmd):
         if not self.session['shell_sh']['enabled']:
             self.session['shell_php']['enabled'] = self.check_shell_php()
 
-        # Check results
-        if self.session['shell_sh']['enabled']:
-            self.run_default_shell = self.run_shell_sh
-        elif self.session['shell_php']['enabled']:
-            self.run_default_shell = self.run_shell_php
-        else:
+        # Check results to set the default shell
+        for shell in ('shell_sh', 'shell_php'):
+            if self.session[shell]['enabled']:
+             self.session['default_shell'] = shell
+             break
+             
+        if not self.session.get('default_shell'):
             raise FatalException(messages.terminal.backdoor_unavailable)
 
         # Get current working directory if not set
@@ -68,19 +70,19 @@ class Terminal(cmd.Cmd):
                 'whoami', ''), host=self.session['system_info']['results'].get(
                 'hostname', ''), path=self.session['file_cd']['results'].get(
                 'cwd', '.'), prompt='PHP>' if (
-                    self.run_default_shell == self.run_shell_php) else '$')
+                    self.session['default_shell'] == 'shell_php') else '$')
 
         return stop
 
     def default(self, line):
         """ Direct command line send. """
 
-        if line:
+        if not line: return
 
-            result = self.run_default_shell([line])
+        result = modules.loaded[self.session['default_shell']].run_argv([line])
 
-            if result:
-                logging.info(result)
+        if not result:
+            logging.info(result)
 
     def do_cd(self, line):
         """ Command "cd" replacement """
@@ -90,7 +92,7 @@ class Terminal(cmd.Cmd):
     def do_ls(self, line):
         """ Command "ls" replacement, if shell_sh is not loaded """
 
-        if self.run_default_shell == self.run_shell_sh:
+        if self.session['default_shell'] == 'shell_sh':
             self.default('ls %s' % line)
         else:
             self.do_file_ls(line)
@@ -98,42 +100,11 @@ class Terminal(cmd.Cmd):
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """
 
-        modules_paths = glob.glob('modules/*/[a-z]*py')
-
-        for module_path in modules_paths:
-
-            module_group, module_filename = module_path.split(os.sep)[-2:]
-            module_name = os.path.splitext(module_filename)[0]
-            classname = module_name.capitalize()
-
-            # Import module
-            module = __import__(
-                'modules.%s.%s' %
-                (module_group, module_name), fromlist=["*"])
-            # Initialize class, passing current terminal instance and module
-            # name
-            module_class = getattr(
-                module, classname)(
-                self, '%s_%s' %
-                (module_group, module_name))
+        for module_name, module_class in modules.loaded.items():
 
             # Set module.do_terminal_module() function as terminal
             # self.do_modulegroup_modulename()
-            class_do = getattr(module_class, 'do_module')
+            class_do = getattr(module_class, 'run_cmdline')
             setattr(
-                Terminal, 'do_%s_%s' %
-                (module_group, module_name), class_do)
-
-            # Set module.run_terminal_module() function as terminal
-            # self.run_modulegroup_modulename()
-            class_run = getattr(module_class, 'run_module')
-            setattr(
-                Terminal, 'run_%s_%s' %
-                (module_group, module_name), class_run)
-
-            # Set module.check() function as terminal
-            # self.check_modulegroup_modulename()
-            class_check = getattr(module_class, 'check')
-            setattr(
-                Terminal, 'check_%s_%s' %
-                (module_group, module_name), class_check)
+                Terminal, 'do_%s' %
+                (module_name), class_do)

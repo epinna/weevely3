@@ -10,11 +10,12 @@ Usage:
 
 from core.terminal import Terminal
 from core import sessions
+from core import modules
+from core import messages
 import getopt
 import sys
 import core.log
 import logging
-from core import messages
 
 if __name__ == '__main__':
 
@@ -28,6 +29,7 @@ if __name__ == '__main__':
         elif len(args_mandatory) == 1:
             session = sessions.start_session_by_file(args_mandatory[0])
 
+        modules.load_modules(session)
         Terminal(session).cmdloop()
 
     else:
