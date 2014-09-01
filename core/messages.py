@@ -43,4 +43,4 @@ class module_shell_sh:
 class generate:
     error_agent_template_s_s = 'error with agent template \'%s\': %s'
     error_obfuscator_template_s_s = 'error with obfuscator template \'%s\': %s'
-    generated_backdoor_with_password_s_in_s = 'generated backdoor with password \'%s\' in \'%s\''
+    generated_backdoor_with_password_s_in_s_size_i = 'generated backdoor with password \'%s\' in \'%s\' of %i byte size.'

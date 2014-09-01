@@ -76,6 +76,6 @@ if __name__ == '__main__':
             obfuscated = generate(password, **dict_args_optionals)
             save_generated(obfuscated, output)
             
-            logging.info(messages.generate.generated_backdoor_with_password_s_in_s % (password, output))
+            logging.info(messages.generate.generated_backdoor_with_password_s_in_s_size_i % (password, output, len(obfuscated)))
         
         
