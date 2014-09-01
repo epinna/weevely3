@@ -19,30 +19,12 @@ class AgentDEFAULTObfuscatorDefault(BaseDefaultChannel):
     def test_10000_100000_requests(self):
         self._incremental_requests(1000,100000, 10000, 60000)
 
-#~ @unittest.skipIf(not test_generated_test_all_agents, "Test only default generator agent") 
-#~ class AgentDefaultObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
-       #~ 
-    #~ @classmethod
-    #~ def setUpClass(cls):
-        #~ cls._randomize_bd()
-        #~ obfuscated = generate(cls.password, obfuscator='cleartext1_php')
-        #~ save_generated(obfuscated, cls.path)
-      
-#~ @unittest.skipIf(not test_generated_test_all_agents, "Test only default generator agent") 
-#~ class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
-       #~ 
-    #~ @classmethod
-    #~ def setUpClass(cls):
-        #~ cls._randomize_bd()
-        #~ obfuscated = generate(cls.password, obfuscator='cleartext1_php', agent='stegaref_php_debug')
-        #~ save_generated(obfuscated, cls.path)
-         
-#~ @unittest.skipIf(not test_generated_test_all_agents, "Test only default generator agent") 
-#~ class AgentUNMINIFIEDObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
-      #~ 
-    #~ @classmethod
-    #~ def setUpClass(cls):
-        #~ cls._randomize_bd()
-        #~ obfuscated = generate(cls.password, obfuscator='cleartext1_php', agent='stegaref_php_unminified')
-        #~ save_generated(obfuscated, cls.path)
+@unittest.skipIf(not test_generated_test_all_agents, "Test only default generator agent") 
+class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
+       
+    @classmethod
+    def setUpClass(cls):
+        cls._randomize_bd()
+        obfuscated = generate(cls.password, agent='stegaref_php_debug')
+        save_generated(obfuscated, cls.path)
 
