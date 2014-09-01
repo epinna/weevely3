@@ -9,37 +9,45 @@ import shutil
 import logging
 import random
 
+
 class BaseDefaultChannel(TestCase):
-   
+
     @classmethod
     def _randomize_bd(cls):
         cls.password = randstr(10)
         password_hash = hashlib.md5(cls.password).hexdigest().lower()
-        filename = '%s_%s_%s.php'% (__name__, password_hash[:4], password_hash[4:8])
+        filename = '%s_%s_%s.php' % (
+            __name__, password_hash[:4], password_hash[4:8])
         cls.url = os.path.join(script_folder_url, filename)
         cls.path = os.path.join(script_folder, filename)
-       
+
     @classmethod
     def setUpClass(cls):
-        
+
         cls._randomize_bd()
-        
+
         obfuscated = generate(cls.password)
         save_generated(obfuscated, cls.path)
 
-
     @classmethod
     def tearDownClass(cls):
-		pass
-        #os.remove(cls.path)
-        
+        pass
+        # os.remove(cls.path)
+
     def setUp(self):
         self.channel = get_channel(self.url, self.password)
-        
-    
-    def _incremental_requests(self, size_start, size_to, step_rand_start, step_rand_to):
-        
+
+    def _incremental_requests(
+            self,
+            size_start,
+            size_to,
+            step_rand_start,
+            step_rand_to):
+
         for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
             payload = randstr(i)
-            self.assertEqual(self.channel.send('echo("%s");' % payload), payload)
-            
+            self.assertEqual(
+                self.channel.send(
+                    'echo("%s");' %
+                    payload),
+                payload)

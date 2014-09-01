@@ -19,227 +19,276 @@ referrer_templates_path = 'core/channels/stegaref/referrers.tpl'
 languages_list_path = 'core/channels/stegaref/languages.txt'
 agents_list_path = 'core/channels/stegaref/user-agents.txt'
 
+
 class StegaRef:
 
-	def __init__(self, url, password):
+    def __init__(self, url, password):
 
-		# Generate the 8 char long main key. Is shared with the server and
-		# used to check header, footer, and encrypt the payload.
-		
-		self.shared_key = hashlib.md5(password).hexdigest().lower()[:8]
-		
-		self.url = url
-		
-		# Initialize regexp for the returning data
-		self.re_response = re.compile( "<%s>(.*)</%s>" % ( self.shared_key[:8], self.shared_key[:8] ), re.DOTALL)
-		self.re_debug = re.compile( "<%sDEBUG>(.*?)</%sDEBUG>" % ( self.shared_key[:8], self.shared_key[:8] ), re.DOTALL )
+        # Generate the 8 char long main key. Is shared with the server and
+        # used to check header, footer, and encrypt the payload.
 
-		# Load and format the referrers templates (payload container)
-		self.referrers_vanilla = self._load_referrers()
+        self.shared_key = hashlib.md5(password).hexdigest().lower()[:8]
 
-		# Load languages (trigger)
-		self.languages = self._load_languages()
+        self.url = url
 
-		# Load agents
-		self.agents = self._load_agents()
+        # Initialize regexp for the returning data
+        self.re_response = re.compile(
+            "<%s>(.*)</%s>" %
+            (self.shared_key[
+                :8], self.shared_key[
+                :8]), re.DOTALL)
+        self.re_debug = re.compile(
+            "<%sDEBUG>(.*?)</%sDEBUG>" %
+            (self.shared_key[
+                :8], self.shared_key[
+                :8]), re.DOTALL)
 
-	def send(self, original_payload):
+        # Load and format the referrers templates (payload container)
+        self.referrers_vanilla = self._load_referrers()
 
-		debug_mode = logging.getLogger().getEffectiveLevel()
-		
-		# Generate session id and referrers
-		session_id, referrers_data = self._prepare(original_payload)
-		
-		cj = cookielib.CookieJar()
-		opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        # Load languages (trigger)
+        self.languages = self._load_languages()
 
-		for referrer_index, referrer_data in enumerate(referrers_data):
+        # Load agents
+        self.agents = self._load_agents()
 
-			accept_header = self._generate_header_accept_language(referrer_data[1], session_id)
-			opener.addheaders = [('Referer', referrer_data[0]), ('Accept', accept_header)]
+    def send(self, original_payload):
 
-			logging.debug('[v:%i/%i] %s %s %s' % (referrer_index, len(referrers_data), accept_header, referrer_data[0], referrer_data[1]))
+        debug_mode = logging.getLogger().getEffectiveLevel()
 
-			response = opener.open(self.url).read()
-			
-			if not response:
-				continue
-				
-			if debug_mode:
-				# Multiple debug string may have been printed, using findall
-				matched_debug = self.re_debug.findall(response)
-				if matched_debug:
-					logging.debug('\n'.join(matched_debug))
+        # Generate session id and referrers
+        session_id, referrers_data = self._prepare(original_payload)
 
-			matched = self.re_response.search(response)
-			if matched and matched.group(1):
-				return zlib.decompress(commons.sxor(base64.b64decode(matched.group(1)), self.shared_key))
-				
+        cj = cookielib.CookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
+        for referrer_index, referrer_data in enumerate(referrers_data):
 
-	def _prepare(self, payload):
+            accept_header = self._generate_header_accept_language(
+                referrer_data[1],
+                session_id)
+            opener.addheaders = [
+                ('Referer', referrer_data[0]), ('Accept', accept_header)]
 
-		obfuscated_payload = base64.urlsafe_b64encode(commons.sxor(zlib.compress(payload), self.shared_key)).rstrip('=')
+            logging.debug(
+                '[v:%i/%i] %s %s %s' %
+                (referrer_index,
+                 len(referrers_data),
+                    accept_header,
+                    referrer_data[0],
+                    referrer_data[1]))
 
-		# Generate a randomic seession_id that does not conflicts with the payload chars
+            response = opener.open(self.url).read()
 
-		for i in range(30):
-			session_id = ''.join(random.choice(string.ascii_lowercase) for x in range(2))
+            if not response:
+                continue
 
-			# Generate 3-character urlsafe_b64encode header and footer checkable on server side
-			header = hashlib.md5(session_id + self.shared_key[:4]).hexdigest().lower()[:3] 
-			footer = hashlib.md5(session_id + self.shared_key[4:8]).hexdigest().lower()[:3]
-			
-			if (not header in obfuscated_payload and
-				not footer in obfuscated_payload and
-				not (obfuscated_payload + footer).find(footer) != len(obfuscated_payload)):
-				break
-			elif i == 30:
-				raise ChannelException(core.messages.stegareferrer.error_generating_id)
+            if debug_mode:
+                # Multiple debug string may have been printed, using findall
+                matched_debug = self.re_debug.findall(response)
+                if matched_debug:
+                    logging.debug('\n'.join(matched_debug))
 
-		remaining_payload = header + obfuscated_payload + footer
+            matched = self.re_response.search(response)
+            if matched and matched.group(1):
+                return zlib.decompress(
+                    commons.sxor(
+                        base64.b64decode(
+                            matched.group(1)),
+                        self.shared_key))
 
-		logging.debug('DATA TO SEND: ' + remaining_payload)
-		logging.debug('HEADER: %s, FOOTER %s' % (header, footer))
-		
-		referrers = []
-		
-		# Randomize the order
-		random.shuffle(self.referrers_vanilla)
+    def _prepare(self, payload):
 
-		for referrer_index, referrer_vanilla_data in enumerate(itertools.cycle(self.referrers_vanilla)):
+        obfuscated_payload = base64.urlsafe_b64encode(
+            commons.sxor(
+                zlib.compress(payload),
+                self.shared_key)).rstrip('=')
 
-			# Separate the chunks sizes from the referrers
-			referrer_vanilla, chunks_sizes_vanilla = referrer_vanilla_data
+        # Generate a randomic seession_id that does not conflicts with the
+        # payload chars
 
-			# Clone chunk size to avoid .pop(0) consuming
-			chunks_sizes = chunks_sizes_vanilla[:]
+        for i in range(30):
+            session_id = ''.join(
+                random.choice(
+                    string.ascii_lowercase) for x in range(2))
 
-			# Separate the query from the rest
-			referrer, query = referrer_vanilla.split('?', 1)
-			referrer += '?'
-			positions = []
+            # Generate 3-character urlsafe_b64encode header and footer
+            # checkable on server side
+            header = hashlib.md5(
+                session_id +
+                self.shared_key[
+                    :4]).hexdigest().lower()[
+                :3]
+            footer = hashlib.md5(
+                session_id +
+                self.shared_key[
+                    4:8]).hexdigest().lower()[
+                :3]
 
-			# Loop the parameters
-			parameters = urlparse.parse_qsl(query)
-			for parameter_index, content in enumerate(parameters):
+            if (not header in obfuscated_payload and not footer in obfuscated_payload and not (
+                    obfuscated_payload + footer).find(footer) != len(obfuscated_payload)):
+                break
+            elif i == 30:
+                raise ChannelException(
+                    core.messages.stegareferrer.error_generating_id)
 
-				param, value = content
+        remaining_payload = header + obfuscated_payload + footer
 
-				# Prepend & to parameters
-				if parameter_index > 0:
-					referrer += '&'
-				
-				# Add the templatized parameters
-				if not value == '${ chunk }':
-					referrer += '%s=%s' % (param, value)
-				else:
+        logging.debug('DATA TO SEND: ' + remaining_payload)
+        logging.debug('HEADER: %s, FOOTER %s' % (header, footer))
 
-					# Since the parameters over the ninth can't be indexed, this
-					# Cause an error.
-					if parameter_index > 9:
-						raise ChannelException(core.messages.stegareferrer.error_chunk_position_i_s % (parameter_index, referrer_vanilla))
-					
-					# Pick a proper payload size
-					min_size, max_size = chunks_sizes.pop(0)
+        referrers = []
 
-					if not remaining_payload:
-						# If not payload, stuff padding
-						payload_size = 0
-						padding_size = random.randint(min_size, max_size)
-					elif len(remaining_payload) <= min_size:
-						# Not enough payload, stuff latest payload + padding
-						payload_size = len(remaining_payload)
-						padding_size = min_size - payload_size
-					elif min_size < len(remaining_payload) <= max_size:
-						# Enough payload to fill properly the parameter, stuff payload
-						payload_size = len(remaining_payload)
-						padding_size = 0
-					else:
-						# Overflowing payload, cut remaining payload to the max
-						payload_size = max_size
-						padding_size = 0			
+        # Randomize the order
+        random.shuffle(self.referrers_vanilla)
 
-					# Add crafted parameter
-					referrer += '%s=%s%s' % (param, remaining_payload[:payload_size], 'P'*padding_size)
+        for referrer_index, referrer_vanilla_data in enumerate(itertools.cycle(self.referrers_vanilla)):
 
-					# If some payload was inserted, add position and cut remaining payload
-					if payload_size:
-						positions.append(parameter_index)
-						remaining_payload = remaining_payload[payload_size:]
+            # Separate the chunks sizes from the referrers
+            referrer_vanilla, chunks_sizes_vanilla = referrer_vanilla_data
 
+            # Clone chunk size to avoid .pop(0) consuming
+            chunks_sizes = chunks_sizes_vanilla[:]
 
-			referrers.append((referrer, positions))
-			if not remaining_payload:
-				break
+            # Separate the query from the rest
+            referrer, query = referrer_vanilla.split('?', 1)
+            referrer += '?'
+            positions = []
 
-		return session_id, referrers
-		
-	def _load_referrers(self):
+            # Loop the parameters
+            parameters = urlparse.parse_qsl(query)
+            for parameter_index, content in enumerate(parameters):
 
-		referrers_vanilla = []
-	
-		try:
-			referrer_file = open(referrer_templates_path)
-		except Exception as e:
-			raise FatalException(core.messages.stegareferrer.error_loading_referrers_s_s % (referrer_templates_path, str(e)))
+                param, value = content
 
-		
-		for template in referrer_file.read().split('\n'):
-			if not template.startswith('http'):
-				continue
+                # Prepend & to parameters
+                if parameter_index > 0:
+                    referrer += '&'
 
-			referer_format = FirstRefererFormat(self.url)
+                # Add the templatized parameters
+                if not value == '${ chunk }':
+                    referrer += '%s=%s' % (param, value)
+                else:
 
-			template_first_formatted = Template(template).render(tpl = referer_format)
-			referrers_vanilla.append((template_first_formatted, referer_format.chunks_sizes))
-		
-		return referrers_vanilla
+                    # Since the parameters over the ninth can't be indexed, this
+                    # Cause an error.
+                    if parameter_index > 9:
+                        raise ChannelException(
+                            core.messages.stegareferrer.error_chunk_position_i_s %
+                            (parameter_index, referrer_vanilla))
 
-	def _load_languages(self):
+                    # Pick a proper payload size
+                    min_size, max_size = chunks_sizes.pop(0)
 
-		try:
-			language_file = open(languages_list_path)
-		except Exception as e:
-			raise FatalException(core.messages.generic.error_loading_file_s_s % (languages_list_path, str(e)))
+                    if not remaining_payload:
+                        # If not payload, stuff padding
+                        payload_size = 0
+                        padding_size = random.randint(min_size, max_size)
+                    elif len(remaining_payload) <= min_size:
+                        # Not enough payload, stuff latest payload + padding
+                        payload_size = len(remaining_payload)
+                        padding_size = min_size - payload_size
+                    elif min_size < len(remaining_payload) <= max_size:
+                        # Enough payload to fill properly the parameter, stuff
+                        # payload
+                        payload_size = len(remaining_payload)
+                        padding_size = 0
+                    else:
+                        # Overflowing payload, cut remaining payload to the max
+                        payload_size = max_size
+                        padding_size = 0
 
-		languages = language_file.read().split('\n')
+                    # Add crafted parameter
+                    referrer += '%s=%s%s' % (param,
+                                             remaining_payload[
+                                                 :payload_size],
+                                             'P' * padding_size)
 
-		# Language list validation, every lower ascii starting letter should be covered 
-		import string
-		for letter in string.ascii_lowercase:
-			if not any([ l for l in languages if l.startswith(letter) ]):
-				raise ChannelException(error_language_start_letter_s % letter)
-			
-		return languages
+                    # If some payload was inserted, add position and cut
+                    # remaining payload
+                    if payload_size:
+                        positions.append(parameter_index)
+                        remaining_payload = remaining_payload[payload_size:]
 
-	def _load_agents(self):
-		
-		try:
-			agents_file = open(agents_list_path)
-		except Exception as e:
-			raise FatalException(messages.generic.error_loading_file_s_s % (languages_list_path, str(e)))
+            referrers.append((referrer, positions))
+            if not remaining_payload:
+                break
 
-		return agents_file.read().split('\n')
+        return session_id, referrers
 
-		
+    def _load_referrers(self):
 
-	def _generate_header_accept_language(self, positions, session_id):
+        referrers_vanilla = []
 
-		# The total language number will be len(positions) + 1
+        try:
+            referrer_file = open(referrer_templates_path)
+        except Exception as e:
+            raise FatalException(
+                core.messages.stegareferrer.error_loading_referrers_s_s %
+                (referrer_templates_path, str(e)))
 
-		# Send session_id composing the two first languages
-		accept_language = '%s,' % (random.choice([l for l in self.languages if '-' in l and l.startswith(session_id[0])]))
+        for template in referrer_file.read().split('\n'):
+            if not template.startswith('http'):
+                continue
 
-		languages = [l for l in self.languages if '-' not in l and l.startswith(session_id[1])]
-		accept_language += '%s;q=0.%i' % (random.choice(languages), positions[0])
+            referer_format = FirstRefererFormat(self.url)
 
-		# Add remaining q= positions
-		for position in positions[1:]:
+            template_first_formatted = Template(
+                template).render(tpl=referer_format)
+            referrers_vanilla.append(
+                (template_first_formatted, referer_format.chunks_sizes))
 
-			language = random.choice(languages)
+        return referrers_vanilla
 
-			accept_language += ',%s;q=0.%i' % (language, position)
+    def _load_languages(self):
 
-		return accept_language
-		
+        try:
+            language_file = open(languages_list_path)
+        except Exception as e:
+            raise FatalException(
+                core.messages.generic.error_loading_file_s_s %
+                (languages_list_path, str(e)))
+
+        languages = language_file.read().split('\n')
+
+        # Language list validation, every lower ascii starting letter should be
+        # covered
+        import string
+        for letter in string.ascii_lowercase:
+            if not any([l for l in languages if l.startswith(letter)]):
+                raise ChannelException(error_language_start_letter_s % letter)
+
+        return languages
+
+    def _load_agents(self):
+
+        try:
+            agents_file = open(agents_list_path)
+        except Exception as e:
+            raise FatalException(
+                messages.generic.error_loading_file_s_s %
+                (languages_list_path, str(e)))
+
+        return agents_file.read().split('\n')
+
+    def _generate_header_accept_language(self, positions, session_id):
+
+        # The total language number will be len(positions) + 1
+
+        # Send session_id composing the two first languages
+        accept_language = '%s,' % (random.choice(
+            [l for l in self.languages if '-' in l and l.startswith(session_id[0])]))
+
+        languages = [
+            l for l in self.languages if '-' not in l and l.startswith(session_id[1])]
+        accept_language += '%s;q=0.%i' % (
+            random.choice(languages), positions[0])
+
+        # Add remaining q= positions
+        for position in positions[1:]:
+
+            language = random.choice(languages)
+
+            accept_language += ',%s;q=0.%i' % (language, position)
+
+        return accept_language
