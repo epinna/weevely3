@@ -8,7 +8,6 @@ class generic:
 
 class sessions:
     error_loading_sessions = 'error loading sessions'
-    # TODO: use generic one
 
 
 class channels:
@@ -20,7 +19,6 @@ class terminal:
 
 
 class stegareferrer:
-        # TODO: review and delete unused ones
     error_generating_id = 'error generating id, payload too long?'
     error_password_hash = 'error generating trigger, please use another password'
     error_language_start_letter_s = 'error, at least one language must start with the letter \'%s\''
@@ -29,6 +27,7 @@ class stegareferrer:
 
 class vectors:
     wrong_target_type = 'wrong target operating system type'
+    wrong_arguments_type = 'wrong formatting argument type, a dictionary is required'
     default_vector_not_set = 'default vector is not set'
 
 

@@ -76,4 +76,4 @@ class Sh(Module):
 
     def run(self, args):
 
-        return Vector("""@system("${args['command']}${args['stderr_redirection']}");""").run(args=args)
+        return Vector("""@system("${args['command']}${args['stderr_redirection']}");""").run({ 'args' : args })

@@ -64,9 +64,7 @@ class Php(Module):
         # Compose command with pre_command and post_command option
         command = Vector(
             "chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}"
-            ).format(
-            args=args,
-            cwd=cwd)
+            ).format( { 'args' : args, 'cwd' : cwd } )
 
         logging.debug(command)
 
@@ -74,7 +72,6 @@ class Php(Module):
         response = self.channel.send(command)
 
         # Strip last newline if present
-        return response[
-            :-
-            1] if (
-            response and response.endswith('\n')) else response
+        return response[:-1] if (
+            response and response.endswith('\n')
+            ) else response

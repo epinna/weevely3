@@ -17,18 +17,25 @@ class Vector:
 
         self.name = name if name else commons.randstr()
 
-        if not isinstance(target, int):
-            raise DevException(core.messages.wrong_target_type)
+        if not isinstance(target, int) or not target < 3:
+            raise DevException(messages.vectors.wrong_target_type)
 
         self.module = module
         self.payload = payload
         self.target = target
 
-    def format(self, **args):
+    def format(self, args):
         return Template(self.payload).render(**args)
 
-    def run(self, **args):
-        formatted = self.format(**args)
+    def run(self, args):
+
+        try:
+            formatted = self.format(args)
+        except TypeError as e:
+            import traceback
+            traceback.print_exc()
+            raise DevException(messages.vectors.wrong_arguments_type)
+        
         return modules.loaded[self.module].run_argv([formatted])
 
 
