@@ -202,7 +202,9 @@ class StegaRef:
                     referrer += '%s=%s%s' % (param,
                                              remaining_payload[
                                                  :payload_size],
-                                             'P' * padding_size)
+                                             commons.randstr(
+                                                 padding_size
+                                              ))
 
                     # If some payload was inserted, add position and cut
                     # remaining payload
