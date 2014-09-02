@@ -32,15 +32,8 @@ class Ls(Module):
                 'dir': '.'
             })
 
-        self._register_vectors(
-            [
-                Vector(
-                    "ls",
-                    'shell_php',
-                    """$p="${args['dir']}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}"""),
-            ])
-
     def run(self, args):
 
-        return self.terminal.run_shell_php(
-            [self.vectors.get_by_name('ls').format(args=args)])
+        return Vector("""$p="${args['dir']}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}""").run(
+        { 'args' : args }
+        )
