@@ -29,7 +29,7 @@ class Module:
     def run_cmdline(self, line):
         """ Function called from terminal to run module. Accepts command line string. """
 
-        result = self.run(shlex.split(line))
+        result = self.run_argv(shlex.split(line))
         if result is not None:
             logging.info(commons.stringify(result))
 

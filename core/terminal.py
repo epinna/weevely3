@@ -34,11 +34,11 @@ class Terminal(cmd.Cmd):
 
         # Probe shell_sh if is never tried
         if not self.session['shell_sh']['enabled']:
-            self.session['shell_sh']['enabled'] = self.check_shell_sh()
+            self.session['shell_sh']['enabled'] = modules.loaded['shell_sh'].check()
 
         # Probe shell_php if shell_sh failed
         if not self.session['shell_sh']['enabled']:
-            self.session['shell_php']['enabled'] = self.check_shell_php()
+            self.session['shell_php']['enabled'] = modules.loaded['shell_php'].check()
 
         # Check results to set the default shell
         for shell in ('shell_sh', 'shell_php'):
@@ -51,7 +51,7 @@ class Terminal(cmd.Cmd):
 
         # Get current working directory if not set
         if not self.session['file_cd']['results'].get('cwd'):
-            self.run_file_cd(["."])
+            self.do_file_cd(".")
 
         # Get hostname and whoami if not set
         if not self.session['system_info']['results'].get('hostname'):
