@@ -14,31 +14,32 @@ def session_save_atexit(session):
     json.dump(session, open(path, 'w'))
 
 
-def start_session_by_file(dbpath):
+def start_session_by_file(dbpath, volatile = False):
     try:
         sessiondb = json.load(open(dbpath, 'r'))
     except Exception as e:
         logging.warn(
             messages.generic.error_loading_file_s_s %
             (dbpath, str(e)))
-    else:
-        saved_url = sessiondb.get('url')
-        saved_password = sessiondb.get('password')
+        return
 
-        if not saved_url or not saved_password:
-            logging.warn(
-                messages.sessions.error_loading_file_s %
-                (dbpath, 'no url or password'))
-        else:
+    saved_url = sessiondb.get('url')
+    saved_password = sessiondb.get('password')
 
+    if saved_url and saved_password:
+        if not volatile:
             # Register dump at exit and return
             atexit.register(session_save_atexit, session=sessiondb)
-            return sessiondb
+        return sessiondb
+
+    logging.warn(
+        messages.sessions.error_loading_file_s %
+        (dbpath, 'no url or password'))
 
     raise FatalException(messages.sessions.error_loading_sessions)
 
 
-def start_session_by_url(url, password):
+def start_session_by_url(url, password, volatile = False):
 
     if not os.path.isdir(sessions_path):
         os.makedirs(sessions_path)
@@ -74,13 +75,17 @@ def start_session_by_url(url, password):
                 logging.warn(
                     messages.generic.error_loading_file_s_s %
                     (dbpath, 'no url or password'))
+                    
             if saved_url == url and saved_password == password:
-
+                
+                # Found correspondent session file.
                 # Register dump at exit and return
-                atexit.register(session_save_atexit, session=sessiondb)
+                if not volatile:
+                    atexit.register(session_save_atexit, session=sessiondb)
+
                 return sessiondb
 
-    # Create a new session with first available filename
+    # If no session was found, create a new one with first available filename
     index = 0
 
     while True:
@@ -96,7 +101,9 @@ def start_session_by_url(url, password):
                 {'path': dbpath, 'url': url, 'password': password})
 
             # Register dump at exit and return
-            atexit.register(session_save_atexit, session=sessiondb)
+            if not volatile:
+                atexit.register(session_save_atexit, session=sessiondb)
+
             return sessiondb
 
         else:
