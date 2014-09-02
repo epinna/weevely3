@@ -30,8 +30,12 @@ class Module:
         """ Function called from terminal to run module. Accepts command line string. """
 
         result = self.run_argv(shlex.split(line))
+
         if result is not None:
             logging.info(commons.stringify(result))
+
+        # Data is returned for the testing of _cmdline calls
+        return result
 
     def run_argv(self, argv):
         """ Main function to run module. Parse arguments list with getopt.
