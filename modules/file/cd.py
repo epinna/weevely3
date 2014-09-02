@@ -33,16 +33,11 @@ class Cd(Module):
                 'dir'
             ])
 
-        self._register_vectors([
-            Vector("chdir", 'shell_php', """@chdir("${args['dir']}") && print(getcwd());"""),
-        ])
-
     def run(self, args):
+        
+        folder = Vector("""@chdir("${args['dir']}") && print(getcwd());""", "chdir").run({ 'args' : args })
 
-        dir = self.terminal.run_shell_php(
-            [self.vectors.get_by_name('chdir').format(args=args)])
-
-        if dir:
+        if folder:
             # Store cwd used by other modules
             self._store_result('cwd', dir)
         else:
