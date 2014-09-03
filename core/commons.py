@@ -97,8 +97,10 @@ def stringify(data):
 
 
 def getstatusoutput(cmd):
-    """Return (status, output) of executing cmd in a shell."""
-    """This new implementation should work on all platforms."""
+    """
+    Return (status, output) of executing cmd in a shell.
+    This new implementation should work on all platforms.
+    """
     pipe = subprocess.Popen(cmd, shell=True, universal_newlines=True,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     output = str.join("", pipe.stdout.readlines())
@@ -106,3 +108,20 @@ def getstatusoutput(cmd):
     if sts is None:
         sts = 0
     return sts, output
+
+
+def shorten_string(body, keep_header = 0, keep_trailer = 0):
+    """
+    Smartly shorten a given string.
+    """
+
+    if len(body) < keep_header:
+        keep_header = len(body)
+
+    if len(body) < keep_trailer:
+        keep_trailer = len(body)
+
+    header = body[:keep_header]
+    footer = body[-keep_trailer:]
+
+    return header, footer

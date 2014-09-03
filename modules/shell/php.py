@@ -1,5 +1,6 @@
 from core.module import Module
 from core import messages
+from core import commons
 from core.channels.channel import Channel
 from core.vectors import Vector
 from core.loggers import log
@@ -50,10 +51,12 @@ class Php(Module):
         enabled = True
         rand = str(random.randint(11111, 99999))
 
-        response, code = self.channel.send('echo(%s);' % rand)
+        command = 'echo(%s);' % rand
+        response, code = self.channel.send(command)
         
         if rand != response:
             enabled = False
+            self._handle_code_warn(code, command)
 
         log.debug('PHP check: %s' % enabled)
 
@@ -72,11 +75,29 @@ class Php(Module):
         # Send command
         response, code = self.channel.send(command)
 
+        # Print warning whether there is no response
+        if not response:
+            self._handle_code_warn(code, command)
+
         # Strip last newline if present
         return response[:-1] if (
             response and response.endswith('\n')
             ) else response
 
-    def handle_code(self, code):
-        if code == 400:
-            self.log.warn('')
+    def _handle_code_warn(self, code, command):
+        """
+        Print warning depending on the returned code
+        """
+        if code == 404:
+            log.warn(messages.module_shell_php.error_404_remote_backdoor)
+        elif code == 500:
+            log.warn(messages.module_shell_php.error_500_executing)
+
+            command_last_chars = commons.shorten_string(command.rstrip(), 
+                                                          keep_trailer = 5)[1]
+
+            if (command_last_chars and 
+                  command_last_chars[-1] not in ( ';', '}' )):
+                log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
+        elif code:
+            log.warn(messages.module_shell_php.error_i_executing % code)
