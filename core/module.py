@@ -1,6 +1,6 @@
 from core.vectors import Os, Vectors
+from core.loggers import log
 from core import messages
-import logging
 import shlex
 import getopt
 import commons
@@ -32,7 +32,7 @@ class Module:
         result = self.run_argv(shlex.split(line))
 
         if result is not None:
-            logging.info(commons.stringify(result))
+            log.info(commons.stringify(result))
 
         # Data is returned for the testing of _cmdline calls
         return result
@@ -49,11 +49,11 @@ class Module:
                     '%s=' %
                     a for a in self.args_optional.keys()])
         except getopt.GetoptError as e:
-            logging.info('%s\n%s' % (e, self.__doc__))
+            log.info('%s\n%s' % (e, self.__doc__))
             return
 
         if len(line_args_mandatory) != len(self.args_mandatory):
-            logging.info(
+            log.info(
                 '%s\n%s' %
                 (messages.generic.error_missing_arguments_s %
                  (' '.join(

@@ -16,8 +16,6 @@ from mako.template import Template
 from core.weexceptions import FatalException
 from core import messages
 import getopt
-import core.log
-import logging
 import os
 import sys
 
@@ -79,11 +77,11 @@ if __name__ == '__main__':
                 1:], '', [
                 'obfuscator=', 'agent='])
     except getopt.GetoptError as e:
-        logging.info('%s\n%s' % (e, __doc__))
+        log.info('%s\n%s' % (e, __doc__))
     else:
 
         if len(line_args_mandatory) != 2:
-            logging.info(
+            log.info(
                 '%s\n%s' %
                 (messages.generic.error_missing_arguments_s %
                  '', __doc__))
@@ -98,6 +96,6 @@ if __name__ == '__main__':
             obfuscated = generate(password, **dict_args_optionals)
             save_generated(obfuscated, output)
 
-            logging.info(
+            log.info(
                 messages.generate.generated_backdoor_with_password_s_in_s_size_i %
                 (password, output, len(obfuscated)))

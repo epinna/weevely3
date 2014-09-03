@@ -2,7 +2,6 @@ from core.vectors import Os, Vector
 from core.module import Module
 from core import messages
 from core import modules
-import logging
 import random
 
 

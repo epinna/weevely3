@@ -9,13 +9,13 @@ Usage:
 """
 
 from core.terminal import Terminal
+from core.loggers import log
 from core import sessions
 from core import modules
 from core import messages
+from core import config
 import getopt
 import sys
-import core.log
-import logging
 
 if __name__ == '__main__':
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
         Terminal(session).cmdloop()
 
     else:
-        logging.info(
+        log.info(
             '%s\n%s' %
             (messages.generic.error_missing_arguments_s %
              '', __doc__))

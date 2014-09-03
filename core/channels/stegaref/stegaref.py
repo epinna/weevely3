@@ -1,5 +1,6 @@
 from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
+from core.loggers import logfile
 from core import commons
 from mako.template import Template
 import core.messages
@@ -12,7 +13,6 @@ import random
 import string
 import cookielib
 import urllib2
-import logging
 import itertools
 
 referrer_templates_path = 'core/channels/stegaref/referrers.tpl'
@@ -54,8 +54,6 @@ class StegaRef:
 
     def send(self, original_payload):
 
-        debug_mode = logging.getLogger().getEffectiveLevel()
-
         # Generate session id and referrers
         session_id, referrers_data = self._prepare(original_payload)
 
@@ -70,7 +68,7 @@ class StegaRef:
             opener.addheaders = [
                 ('Referer', referrer_data[0]), ('Accept', accept_header)]
 
-            logging.debug(
+            logfile.debug(
                 '[v:%i/%i] %s %s %s' %
                 (referrer_index,
                  len(referrers_data),
@@ -83,11 +81,10 @@ class StegaRef:
             if not response:
                 continue
 
-            if debug_mode:
-                # Multiple debug string may have been printed, using findall
-                matched_debug = self.re_debug.findall(response)
-                if matched_debug:
-                    logging.debug('\n'.join(matched_debug))
+            # Multiple debug string may have been printed, using findall
+            matched_debug = self.re_debug.findall(response)
+            if matched_debug:
+                logfile.debug('\n'.join(matched_debug))
 
             matched = self.re_response.search(response)
             if matched and matched.group(1):
@@ -134,8 +131,8 @@ class StegaRef:
 
         remaining_payload = header + obfuscated_payload + footer
 
-        logging.debug('DATA TO SEND: ' + remaining_payload)
-        logging.debug('HEADER: %s, FOOTER %s' % (header, footer))
+        logfile.debug('DATA TO SEND: ' + remaining_payload)
+        logfile.debug('HEADER: %s, FOOTER %s' % (header, footer))
 
         referrers = []
 

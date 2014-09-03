@@ -2,7 +2,7 @@ from core.module import Module
 from core import messages
 from core.channels.channels import get_channel
 from core.vectors import Vector
-import logging
+from core.loggers import log
 import random
 
 
@@ -52,7 +52,7 @@ class Php(Module):
         if rand != self.channel.send('echo(%s);' % rand):
             enabled = False
 
-        logging.debug('shell_php check: %s' % enabled)
+        log.debug('check: %s' % enabled)
 
         return enabled
 
@@ -65,8 +65,6 @@ class Php(Module):
         command = Vector(
             "chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}"
             ).format( { 'args' : args, 'cwd' : cwd } )
-
-        logging.debug(command)
 
         # Send command
         response = self.channel.send(command)

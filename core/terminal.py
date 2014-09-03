@@ -1,11 +1,11 @@
 from core.weexceptions import FatalException
+from core.loggers import log
 from core import messages
 from core import modules
 import readline
 import cmd
 import glob
 import os
-import logging
 import shlex
 import pprint
 
@@ -20,7 +20,7 @@ class Terminal(cmd.Cmd):
         self.prompt = 'weevely> '
         self._load_modules()
 
-        logging.debug(pprint.pformat(dict(session)))
+        log.debug(pprint.pformat(dict(session)))
 
         cmd.Cmd.__init__(self)
 
@@ -82,7 +82,7 @@ class Terminal(cmd.Cmd):
         result = modules.loaded[self.session['default_shell']].run_argv([line])
 
         if not result:
-            logging.info(result)
+            log.info(result)
 
     def do_cd(self, line):
         """ Command "cd" replacement """

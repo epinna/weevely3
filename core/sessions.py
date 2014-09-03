@@ -1,12 +1,12 @@
+from core import messages
+from core.weexceptions import FatalException
+from core.config import sessions_path, sessions_ext
+from core.loggers import log
 import os
 import json
 import glob
 import urlparse
-import logging
 import atexit
-from core import messages
-from core.weexceptions import FatalException
-from core.config import sessions_path, sessions_ext
 
 
 def session_save_atexit(session):
@@ -18,7 +18,7 @@ def start_session_by_file(dbpath, volatile = False):
     try:
         sessiondb = json.load(open(dbpath, 'r'))
     except Exception as e:
-        logging.warn(
+        log.warn(
             messages.generic.error_loading_file_s_s %
             (dbpath, str(e)))
         return
@@ -32,7 +32,7 @@ def start_session_by_file(dbpath, volatile = False):
             atexit.register(session_save_atexit, session=sessiondb)
         return sessiondb
 
-    logging.warn(
+    log.warn(
         messages.sessions.error_loading_file_s %
         (dbpath, 'no url or password'))
 
@@ -64,7 +64,7 @@ def start_session_by_url(url, password, volatile = False):
         try:
             sessiondb = json.load(open(dbpath, 'r'))
         except Exception as e:
-            logging.warn(
+            log.warn(
                 messages.generic.error_loading_file_s_s %
                 (dbpath, str(e)))
         else:
@@ -72,7 +72,7 @@ def start_session_by_url(url, password, volatile = False):
             saved_password = sessiondb.get('password')
 
             if not saved_url or not saved_password:
-                logging.warn(
+                log.warn(
                     messages.generic.error_loading_file_s_s %
                     (dbpath, 'no url or password'))
                     

@@ -2,7 +2,6 @@ import random
 import urlparse
 import string
 import urllib
-import logging
 from core import commons
 from core import messages
 
