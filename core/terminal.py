@@ -55,10 +55,10 @@ class Terminal(cmd.Cmd):
 
         # Get hostname and whoami if not set
         if not self.session['system_info']['results'].get('hostname'):
-            self.run_system_info(["--info=hostname"])
+            modules.loaded['system_info'].run_argv(["--info=hostname"])
 
         if not self.session['system_info']['results'].get('whoami'):
-            self.run_system_info(["--info=whoami"])
+            modules.loaded['system_info'].run_argv(["--info=whoami"])
 
         return line
 

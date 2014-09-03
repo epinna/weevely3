@@ -1,6 +1,7 @@
 from core.vectors import Os, Vector
 from core.module import Module
 from core import messages
+from core.loggers import log
 import random
 
 
@@ -40,6 +41,6 @@ class Cd(Module):
             # Store cwd used by other modules
             self._store_result('cwd', dir)
         else:
-            logging.info(
+            log.info(
                 messages.module_file_cd.failed_directory_change_to_s %
                 (args['dir']))

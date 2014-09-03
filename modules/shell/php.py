@@ -1,6 +1,6 @@
 from core.module import Module
 from core import messages
-from core.channels.channels import get_channel
+from core.channels.channel import Channel
 from core.vectors import Vector
 from core.loggers import log
 import random
@@ -40,7 +40,7 @@ class Php(Module):
                 'postfix_string': '',
             })
 
-        self.channel = get_channel(
+        self.channel = Channel(
             self.session['url'],
             self.session['password'])
 
@@ -49,10 +49,13 @@ class Php(Module):
 
         enabled = True
         rand = str(random.randint(11111, 99999))
-        if rand != self.channel.send('echo(%s);' % rand):
+
+        response, code = self.channel.send('echo(%s);' % rand)
+        
+        if rand != response:
             enabled = False
 
-        log.debug('check: %s' % enabled)
+        log.debug('PHP check: %s' % enabled)
 
         return enabled
 
@@ -67,7 +70,7 @@ class Php(Module):
             ).format( { 'args' : args, 'cwd' : cwd } )
 
         # Send command
-        response = self.channel.send(command)
+        response, code = self.channel.send(command)
 
         # Strip last newline if present
         return response[:-1] if (
