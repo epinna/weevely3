@@ -76,3 +76,7 @@ class Php(Module):
         return response[:-1] if (
             response and response.endswith('\n')
             ) else response
+
+    def handle_code(self, code):
+        if code == 400:
+            self.log.warn('')
