@@ -23,8 +23,8 @@ $rr=@$r["HTTP_REFERER"];
 $ra=@$r["HTTP_ACCEPT"];
 
 if($rr&&$ra){
-
-	parse_str(@parse_url($rr)["query"],$q);
+    $u=parse_url($rr);
+    parse_str($u["query"],$q);
 	$q=array_values($q);
 	preg_match_all("/([\w])[\w-]+(?:;q=0.([\d]))?,?/",$ra,$m);
 
