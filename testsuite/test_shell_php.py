@@ -1,4 +1,3 @@
-from core.channels.channels import get_channel
 from testsuite.base_test import BaseTest
 from core import modules
 from core import sessions
