@@ -5,6 +5,7 @@ footer = key[4:8]
 %>$kh="${header}";
 $kf="${footer}";
 <%text>
+/* The comments has to be in this style, or they will break the minimization during obfuscation */
 $k=$kh.$kf;
 function x($t,$k){
 	$c=strlen($k);
@@ -26,8 +27,8 @@ print("<${k}DEBUG>CHECK1 ?</${k}DEBUG>");
 if($rr&&$ra){
 	print("<${k}DEBUG>CHECK1 OK!</${k}DEBUG>");
 
-    // parse_url($rr)[] direct access is not allowed in PHP < 5.4
-    $u=parse_url($rr);
+	/* function()[] direct access is not allowed in PHP < 5.4 */
+	$u=parse_url($rr);
 	parse_str($u["query"],$q);
 	$q=array_values($q);
 	preg_match_all("/([\w])[\w-]+(?:;q=0.([\d]))?,?/",$ra,$m);
