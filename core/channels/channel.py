@@ -1,5 +1,7 @@
 from core.channels.stegaref.stegaref import StegaRef
+from core.weexceptions import ChannelHTTPError404, ChannelHTTPError500, ChannelHTTPError
 from core.weexceptions import FatalException
+from urllib2 import HTTPError
 from core import config
 from core import messages
 
@@ -32,5 +34,14 @@ class Channel:
         # Create channel instance
         self.channel = channel_object(url, password)
 
-        self.send = self.channel.send
+    def send(self, payload):
 
+        try:
+            self.channel.send(payload)
+        except HTTPError as e:
+            if e.code == 404:
+                raise ChannelHTTPError404
+            elif e.code == 500:
+                raise ChannelHTTPError500
+            else:
+                raise ChannelHTTPError
