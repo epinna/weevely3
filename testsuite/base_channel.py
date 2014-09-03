@@ -20,5 +20,5 @@ class BaseDefaultChannel(BaseTest):
             self.assertEqual(
                 self.channel.send(
                     'echo("%s");' %
-                    payload),
+                    payload)[0],
                 payload)
