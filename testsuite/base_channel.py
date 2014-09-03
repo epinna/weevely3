@@ -1,13 +1,12 @@
-from core.channels.channels import get_channel
+from core.channels.channel import Channel
 from testsuite.base_test import BaseTest
 from core.commons import randstr
 import random
 
-
 class BaseDefaultChannel(BaseTest):
 
     def setUp(self):
-        self.channel = get_channel(self.url, self.password)
+        self.channel = Channel(self.url, self.password)
 
     def _incremental_requests(
             self,

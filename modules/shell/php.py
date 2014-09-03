@@ -1,6 +1,6 @@
 from core.module import Module
 from core import messages
-from core.channels.channels import get_channel
+from core.channels.channel import Channel
 from core.vectors import Vector
 from core.loggers import log
 import random
@@ -40,7 +40,7 @@ class Php(Module):
                 'postfix_string': '',
             })
 
-        self.channel = get_channel(
+        self.channel = Channel(
             self.session['url'],
             self.session['password'])
 
