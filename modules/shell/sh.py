@@ -1,5 +1,6 @@
 from core.vectors import Os, Vector
 from core.module import Module
+from core.loggers import log
 from core import messages
 from core import modules
 import random
@@ -52,26 +53,29 @@ class Sh(Module):
                 Vector("""$p = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));$h = @proc_open('${args['command']}', $p, $pipes); if($h&&$pipes) { while(!feof($pipes[1])) echo(fread($pipes[1],4096));while(!feof($pipes[2])) echo(fread($pipes[2],4096)); fclose($pipes[0]); fclose($pipes[1]);fclose($pipes[2]); proc_close($h); }""", "proc_open"),
             ])
 
-    #~ def check(self, args={}):
-        #~ """ Check if remote Sh interpreter works """
-#~ 
-        #~ rand = str(random.randint(11111, 99999))
-#~ 
-        #~ args_check = {'command': 'echo %s' % rand, 'stderr_redirection': ''}
-#~ 
-        #~ for vector in self.vectors:
-#~ 
-            #~ output = self.terminal.run_shell_php(
-                #~ [vector.format(args=args_check)])
-#~ 
-            #~ if output and output.strip() == rand:
-                #~ self.vectors.save_default_vector(vector.name)
-                #~ logging.debug('shell_sh check: enabled with %s' % vector.name)
-#~ 
-                #~ return True
-#~ 
-        #~ logging.debug('shell_sh check: disabled, no vector found')
-        #~ return False
+    def check(self, args={}):
+        """ Check if remote Sh interpreter works """
+
+        rand = str(random.randint(11111, 99999))
+
+        args_check = {'command': 'echo %s' % rand, 'stderr_redirection': ''}
+
+        for vector in self.vectors:
+
+            output = vector.run({ 'args' : args_check })
+
+            if output and output.strip() == rand:
+                self.vectors.save_default_vector(vector.name)
+                log.debug('shell_sh check: enabled with %s' % vector.name)
+                return True
+            else:
+                # With the failed first vector, check if at least
+                # shell_php is enabled. If not, return immediatly.
+                if not self.session['shell_php'].get('enabled'):
+                    return False
+
+        log.debug('shell_sh check: disabled, no vector found')
+        return False
 
     def run(self, args):
 

@@ -41,6 +41,6 @@ class Cd(Module):
             # Store cwd used by other modules
             self._store_result('cwd', dir)
         else:
-            log.info(
+            log.warning(
                 messages.module_file_cd.failed_directory_change_to_s %
                 (args['dir']))
