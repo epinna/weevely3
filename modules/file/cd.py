@@ -39,7 +39,7 @@ class Cd(Module):
 
         if folder:
             # Store cwd used by other modules
-            self._store_result('cwd', dir)
+            self._store_result('cwd', folder)
         else:
             log.warning(
                 messages.module_file_cd.failed_directory_change_to_s %

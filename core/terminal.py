@@ -76,10 +76,10 @@ class Terminal(cmd.Cmd):
 
             # Build next prompt, last command could have changed the cwd
             self.prompt = '{user}@{host}:{path} {prompt} '.format(
-                user=self.session['system_info']['results'].get(
-                    'whoami', ''), host = self.session['system_info']['results'].get(
-                    'hostname', ''), path = self.session['file_cd']['results'].get(
-                    'cwd', '.'), prompt = prompt)
+             user=self.session['system_info']['results'].get('whoami', ''),
+             host = self.session['system_info']['results'].get('hostname', ''),
+             path = self.session['file_cd']['results'].get('cwd', '.'),
+             prompt = prompt)
 
         return stop
 

@@ -14,6 +14,7 @@ Options:
 
 from mako.template import Template
 from core.weexceptions import FatalException
+from core.loggers import log
 from core import messages
 import getopt
 import os
