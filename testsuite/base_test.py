@@ -26,4 +26,8 @@ class BaseTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        os.remove(cls.path)
+
+        # Check the agent presence, could be already deleted 
+        if not os.path.isfile(cls.path): return
+        #os.remove(cls.path)
+        
