@@ -36,10 +36,6 @@ class Terminal(cmd.Cmd):
         if not self.session['shell_sh']['enabled']:
             self.session['shell_sh']['enabled'] = modules.loaded['shell_sh'].check()
 
-        # Probe shell_php if shell_sh failed
-        if not self.session['shell_sh']['enabled']:
-            self.session['shell_php']['enabled'] = modules.loaded['shell_php'].check()
-
         # Check results to set the default shell
         for shell in ('shell_sh', 'shell_php'):
             if self.session[shell]['enabled']:
