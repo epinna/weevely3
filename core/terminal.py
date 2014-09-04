@@ -39,12 +39,14 @@ class Terminal(cmd.Cmd):
         # Check results to set the default shell
         for shell in ('shell_sh', 'shell_php'):
             if self.session[shell]['enabled']:
-             self.session['default_shell'] = shell
-             break
-             
-        if not self.session.get('default_shell'):
-            raise FatalException(messages.terminal.backdoor_unavailable)
+                self.session['default_shell'] = shell
+                break
 
+        # Check if some shell is loaded
+        if not self.session.get('default_shell'):
+            log.error(messages.terminal.backdoor_unavailable)
+            return ''
+        
         # Get current working directory if not set
         if not self.session['file_cd']['results'].get('cwd'):
             self.do_file_cd(".")
@@ -60,13 +62,24 @@ class Terminal(cmd.Cmd):
 
     def postcmd(self, stop, line):
 
-        # Build next prompt, last command could have changed the cwd
-        self.prompt = '{user}@{host}:{path} {prompt} '.format(
-            user=self.session['system_info']['results'].get(
-                'whoami', ''), host=self.session['system_info']['results'].get(
-                'hostname', ''), path=self.session['file_cd']['results'].get(
-                'cwd', '.'), prompt='PHP>' if (
-                    self.session['default_shell'] == 'shell_php') else '$')
+        default_shell = self.session.get('default_shell')
+
+        if not default_shell:
+            self.prompt = 'weevely> '
+        else:
+            if default_shell == 'shell_sh':
+                prompt = '$'
+            elif default_shell == 'shell_ph':
+                prompt = 'PHP>'
+            else:
+                prompt = '?'
+
+            # Build next prompt, last command could have changed the cwd
+            self.prompt = '{user}@{host}:{path} {prompt} '.format(
+                user=self.session['system_info']['results'].get(
+                    'whoami', ''), host = self.session['system_info']['results'].get(
+                    'hostname', ''), path = self.session['file_cd']['results'].get(
+                    'cwd', '.'), prompt = prompt)
 
         return stop
 
