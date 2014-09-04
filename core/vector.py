@@ -12,7 +12,7 @@ class Os:
 
 class Vector:
 
-    def __init__(self, payload, name = None, module = 'shell_php', target = 0):
+    def __init__(self, payload, name = None, module = 'shell_php', target = 0, args = []):
 
         self.name = name if name else commons.randstr()
 
@@ -22,17 +22,18 @@ class Vector:
         self.module = module
         self.payload = payload
         self.target = target
+        self.args = []
 
-    def format(self, args):
-        return Template(self.payload).render(**args)
+    def format(self, values):
+        return Template(self.payload).render(**values)
 
-    def run(self, args = {}):
+    def run(self, values = {}):
 
         try:
-            formatted = self.format(args)
+            formatted = self.format(values)
         except TypeError as e:
             import traceback
             traceback.print_exc()
             raise DevException(messages.vectors.wrong_arguments_type)
         
-        return modules.loaded[self.module].run_argv([formatted])
+        return modules.loaded[self.module].run_argv( [ formatted ] + self.args )
