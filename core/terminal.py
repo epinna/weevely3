@@ -90,8 +90,9 @@ class Terminal(cmd.Cmd):
 
         result = modules.loaded[self.session['default_shell']].run_argv([line])
 
-        if not result:
-            log.info(result)
+        if not result: return
+
+        log.info(result)
 
     def do_cd(self, line):
         """ Command "cd" replacement """

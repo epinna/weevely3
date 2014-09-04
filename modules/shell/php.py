@@ -2,7 +2,7 @@ from core.module import Module
 from core import messages
 from core import commons
 from core.channels.channel import Channel
-from core.vectors import Vector
+from core.vector import Vector
 from core.loggers import log
 import random
 
@@ -80,7 +80,7 @@ class Php(Module):
 
         # If the response is empty, warn about the error code
         self._print_response_status(command, code, response)
-
+        
         # Strip last newline if present
         return response[:-1] if (
             response and response.endswith('\n')

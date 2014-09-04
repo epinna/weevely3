@@ -1,4 +1,4 @@
-from core.vectors import Os, Vector
+from core.vector import Os, Vector
 from core.module import Module
 from core.loggers import log
 from core import messages
