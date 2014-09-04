@@ -1,6 +1,9 @@
 from testsuite.base_test import BaseTest
+from testfixtures import log_capture
 from core import modules
 from core import sessions
+from core import messages
+import logging
 
 class ShellPHP(BaseTest):
 
@@ -10,9 +13,10 @@ class ShellPHP(BaseTest):
 
         self.run_argv = modules.loaded['shell_php'].run_argv
 
-
-    def test_simple_commands(self):
-
+    @log_capture()
+    def test_commands(self, log_captured):
+                
         self.assertEqual(self.run_argv(["echo(1);"]),"1");
-        self.assertEqual(self.run_argv(["echo(1)"]),"");
-        
+        self.assertEqual(self.run_argv(["echo(1)"]),"");        
+        self.assertEqual(messages.module_shell_php.missing_php_trailer_s % "');echo(1)",
+                        log_captured.records[-1].msg)
