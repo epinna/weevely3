@@ -56,7 +56,10 @@ class Php(Module):
         
         if rand != response:
             enabled = False
-            self._handle_code_warn(code, command)
+
+            # If the response is wrong, warn about the
+            # error code
+            self._handle_error_code(code, command)
 
         log.debug('PHP check: %s' % enabled)
 
@@ -75,16 +78,16 @@ class Php(Module):
         # Send command
         response, code = self.channel.send(command)
 
-        # Print warning whether there is no response
+        # If the response is empty, warn about the error code
         if not response:
-            self._handle_code_warn(code, command)
+            self._handle_error_code(code, command)
 
         # Strip last newline if present
         return response[:-1] if (
             response and response.endswith('\n')
             ) else response
 
-    def _handle_code_warn(self, code, command):
+    def _handle_error_code(self, code, command):
         """
         Print warning depending on the returned code
         """
@@ -92,12 +95,12 @@ class Php(Module):
             log.warn(messages.module_shell_php.error_404_remote_backdoor)
         elif code == 500:
             log.warn(messages.module_shell_php.error_500_executing)
-
-            command_last_chars = commons.shorten_string(command.rstrip(), 
-                                                          keep_trailer = 5)[1]
-
-            if (command_last_chars and 
-                  command_last_chars[-1] not in ( ';', '}' )):
-                log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
-        elif code:
+        elif code != 200:
             log.warn(messages.module_shell_php.error_i_executing % code)
+        
+        command_last_chars = commons.shorten_string(command.rstrip(), 
+                                                      keep_trailer = 10)[1]
+
+        if (command_last_chars and 
+              command_last_chars[-1] not in ( ';', '}' )):
+            log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
