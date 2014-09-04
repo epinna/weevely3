@@ -57,9 +57,9 @@ class Php(Module):
         if rand != response:
             enabled = False
 
-            # If the response is wrong, warn about the
-            # error code
-            self._handle_error_code(code, command)
+        # If the response is wrong, warn about the
+        # error code
+        self._print_response_status(command, code, response)
 
         log.debug('PHP check: %s' % enabled)
 
@@ -79,27 +79,35 @@ class Php(Module):
         response, code = self.channel.send(command)
 
         # If the response is empty, warn about the error code
-        if not response:
-            self._handle_error_code(code, command)
+        self._print_response_status(command, code, response)
 
         # Strip last newline if present
         return response[:-1] if (
             response and response.endswith('\n')
             ) else response
 
-    def _handle_error_code(self, code, command):
+    def _print_response_status(self, command, code, response):
+
         """
-        Print warning depending on the returned code
+        Debug print and warning in case of missing response and HTTP errors
         """
+
+        log.debug(commons.shorten_string(command,
+                                        keep_header = 40,
+                                        keep_trailer = 40)
+                 )
+
+        if response: return
+
         if code == 404:
             log.warn(messages.module_shell_php.error_404_remote_backdoor)
         elif code == 500:
             log.warn(messages.module_shell_php.error_500_executing)
         elif code != 200:
             log.warn(messages.module_shell_php.error_i_executing % code)
-        
+
         command_last_chars = commons.shorten_string(command.rstrip(), 
-                                                      keep_trailer = 10)[1]
+                                                    keep_trailer = 10)
 
         if (command_last_chars and 
               command_last_chars[-1] not in ( ';', '}' )):

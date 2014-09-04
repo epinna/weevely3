@@ -115,13 +115,21 @@ def shorten_string(body, keep_header = 0, keep_trailer = 0):
     Smartly shorten a given string.
     """
 
-    if len(body) < keep_header:
-        keep_header = len(body)
+    # Cut header
+    if (keep_header 
+        and not keep_trailer 
+        and len(body) > keep_header):
+            return '..%s' % body[:keep_header]
 
-    if len(body) < keep_trailer:
-        keep_trailer = len(body)
-
-    header = body[:keep_header]
-    footer = body[-keep_trailer:]
-
-    return header, footer
+    # Cut footer
+    if (keep_trailer
+        and not keep_header
+        and len(body) > keep_trailer):
+            return '..%s' % body[-keep_header:]
+    
+    if (keep_header 
+        and keep_trailer
+        and len(body) > keep_header + keep_trailer):
+            return '%s .. %s' % (body[:keep_header], body[-keep_trailer:])
+        
+    return body

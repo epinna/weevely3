@@ -44,7 +44,7 @@ class module_file_ls:
 class module_shell_php:
     error_404_remote_backdoor = 'the remote backdoor request triggers an error 404, please verify its availability'
     error_500_executing = 'the remote script execution triggers an error 500, please verify script integrity and sent payload correctness'
-    missing_php_trailer_s = 'is the trailing comma missing at the end of the sent payload \'..%s\'?'
+    missing_php_trailer_s = 'is the trailing comma missing at the end of the sent payload \'%s\'?'
     error_i_executing = 'the request triggers the error %i, please verify running code'
 
 
