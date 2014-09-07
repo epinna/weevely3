@@ -42,9 +42,17 @@ class Module:
         return result
 
     def run_argv(self, argv):
-        """ Main function to run module. Parse arguments list with getopt.
-        Calls check() and run() of module.
-        Set self.last_result and return a stringified result.
+        """ Main function to run module.
+
+        Receives arguments as list, and parse them with getopt. After some check
+        calls check() and run() of module.
+
+        Args:
+            argv: The list of arguments to execute the module with.
+
+        Returns:
+            An object as result of the module run.
+            
         """
         
         try:
