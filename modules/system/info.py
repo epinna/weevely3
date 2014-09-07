@@ -42,7 +42,7 @@ class Info(Module):
             Vector("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode'),
             Vector("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
             Vector("print(@php_uname());", 'uname'),
-            Vector("print(PHP_OS);", 'os'),
+            Vector("print(@php_uname('s'));", 'os'),
             Vector("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
             Vector('print(@ini_get("max_execution_time"));', 'max_execution_time'),
             Vector('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
@@ -55,5 +55,5 @@ class Info(Module):
 
         return self._run_vectors(
                      names = args['info'].split(','),
-                     names_to_store = ['whoami', 'hostname', 'dir_sep'])
+                     names_to_store = ['whoami', 'hostname', 'dir_sep', 'os'])
 
