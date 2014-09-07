@@ -15,6 +15,8 @@ class Module:
         self.session = session
         self.vectors = Vectors(session, name)
 
+        self._run_vectors = self.vectors.run
+
         self.__doc__ = self.__doc__.strip()
 
         # Initialize session db for current session

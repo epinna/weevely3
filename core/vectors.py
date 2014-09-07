@@ -37,3 +37,37 @@ class Vectors(list):
 
         self.session[self.module_name][
             'options']['vector'] = vector_name
+
+    def run(self, arguments = {}, names = [ '' ], names_to_store = [ ]):
+        """Run the vectors.
+
+        Run all the Vector objects in the Vectors list. Optionally filter vectors by name
+        and save results.
+
+        Args:
+            arguments: The dictnary of arguments to format the vectors with
+            names: The names lists of vectors to execute
+            names_to_store: The names lists of vectors of which save the
+                returned result.
+
+        Returns:
+            A dict mapping keys to the corresponding the executed vectors
+            results.
+
+        Raises:
+            Could returns Mako library exceptions while formatting.
+
+        """
+        response = {}
+                
+        for vector in self:
+            
+            if not any(x in vector.name for x in names): continue
+
+            response[vector.name] = vector.run(arguments)
+                
+            if not any(x in vector.name for x in names_to_store): continue
+
+            self.session[self.module_name]['results'][vector.name] = response[vector.name]
+            
+        return response
