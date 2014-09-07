@@ -29,7 +29,7 @@ class Info(Module):
 
         self._register_arguments(
             options={
-                'info': 'all'
+                'info': '' # Comma separated information to request
             })
 
         self._register_vectors(
@@ -53,16 +53,7 @@ class Info(Module):
 
     def run(self, args):
 
-        results = {}
-        
-        for vector in self.vectors:
-            
-            if args['info'] in ('all', vector.name):
+        return self._run_vectors(
+                     names = args['info'].split(','),
+                     names_to_store = ['whoami', 'hostname', 'dir_sep'])
 
-                results[vector.name] = vector.run()
-
-                # Store "static" results used by other modules
-                if vector.name in ('whoami', 'hostname', 'dir_sep'):
-                    self._store_result(vector.name, results[vector.name])
-
-        return results
