@@ -40,33 +40,33 @@ class Check(Module):
               postprocess = lambda x: True if '1' else False
             ),
             Vector("print(md5_file('${args['rpath']}'));",
-              "md5"
+              name = "md5"
             ),
             Vector("(is_readable('${args['rpath']}') && print(1)) || print(0);",
-              "read",
+              name = "read",
               postprocess = lambda x: True if '1' else False
             ),
             Vector("(is_writable('${args['rpath']}') && print(1))|| print(0);",
-              "write",
+              name = "write",
               postprocess = lambda x: True if '1' else False
             ),
             Vector("(is_executable('${args['rpath']}') && print(1)) || print(0);",
-              "exec",
+              name = "exec",
               postprocess = lambda x: True if '1' else False
             ),
             Vector("(is_file('${args['rpath']}') && print(1)) || print(0);",
-              "isfile",
+              name = "isfile",
               postprocess = lambda x: True if x == '1' else False
             ),
             Vector("print(filesize('${args['rpath']}'));",
-              "size",
+              name = "size",
               postprocess = lambda x: int(x)
             ),
             Vector("print(filemtime('${args['rpath']}'));",
-              "time_epoch"
+              name = "time_epoch"
             ),
             Vector("print(filemtime('${args['rpath']}'));",
-              "time",
+              name = "time",
               postprocess = lambda x: datetime.datetime.fromtimestamp(x).strftime('%Y-%m-%d %H:%M:%S')
             )
             ]
