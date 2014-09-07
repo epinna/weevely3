@@ -56,17 +56,16 @@ class Sh(Module):
     def check(self, args={}):
         """ Check if remote Sh interpreter works """
 
-        rand = str(random.randint(11111, 99999))
+        check_digits = str(random.randint(11111, 99999))
 
-        args_check = {'command': 'echo %s' % rand, 'stderr_redirection': ''}
-
+        args_check = { 'args' : {'command': 'echo %s' % check_digits, 'stderr_redirection': ''} }
+        
         for vector in self.vectors:
 
-            output = vector.run({ 'args' : args_check })
-
-            if output and output.strip() == rand:
-                self.vectors.save_default_vector(vector.name)
-                log.debug('shell_sh check: enabled with %s' % vector.name)
+            result = vector.run(values = args_check)
+            
+            if result == check_digits: 
+                self._set_default_vector(vector.name)
                 return True
             else:
                 # With the failed first vector, check if at least
@@ -74,8 +73,8 @@ class Sh(Module):
                 if not self.session['shell_php'].get('enabled'):
                     return False
 
-        log.debug('shell_sh check: disabled, no vector found')
         return False
+        
 
     def run(self, args):
 

@@ -16,6 +16,7 @@ class Module:
         self.vectors = Vectors(session, name)
 
         self._run_vectors = self.vectors.run
+        self._run_vectors_until = self.vectors.run_until
 
         self.__doc__ = self.__doc__.strip()
 
@@ -124,3 +125,11 @@ class Module:
                 'results'].get(field, default)
         else:
             return self.session.get(field, default)
+
+    def _set_default_vector(self, vector_name, enable_module = True):
+        """ Save default vector and eventually set module as enabled """
+        
+        self.session[self.name]['options']['vector'] = vector_name
+
+        if enable_module:
+            self.session[self.name]['enabled'] = True

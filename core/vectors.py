@@ -38,15 +38,50 @@ class Vectors(list):
         self.session[self.module_name][
             'options']['vector'] = vector_name
 
-    def run(self, arguments = {}, names = [ '' ], names_to_store = [ ]):
-        """Run the vectors.
 
-        Run all the Vector objects in the Vectors list. Optionally filter vectors by name
-        and save results.
+    def run_until(self, values = {}, until_return = None, store_result = False):
+        """Run the next vectors until returns a specified result.
+
+        Run next vectors in lists until returns specified value.
+        Optionally store result.
 
         Args:
-            arguments: The dictnary of arguments to format the vectors with
-            names: The names lists of vectors to execute
+            values: The dictionaries of arguments to format the vectors with.
+            until_return: Run all vectors until returns this value.
+            store_result: Store result,
+            
+
+        Returns:
+            A tuple containing the vector name, and the vector result.
+
+        Raises:
+            Could returns Mako library exceptions while formatting.
+
+        """
+
+        for vector in self:
+
+            result = vector.run(values)
+
+            if result == which_returns:
+
+                if store_as_default_vector:
+                    self.session[self.module_name]['options']['vector'] = response[vector.name]
+                
+                return vector_name, result
+
+        return None, None
+        
+
+    def run(self, values = {}, names = [ '' ], names_to_store = [ ]):
+        """Run the vectors in names.
+
+        Run all the vectors which match passed names. With unspecified names,
+        run all the vectors. Optionally store results.
+
+        Args:
+            values: The dictionary of arguments to format the vectors with.
+            names: The names lists of vectors to execute.
             names_to_store: The names lists of vectors of which save the
                 returned result.
 
@@ -58,16 +93,17 @@ class Vectors(list):
             Could returns Mako library exceptions while formatting.
 
         """
+
         response = {}
-                
+
         for vector in self:
             
             if not any(x in vector.name for x in names): continue
 
-            response[vector.name] = vector.run(arguments)
+            response[vector.name] = vector.run(values)
                 
             if not any(x in vector.name for x in names_to_store): continue
 
             self.session[self.module_name]['results'][vector.name] = response[vector.name]
-            
+
         return response
