@@ -12,17 +12,21 @@ class Os:
 
 class Vector:
 
-    def __init__(self, payload, name = None, module = 'shell_php', target = 0, args = []):
+    def __init__(self, payload, name = None, module = 'shell_php', target = 0, args = [], postprocess = lambda x: x):
 
         self.name = name if name else commons.randstr()
 
         if not isinstance(target, int) or not target < 3:
             raise DevException(messages.vectors.wrong_target_type)
 
+        if not callable(postprocess):
+            raise DevException(messages.vectors.wrong_postprocessing_type)
+
         self.module = module
         self.payload = payload
         self.target = target
         self.args = []
+        self.postprocess = postprocess
 
     def format(self, values):
         return Template(self.payload).render(**values)
@@ -36,4 +40,8 @@ class Vector:
             traceback.print_exc()
             raise DevException(messages.vectors.wrong_arguments_type)
         
-        return modules.loaded[self.module].run_argv( [ formatted ] + self.args )
+        return self.postprocess(
+                                  modules.loaded[self.module].run_argv(
+                                    [ formatted ] + self.args
+                                  )
+                )

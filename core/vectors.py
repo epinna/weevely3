@@ -27,7 +27,7 @@ class Vectors(list):
         Optionally store result.
 
         Args:
-            values: The dictionaries of arguments to format the vectors with.
+            values: The dictionary of arguments to format the vectors with.
             until_return: Run all vectors until returns this value.
             store_result: Store result,
             
