@@ -37,22 +37,22 @@ class Check(Module):
             Vector(
               "$f='${args['rpath']}';if(file_exists($f)||is_readable($f)||is_writable($f)||is_file($f)||is_dir($f)) print(1); else print(0);",
               name = 'exists',
-              postprocess = lambda x: True if '1' else False
+              postprocess = lambda x: True if x == '1' else False
             ),
             Vector("print(md5_file('${args['rpath']}'));",
               name = "md5"
             ),
             Vector("(is_readable('${args['rpath']}') && print(1)) || print(0);",
               name = "read",
-              postprocess = lambda x: True if '1' else False
+              postprocess = lambda x: True if x == '1' else False
             ),
             Vector("(is_writable('${args['rpath']}') && print(1))|| print(0);",
               name = "write",
-              postprocess = lambda x: True if '1' else False
+              postprocess = lambda x: True if x == '1' else False
             ),
             Vector("(is_executable('${args['rpath']}') && print(1)) || print(0);",
               name = "exec",
-              postprocess = lambda x: True if '1' else False
+              postprocess = lambda x: True if x == '1' else False
             ),
             Vector("(is_file('${args['rpath']}') && print(1)) || print(0);",
               name = "isfile",
