@@ -81,7 +81,7 @@ class Terminal(cmd.Cmd):
              path = self.session['file_cd']['results'].get('cwd', '.'),
              prompt = prompt)
 
-        return stop
+        #return stop
 
     def default(self, line):
         """ Direct command line send. """
@@ -91,7 +91,7 @@ class Terminal(cmd.Cmd):
         result = modules.loaded[self.session['default_shell']].run_argv([line])
 
         if not result: return
-
+        
         log.info(result)
 
     def do_cd(self, line):
