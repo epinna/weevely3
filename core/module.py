@@ -86,6 +86,7 @@ class Module:
 
         # Dirty filter the module default vectors by operating system, if
         # available.
+        # TODO: this check should be done in vector.run
         os_current = self.session['system_info']['results'].get('os')
         if os_current:
             target = Os.WIN if os_current.lower().startswith('win') else Os.NIX
@@ -94,6 +95,7 @@ class Module:
                     del vector
             
         # If module is not already enable, launch check()
+        # TODO: change check method name with some more intuitive, e.g. .setup()
         if not self.session[self.name]['enabled']:
             self.session[self.name]['enabled'] = self.check(args)
 
