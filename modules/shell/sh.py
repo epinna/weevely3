@@ -65,7 +65,7 @@ class Sh(Module):
             result = vector.run(values = args_check)
             
             if result == check_digits: 
-                self._set_default_vector(vector.name)
+                self._store_default_vector(vector.name)
                 return True
             else:
                 # With the failed first vector, check if at least
@@ -78,4 +78,4 @@ class Sh(Module):
 
     def run(self, args):
 
-        return Vector("""@system("${args['command']}${args['stderr_redirection']}");""").run({ 'args' : args })
+        return self._run_default_vector({ 'args' : args })

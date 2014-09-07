@@ -20,25 +20,6 @@ class Vectors(list):
             if vector.name == name:
                 return vector
 
-    def get_default_vector(self):
-        """ Get default vector by name """
-
-        default_vector = self.get_by_name(
-            self.session[
-                self.module_name]['options']['vector'])
-
-        if not default_vector:
-            raise ModuleError(messages.vectors.default_vector_not_set)
-
-        return default_vector
-
-    def save_default_vector(self, vector_name):
-        """ Save default vector name """
-
-        self.session[self.module_name][
-            'options']['vector'] = vector_name
-
-
     def run_until(self, values = {}, until_return = None, store_result = False):
         """Run the next vectors until returns a specified result.
 

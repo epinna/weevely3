@@ -28,6 +28,8 @@ class stegareferrer:
 class vectors:
     wrong_target_type = 'Wrong target operating system type'
     wrong_arguments_type = 'Wrong formatting argument type, a dictionary is required'
+
+class module:
     default_vector_not_set = 'Default vector is not set'
 
 
