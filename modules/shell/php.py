@@ -92,10 +92,12 @@ class Php(Module):
         Debug print and warning in case of missing response and HTTP errors
         """
 
-        log.debug(commons.shorten_string(command,
-                                        keep_header = 40,
-                                        keep_trailer = 40)
-                 )
+#        log.debug(commons.shorten_string(command,
+#                                        keep_header = 40,
+#                                        keep_trailer = 40)
+#                 )
+
+        log.debug(command)
 
         if response: return
 
