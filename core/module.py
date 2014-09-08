@@ -84,16 +84,6 @@ class Module:
                     
         args.update(dict((key, line_args_mandatory.pop(0))
                          for key in self.args_mandatory))
-
-        # Dirty filter the module default vectors by operating system, if
-        # available.
-        # TODO: this check should be done in vector.run
-        #~ os_current = self.session['system_info']['results'].get('os')
-        #~ if os_current:
-            #~ target = Os.WIN if os_current.lower().startswith('win') else Os.NIX
-            #~ for vector in self.vectors:
-                #~ if not vector.target in (target, Os.ANY):
-                    #~ del vector
             
         # If module is not already enable, launch check()
         # TODO: change check method name with some more intuitive, e.g. .setup()

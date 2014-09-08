@@ -42,6 +42,8 @@ class Vectors(list):
 
         for vector in self:
 
+            if not self._os_match(vector.target): continue
+
             result = vector.run(values)
 
             if result == which_returns:
@@ -72,15 +74,17 @@ class Vectors(list):
 
         """
 
-        result = self.get_by_name(name).run(values)
+        vector = self.get_by_name(name)
 
-        if store:
-            self.session[self.module_name]['results'][name] = result
+        if vector and self._os_match(vector.target):
+            result = vector.run(values)
 
-        return result
+            if store:
+                self.session[self.module_name]['results'][name] = result
+
+            return result
 
 
-        
     def run_all(self, names = [ '' ], values = {}, names_to_store = [ ]):
         """Run all the vectors.
 
@@ -105,6 +109,8 @@ class Vectors(list):
         response = {}
 
         for vector in self:
+
+            if not self._os_match(vector.target): continue
             
             if not any(x in vector.name for x in names): continue
 
@@ -115,3 +121,17 @@ class Vectors(list):
             self.session[self.module_name]['results'][vector.name] = response[vector.name]
 
         return response
+
+    def _os_match(self, os):
+        """Check if vector os is compatible with the remote os
+        """
+
+        os_string = self.session['system_info']['results'].get('os')
+
+        # If os_string is not set, just return True and continue
+        if not os_string: return True
+
+        os_current = s.WIN if os_string.lower().startswith('win') else Os.NIX
+        
+        return os in (os_current, Os.ANY)
+
