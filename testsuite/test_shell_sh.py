@@ -30,7 +30,7 @@ class SystemInfo(BaseTest):
         self.assertEqual(self.run_argv(["echo 1"]), "1");
 
         # Check stored vector
-        self.assertEqual(self.session['shell_sh']['options']['vector'], vector_safe_name)
+        self.assertEqual(self.session['shell_sh']['stored_args']['vector'], vector_safe_name)
 
     def test_param_vector(self):
 
@@ -40,6 +40,6 @@ class SystemInfo(BaseTest):
         self.assertEqual(self.run_argv(["echo 1", "--vector=%s" % vector_safe_name]), "1");
 
         # Check stored vector
-        self.assertEqual(self.session['shell_sh']['options']['vector'], vector_safe_name)
+        self.assertEqual(self.session['shell_sh']['stored_args']['vector'], vector_safe_name)
 
 

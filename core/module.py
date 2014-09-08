@@ -16,7 +16,8 @@ class Module:
         self.session = session
         self.vectors = Vectors(session, name)
 
-        self._run_vectors = self.vectors.run
+        self._run_vector = self.vectors.run_one
+        self._run_vectors = self.vectors.run_all
         self._run_vectors_until = self.vectors.run_until
 
         self.__doc__ = self.__doc__.strip()
@@ -24,7 +25,7 @@ class Module:
         # Initialize session db for current session
         if name not in self.session:
             self.session[self.name] = {
-                'options': {},
+                'stored_args': {},
                 'results': {},
                 'enabled': None}
 
@@ -52,9 +53,9 @@ class Module:
 
         Returns:
             An object as result of the module run.
-            
+
         """
-        
+
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(
                 argv, '', [
@@ -73,8 +74,8 @@ class Module:
                     self.__doc__))
             return
 
-        # Merge options with line arguments
-        args = self.session[self.name]['options'].copy()
+        # Merge stored arguments with line arguments
+        args = self.session[self.name]['stored_args'].copy()
         args.update(
                 dict(
                     (key.strip('-'), value) for
@@ -87,17 +88,21 @@ class Module:
         # Dirty filter the module default vectors by operating system, if
         # available.
         # TODO: this check should be done in vector.run
-        os_current = self.session['system_info']['results'].get('os')
-        if os_current:
-            target = Os.WIN if os_current.lower().startswith('win') else Os.NIX
-            for vector in self.vectors:
-                if not vector.target in (target, Os.ANY):
-                    del vector
+        #~ os_current = self.session['system_info']['results'].get('os')
+        #~ if os_current:
+            #~ target = Os.WIN if os_current.lower().startswith('win') else Os.NIX
+            #~ for vector in self.vectors:
+                #~ if not vector.target in (target, Os.ANY):
+                    #~ del vector
             
         # If module is not already enable, launch check()
         # TODO: change check method name with some more intuitive, e.g. .setup()
         if not self.session[self.name]['enabled']:
             self.session[self.name]['enabled'] = self.check(args)
+
+        # Merge again stored arguments with current args, the check() method can
+        # has stored additional parameters in session
+        args.update(self.session[self.name]['stored_args']) 
 
         if self.session[self.name]['enabled']:
             return self.run(args)
@@ -119,8 +124,8 @@ class Module:
         # Options saved in session has more priority than registered
         # variables
 
-        options.update(self.session[self.name]['options'])
-        self.session[self.name]['options'] = self.args_optional
+        options.update(self.session[self.name]['stored_args'])
+        self.session[self.name]['stored_args'] = self.args_optional
 
     def _register_vectors(self, vectors):
         """ Add module vectors """
@@ -146,30 +151,7 @@ class Module:
         else:
             return self.session.get(field, default)
 
-    def _store_default_vector(self, vector_name, enable_module = True):
-        """ Save default vector and set module as enabled """
+    def _store_arg(self, field, value):
+        """ Stored arguments """
         
-        self.session[self.name]['options']['vector'] = vector_name
-
-        if enable_module:
-            self.session[self.name]['enabled'] = True
-
-
-    def _get_default_vector(self):
-        """ Get stored default vector """
-
-        default_vector = self.vectors.get_by_name(
-          self.session[self.name]['options']['vector']
-        )
-
-        if not default_vector:
-            raise DevException(messages.module.default_vector_not_set)
-
-        return default_vector
-
-    def _run_default_vector(self, values = {}):
-        """ Run stored default vector"""
-
-        vector = self._get_default_vector()
-
-        return vector.run(values)
+        self.session[self.name]['stored_args'][field] = value

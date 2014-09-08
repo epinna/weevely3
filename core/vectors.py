@@ -47,15 +47,42 @@ class Vectors(list):
             if result == which_returns:
 
                 if store_as_default_vector:
-                    self.session[self.module_name]['options']['vector'] = response[vector.name]
+                    self.session[self.module_name]['stored_args']['vector'] = response[vector.name]
                 
                 return vector_name, result
 
         return None, None
-        
 
-    def run(self, values = {}, names = [ '' ], names_to_store = [ ]):
-        """Run the vectors in names.
+    def run_one(self, name, values = {}, store = False):
+        """Run one module vector.
+
+        Run the vectors with specified name. With unspecified names,
+        run all the vectors. Optionally store results.
+
+        Args:
+            values: The dictionary of arguments to format the vectors with.
+            name: The name string of vector to execute.
+            store: The boolean value to store the result.
+
+        Returns:
+            A string with the execution result.
+
+        Raises:
+            Could returns Mako library exceptions while formatting.
+
+        """
+
+        result = self.get_by_name(name).run(values)
+
+        if store:
+            self.session[self.module_name]['results'][name] = result
+
+        return result
+
+
+        
+    def run_all(self, names = [ '' ], values = {}, names_to_store = [ ]):
+        """Run all the vectors.
 
         Run all the vectors which match passed names. With unspecified names,
         run all the vectors. Optionally store results.
