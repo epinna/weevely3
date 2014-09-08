@@ -45,8 +45,16 @@ class Php(Module):
             self.session['url'],
             self.session['password'])
 
-    def check(self, args={}):
-        """ Check if remote PHP interpreter works """
+    def setup(self, args={}):
+        """Basic check if some PHP remote interpreter is working.
+
+        Args:
+            args: The dictionary of arguments
+
+        Returns:
+            Returns true or false if the module is enable or not.
+
+        """
 
         enabled = True
         rand = str(random.randint(11111, 99999))

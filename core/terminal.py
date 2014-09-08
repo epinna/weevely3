@@ -32,9 +32,9 @@ class Terminal(cmd.Cmd):
     def precmd(self, line):
         """ Before to execute a line commands. Confirm shell availability and get basic system infos. """
 
-        # Probe shell_sh if is never tried
+        # Setup shell_sh if is never tried
         if not self.session['shell_sh']['enabled']:
-            self.session['shell_sh']['enabled'] = modules.loaded['shell_sh'].check()
+            self.session['shell_sh']['enabled'] = modules.loaded['shell_sh'].setup()
 
         # Check results to set the default shell
         for shell in ('shell_sh', 'shell_php'):

@@ -57,7 +57,7 @@ class Sh(Module):
 
     
 
-    def check(self, args={}):
+    def setup(self, args={}):
         """Probe all vectors to find a working system-like function.
 
         The method run_until is not used due to the check of shell_sh

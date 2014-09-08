@@ -46,7 +46,7 @@ class Module:
         """ Main function to run module.
 
         Receives arguments as list, and parse them with getopt. Then
-        calls check() and run() of module.
+        calls setup() and run() of module.
 
         Args:
             argv: The list of arguments to execute the module with.
@@ -85,14 +85,13 @@ class Module:
         args.update(dict((key, line_args_mandatory.pop(0))
                          for key in self.args_mandatory))
             
-        # If module is not already enable, launch check()
-        # TODO: change check method name with some more intuitive, e.g. .setup()
+        # If module is not already enable, launch setup()
         if not self.session[self.name]['enabled']:
-            self.session[self.name]['enabled'] = self.check(args)
+            self.session[self.name]['enabled'] = self.setup(args)
 
-        # Merge again stored arguments with current args, the check() method can
-        # has stored additional parameters in session. This still need some fix
-        # (what if I want to store ''?)
+        # Merge again stored arguments with current args, cause setup() method could
+        # store additional args.
+        # TODO: This still need some fix (what if I want to store ''?)
         args.update(
             dict(
                 (key, value) for key, value in self.session[self.name]['stored_args'].items()
@@ -103,8 +102,8 @@ class Module:
         if self.session[self.name]['enabled']:
             return self.run(args)
 
-    def check(self, args={}):
-        """ Override to implement module check """
+    def setup(self, args={}):
+        """ Override to implement module setup """
 
         return True
 
