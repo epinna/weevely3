@@ -30,7 +30,8 @@ class Check(Module):
             arguments=[
                 'rpath',
                 'check'
-            ])
+            ],
+            vector_argument = 'check')
 
         self._register_vectors(
             [

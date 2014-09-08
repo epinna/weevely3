@@ -15,11 +15,6 @@ class Vectors(list):
 
         list.__init__(self)
 
-    def get_by_name(self, name):
-        for vector in self:
-            if vector.name == name:
-                return vector
-
     def run_until(self, values = {}, until_return = None, store_result = False):
         """Run the next vectors until returns a specified result.
 
@@ -135,3 +130,10 @@ class Vectors(list):
         
         return os in (os_current, Os.ANY)
 
+    def get_by_name(self, name):
+        for vector in self:
+            if vector.name == name:
+                return vector
+
+    def get_names(self):
+        return [ v.name for v in self ]

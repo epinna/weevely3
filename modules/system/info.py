@@ -30,7 +30,8 @@ class Info(Module):
         self._register_arguments(
             options={
                 'info': '' # Comma separated information to request
-            })
+            },
+            vector_argument = 'info')
 
         self._register_vectors(
             [

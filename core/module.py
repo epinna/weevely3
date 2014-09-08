@@ -45,8 +45,8 @@ class Module:
     def run_argv(self, argv):
         """ Main function to run module.
 
-        Receives arguments as list, and parse them with getopt. Then
-        calls setup() and run() of module.
+        Receives arguments as list, parse with getopt, and validate
+        them. Then calls setup() and run() of module.
 
         Args:
             argv: The list of arguments to execute the module with.
@@ -84,7 +84,14 @@ class Module:
                     
         args.update(dict((key, line_args_mandatory.pop(0))
                          for key in self.args_mandatory))
-            
+
+        # Check if argument passed to vector_argument matches with
+        # some vector
+        vect_arg_value = args.get(self.vector_argument)
+        if vect_arg_value and vect_arg_value not in self.vectors.get_names():
+            log.warn(messages.module.argument_s_must_be_a_vector % self.vector_argument)
+            return
+        
         # If module is not already enable, launch setup()
         if not self.session[self.name]['enabled']:
             self.session[self.name]['enabled'] = self.setup(args)
@@ -110,17 +117,18 @@ class Module:
     def _register_infos(self, infos):
         self.infos = infos
 
-    def _register_arguments(self, arguments=[], options={}):
+    def _register_arguments(self, arguments = [], options = {}, vector_argument = ''):
         """ Register additional modules options """
 
         self.args_mandatory = arguments
         self.args_optional = options
 
-        # Options saved in session has more priority than registered
-        # variables
+        # Arguments in session has more priority than registered variables
 
         options.update(self.session[self.name]['stored_args'])
         self.session[self.name]['stored_args'] = self.args_optional
+
+        self.vector_argument = vector_argument
 
     def _register_vectors(self, vectors):
         """ Add module vectors """

@@ -1,4 +1,5 @@
 from testsuite.base_test import BaseTest
+from testfixtures import log_capture
 from core import modules
 from core import sessions
 from core import messages
@@ -13,7 +14,8 @@ class SystemInfo(BaseTest):
 
         self.run_argv = modules.loaded['system_info'].run_argv
 
-    def test_commands(self):
+    @log_capture()
+    def test_commands(self, log_captured):
 
         # Get all infos
         vectors_names = [v.name for v in modules.loaded['system_info'].vectors ]
@@ -26,5 +28,6 @@ class SystemInfo(BaseTest):
         );  
 
         # Pass unexistant info
-        self.assertEqual(self.run_argv(["--info=BOGUS"]), {});
+        self.assertIsNone(self.run_argv(["--info=BOGUS"]));
+        self.assertEqual(messages.module.argument_s_must_be_a_vector % 'info', log_captured.records[-1].msg)   
 

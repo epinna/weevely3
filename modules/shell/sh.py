@@ -37,7 +37,8 @@ class Sh(Module):
             options={
                 'stderr_redirection': ' 2>&1',
                 'vector': ''
-            })
+            },
+            vector_argument = 'vector')
 
         self._register_vectors(
             [
@@ -61,7 +62,7 @@ class Sh(Module):
         """Probe all vectors to find a working system-like function.
 
         The method run_until is not used due to the check of shell_sh
-        enabling.
+        enabling for every tested vector.
 
         Args:
             args: The dictionary of arguments

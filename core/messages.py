@@ -31,7 +31,7 @@ class vectors:
     wrong_postprocessing_type = 'Wrong postprocessing argument type, a callable function is required'
 
 class module:
-    default_vector_not_set = 'Default vector is not set'
+    argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'
 
 
 class module_file_cd:
