@@ -1,4 +1,4 @@
-from core.vectors import Os, Vectors
+from core.vectors import Vectors
 from core.weexceptions import DevException
 from core.loggers import log
 from core import messages
