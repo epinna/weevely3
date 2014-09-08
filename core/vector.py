@@ -12,6 +12,9 @@ class Os:
 
 class Vector:
 
+    # TODO: The vector still does not support modules != 'shell_php'.
+    # Could just accept payload as list to send to run_argv. OK to format the whole list.
+
     def __init__(self, payload, name = None, module = 'shell_php', target = 0, args = [], postprocess = lambda x: x):
 
         self.name = name if name else commons.randstr()
