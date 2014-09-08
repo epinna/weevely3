@@ -45,7 +45,7 @@ class Module:
     def run_argv(self, argv):
         """ Main function to run module.
 
-        Receives arguments as list, and parse them with getopt. After some check
+        Receives arguments as list, and parse them with getopt. Then
         calls check() and run() of module.
 
         Args:
@@ -101,8 +101,14 @@ class Module:
             self.session[self.name]['enabled'] = self.check(args)
 
         # Merge again stored arguments with current args, the check() method can
-        # has stored additional parameters in session
-        args.update(self.session[self.name]['stored_args']) 
+        # has stored additional parameters in session. This still need some fix
+        # (what if I want to store ''?)
+        args.update(
+            dict(
+                (key, value) for key, value in self.session[self.name]['stored_args'].items()
+                    if value != ''
+                )
+        )
 
         if self.session[self.name]['enabled']:
             return self.run(args)

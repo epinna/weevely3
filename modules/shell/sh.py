@@ -54,14 +54,37 @@ class Sh(Module):
                     name="pcntl", target=Os.NIX),
             ])
 
+
+    
+
     def check(self, args={}):
-        """ Check if remote Sh interpreter works """
+        """Probe all vectors to find a working system-like function.
+
+        The method run_until is not used due to the check of shell_sh
+        enabling.
+
+        Args:
+            args: The dictionary of arguments
+
+        Returns:
+            Returns true or false if the module is enable or not.
+
+        """
 
         check_digits = str(random.randint(11111, 99999))
 
-        args_check = { 'args' : {'command': 'echo %s' % check_digits, 'stderr_redirection': ''} }
+        args_check = { 'args' : {
+                            'command': 'echo %s' % check_digits,
+                            'stderr_redirection': ''
+                        }
+                    }
         
         for vector in self.vectors:
+
+            # If a vector is explicitly set, just use that
+            selected_vector = args['vector']
+            if selected_vector and selected_vector != vector.name:
+                continue 
 
             result = vector.run(values = args_check)
             
@@ -69,8 +92,9 @@ class Sh(Module):
                 self._store_arg('vector', vector.name)
                 return True
             else:
-                # With the failed first vector, check if at least
-                # shell_php is enabled. If not, return immediatly.
+                # If a vector fails, check if at least shell_php is enabled.
+                # If not the backdoor communication is missing, and return
+                # immediatly.
                 if not self.session['shell_php'].get('enabled'):
                     return False
 

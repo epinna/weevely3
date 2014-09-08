@@ -37,7 +37,7 @@ class SystemInfo(BaseTest):
         vector_safe_name = 'proc_open'
 
         # Check correctness of execution
-        self.assertEqual(self.run_argv(["echo 1", "--vector=%s" % vector_safe_name]), "1");
+        self.assertEqual(self.run_argv(["--vector=%s" % vector_safe_name, "echo 1"]), "1");
 
         # Check stored vector
         self.assertEqual(self.session['shell_sh']['stored_args']['vector'], vector_safe_name)
