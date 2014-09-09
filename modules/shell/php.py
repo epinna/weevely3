@@ -77,11 +77,12 @@ class Php(Module):
     def run(self, args):
         """ Run module """
 
-        cwd = self._get_module_result('file_cd', 'cwd', default='.')
-
-        # Compose command with pre_command and post_command option.
-        command = Template("chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}").render(
-          args=args, cwd=cwd 
+        cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
+        chdir = '' if cwd == '.' else "chdir('${cwd}');" % cwd
+        
+        # Compose command with cwd, pre_command, and post_command option.
+        command = Template("${chdir}${args['prefix_string']}${args['command']}${args['postfix_string']}").render(
+          chdir = chdir, args=args
         )
 
         # Send command
