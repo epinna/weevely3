@@ -4,6 +4,7 @@ from core import messages
 from core.loggers import log
 import random
 import hashlib
+import base64
 
 
 class Upload(Module):
@@ -31,61 +32,53 @@ class Upload(Module):
         self._register_arguments(
             # Declare mandatory arguments
             arguments=[
-                'lfile',
-                'rfile',
-                'vector'
+                'lpath',
+                'rpath'
             ],
             # Declare additional options
             options={
-                'content': ''
+                'content': '',
+                'vector': ''
             },
             vector_argument = 'vector')
             
         self._register_vectors(
             [
             Vector(
-              "file_put_contents('${args['rpath']}', base64_decode(${content}), FILE_APPEND);",
+              "(file_put_contents('${args['rpath']}', base64_decode('${content}'))&&print(1)) || print(0);",
               name = 'file_put_contents'
               ),
               
             Vector(
-              """'$h = fopen("${args['rpath']}", "a+"); fwrite($h, base64_decode(${content}); fclose($h);""",
+              """($h=fopen("${args['rpath']}","a+")&&fwrite($h, base64_decode('${content}'))&&fclose($h)&&print(1)) || print(0);""",
               name = "fwrite"
               )
             ]
         )
 
-    def setup(self, args):
+    def run(self, args):
 
         # Load local file
-        content = args.get('content')
-        if not content:
+        content_orig = args.get('content')
+        if not content_orig:
 
             lpath = args.get('lpath')
             
             try:
-                content = open(lpath, 'r').read()
+                content_orig = open(lpath, 'r').read()
             except Exception, e:
                 log.warning(
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
-                return False
+                return
 
+        content = base64.b64encode(content_orig)
         content_md5 = hashlib.md5(content).hexdigest()
 
-        # Check remote file existance
+        # Check remote file existence
+        rpath_exists = Vector([ args['rpath'], 'exists' ], module = 'file_check').run()
+        if rpath_exists:
+            log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
+            return
 
+        vector_name, result = self._run_vectors_until({ 'args' : args, 'content' : content }, until_returns = '1')
 
-        #~ folder = Vector("""@chdir("${args['dir']}") && print(getcwd());""", "chdir").run({ 'args' : args })
-#~ 
-        #~ if folder:
-            #~ # Store cwd used by other modules
-            #~ self._store_result('cwd', folder)
-        #~ else:
-            #~ log.warning(
-                #~ messages.module_file_cd.failed_directory_change_to_s %
-                #~ (args['dir']))        
-
-    def run(self, args):
-        
-
-        pass

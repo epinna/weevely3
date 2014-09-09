@@ -4,6 +4,7 @@ class generic:
     error_creating_file_s_s = "Error creating file '%s': %s"
     error_missing_arguments_s = 'Error missing arguments %s'
     error_loading_file_s_s = 'Error loading file \'%s\': %s'
+    error_file_s_already_exists = 'Error file \'%s\' already exists'
 
 
 class sessions:
