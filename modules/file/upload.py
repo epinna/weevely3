@@ -72,7 +72,6 @@ class Upload(Module):
                 return
 
         content = base64.b64encode(content_orig)
-        content_md5 = hashlib.md5(content).hexdigest()
 
         # Check remote file existence
         rpath_exists = Vector([ args['rpath'], 'exists' ], module = 'file_check').run()
