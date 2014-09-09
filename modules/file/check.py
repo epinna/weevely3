@@ -2,6 +2,7 @@ from core.vector import Os, Vector
 from core.module import Module
 from core import messages
 import random
+import datetime
 
 
 class Check(Module):
@@ -44,19 +45,19 @@ class Check(Module):
               name = "md5"
             ),
             Vector("(is_readable('${args['rpath']}') && print(1)) || print(0);",
-              name = "read",
+              name = "readable",
               postprocess = lambda x: True if x == '1' else False
             ),
             Vector("(is_writable('${args['rpath']}') && print(1))|| print(0);",
-              name = "write",
+              name = "writable",
               postprocess = lambda x: True if x == '1' else False
             ),
             Vector("(is_executable('${args['rpath']}') && print(1)) || print(0);",
-              name = "exec",
+              name = "executable",
               postprocess = lambda x: True if x == '1' else False
             ),
             Vector("(is_file('${args['rpath']}') && print(1)) || print(0);",
-              name = "isfile",
+              name = "file",
               postprocess = lambda x: True if x == '1' else False
             ),
             Vector("print(filesize('${args['rpath']}'));",
@@ -64,11 +65,12 @@ class Check(Module):
               postprocess = lambda x: int(x)
             ),
             Vector("print(filemtime('${args['rpath']}'));",
-              name = "time_epoch"
+              name = "time",
+              postprocess = lambda x: int(x)
             ),
             Vector("print(filemtime('${args['rpath']}'));",
-              name = "time",
-              postprocess = lambda x: datetime.datetime.fromtimestamp(x).strftime('%Y-%m-%d %H:%M:%S')
+              name = "datetime",
+              postprocess = lambda x: datetime.datetime.fromtimestamp(float(x)).strftime('%Y-%m-%d %H:%M:%S')
             )
             ]
         )
