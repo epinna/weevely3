@@ -36,7 +36,7 @@ class Check(Module):
         self._register_vectors(
             [
             Vector(
-              "$f='${args['rpath']}';if(file_exists($f)||is_readable($f)||is_writable($f)||is_file($f)||is_dir($f)) print(1); else print(0);",
+              "$f='${args['rpath']}';((file_exists($f)||is_readable($f)||is_writable($f)||is_file($f)||is_dir($f))&&print(1))||print(0);",
               name = 'exists',
               postprocess = lambda x: True if x == '1' else False
             ),
