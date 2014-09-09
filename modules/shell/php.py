@@ -78,7 +78,7 @@ class Php(Module):
         """ Run module """
 
         cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
-        chdir = '' if cwd == '.' else "chdir('${cwd}');" % cwd
+        chdir = '' if cwd == '.' else "chdir('%s');" % cwd
         
         # Compose command with cwd, pre_command, and post_command option.
         command = Template("${chdir}${args['prefix_string']}${args['command']}${args['postfix_string']}").render(
@@ -102,10 +102,13 @@ class Php(Module):
         Debug print and warning in case of missing response and HTTP errors
         """
 
-#        log.debug(commons.shorten_string(command,
-#                                        keep_header = 40,
-#                                        keep_trailer = 40)
-#                 )
+#        log.debug(
+#           commons.shorten_string(
+#               command,
+#               keep_header = 40,
+#               keep_trailer = 40
+#           )
+#        )
 
         log.debug(command)
 
