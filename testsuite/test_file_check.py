@@ -1,5 +1,6 @@
 from testsuite.base_test import BaseTest
 from testfixtures import log_capture
+from testsuite.config import script_folder
 from core import modules
 from core import sessions
 from core import messages
@@ -38,8 +39,14 @@ class FileCheck(BaseTest):
         self.assertTrue(self.run_argv(['/tmp', 'executable']))
         self.assertTrue(self.run_argv(['/tmp', 'writable']))
 
-        # Some check, with also md5 and time check 
+        # Some check, with also md5 and time check
+        # First check if the current folder is writable
+        self.assertTrue(
+            self.run_argv(['.', 'writable']),
+            'Error: please set the script folder \'%s\' writable by the httpd user and re-run the test' % script_folder
+        )
         # Create a test file
+        self.assertTrue(self.run_argv(['/tmp', 'writable']))
         modules.loaded['shell_php'].run_argv(['file_put_contents("ftest","1");'])
         # Get the remote timestamp
         rtime = int(modules.loaded['shell_php'].run_argv(['print(time());']))
