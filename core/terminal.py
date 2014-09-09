@@ -2,28 +2,31 @@ from core.weexceptions import FatalException
 from core.loggers import log
 from core import messages
 from core import modules
+from core import config
 import readline
 import cmd
 import glob
 import os
 import shlex
-import pprint
-
+import atexit
 
 class Terminal(cmd.Cmd):
 
-    """ Weevely terminal. """
+    """ Weevely Terminal """
 
     def __init__(self, session):
 
+        cmd.Cmd.__init__(self)
+        
         self.session = session
         self.prompt = 'weevely> '
+
+        # Load all available modules
         self._load_modules()
 
-        log.debug(pprint.pformat(dict(session)))
-
-        cmd.Cmd.__init__(self)
-
+        # Load history file
+        self._load_history()
+            
     def emptyline(self):
         """ Disable repetition of last command. """
 
@@ -118,3 +121,13 @@ class Terminal(cmd.Cmd):
             setattr(
                 Terminal, 'do_%s' %
                 (module_name), class_do)
+
+    def _load_history(self):
+        """ Load history file and register dump on exit """
+
+        # Create a file without truncating it in case it exists.
+        open(config.history_path, 'a').close()
+            
+        readline.read_history_file(config.history_path)
+        atexit.register(readline.write_history_file,
+            config.history_path)
