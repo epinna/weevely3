@@ -46,6 +46,9 @@ def divide(str, min_size, max_size, split_size):
 
 def stringify(data):
 
+    # TODO: Check that is prettytable-0.7.2 that supports the
+    # dynamic table columns number setting. Version 0.5 does not.
+
     output = ''
 
     # Empty outputs. False is probably a good output value
