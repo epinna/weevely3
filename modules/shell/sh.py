@@ -83,7 +83,7 @@ class Sh(Module):
         for vector in self.vectors:
 
             # If a vector is explicitly set, just use that
-            selected_vector = args['vector']
+            selected_vector = args.get('vector')
             if selected_vector and selected_vector != vector.name:
                 continue 
 
