@@ -29,6 +29,7 @@ class vectors:
     wrong_target_type = 'Wrong target operating system type'
     wrong_arguments_type = 'Wrong formatting argument type, a dictionary is required'
     wrong_postprocessing_type = 'Wrong postprocessing argument type, a callable function is required'
+    wrong_payload_type = 'Wrong payload argument type, a string or a list of strings is required'
 
 class module:
     argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'

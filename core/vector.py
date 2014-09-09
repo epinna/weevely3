@@ -12,12 +12,16 @@ class Os:
 
 class Vector:
 
-    # TODO: The vector still does not support modules != 'shell_php'.
-    # Could just accept payload as list to send to run_argv. OK to format the whole list.
-
-    def __init__(self, payload, name = None, module = 'shell_php', target = 0, args = [], postprocess = lambda x: x):
+    def __init__(self, payload, name = None, module = 'shell_php', target = 0, postprocess = lambda x: x):
 
         self.name = name if name else commons.randstr()
+
+        if isinstance(payload, basestring):
+            self.payload = [ payload ]
+        elif isinstance(payload, list):
+            self.payload = payload
+        else:
+            raise DevException(messages.vectors.wrong_payload_type)
 
         if not isinstance(target, int) or not target < 3:
             raise DevException(messages.vectors.wrong_target_type)
@@ -26,13 +30,11 @@ class Vector:
             raise DevException(messages.vectors.wrong_postprocessing_type)
 
         self.module = module
-        self.payload = payload
         self.target = target
-        self.args = []
         self.postprocess = postprocess
 
     def format(self, values):
-        return Template(self.payload).render(**values)
+        return [ Template(payload).render(**values) for payload in self.payload ]
 
     def run(self, values = {}):
 
@@ -44,7 +46,5 @@ class Vector:
             raise DevException(messages.vectors.wrong_arguments_type)
         
         return self.postprocess(
-                                  modules.loaded[self.module].run_argv(
-                                    [ formatted ] + self.args
-                                  )
+                          modules.loaded[self.module].run_argv(formatted)
                 )

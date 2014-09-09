@@ -1,3 +1,4 @@
+from mako.template import Template
 from core.module import Module
 from core import messages
 from core import commons
@@ -78,10 +79,10 @@ class Php(Module):
 
         cwd = self._get_module_result('file_cd', 'cwd', default='.')
 
-        # Compose command with pre_command and post_command option
-        command = Vector(
-            "chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}"
-            ).format( { 'args' : args, 'cwd' : cwd } )
+        # Compose command with pre_command and post_command option.
+        command = Template("chdir('${cwd}');${args['prefix_string']}${args['command']}${args['postfix_string']}").render(
+          args=args, cwd=cwd 
+        )
 
         # Send command
         response, code = self.channel.send(command)

@@ -22,7 +22,7 @@ class SystemInfo(BaseTest):
             payload = modules.loaded['shell_sh'].vectors[i].payload
 
             if name != vector_safe_name:
-                modules.loaded['shell_sh'].vectors[i] = Vector('\'"%s' % payload, name)
+                modules.loaded['shell_sh'].vectors[i] = Vector('\'"%s' % payload[0], name)
                 
     def test_run_unless(self):
 
