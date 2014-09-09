@@ -15,7 +15,7 @@ class Vectors(list):
 
         list.__init__(self)
 
-    def run_until(self, values = {}, until_return = None, store_result = False):
+    def run_until(self, values = {}, until_returns = None, store_result = False):
         """Run the next vectors until returns a specified result.
 
         Run next vectors in lists until returns specified value.
@@ -41,12 +41,8 @@ class Vectors(list):
 
             result = vector.run(values)
 
-            if result == which_returns:
-
-                if store_as_default_vector:
-                    self.session[self.module_name]['stored_args']['vector'] = response[vector.name]
-                
-                return vector_name, result
+            if result == until_returns:
+                return vector.name, result
 
         return None, None
 
