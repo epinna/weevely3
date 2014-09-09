@@ -140,16 +140,11 @@ class Module:
 
         self.session[self.name]['results'][field] = value
 
-    def _get_result(self, field, default=None):
+    def _get_stored_result(self, field, module = None, default=None):
         """ Recover saved data """
 
-        self._get_module_result(self.name, field, default)
-
-    def _get_module_result(self, module_name, field, default=None):
-        """ Recover another module saved data """
-
-        if module_name is not None:
-            return self.session[module_name][
+        if module is not None:
+            return self.session[module][
                 'results'].get(field, default)
         else:
             return self.session.get(field, default)
