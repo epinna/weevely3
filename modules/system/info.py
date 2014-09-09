@@ -56,5 +56,5 @@ class Info(Module):
 
         return self._run_vectors(
                      names = args['info'].split(','),
-                     names_to_store = ['whoami', 'hostname', 'dir_sep', 'os'])
+                     names_to_store_result = ['whoami', 'hostname', 'dir_sep', 'os'])
 
