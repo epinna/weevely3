@@ -35,7 +35,8 @@ class Cd(Module):
 
     def run(self, args):
         
-        folder = Vector("""@chdir("${args['dir']}") && print(getcwd());""", "chdir").run({ 'args' : args })
+        chdir = '' if args['dir'] == '.' else "@chdir('%s')&&" % args['dir']
+        folder = Vector("""${chdir}print(@getcwd());""", "chdir").run({ 'chdir' : chdir })
 
         if folder:
             # Store cwd used by other modules
