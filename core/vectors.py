@@ -15,15 +15,19 @@ class Vectors(list):
 
         list.__init__(self)
 
-    def run_until(self, values = {}, until_returns = None, store_result = False):
-        """Run the next vectors until returns a specified result.
+    def run_all_unless(self, names_filters = [ '' ], values = {}, unless = None, store_result = False):
+        """Run all the vectors unless a certain result condition is verified.
 
-        Run next vectors in lists until returns specified value.
-        Optionally store result.
+        Run all the vectors which match passed names, unless a given condition on
+        result is verified.
+        Return data of the last vector.
+        With unspecified names, apply to all the vectors. Optionally store results.
 
         Args:
+            names_filters: The names lists of vectors to execute.
             values: The dictionary of arguments to format the vectors with.
-            until_return: Run all vectors until returns this value.
+            unless: The function to verify the result condition is verified (returns
+                a true value). This has to be a function.
             store_result: Store result,
             
 
@@ -35,13 +39,22 @@ class Vectors(list):
 
         """
 
+        if not unless(postprocess):
+            raise DevException(messages.vectors.wrong_unless_type)
+
         for vector in self:
 
             if not self._os_match(vector.target): continue
 
+            if not any(x in vector.name for x in names_filters): continue
+
             result = vector.run(values)
 
-            if result == until_returns:
+            if unless(result):
+                
+                if store_result:
+                    self.session[self.module_name]['results'][name] = result
+
                 return vector.name, result
 
         return None, None
@@ -76,7 +89,7 @@ class Vectors(list):
             return result
 
 
-    def run_all(self, names = [ '' ], values = {}, names_to_store_result = [ ]):
+    def run_all(self, names_filters = [ '' ], values = {}, names_to_store_result = [ ]):
         """Run all the vectors.
 
         Run all the vectors which match passed names. With unspecified names,
@@ -84,7 +97,7 @@ class Vectors(list):
 
         Args:
             values: The dictionary of arguments to format the vectors with.
-            names: The names lists of vectors to execute.
+            names_filters: The names lists of vectors to execute.
             names_to_store: The names lists of vectors of which save the
                 returned result.
 
@@ -103,7 +116,7 @@ class Vectors(list):
 
             if not self._os_match(vector.target): continue
             
-            if not any(x in vector.name for x in names): continue
+            if not any(x in vector.name for x in names_filters): continue
 
             response[vector.name] = vector.run(values)
                 

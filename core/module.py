@@ -18,7 +18,7 @@ class Module:
 
         self._run_vector = self.vectors.run_one
         self._run_vectors = self.vectors.run_all
-        self._run_vectors_until = self.vectors.run_until
+        self._run_vectors_unless = self.vectors.run_all_unless
 
         self.__doc__ = self.__doc__.strip()
 

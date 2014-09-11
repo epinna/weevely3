@@ -55,6 +55,6 @@ class Info(Module):
     def run(self, args):
 
         asd = self._run_vectors(
-                     names = args['info'].split(','),
+                     names_filters = args['info'].split(','),
                      names_to_store_result = ['whoami', 'hostname', 'dir_sep', 'os'])
         return asd

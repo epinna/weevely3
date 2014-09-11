@@ -31,6 +31,7 @@ class vectors:
     wrong_arguments_type = 'Wrong formatting argument type, a dictionary is required'
     wrong_postprocessing_type = 'Wrong postprocessing argument type, a callable function is required'
     wrong_payload_type = 'Wrong payload argument type, a string or a list of strings is required'
+    wrong_unless_type = 'Wrong unless argument type, a callable function is required'
 
 class module:
     argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'
