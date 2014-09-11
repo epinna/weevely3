@@ -39,7 +39,7 @@ class Vectors(list):
 
         """
 
-        if not unless(postprocess):
+        if not callable(unless):
             raise DevException(messages.vectors.wrong_unless_type)
 
         for vector in self:

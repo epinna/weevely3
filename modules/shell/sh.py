@@ -79,28 +79,17 @@ class Sh(Module):
                             'stderr_redirection': ''
                         }
                     }
-        
-        for vector in self.vectors:
 
-            # If a vector is explicitly set, just use that
-            selected_vector = args.get('vector')
-            if selected_vector and selected_vector != vector.name:
-                continue 
+        vector_name, result = self.vectors.run_all_unless(
+                                    names_filters = [ args.get('vector', '') ],
+                                    values = args_check,
+                                    unless = lambda result: self.session['shell_php'].get('enabled') and result == check_digits 
+                                    )
 
-            result = vector.run(values = args_check)
-            
-            if result == check_digits: 
-                self._store_arg('vector', vector.name)
-                return True
-            else:
-                # If a vector fails, check if at least shell_php is enabled.
-                # If not the backdoor communication is missing, and return
-                # immediatly.
-                if not self.session['shell_php'].get('enabled'):
-                    return False
+        self._store_arg('vector', vector_name)
 
-        return False
-        
+        return True
+
 
     def run(self, args):
         
