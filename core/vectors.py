@@ -15,20 +15,21 @@ class Vectors(list):
 
         list.__init__(self)
 
-    def run_all_unless(self, names_filters = [ '' ], values = {}, unless = None, store_result = False):
-        """Run all the vectors unless a certain result condition is verified.
-
-        Run all the vectors which match passed names, unless a given condition on
-        result is verified.
-        Return data of the last vector.
+    def find_first_result(self, names = [ '' ], arguments = {}, condition = None, store_as_result = '', store_as_argument = ''):
+        """ Execute all the vectors returning the result matching the given condition.
+        
+        Return the name and the result of the first vector that gives the response that satisfy
+        a certain condition.
+        
         With unspecified names, apply to all the vectors. Optionally store results.
 
         Args:
-            names_filters: The names lists of vectors to execute.
-            values: The dictionary of arguments to format the vectors with.
-            unless: The function to verify the result condition is verified (returns
+            names: The names lists of vectors to execute.
+            arguments: The dictionary of arguments to format the vectors with.
+            condition: The function to verify the result condition is verified (returns
                 a true value). This has to be a function.
-            store_result: Store result,
+            store_as_result: Store as result
+            store_as_argument: Store as argument
             
 
         Returns:
@@ -39,21 +40,21 @@ class Vectors(list):
 
         """
 
-        if not callable(unless):
+        if not callable(condition):
             raise DevException(messages.vectors.wrong_unless_type)
 
         for vector in self:
 
             if not self._os_match(vector.target): continue
 
-            if not any(x in vector.name for x in names_filters): continue
+            if not any(x in vector.name for x in names): continue
 
-            result = vector.run(values)
+            result = vector.run(arguments)
 
-            if unless(result):
+            if condition(result):
                 
-                if store_result:
-                    self.session[self.module_name]['results'][name] = result
+                if store_as_result:
+                    self.session[self.module_name]['results'][vector.name] = result
 
                 return vector.name, result
 

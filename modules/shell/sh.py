@@ -80,10 +80,10 @@ class Sh(Module):
                         }
                     }
 
-        vector_name, result = self.vectors.run_all_unless(
-                                    names_filters = [ args.get('vector', '') ],
-                                    values = args_check,
-                                    unless = lambda result: self.session['shell_php'].get('enabled') and result == check_digits 
+        vector_name, result = self.vectors.find_first_result(
+                                    names = [ args.get('vector', '') ],
+                                    arguments = args_check,
+                                    condition = lambda result: self.session['shell_php'].get('enabled') and result == check_digits 
                                     )
 
         self._store_arg('vector', vector_name)
