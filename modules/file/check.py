@@ -77,6 +77,6 @@ class Check(Module):
 
     def run(self, args):
 
-        return self._run_vector(args['check'], { 'args' : args })
+        return self._get_result(args['check'], { 'args' : args })
         
 

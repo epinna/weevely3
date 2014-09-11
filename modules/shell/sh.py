@@ -93,4 +93,4 @@ class Sh(Module):
 
     def run(self, args):
         
-        return self._run_vector(args['vector'], { 'args' : args })
+        return self._get_result(args['vector'], { 'args' : args })

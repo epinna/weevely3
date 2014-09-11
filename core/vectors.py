@@ -60,7 +60,7 @@ class Vectors(list):
 
         return None, None
 
-    def run_one(self, name, values = {}, store_result = False):
+    def get_result(self, name, arguments = {}, store_as_result = ''):
         """Run one module vector.
 
         Run the vectors with specified name. With unspecified names,
@@ -82,15 +82,15 @@ class Vectors(list):
         vector = self.get_by_name(name)
 
         if vector and self._os_match(vector.target):
-            result = vector.run(values)
+            result = vector.run(arguments)
 
-            if store_result:
+            if store_as_result:
                 self.session[self.module_name]['results'][name] = result
 
             return result
 
 
-    def run_all(self, names_filters = [ '' ], values = {}, names_to_store_result = [ ]):
+    def run_all(self, names = [ '' ], values = {}, names_to_store_result = [ ]):
         """Run all the vectors.
 
         Run all the vectors which match passed names. With unspecified names,
@@ -117,7 +117,7 @@ class Vectors(list):
 
             if not self._os_match(vector.target): continue
             
-            if not any(x in vector.name for x in names_filters): continue
+            if not any(x in vector.name for x in names): continue
 
             response[vector.name] = vector.run(values)
                 

@@ -16,7 +16,7 @@ class Module:
         self.session = session
         self.vectors = Vectors(session, name)
 
-        self._run_vector = self.vectors.run_one
+        self._get_result = self.vectors.get_result
         self._run_vectors = self.vectors.run_all
         self._find_result = self.vectors.find_first_result
 
