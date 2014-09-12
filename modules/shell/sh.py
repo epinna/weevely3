@@ -95,4 +95,7 @@ class Sh(Module):
 
     def run(self, args):
 
-        return self.vectors.get_result(args['vector'], { 'args' : args })
+        return self.vectors.get_result(
+         name = args['vector'],
+         arguments = { 'args' : args }
+        )

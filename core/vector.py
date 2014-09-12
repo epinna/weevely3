@@ -29,10 +29,10 @@ class ModuleCmd:
     def format(self, values):
         return [ Template(option).render(**values) for option in self.options ]
 
-    def run(self, values = {}):
+    def run(self, format_args = {}):
 
         try:
-            formatted = self.format(values)
+            formatted = self.format(format_args)
         except TypeError as e:
             import traceback
             traceback.print_exc()
