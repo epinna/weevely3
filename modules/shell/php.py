@@ -3,7 +3,6 @@ from core.module import Module
 from core import messages
 from core import commons
 from core.channels.channel import Channel
-from core.vector import Vector
 from core.loggers import log
 import random
 
@@ -62,7 +61,7 @@ class Php(Module):
 
         command = 'echo(%s);' % rand
         response, code = self.channel.send(command)
-        
+
         if rand != response:
             enabled = False
 
@@ -79,7 +78,7 @@ class Php(Module):
 
         cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
-        
+
         # Compose command with cwd, pre_command, and post_command option.
         command = Template("${chdir}${args['prefix_string']}${args['command']}${args['postfix_string']}").render(
           chdir = chdir, args=args
@@ -90,7 +89,7 @@ class Php(Module):
 
         # If the response is empty, warn about the error code
         self._print_response_status(command, code, response)
-        
+
         # Strip last newline if present
         return response[:-1] if (
             response and response.endswith('\n')
@@ -121,9 +120,9 @@ class Php(Module):
         elif code != 200:
             log.warn(messages.module_shell_php.error_i_executing % code)
 
-        command_last_chars = commons.shorten_string(command.rstrip(), 
+        command_last_chars = commons.shorten_string(command.rstrip(),
                                                     keep_trailer = 10)
 
-        if (command_last_chars and 
+        if (command_last_chars and
               command_last_chars[-1] not in ( ';', '}' )):
             log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)

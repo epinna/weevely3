@@ -1,4 +1,4 @@
-from core.vector import Os, Vector
+from core.vector import PhpCmd
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -44,12 +44,12 @@ class Upload(Module):
 
         self._register_vectors(
             [
-            Vector(
+            PhpCmd(
               "(file_put_contents('${args['rpath']}', base64_decode('${content}'))&&print(1)) || print(0);",
               name = 'file_put_contents'
               ),
 
-            Vector(
+            PhpCmd(
               """($h=fopen("${args['rpath']}","a+")&&fwrite($h, base64_decode('${content}'))&&fclose($h)&&print(1)) || print(0);""",
               name = "fwrite"
               )
@@ -74,7 +74,7 @@ class Upload(Module):
         content = base64.b64encode(content_orig)
 
         # Check remote file existence
-        rpath_exists = Vector([ args['rpath'], 'exists' ], module = 'file_check').run()
+        rpath_exists = PhpCmd([ args['rpath'], 'exists' ], module = 'file_check').run()
         if rpath_exists:
             log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
             return

@@ -1,4 +1,4 @@
-from core.vector import Os, Vector
+from core.vector import PhpCmd
 from core.module import Module
 from core import messages
 import random
@@ -33,6 +33,6 @@ class Ls(Module):
 
     def run(self, args):
 
-        return Vector("""$p="${args['dir']}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}""").run(
+        return PhpCmd("""$p="${args['dir']}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}""").run(
         { 'args' : args }
         )
