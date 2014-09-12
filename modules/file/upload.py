@@ -21,7 +21,6 @@ class Upload(Module):
         self._register_infos(
             {
                 'name': 'Change directory',
-                'description': __doc__,
                 'author': [
                     'Emilio Pinna'
                 ],

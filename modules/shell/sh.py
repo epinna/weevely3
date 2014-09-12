@@ -21,7 +21,6 @@ class Sh(Module):
         self._register_infos(
             {
                 'name': 'System Shell',
-                'description': __doc__,
                 'author': [
                     'Emilio Pinna'
                 ],

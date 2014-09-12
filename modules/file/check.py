@@ -19,7 +19,6 @@ class Check(Module):
         self._register_infos(
             {
                 'name': 'Check file',
-                'description': __doc__,
                 'author': [
                     'Emilio Pinna'
                 ],

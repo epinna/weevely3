@@ -21,7 +21,6 @@ class Php(Module):
         self._register_infos(
             {
                 'name': 'PHP Shell',
-                'description': __doc__,
                 'author': [
                     'Emilio Pinna'
                 ],

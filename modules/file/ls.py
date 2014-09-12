@@ -18,7 +18,6 @@ class Ls(Module):
         self._register_infos(
             {
                 'name': 'List files',
-                'description': __doc__,
                 'author': [
                     'Emilio Pinna'
                 ],

@@ -19,7 +19,6 @@ class Info(Module):
         self._register_infos(
             {
                 'name': 'System information',
-                'description': __doc__,
                 'author': [
                     'Emilio Pinna'
                 ],
