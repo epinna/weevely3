@@ -1,6 +1,7 @@
 from testsuite.base_test import BaseTest
-from core.vectors import Os, Vectors
+from core.vectors import Vectors
 from core.vector import PhpCmd
+from core.commons import Os
 from core import modules
 from core import sessions
 from core import messages

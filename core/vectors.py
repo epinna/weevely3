@@ -3,7 +3,7 @@ from core.weexceptions import DevException, ModuleError
 from core import modules
 from core import commons
 from core import messages
-from core.vector import Os
+from core.commons import Os
 
 class Vectors(list):
 

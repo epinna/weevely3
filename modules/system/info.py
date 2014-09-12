@@ -1,4 +1,4 @@
-from core.vector import Os, PhpCmd
+from core.vector import PhpCmd
 from core.module import Module
 from core import messages
 import random

@@ -5,11 +5,6 @@ from core import commons
 from core import messages
 import shlex
 
-class Os:
-    ANY = 0
-    NIX = 1
-    WIN = 2
-
 class ModuleCmd:
 
     def __init__(self, module, options, name = '', target = 0, postprocess = lambda x: x):

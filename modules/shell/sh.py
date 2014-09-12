@@ -1,6 +1,7 @@
-from core.vector import PhpCmd, Os
+from core.vector import PhpCmd
 from core.module import Module
 from core.loggers import log
+from core.commons import Os
 from core import messages
 from core import modules
 import random

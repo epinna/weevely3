@@ -5,6 +5,10 @@ import itertools
 import types
 import prettytable
 
+class Os:
+    ANY = 0
+    NIX = 1
+    WIN = 2
 
 def chunks_equal(l, n):
     """ Yield n successive chunks from l.
@@ -119,8 +123,8 @@ def shorten_string(body, keep_header = 0, keep_trailer = 0):
     """
 
     # Cut header
-    if (keep_header 
-        and not keep_trailer 
+    if (keep_header
+        and not keep_trailer
         and len(body) > keep_header):
             return '..%s' % body[:keep_header]
 
@@ -129,10 +133,10 @@ def shorten_string(body, keep_header = 0, keep_trailer = 0):
         and not keep_header
         and len(body) > keep_trailer):
             return '..%s' % body[-keep_header:]
-    
-    if (keep_header 
+
+    if (keep_header
         and keep_trailer
         and len(body) > keep_header + keep_trailer):
             return '%s .. %s' % (body[:keep_header], body[-keep_trailer:])
-        
+
     return body
