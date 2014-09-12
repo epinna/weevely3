@@ -10,14 +10,84 @@ import os
 import shlex
 import atexit
 
-class Terminal(cmd.Cmd):
+class CmdModules(cmd.Cmd):
+
+    identchars = cmd.Cmd.identchars + ':'
+
+    def complete(self, text, state):
+        """Return the next possible completion for 'text'.
+
+        If a command has not been entered, then complete against command list.
+        Otherwise try to call complete_<command> to get list of completions.
+        """
+        if state == 0:
+            import readline
+            origline = readline.get_line_buffer()
+
+            # Offer completion just for commands that starts
+            # with the trigger :
+            if not origline.startswith(':'):
+                return None
+
+            line = origline.lstrip(':')
+
+            stripped = len(origline) - len(line)
+            begidx = readline.get_begidx() - stripped
+            endidx = readline.get_endidx() - stripped
+            if begidx>0:
+                cmd, args, foo = self.parseline(line)
+                if cmd == '':
+                    compfunc = self.completedefault
+                else:
+                    try:
+                        compfunc = getattr(self, 'complete_' + cmd)
+                    except AttributeError:
+                        compfunc = self.completedefault
+            else:
+                compfunc = self.completenames
+            self.completion_matches = compfunc(text, line, begidx, endidx)
+        try:
+            return self.completion_matches[state]
+        except IndexError:
+            return None
+
+    def onecmd(self, line):
+        """Interpret the argument as though it had been typed in response
+        to the prompt.
+
+        This may be overridden, but should not normally need to be;
+        see the precmd() and postcmd() methods for useful execution hooks.
+        The return value is a flag indicating whether interpretation of
+        commands by the interpreter should stop.
+
+        """
+        cmd, arg, line = self.parseline(line)
+        if not line:
+            return self.emptyline()
+        if cmd is None:
+            return self.default(line)
+        self.lastcmd = line
+        if line == 'EOF' :
+            self.lastcmd = ''
+        if cmd == '':
+            return self.default(line)
+        if cmd.startswith(':'):
+            try:
+                func = getattr(self, 'do_' + cmd[1:])
+            except AttributeError:
+                return self.default(line)
+            return func(arg)
+        else:
+            return self.default(line)
+
+class Terminal(CmdModules):
 
     """ Weevely Terminal """
 
     def __init__(self, session):
 
         cmd.Cmd.__init__(self)
-        
+
         self.session = session
         self.prompt = 'weevely> '
 
@@ -26,7 +96,7 @@ class Terminal(cmd.Cmd):
 
         # Load history file
         self._load_history()
-            
+
     def emptyline(self):
         """ Disable repetition of last command. """
 
@@ -49,7 +119,7 @@ class Terminal(cmd.Cmd):
         if not self.session.get('default_shell'):
             log.error(messages.terminal.backdoor_unavailable)
             return ''
-        
+
         # Get current working directory if not set
         if not self.session['file_cd']['results'].get('cwd'):
             self.do_file_cd(".")
@@ -94,7 +164,7 @@ class Terminal(cmd.Cmd):
         result = modules.loaded[self.session['default_shell']].run_argv([line])
 
         if not result: return
-        
+
         log.info(result)
 
     def do_cd(self, line):
@@ -127,7 +197,7 @@ class Terminal(cmd.Cmd):
 
         # Create a file without truncating it in case it exists.
         open(config.history_path, 'a').close()
-            
+
         readline.read_history_file(config.history_path)
         atexit.register(readline.write_history_file,
             config.history_path)
