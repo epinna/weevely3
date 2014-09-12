@@ -16,10 +16,6 @@ class Module:
         self.session = session
         self.vectors = Vectors(session, name)
 
-        self._get_result = self.vectors.get_result
-        self._run_vectors = self.vectors.run_all
-        self._find_result = self.vectors.find_first_result
-
         self.__doc__ = self.__doc__.strip()
 
         # Initialize session db for current session
@@ -81,7 +77,7 @@ class Module:
                     (key.strip('-'), value) for
                     (key, value) in line_args_optional)
                 )
-                    
+
         args.update(dict((key, line_args_mandatory.pop(0))
                          for key in self.args_mandatory))
 
@@ -91,7 +87,7 @@ class Module:
         if vect_arg_value and vect_arg_value not in self.vectors.get_names():
             log.warn(messages.module.argument_s_must_be_a_vector % self.vector_argument)
             return
-        
+
         # If module is not already enable, launch setup()
         if not self.session[self.name]['enabled']:
             self.session[self.name]['enabled'] = self.setup(args)
@@ -151,5 +147,5 @@ class Module:
 
     def _store_arg(self, field, value):
         """ Stored arguments """
-        
+
         self.session[self.name]['stored_args'][field] = value

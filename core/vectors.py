@@ -17,10 +17,10 @@ class Vectors(list):
 
     def find_first_result(self, names = [ '' ], arguments = {}, condition = None, store_as_result = '', store_as_argument = ''):
         """ Execute all the vectors returning the result matching the given condition.
-        
+
         Return the name and the result of the first vector that gives the response that satisfy
         a certain condition.
-        
+
         With unspecified names, apply to all the vectors. Optionally store results.
 
         Args:
@@ -30,13 +30,10 @@ class Vectors(list):
                 a true value). This has to be a function.
             store_as_result: Store as result
             store_as_argument: Store as argument
-            
+
 
         Returns:
             A tuple containing the vector name, and the vector result.
-
-        Raises:
-            Could returns Mako library exceptions while formatting.
 
         """
 
@@ -52,7 +49,7 @@ class Vectors(list):
             result = vector.run(arguments)
 
             if condition(result):
-                
+
                 if store_as_result:
                     self.session[self.module_name]['results'][vector.name] = result
 
@@ -61,7 +58,7 @@ class Vectors(list):
         return None, None
 
     def get_result(self, name, arguments = {}, store_as_result = ''):
-        """Run one module vector.
+        """Run one vector.
 
         Run the vectors with specified name. With unspecified names,
         run all the vectors. Optionally store results.
@@ -73,9 +70,6 @@ class Vectors(list):
 
         Returns:
             A string with the execution result.
-
-        Raises:
-            Could returns Mako library exceptions while formatting.
 
         """
 
@@ -90,24 +84,21 @@ class Vectors(list):
             return result
 
 
-    def run_all(self, names = [ '' ], values = {}, names_to_store_result = [ ]):
+    def get_results(self, names = [ '' ], values = {}, names_to_store_result = [ ]):
         """Run all the vectors.
 
-        Run all the vectors which match passed names. With unspecified names,
-        run all the vectors. Optionally store results.
+        Returns a dictionary with the vector names as keys and result as values.
+        With unspecified names, run all the vectors. Optionally store results.
 
         Args:
             values: The dictionary of arguments to format the vectors with.
-            names_filters: The names lists of vectors to execute.
+            names: The names lists of vectors to execute.
             names_to_store: The names lists of vectors of which save the
                 returned result.
 
         Returns:
             A dict mapping keys to the corresponding the executed vectors
             results.
-
-        Raises:
-            Could returns Mako library exceptions while formatting.
 
         """
 
@@ -116,11 +107,11 @@ class Vectors(list):
         for vector in self:
 
             if not self._os_match(vector.target): continue
-            
+
             if not any(x in vector.name for x in names): continue
 
             response[vector.name] = vector.run(values)
-                
+
             if not any(x in vector.name for x in names_to_store_result): continue
 
             self.session[self.module_name]['results'][vector.name] = response[vector.name]
@@ -137,7 +128,7 @@ class Vectors(list):
         if not os_string: return True
 
         os_current = s.WIN if os_string.lower().startswith('win') else Os.NIX
-        
+
         return os in (os_current, Os.ANY)
 
     def get_by_name(self, name):

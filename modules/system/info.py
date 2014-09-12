@@ -40,12 +40,16 @@ class Info(Module):
             Vector("print(@gethostname());", 'hostname'),
             Vector("@print(getcwd());", 'cwd'),
             Vector("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
-            Vector("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode', postprocess = lambda x: True if '1' else False),
+            Vector("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
+             postprocess = lambda x: True if '1' else False
+            ),
             Vector("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
             Vector("print(@php_uname());", 'uname'),
             Vector("print(@php_uname('s'));", 'os'),
             Vector("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
-            Vector('print(@ini_get("max_execution_time"));', 'max_execution_time', postprocess = lambda x: int(x)),
+            Vector('print(@ini_get("max_execution_time"));', 'max_execution_time',
+             postprocess = lambda x: int(x)
+            ),
             Vector('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
             Vector('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
             Vector("$v=''; if(function_exists( 'phpversion' )) { $v=phpversion(); } elseif(defined('PHP_VERSION')) { $v=PHP_VERSION; } elseif(defined('PHP_VERSION_ID')) { $v=PHP_VERSION_ID; } print($v);", 'php_version')
@@ -54,7 +58,7 @@ class Info(Module):
 
     def run(self, args):
 
-        asd = self._run_vectors(
-                     names = args['info'].split(','),
-                     names_to_store_result = ['whoami', 'hostname', 'dir_sep', 'os'])
-        return asd
+        return self.vectors.get_results(
+         names = args['info'].split(','),
+         names_to_store_result = ['whoami', 'hostname', 'dir_sep', 'os']
+         )

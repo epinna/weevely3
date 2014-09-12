@@ -56,7 +56,7 @@ class Sh(Module):
             ])
 
 
-    
+
 
     def setup(self, args={}):
         """Probe all vectors to find a working system-like function.
@@ -80,11 +80,12 @@ class Sh(Module):
                         }
                     }
 
-        vector_name, result = self.vectors.find_first_result(
-                                    names = [ args.get('vector', '') ],
-                                    arguments = args_check,
-                                    condition = lambda result: self.session['shell_php'].get('enabled') and result == check_digits 
-                                    )
+        (vector_name,
+         result) = self.vectors.find_first_result(
+          names = [ args.get('vector', '') ],
+            arguments = args_check,
+            condition = lambda result: self.session['shell_php'].get('enabled') and result == check_digits
+                                        )
 
         self._store_arg('vector', vector_name)
 
@@ -92,5 +93,5 @@ class Sh(Module):
 
 
     def run(self, args):
-        
-        return self._get_result(args['vector'], { 'args' : args })
+
+        return self.vectors.get_result(args['vector'], { 'args' : args })

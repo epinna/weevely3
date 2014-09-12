@@ -41,14 +41,14 @@ class Upload(Module):
                 'vector': ''
             },
             vector_argument = 'vector')
-            
+
         self._register_vectors(
             [
             Vector(
               "(file_put_contents('${args['rpath']}', base64_decode('${content}'))&&print(1)) || print(0);",
               name = 'file_put_contents'
               ),
-              
+
             Vector(
               """($h=fopen("${args['rpath']}","a+")&&fwrite($h, base64_decode('${content}'))&&fclose($h)&&print(1)) || print(0);""",
               name = "fwrite"
@@ -63,7 +63,7 @@ class Upload(Module):
         if not content_orig:
 
             lpath = args.get('lpath')
-            
+
             try:
                 content_orig = open(lpath, 'r').read()
             except Exception, e:
@@ -79,5 +79,7 @@ class Upload(Module):
             log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
             return
 
-        vector_name, result = self._run_vectors_until({ 'args' : args, 'content' : content }, until_returns = '1')
-
+        vector_name, result = self.find_first_result(
+         arguments = { 'args' : args, 'content' : content },
+         condition = lambda result: True if result == '1' else False
+        )
