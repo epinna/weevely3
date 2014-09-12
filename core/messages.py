@@ -38,7 +38,7 @@ class module:
 
 
 class module_file_cd:
-    failed_directory_change_to_s = "Failed working directory change to '%s': no such directory or permission denied"
+    failed_directory_change_to_s = "Failed cd '%s': no such directory or permission denied"
     error_getting_ossep = "Error getting remote directory separator"
 
 
