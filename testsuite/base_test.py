@@ -1,7 +1,9 @@
 from unittest import TestCase
 from core.utilities import randstr
-from testsuite.config import script_folder, script_folder_url
+from testsuite import config
 from generate import generate, save_generated
+import subprocess
+import tempfile
 import hashlib
 import os
 
@@ -13,8 +15,8 @@ class BaseTest(TestCase):
         password_hash = hashlib.md5(cls.password).hexdigest().lower()
         filename = '%s_%s.php' % (
             __name__, cls.password)
-        cls.url = os.path.join(script_folder_url, filename)
-        cls.path = os.path.join(script_folder, filename)
+        cls.url = os.path.join(config.script_folder_url, filename)
+        cls.path = os.path.join(config.script_folder, filename)
 
     @classmethod
     def setUpClass(cls):
@@ -22,12 +24,20 @@ class BaseTest(TestCase):
         cls._randomize_bd()
 
         obfuscated = generate(cls.password)
-        save_generated(obfuscated, cls.path)
+
+        tmp_handler, tmp_path = tempfile.mkstemp()
+        save_generated(obfuscated, tmp_path)
+        subprocess.check_call(
+            config.cmd_env_move_s_s % (tmp_path, cls.path),
+            shell=True)
+
+        subprocess.check_call(
+            config.cmd_env_chmod_s_s % ('777', cls.path),
+            shell=True)
 
     @classmethod
     def tearDownClass(cls):
 
-        # Check the agent presence, could be already deleted 
+        # Check the agent presence, could be already deleted
         if not os.path.isfile(cls.path): return
-        #os.remove(cls.path)
-        
+        #subprocess.check_call(cmd_env_remove_s % cls.path, shell=True)
