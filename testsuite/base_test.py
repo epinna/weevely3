@@ -1,5 +1,5 @@
 from unittest import TestCase
-from core.commons import randstr
+from core.utilities import randstr
 from testsuite.config import script_folder, script_folder_url
 from generate import generate, save_generated
 import hashlib

@@ -4,7 +4,7 @@ from core.loggers import log
 from core import messages
 import shlex
 import getopt
-import commons
+import utilities
 
 
 class Module:
@@ -33,7 +33,7 @@ class Module:
         result = self.run_argv(shlex.split(line))
 
         if result is not None:
-            log.info(commons.stringify(result))
+            log.info(utilities.stringify(result))
 
         # Data is returned for the testing of _cmdline calls
         return result

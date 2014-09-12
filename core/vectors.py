@@ -1,9 +1,9 @@
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
 from core import modules
-from core import commons
+from core import utilities
 from core import messages
-from core.commons import Os
+from core.utilities import Os
 
 class Vectors(list):
 

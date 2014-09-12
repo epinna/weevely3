@@ -1,7 +1,7 @@
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
 from core import modules
-from core import commons
+from core import utilities
 from core import messages
 import shlex
 
@@ -9,7 +9,7 @@ class ModuleCmd:
 
     def __init__(self, module, options, name = '', target = 0, postprocess = lambda x: x):
 
-        self.name = name if name else commons.randstr()
+        self.name = name if name else utilities.randstr()
 
         if isinstance(options, list):
             self.options = options

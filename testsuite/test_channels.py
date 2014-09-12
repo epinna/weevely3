@@ -1,5 +1,5 @@
 from testsuite.base_channel import BaseDefaultChannel
-from core.commons import randstr
+from core.utilities import randstr
 from testsuite.config import script_folder, script_folder_url, test_generated_test_all_agents
 from generate import generate, save_generated
 import os

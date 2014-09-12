@@ -1,6 +1,6 @@
 from core.channels.channel import Channel
 from testsuite.base_test import BaseTest
-from core.commons import randstr
+from core.utilities import randstr
 import random
 
 class BaseDefaultChannel(BaseTest):

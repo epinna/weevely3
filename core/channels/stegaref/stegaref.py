@@ -1,7 +1,7 @@
 from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
 from core.loggers import logfile
-from core import commons
+from core import utilities
 from mako.template import Template
 import core.messages
 import zlib
@@ -89,7 +89,7 @@ class StegaRef:
             matched = self.re_response.search(response)
             if matched and matched.group(1):
                 return zlib.decompress(
-                    commons.sxor(
+                    utilities.sxor(
                         base64.b64decode(
                             matched.group(1)),
                         self.shared_key))
@@ -97,7 +97,7 @@ class StegaRef:
     def _prepare(self, payload):
 
         obfuscated_payload = base64.urlsafe_b64encode(
-            commons.sxor(
+            utilities.sxor(
                 zlib.compress(payload),
                 self.shared_key)).rstrip('=')
 
@@ -199,7 +199,7 @@ class StegaRef:
                     referrer += '%s=%s%s' % (param,
                                              remaining_payload[
                                                  :payload_size],
-                                             commons.randstr(
+                                             utilities.randstr(
                                                  padding_size
                                               ))
 

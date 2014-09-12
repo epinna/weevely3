@@ -1,7 +1,7 @@
 from mako.template import Template
 from core.module import Module
 from core import messages
-from core import commons
+from core import utilities
 from core.channels.channel import Channel
 from core.loggers import log
 import random
@@ -102,7 +102,7 @@ class Php(Module):
         """
 
 #        log.debug(
-#           commons.shorten_string(
+#           utilities.shorten_string(
 #               command,
 #               keep_header = 40,
 #               keep_trailer = 40
@@ -120,7 +120,7 @@ class Php(Module):
         elif code != 200:
             log.warn(messages.module_shell_php.error_i_executing % code)
 
-        command_last_chars = commons.shorten_string(command.rstrip(),
+        command_last_chars = utilities.shorten_string(command.rstrip(),
                                                     keep_trailer = 10)
 
         if (command_last_chars and
