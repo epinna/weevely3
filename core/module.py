@@ -110,7 +110,7 @@ class Module:
 
         return True
 
-    def _register_infos(self, infos):
+    def _register_info(self, infos):
         self.infos = infos
 
     def _register_arguments(self, arguments = [], options = {}, vector_argument = ''):

@@ -18,7 +18,7 @@ class Sh(Module):
 
     def initialize(self):
 
-        self._register_infos(
+        self._register_info(
             {
                 'name': 'System Shell',
                 'author': [

@@ -16,7 +16,7 @@ class Cd(Module):
 
     def initialize(self):
 
-        self._register_infos(
+        self._register_info(
             {
                 'name': 'Change directory',
                 'author': [

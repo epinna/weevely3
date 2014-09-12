@@ -18,7 +18,7 @@ class Php(Module):
 
     def initialize(self):
 
-        self._register_infos(
+        self._register_info(
             {
                 'name': 'PHP Shell',
                 'author': [
