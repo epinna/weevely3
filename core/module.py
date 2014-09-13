@@ -54,8 +54,8 @@ class Module:
 
         # Little hack to join all the argv arguments as 1, if
         # the module expects just one mandatory argument.
-        if argv and len(self.args_mandatory) == 1 and not any(a for a in argv if a.startswith('-')):
-            argv = [ ' '.join( argv ) ]
+        #if argv and len(self.args_mandatory) == 1 and not any(a for a in argv if a.startswith('-')):
+        #    argv = [ ' '.join( argv ) ]
 
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(
@@ -66,7 +66,8 @@ class Module:
             log.info('%s\n%s' % (e, self.__doc__))
             return
 
-        if len(line_args_mandatory) != len(self.args_mandatory):
+        # If less mandatory arguments are passed, abort
+        if len(line_args_mandatory) < len(self.args_mandatory):
             log.info(
                 '%s\n%s' %
                 (messages.generic.error_missing_arguments_s %
@@ -74,6 +75,10 @@ class Module:
                      self.args_mandatory)),
                     self.__doc__))
             return
+        # If there are more argument and we expect one, join all the
+        # Remaining mandatory arguments
+        elif len(line_args_mandatory) > 1 and len(self.args_mandatory) == 1:
+            line_args_mandatory = [ ' '.join( line_args_mandatory ) ]
 
         # Merge stored arguments with line arguments
         args = self.session[self.name]['stored_args'].copy()
