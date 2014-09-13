@@ -181,6 +181,42 @@ class Terminal(CmdModules):
         else:
             self.do_file_ls(line)
 
+    def do_set(self, line):
+        """ Command "set" to set session variables """
+
+        args = shlex.split(line)
+
+        # Print all settings that startswith args[0]
+        if len(args) < 2:
+            for mod_name, mod_value in self.session.items():
+
+                if isinstance(mod_value, dict):
+                    mod_args = mod_value.get('stored_args')
+
+                    # Is a module, print all the storable stored_arguments
+                    for argument, arg_value in mod_args.items():
+                        if not args or ("%s.%s" % (mod_name, argument)).startswith(args[0]):
+                            log.info("%s.%s = '%s'" % (mod_name, argument, arg_value))
+                else:
+                    if not args or mod_name.startswith(args[0]):
+                        log.info("%s = '%s'" % (mod_name, mod_value))
+
+        # Set the setting 
+        elif len(args) >= 2:
+
+            if len(args) > 2:
+                args[1] = ' '.join(args[1:])
+
+            if args[0].count('.') == 1:
+                module_name, arg_name = args[0].split('.')
+                self.session[module_name]['stored_args'][arg_name] = args[1]
+                log.info("%s.%s = '%s'" % (module_name, arg_name, args[1]))
+            else:
+                module_name = args[0]
+                self.session[module_name] = args[1]
+                log.info("%s = '%s'" % (module_name, args[1]))
+
+
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """
 

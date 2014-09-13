@@ -17,6 +17,7 @@ class channels:
 
 class terminal:
     backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
+    error_set_usage = 'Error using set'
 
 
 class stegareferrer:
