@@ -40,7 +40,7 @@ class Info(Module):
             PhpCmd("@print(getcwd());", 'cwd'),
             PhpCmd("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
             PhpCmd("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
-             postprocess = lambda x: True if '1' else False
+             postprocess = lambda x: True if x=='1' else False
             ),
             PhpCmd("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
             PhpCmd("print(@php_uname());", 'uname'),
