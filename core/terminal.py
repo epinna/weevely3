@@ -26,10 +26,10 @@ class CmdModules(cmd.Cmd):
 
             # Offer completion just for commands that starts
             # with the trigger :
-            if not origline.startswith(':'):
+            if origline and not origline.startswith(':'):
                 return None
 
-            line = origline.lstrip(':')
+            line = origline.lstrip().lstrip(':')
 
             stripped = len(origline) - len(line)
             begidx = readline.get_begidx() - stripped
