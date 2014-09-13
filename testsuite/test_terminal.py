@@ -4,6 +4,7 @@ from testfixtures import log_capture
 from core.terminal import Terminal
 from core import sessions
 from core import modules
+from core import messages
 
 
 class TermExcept(BaseTest):
@@ -49,3 +50,41 @@ class TermExcept(BaseTest):
 
         # Test to generate a session with a wrong file
         self.assertRaises(FatalException, lambda: sessions.start_session_by_file('BOGUS'))
+
+    @log_capture()
+    def test_run_wrong_pass(self, log_captured):
+
+        session = sessions.start_session_by_url(self.url, 'BOGUS', volatile = True)
+        modules.load_modules(session)
+
+        terminal = Terminal(session)
+        line = 'echo 1'
+        line = terminal.precmd(line)
+        stop = terminal.onecmd(line)
+        stop = terminal.postcmd(stop, line)
+
+        # Test the behaviour when starting terminal on wrong remote pass
+        self.assertTrue(
+            log_captured.records[-1].msg.endswith(
+                messages.terminal.backdoor_unavailable
+            )
+        )
+
+    @log_capture()
+    def test_run_wrong_url(self, log_captured):
+
+        session = sessions.start_session_by_url(self.url + 'BOGUS', 'BOGUS', volatile = True)
+        modules.load_modules(session)
+
+        terminal = Terminal(session)
+        line = 'echo 1'
+        line = terminal.precmd(line)
+        stop = terminal.onecmd(line)
+        stop = terminal.postcmd(stop, line)
+
+        # Test the behaviour when starting terminal on wrong remote URL
+        self.assertTrue(
+            log_captured.records[-1].msg.endswith(
+                messages.terminal.backdoor_unavailable
+            )
+        )
