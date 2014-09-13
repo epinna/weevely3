@@ -29,5 +29,8 @@ class TermExcept(BaseTest):
         # Module with single argument
         self._assert_exec(':shell_php echo(1);', '1', log_captured)
 
-        # Module with multiple argument
+        # Module with multiple argument wrognly passed and correctly fixed
         self._assert_exec(':shell_php echo(1); echo(2);', '12', log_captured)
+
+        # Module with multiple argument properly passed
+        self._assert_exec(':shell_php "echo(1); echo(2);"', '12', log_captured)
