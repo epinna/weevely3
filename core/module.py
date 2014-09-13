@@ -54,8 +54,8 @@ class Module:
 
         # Little hack to join all the argv arguments as 1, if
         # the module expects just one mandatory argument.
-        if argv and len(self.args_mandatory) == 1:
-            argv = [ ' '.join(argv) ]
+        if argv and len(self.args_mandatory) == 1 and not any(a for a in argv if a.startswith('-')):
+            argv = [ ' '.join( argv ) ]
 
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(
