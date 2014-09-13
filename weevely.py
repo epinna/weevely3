@@ -17,6 +17,7 @@ from core import messages
 from core import config
 import getopt
 import sys
+import pprint
 
 if __name__ == '__main__':
 
@@ -36,6 +37,10 @@ if __name__ == '__main__':
                     args_mandatory[1])
             elif len(args_mandatory) == 1:
                 session = sessions.start_session_by_file(args_mandatory[0])
+
+            log.debug(
+                pprint.pformat(session)
+            )
 
             modules.load_modules(session)
             Terminal(session).cmdloop()
