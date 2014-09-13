@@ -21,7 +21,7 @@ def start_session_by_file(dbpath, volatile = False):
         log.warn(
             messages.generic.error_loading_file_s_s %
             (dbpath, str(e)))
-        return
+        raise FatalException(messages.sessions.error_loading_sessions)
 
     saved_url = sessiondb.get('url')
     saved_password = sessiondb.get('password')
@@ -75,9 +75,9 @@ def start_session_by_url(url, password, volatile = False):
                 log.warn(
                     messages.generic.error_loading_file_s_s %
                     (dbpath, 'no url or password'))
-                    
+
             if saved_url == url and saved_password == password:
-                
+
                 # Found correspondent session file.
                 # Register dump at exit and return
                 if not volatile:

@@ -8,7 +8,7 @@ class generic:
 
 
 class sessions:
-    error_loading_sessions = 'Error loading sessions'
+    error_loading_sessions = 'Session can not be loaded'
 
 
 class channels:

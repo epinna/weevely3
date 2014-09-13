@@ -9,6 +9,7 @@ Usage:
 """
 
 from core.terminal import Terminal
+from core.weexceptions import FatalException
 from core.loggers import log
 from core import sessions
 from core import modules
@@ -21,19 +22,25 @@ if __name__ == '__main__':
 
     args_optional, args_mandatory = getopt.getopt(sys.argv[1:], '')
 
-    if args_mandatory:
-        if len(args_mandatory) >= 2:
-            session = sessions.start_session_by_url(
-                args_mandatory[0],
-                args_mandatory[1])
-        elif len(args_mandatory) == 1:
-            session = sessions.start_session_by_file(args_mandatory[0])
-
-        modules.load_modules(session)
-        Terminal(session).cmdloop()
-
-    else:
+    if not args_mandatory:
         log.info(
             '%s\n%s' %
             (messages.generic.error_missing_arguments_s %
              '', __doc__))
+    else:
+
+        try:
+            if len(args_mandatory) >= 2:
+                session = sessions.start_session_by_url(
+                    args_mandatory[0],
+                    args_mandatory[1])
+            elif len(args_mandatory) == 1:
+                session = sessions.start_session_by_file(args_mandatory[0])
+
+            modules.load_modules(session)
+            Terminal(session).cmdloop()
+
+        except (KeyboardInterrupt, EOFError):
+            log.info('Exiting.')
+        except FatalException as e:
+            log.critical('Exiting: %s' % e)

@@ -1,4 +1,5 @@
 from testsuite.base_test import BaseTest
+from core.weexceptions import FatalException
 from testfixtures import log_capture
 from core.terminal import Terminal
 from core import sessions
@@ -7,7 +8,9 @@ from core import modules
 
 class TermExcept(BaseTest):
 
-    def setUp(self):
+    @log_capture()
+    def setUp(self, log_captured):
+
         session = sessions.start_session_by_url(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
@@ -40,3 +43,9 @@ class TermExcept(BaseTest):
 
         # Module with mandatory and optional arguments wrongly passed but precisely fixed
         self._assert_exec(':shell_php --postfix_string=" echo(3);" echo(1); echo(2);', '123', log_captured)
+
+    @log_capture()
+    def test_session(self, log_captured):
+
+        # Test to generate a session with a wrong file
+        self.assertRaises(FatalException, lambda: sessions.start_session_by_file('BOGUS'))

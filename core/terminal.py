@@ -68,7 +68,8 @@ class CmdModules(cmd.Cmd):
             return self.default(line)
         self.lastcmd = line
         if line == 'EOF' :
-            self.lastcmd = ''
+            #self.lastcmd = ''
+            raise EOFError()
         if cmd == '':
             return self.default(line)
         if cmd.startswith(':'):

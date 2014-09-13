@@ -14,6 +14,7 @@ class WeevelyFormatter(logging.Formatter):
         logging.INFO: "%(message)s",
         logging.WARNING: "[-][%(module)s] %(message)s",
         logging.ERROR: "[!][%(module)s] %(message)s",
+        logging.CRITICAL: "[!][%(module)s] %(message)s",
         'DEFAULT': "[%(levelname)s] %(message)s"}
 
     def format(self, record):
@@ -24,7 +25,7 @@ def setup_logger(logger_name, log_file = None, level = logging.INFO):
 
     """Returns the proper logger.
     When logfile parameter is set, the logger dumps to the file"""
-    
+
     l = logging.getLogger(logger_name)
     formatter = WeevelyFormatter()
 
@@ -35,13 +36,13 @@ def setup_logger(logger_name, log_file = None, level = logging.INFO):
     else:
         streamHandler = logging.StreamHandler()
         streamHandler.setFormatter(formatter)
-        l.addHandler(streamHandler)    
+        l.addHandler(streamHandler)
 
     l.setLevel(level)
 
 if not os.path.isdir(core.config.base_path):
     os.makedirs(core.config.base_path)
-    
+
 setup_logger('log',
               level = logging.DEBUG)
 setup_logger('logfile',
