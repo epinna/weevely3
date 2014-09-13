@@ -84,13 +84,19 @@ class Sh(Module):
          result) = self.vectors.find_first_result(
           names = [ args.get('vector', '') ],
             arguments = args_check,
-            condition = lambda result: self.session['shell_php'].get('enabled') and result == check_digits
+            condition = lambda result: (
+                            # Stop if shell_php is disabled
+                            not self.session['shell_php'].get('enabled') or
+                            # Or if the result is correct
+                            self.session['shell_php'].get('enabled') and result == check_digits
+                            )
             )
 
-        self._store_arg('vector', vector_name)
-
-        return True
-
+        if self.session['shell_php'].get('enabled') and result == check_digits:
+            self._store_arg('vector', vector_name)
+            return True
+        else:
+            return False
 
     def run(self, args):
 
