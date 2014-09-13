@@ -1,6 +1,6 @@
 from core.channels.stegaref.stegaref import StegaRef
 from core.weexceptions import FatalException
-from urllib2 import HTTPError
+from urllib2 import HTTPError, URLError
 from core import config
 from core import messages
 
@@ -24,12 +24,12 @@ class Channel:
             module = __import__(
                 'core.channels.%s.%s' %
                 (module_name, module_name), fromlist=["*"])
-                
+
             # Import object
             channel_object = getattr(module, channel_name)
         except:
             raise FatalException(messages.channels.error_loading_channel_s % (channel_name))
-            
+
         # Create channel instance
         self.channel_loaded = channel_object(url, password)
 
@@ -37,11 +37,13 @@ class Channel:
 
         response = ''
         code = 200
-        
+
         try:
             response = self.channel_loaded.send(payload)
         except HTTPError as e:
             if e.code:
                 code = e.code
+        except URLError as e:
+            code = -1
 
         return response, code
