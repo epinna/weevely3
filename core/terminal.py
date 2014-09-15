@@ -188,34 +188,43 @@ class Terminal(CmdModules):
 
         # Print all settings that startswith args[0]
         if len(args) < 2:
-            for mod_name, mod_value in self.session.items():
+            self._set_print(args[0] if args else '')
 
-                if isinstance(mod_value, dict):
-                    mod_args = mod_value.get('stored_args')
-
-                    # Is a module, print all the storable stored_arguments
-                    for argument, arg_value in mod_args.items():
-                        if not args or ("%s.%s" % (mod_name, argument)).startswith(args[0]):
-                            log.info("%s.%s = '%s'" % (mod_name, argument, arg_value))
-                else:
-                    if not args or mod_name.startswith(args[0]):
-                        log.info("%s = '%s'" % (mod_name, mod_value))
-
-        # Set the setting 
-        elif len(args) >= 2:
-
+        # Set the setting
+        else:
             if len(args) > 2:
                 args[1] = ' '.join(args[1:])
 
-            if args[0].count('.') == 1:
-                module_name, arg_name = args[0].split('.')
-                self.session[module_name]['stored_args'][arg_name] = args[1]
-                log.info("%s.%s = '%s'" % (module_name, arg_name, args[1]))
-            else:
-                module_name = args[0]
-                self.session[module_name] = args[1]
-                log.info("%s = '%s'" % (module_name, args[1]))
+            self._set_value(args[0], args[1])
 
+    def _set_print(self, module_filter = ''):
+
+        global_filters = [ 'log' ]
+
+        for mod_name, mod_value in self.session.items():
+
+            if isinstance(mod_value, dict):
+                mod_args = mod_value.get('stored_args')
+
+                # Is a module, print all the storable stored_arguments
+                for argument, arg_value in mod_args.items():
+                    if not module_filter or ("%s.%s" % (mod_name, argument)).startswith(module_filter):
+                        log.info("%s.%s = '%s'" % (mod_name, argument, arg_value))
+            else:
+                # If is not a module, just print if matches with global_filters
+                if not module_filter or any(f for f in global_filters if f == mod_name):
+                    log.info("%s = '%s'" % (mod_name, mod_value))
+
+    def _set_value(self, module_argument, value):
+
+        if module_argument.count('.') == 1:
+            module_name, arg_name = module_argument.split('.')
+            self.session[module_name]['stored_args'][arg_name] = value
+            log.info("%s.%s = '%s'" % (module_name, arg_name, value))
+        else:
+            module_name = module_argument
+            self.session[module_name] = value
+            log.info("%s = '%s'" % (module_name, value))
 
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """
