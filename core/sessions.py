@@ -41,20 +41,6 @@ class SessionFile(dict):
         path = self['path']
         json.dump(self, open(path, 'w'))
 
-    def set_from_terminal(self, module_name, value):
-        if len(args) > 2:
-            args[1] = ' '.join(args[1:])
-
-        if args[0].count('.') == 1:
-            module_name, arg_name = args[0].split('.')
-            self.session[module_name]['stored_args'][arg_name] = args[1]
-            log.info("%s.%s = '%s'" % (module_name, arg_name, args[1]))
-        else:
-            module_name = args[0]
-            self.session[module_name] = args[1]
-            log.info("%s = '%s'" % (module_name, args[1]))
-
-
 class SessionURL(SessionFile):
 
     def __init__(self, url, password, volatile = False):
