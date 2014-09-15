@@ -117,7 +117,13 @@ class SessionURL(SessionFile):
             if not os.path.exists(dbpath):
                 sessiondb = {}
                 sessiondb.update(
-                    {'path': dbpath, 'url': url, 'password': password, 'debug': ''})
+                    {   'path': dbpath,
+                        'url': url,
+                        'password': password,
+                        'debug': '',
+                        'default_shell' : ''
+                    }
+                )
 
                 # Register dump at exit and return
                 if not volatile:
