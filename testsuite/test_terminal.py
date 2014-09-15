@@ -7,7 +7,7 @@ from core import modules
 from core import messages
 
 
-class Terminal(BaseTest):
+class TerminalTest(BaseTest):
 
     @log_capture()
     def setUp(self, log_captured):
