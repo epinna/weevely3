@@ -108,6 +108,10 @@ class Terminal(CmdModules):
     def precmd(self, line):
         """ Before to execute a line commands. Confirm shell availability and get basic system infos. """
 
+        # Skip slack check is not a remote command
+        if not line or line.startswith(':set'):
+            return line
+
         # Setup shell_sh if is never tried
         if not self.session['shell_sh']['enabled']:
             self.session['shell_sh']['enabled'] = modules.loaded['shell_sh'].setup()
@@ -164,7 +168,11 @@ class Terminal(CmdModules):
 
         if not line: return
 
-        result = modules.loaded[self.session['default_shell']].run_argv([line])
+        default_shell = self.session.get('default_shell')
+
+        if not default_shell: return
+
+        result = modules.loaded[default_shell].run_argv([line])
 
         if not result: return
 
