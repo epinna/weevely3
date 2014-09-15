@@ -1,4 +1,4 @@
-from core.vector import PhpCmd
+from core.vector import PhpCmd, ModuleCmd
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -73,12 +73,12 @@ class Upload(Module):
         content = base64.b64encode(content_orig)
 
         # Check remote file existence
-        rpath_exists = PhpCmd([ args['rpath'], 'exists' ], module = 'file_check').run()
+        rpath_exists = ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run()
         if rpath_exists:
             log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
             return
 
-        vector_name, result = self.find_first_result(
+        vector_name, result = self.vectors.find_first_result(
          arguments = { 'args' : args, 'content' : content },
          condition = lambda result: True if result == '1' else False
         )
