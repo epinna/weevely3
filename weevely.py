@@ -11,7 +11,7 @@ Usage:
 from core.terminal import Terminal
 from core.weexceptions import FatalException
 from core.loggers import log
-from core import sessions
+from core.sessions import SessionURL, SessionFile 
 from core import modules
 from core import messages
 from core import config
@@ -32,11 +32,11 @@ if __name__ == '__main__':
 
         try:
             if len(args_mandatory) >= 2:
-                session = sessions.start_session_by_url(
-                    args_mandatory[0],
-                    args_mandatory[1])
+                session = SessionURL(
+                    url = args_mandatory[0],
+                    password = args_mandatory[1])
             elif len(args_mandatory) == 1:
-                session = sessions.start_session_by_file(args_mandatory[0])
+                session = SessionFile(args_mandatory[0])
 
             log.debug(
                 pprint.pformat(session)

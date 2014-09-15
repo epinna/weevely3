@@ -1,7 +1,7 @@
 from testfixtures import log_capture
 from testsuite.base_test import BaseTest
 from testsuite import config
-from core import sessions
+from core.sessions import SessionURL
 from core import modules
 from core import utilities
 from core import messages
@@ -21,7 +21,7 @@ class FileCd(BaseTest):
         return folders[1:]
 
     def setUp(self):
-        self.session = sessions.start_session_by_url(
+        self.session = SessionURL(
                     self.url,
                     self.password,
                     volatile = True

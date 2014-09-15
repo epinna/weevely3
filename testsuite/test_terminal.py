@@ -2,7 +2,7 @@ from testsuite.base_test import BaseTest
 from core.weexceptions import FatalException
 from testfixtures import log_capture
 from core.terminal import Terminal
-from core import sessions
+from core.sessions import SessionURL, SessionFile
 from core import modules
 from core import messages
 
@@ -12,7 +12,7 @@ class TerminalTest(BaseTest):
     @log_capture()
     def setUp(self, log_captured):
 
-        session = sessions.start_session_by_url(self.url, self.password, volatile = True)
+        session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
         self.terminal = Terminal(session)
@@ -49,12 +49,12 @@ class TerminalTest(BaseTest):
     def test_session(self, log_captured):
 
         # Test to generate a session with a wrong file
-        self.assertRaises(FatalException, lambda: sessions.start_session_by_file('BOGUS'))
+        self.assertRaises(FatalException, lambda: SessionFile('BOGUS'))
 
     @log_capture()
     def test_run_wrong_pass(self, log_captured):
 
-        session = sessions.start_session_by_url(self.url, 'BOGUS', volatile = True)
+        session = SessionURL(self.url, 'BOGUS', volatile = True)
         modules.load_modules(session)
 
         terminal = Terminal(session)
@@ -73,7 +73,7 @@ class TerminalTest(BaseTest):
     @log_capture()
     def test_run_wrong_url(self, log_captured):
 
-        session = sessions.start_session_by_url(self.url + 'BOGUS', 'BOGUS', volatile = True)
+        session = SessionURL(self.url + 'BOGUS', 'BOGUS', volatile = True)
         modules.load_modules(session)
 
         terminal = Terminal(session)

@@ -1,8 +1,8 @@
 from testsuite.base_test import BaseTest
 from testfixtures import log_capture
 from testsuite.config import script_folder
+from core.sessions import SessionURL
 from core import modules
-from core import sessions
 from core import messages
 import datetime
 import logging
@@ -11,7 +11,7 @@ import os
 class FileCheck(BaseTest):
 
     def setUp(self):
-        session = sessions.start_session_by_url(self.url, self.password, volatile = True)
+        session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
         self.run_argv = modules.loaded['file_check'].run_argv

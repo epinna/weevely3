@@ -3,7 +3,7 @@ from core.vectors import Vectors
 from core.vector import PhpCmd
 from core.utilities import Os
 from core import modules
-from core import sessions
+from core.sessions import SessionURL
 from core import messages
 import logging
 import os
@@ -11,7 +11,7 @@ import os
 class SystemInfo(BaseTest):
 
     def setUp(self):
-        self.session = sessions.start_session_by_url(self.url, self.password, volatile = True)
+        self.session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(self.session)
 
         self.run_argv = modules.loaded['shell_sh'].run_argv
