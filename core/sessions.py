@@ -26,7 +26,7 @@ class SessionFile(dict):
         if saved_url and saved_password:
             if not volatile:
                 # Register dump at exit and return
-                atexit.register(self._session_save_atexit, session=sessiondb)
+                atexit.register(self._session_save_atexit)
 
             self.update(sessiondb)
             return
@@ -37,9 +37,9 @@ class SessionFile(dict):
 
         raise FatalException(messages.sessions.error_loading_sessions)
 
-    def _session_save_atexit(self, session):
-        path = session['path']
-        json.dump(session, open(path, 'w'))
+    def _session_save_atexit(self):
+        path = self['path']
+        json.dump(self, open(path, 'w'))
 
     def set_from_terminal(self, module_name, value):
         if len(args) > 2:
@@ -99,7 +99,7 @@ class SessionURL(SessionFile):
                     # Found correspondent session file.
                     # Register dump at exit and return
                     if not volatile:
-                        atexit.register(self._session_save_atexit, session=sessiondb)
+                        atexit.register(self._session_save_atexit)
 
                     self.update(sessiondb)
                     return
@@ -117,11 +117,11 @@ class SessionURL(SessionFile):
             if not os.path.exists(dbpath):
                 sessiondb = {}
                 sessiondb.update(
-                    {'path': dbpath, 'url': url, 'password': password})
+                    {'path': dbpath, 'url': url, 'password': password, 'debug': ''})
 
                 # Register dump at exit and return
                 if not volatile:
-                    atexit.register(session_save_atexit, session=sessiondb)
+                    atexit.register(self._session_save_atexit)
 
                 self.update(sessiondb)
                 return

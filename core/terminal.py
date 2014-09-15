@@ -92,6 +92,8 @@ class Terminal(CmdModules):
         self.session = session
         self.prompt = 'weevely> '
 
+        self.set_filters = [ 'debug' ]
+
         # Load all available modules
         self._load_modules()
 
@@ -199,8 +201,6 @@ class Terminal(CmdModules):
 
     def _set_print(self, module_filter = ''):
 
-        global_filters = [ 'log' ]
-
         for mod_name, mod_value in self.session.items():
 
             if isinstance(mod_value, dict):
@@ -211,20 +211,26 @@ class Terminal(CmdModules):
                     if not module_filter or ("%s.%s" % (mod_name, argument)).startswith(module_filter):
                         log.info("%s.%s = '%s'" % (mod_name, argument, arg_value))
             else:
-                # If is not a module, just print if matches with global_filters
-                if not module_filter or any(f for f in global_filters if f == mod_name):
+                # If is not a module, just print if matches with set_filters
+                if any(f for f in self.set_filters if f == mod_name):
                     log.info("%s = '%s'" % (mod_name, mod_value))
 
     def _set_value(self, module_argument, value):
 
         if module_argument.count('.') == 1:
             module_name, arg_name = module_argument.split('.')
-            self.session[module_name]['stored_args'][arg_name] = value
-            log.info("%s.%s = '%s'" % (module_name, arg_name, value))
+            if arg_name not in self.session[module_name]['stored_args']:
+                log.warn(messages.terminal.error_setting_arg_s_not_found % ( '%s.%s' % (module_name, arg_name) ))
+            else:
+                self.session[module_name]['stored_args'][arg_name] = value
+                log.info("%s.%s = '%s'" % (module_name, arg_name, value))
         else:
             module_name = module_argument
-            self.session[module_name] = value
-            log.info("%s = '%s'" % (module_name, value))
+            if module_name not in self.session or module_name not in self.set_filters:
+                log.warn(messages.terminal.error_setting_arg_s_not_found % (module_name))
+            else:
+                self.session[module_name] = value
+                log.info("%s = '%s'" % (module_name, value))
 
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """
