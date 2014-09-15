@@ -154,8 +154,3 @@ class Module:
                 'results'].get(field, default)
         else:
             return self.session.get(field, default)
-
-    def _store_arg(self, field, value):
-        """ Stored arguments """
-
-        self.session[self.name]['stored_args'][field] = value

@@ -93,7 +93,7 @@ class Sh(Module):
             )
 
         if self.session['shell_php'].get('enabled') and result == check_digits:
-            self._store_arg('vector', vector_name)
+            self.session['shell_sh']['stored_args']['vector'] = vector_name
             return True
         else:
             return False
