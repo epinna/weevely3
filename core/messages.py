@@ -9,16 +9,14 @@ class generic:
 
 class sessions:
     error_loading_sessions = 'Session can not be loaded'
+    error_storing_s_not_found = 'Error storing argument in session, \'%s\' argument not found or can\'t be set.'
 
 
 class channels:
     error_loading_channel_s = 'Error loading channel \'%s\''
 
-
 class terminal:
     backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
-    error_setting_arg_s_not_found = 'Error setting stored argument, \'%s\' argument not found or can\'t be set.'
-
 
 class stegareferrer:
     error_generating_id = 'Error generating id, payload too long?'

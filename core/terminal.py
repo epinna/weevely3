@@ -92,8 +92,6 @@ class Terminal(CmdModules):
         self.session = session
         self.prompt = 'weevely> '
 
-        self.set_filters = [ 'debug' ]
-
         # Load all available modules
         self._load_modules()
 
@@ -202,47 +200,14 @@ class Terminal(CmdModules):
 
         # Print all settings that startswith args[0]
         if len(args) < 2:
-            self._set_print(args[0] if args else '')
+            self.session.print_to_user(args[0] if args else '')
 
         # Set the setting
         else:
             if len(args) > 2:
                 args[1] = ' '.join(args[1:])
 
-            self._set_value(args[0], args[1])
-
-    def _set_print(self, module_filter = ''):
-
-        for mod_name, mod_value in self.session.items():
-
-            if isinstance(mod_value, dict):
-                mod_args = mod_value.get('stored_args')
-
-                # Is a module, print all the storable stored_arguments
-                for argument, arg_value in mod_args.items():
-                    if not module_filter or ("%s.%s" % (mod_name, argument)).startswith(module_filter):
-                        log.info("%s.%s = '%s'" % (mod_name, argument, arg_value))
-            else:
-                # If is not a module, just print if matches with set_filters
-                if any(f for f in self.set_filters if f == mod_name):
-                    log.info("%s = '%s'" % (mod_name, mod_value))
-
-    def _set_value(self, module_argument, value):
-
-        if module_argument.count('.') == 1:
-            module_name, arg_name = module_argument.split('.')
-            if arg_name not in self.session[module_name]['stored_args']:
-                log.warn(messages.terminal.error_setting_arg_s_not_found % ( '%s.%s' % (module_name, arg_name) ))
-            else:
-                self.session[module_name]['stored_args'][arg_name] = value
-                log.info("%s.%s = '%s'" % (module_name, arg_name, value))
-        else:
-            module_name = module_argument
-            if module_name not in self.session or module_name not in self.set_filters:
-                log.warn(messages.terminal.error_setting_arg_s_not_found % (module_name))
-            else:
-                self.session[module_name] = value
-                log.info("%s = '%s'" % (module_name, value))
+            self.session.set(args[0], args[1])
 
     def _load_modules(self):
         """ Load all modules assigning corresponding do_* functions. """
