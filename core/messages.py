@@ -36,7 +36,7 @@ class vectors:
 
 class module:
     argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'
-
+    error_module_missing_description = 'Error, module description is missing'
 
 class module_file_cd:
     failed_directory_change_to_s = "Failed cd '%s': no such directory or permission denied"

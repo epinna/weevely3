@@ -256,6 +256,13 @@ class Terminal(CmdModules):
                 Terminal, 'do_%s' %
                 (module_name), class_do)
 
+            # Set module.help() function as terminal
+            # self.help_modulegroup_modulename()
+            class_help = getattr(module_class, 'help')
+            setattr(
+                Terminal, 'help_%s' %
+                (module_name), class_help)
+
     def _load_history(self):
         """ Load history file and register dump on exit """
 

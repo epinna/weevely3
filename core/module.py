@@ -15,8 +15,6 @@ class Module:
         self.session = session
         self.vectors = Vectors(session, name)
 
-        self.__doc__ = self.__doc__.strip()
-
         # Initialize session db for current session
         if name not in self.session:
             self.session[self.name] = {
@@ -54,11 +52,6 @@ class Module:
             An object as result of the module run.
 
         """
-
-        # Little hack to join all the argv arguments as 1, if
-        # the module expects just one mandatory argument.
-        #if argv and len(self.args_mandatory) == 1 and not any(a for a in argv if a.startswith('-')):
-        #    argv = [ ' '.join( argv ) ]
 
         try:
             line_args_optional, line_args_mandatory = getopt.getopt(
@@ -111,7 +104,7 @@ class Module:
         args.update(
             dict(
                 (key, value) for key, value in self.session[self.name]['stored_args'].items()
-                    if value != ''
+                if value != ''
                 )
         )
 
@@ -119,12 +112,26 @@ class Module:
             return self.run(args)
 
     def setup(self, args={}):
-        """ Override to implement module setup """
+        """ Override to implement specific module setup """
 
         return True
 
-    def _register_info(self, infos):
-        self.infos = infos
+    def help(self):
+        """ Override to implement specific module help """
+
+        log.info(self.info['description'])
+
+    def _register_info(self, info):
+        self.info = info
+
+        # Add description from module __doc__ if missing
+        self.info['description'] = (
+            self.info.get('description')
+            if self.info.get('description')
+            else self.__doc__.strip()
+        )
+        if not self.info['description']:
+            raise DevException(messages.module.error_module_missing_description)
 
     def _register_arguments(self, arguments = [], options = {}, vector_argument = ''):
         """ Register additional modules options """
