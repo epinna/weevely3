@@ -62,17 +62,19 @@ class StegaRef:
 
         for referrer_index, referrer_data in enumerate(referrers_data):
 
-            accept_header = self._generate_header_accept_language(
+            accept_language_header = self._generate_header_accept_language(
                 referrer_data[1],
                 session_id)
             opener.addheaders = [
-                ('Referer', referrer_data[0]), ('Accept', accept_header)]
+                ('Referer', referrer_data[0]),
+                ('Accept-Language', accept_language_header)
+            ]
 
             logfile.debug(
                 '[v:%i/%i] %s %s %s' %
                 (referrer_index,
                  len(referrers_data),
-                    accept_header,
+                    accept_language_header,
                     referrer_data[0],
                     referrer_data[1]))
 
@@ -291,3 +293,31 @@ class StegaRef:
             accept_language += ',%s;q=0.%i' % (language, position)
 
         return accept_language
+
+    def _generate_header_accept(self):
+        """Generate an accept header value"""
+
+        content_types = [
+            'text/html',
+            'application/xhtml+xml',
+            'application/xml',
+            'text/plain'
+        ]
+
+        shuffle(content_types)
+
+        header = []
+
+        # Add first content type
+        header.append('%s,' % content_types.pop())
+
+        # Add some other content types with quality
+        latest_quality = 9
+        for r in range(0, random.randint(0, len(content_types))):
+            header.append('%s;0.%i,' %(content_types.pop(), last_quality))
+            latest_quality = random.randint(last_quality-2, last_quality)
+
+        # Add
+        header.append('*/*')
+
+        return header

