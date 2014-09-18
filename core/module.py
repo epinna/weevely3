@@ -6,7 +6,6 @@ import shlex
 import getopt
 import utilities
 
-
 class Module:
 
     def __init__(self, session, name):
@@ -30,7 +29,11 @@ class Module:
     def run_cmdline(self, line):
         """ Function called from terminal to run module. Accepts command line string. """
 
-        result = self.run_argv(shlex.split(line))
+        try:
+            result = self.run_argv(shlex.split(line))
+        except Exception as e:
+            log.warn(messages.generic.error_parsing_command_s % str(e))
+            return
 
         if result is not None:
             log.info(utilities.stringify(result))

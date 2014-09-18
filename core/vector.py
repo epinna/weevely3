@@ -3,7 +3,6 @@ from core.weexceptions import DevException, ModuleError
 from core import modules
 from core import utilities
 from core import messages
-import shlex
 
 class ModuleCmd:
 

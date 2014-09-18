@@ -194,7 +194,11 @@ class Terminal(CmdModules):
     def do_set(self, line):
         """ Command "set" to set session variables """
 
-        args = shlex.split(line)
+        try:
+            args = shlex.split(line)
+        except Exception as e:
+            log.warn(messages.generic.error_parsing_command_s % str(e))
+            return
 
         # Print all settings that startswith args[0]
         if len(args) < 2:
