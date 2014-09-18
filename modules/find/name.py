@@ -34,7 +34,7 @@ class Name(Module):
                 'equal': '',
                 'case' : '',
                 'recursion' : 'True',
-                'vector' : ''
+                'vector' : 'php_recursive'
             },
             vector_argument = 'vector')
 
@@ -46,11 +46,11 @@ function swp($d){ $h=@opendir($d);while($f = readdir($h)) { $df=$d.'/'.$f; if(($
 print($df."\n"); if(@ckdir($df,$f)&&${False if (not args['recursion'] or args['recursion'].lower() == 'false') else True}) @swp($df); }
 if($h) { @closedir($h); } }""", 'php_recursive'
             ),
-            ShellCmd("""find ${args['rpath']} ${ '-maxdepth 1' if not args['recursion'] else '' } ${ '-name' if args['case'] else '-iname' } "${ '*%s*' % (args['string']) if not args['equal'] else args['string'] }" 2>/dev/null""")
+            ShellCmd("""find ${args['rpath']} ${ '-maxdepth 1' if not args['recursion'] else '' } ${ '-name' if args['case'] else '-iname' } "${ '*%s*' % (args['string']) if not args['equal'] else args['string'] }" 2>/dev/null""", "sh_find")
             ]
         )
 
 
     def run(self, args):
 
-        return self.vectors.get_result('php_recursive', { 'args' : args })
+        return self.vectors.get_result(args['vector'], { 'args' : args })
