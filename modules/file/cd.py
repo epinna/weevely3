@@ -7,18 +7,12 @@ import random
 
 class Cd(Module):
 
-    """Change current working directory.
-
-    Usage:
-      file_cd <dir>
-
-    """
+    """Change current working directory."""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'Change directory',
                 'author': [
                     'Emilio Pinna'
                 ],

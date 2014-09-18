@@ -179,12 +179,12 @@ class Terminal(CmdModules):
         log.info(result)
 
     def do_cd(self, line):
-        """ Command "cd" replacement """
+        """Command "cd" replacement. See "file_cd" help."""
 
         self.do_file_cd(line)
 
     def do_ls(self, line):
-        """ Command "ls" replacement, if shell_sh is not loaded """
+        """Command "ls" replacement, called if shell_sh is not enabled. See "file_ls" help."""
 
         if self.session['default_shell'] == 'shell_sh':
             self.default('ls %s' % line)
@@ -192,7 +192,7 @@ class Terminal(CmdModules):
             self.do_file_ls(line)
 
     def do_set(self, line):
-        """ Command "set" to set session variables """
+        """Command "set" to set session variables."""
 
         try:
             args = shlex.split(line)

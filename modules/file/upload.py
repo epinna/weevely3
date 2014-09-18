@@ -9,18 +9,12 @@ import base64
 
 class Upload(Module):
 
-    """Upload file to remote filesystem.
-
-    Usage:
-      file_upload <lfile> <rfile>
-
-    """
+    """Upload file to remote filesystem."""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'Change directory',
                 'author': [
                     'Emilio Pinna'
                 ],

@@ -65,14 +65,23 @@ class generate:
     generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
 
 class help:
-    optional_arguments = """Basic ${module_name} usage
-======================
+    optional_arguments = """
+Description
+===========
+
 ${description}
 
-Optional arguments (also settable with ':set ${module_name}.variable value')
-======================================================================
+Basic ${module_name} usage
+${ '=' * (len(module_name) + 12 ) }
 
-% for arg, value in arguments.items():
-    --${arg}=[value]\t${ '(default: %s)' % value if value else '' }\t${ '(choices: %s)' % ','.join(vector_arg[1]) if vector_arg and vector_arg[0] == arg else '' }
+    ${ module_name } ${ '[options] ' if opt_arguments else '' }${ '<%s>' % '> <'.join(mand_arguments) if mand_arguments else '' }
+
+%if opt_arguments:
+Options (can be stored with e.g. ':set ${module_name}.<option> <value>')
+${ '=' * (len(module_name) + 58) }
+
+% for arg, value in opt_arguments.items():
+    --${arg}=${ '\\n      Default: \\'%s\\'' % value if value and stored_arguments.get(arg) != value else '' }${ '\\n      Stored: \\'%s\\'' % stored_arguments.get(arg) if stored_arguments.get(arg) else '' }${ '\\n      Choices: \\'%s\\'' % '\\', \\''.join(vector_arg[1]) if vector_arg and vector_arg[0] == arg else '' }
 % endfor
+% endif
 """

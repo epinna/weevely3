@@ -7,18 +7,12 @@ import datetime
 
 class Check(Module):
 
-    """Check remote files type, md5, or permissions
-
-    Usage:
-      file_check <path> <check>
-
-    """
+    """Check remote files type, md5, or permissions"""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'Check file',
                 'author': [
                     'Emilio Pinna'
                 ],

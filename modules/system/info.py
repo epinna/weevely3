@@ -6,19 +6,12 @@ import random
 
 class Info(Module):
 
-    """Collect system information.
-
-    Usage:
-      system_info
-      system_info [--info=info]
-
-    """
+    """Collect system information."""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'System information',
                 'author': [
                     'Emilio Pinna'
                 ],

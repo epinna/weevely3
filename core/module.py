@@ -125,7 +125,9 @@ class Module:
         ).render(
             module_name = self.name,
             description = self.info['description'],
-            arguments = self.args_optional,
+            mand_arguments = self.args_mandatory,
+            opt_arguments = self.args_optional,
+            stored_arguments = self.session[self.name]['stored_args'],
             vector_arg = (self.vector_argument, self.vectors.get_names())
         )
 
@@ -147,12 +149,11 @@ class Module:
         """ Register additional modules options """
 
         self.args_mandatory = arguments
-        self.args_optional = options
+        self.args_optional = options.copy()
 
         # Arguments in session has more priority than registered variables
-
         options.update(self.session[self.name]['stored_args'])
-        self.session[self.name]['stored_args'] = self.args_optional
+        self.session[self.name]['stored_args'] = options
 
         self.vector_argument = vector_argument
 

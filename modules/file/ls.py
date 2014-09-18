@@ -6,18 +6,12 @@ import random
 
 class Ls(Module):
 
-    """List directory content (replacement)
-
-    Usage:
-      file_ls [--dir=./folder]
-
-    """
+    """List directory content ('ls' replacement)"""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'List files',
                 'author': [
                     'Emilio Pinna'
                 ],

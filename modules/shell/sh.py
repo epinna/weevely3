@@ -8,18 +8,12 @@ import random
 
 class Sh(Module):
 
-    """Execute Shell commands.
-
-    Usage:
-      shell_sh <command>
-
-    """
+    """Execute Shell commands."""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'System Shell',
                 'author': [
                     'Emilio Pinna'
                 ],

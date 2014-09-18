@@ -6,18 +6,12 @@ import random
 
 class Name(Module):
 
-    """Find files with matching name.
-
-    Usage:
-      find_name <name>
-
-    """
+    """Find files with matching name."""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'Find files with matching name',
                 'author': [
                     'Emilio Pinna'
                 ],

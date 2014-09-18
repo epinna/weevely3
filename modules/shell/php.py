@@ -9,18 +9,12 @@ import random
 
 class Php(Module):
 
-    """Execute PHP commands.
-
-    Usage:
-      shell_php <command>
-
-    """
+    """Execute PHP commands."""
 
     def initialize(self):
 
         self._register_info(
             {
-                'name': 'PHP Shell',
                 'author': [
                     'Emilio Pinna'
                 ],
