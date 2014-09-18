@@ -13,6 +13,8 @@ import atexit
 class CmdModules(cmd.Cmd):
 
     identchars = cmd.Cmd.identchars + ':'
+    doc_header = "Documented modules and commands (type :help <module>):"
+    nohelp = "[!] No help on %s"
 
     def complete(self, text, state):
         """Return the next possible completion for 'text'.
@@ -83,7 +85,7 @@ class CmdModules(cmd.Cmd):
 
 class Terminal(CmdModules):
 
-    """ Weevely Terminal """
+    """Weevely Terminal"""
 
     def __init__(self, session):
 
@@ -99,12 +101,12 @@ class Terminal(CmdModules):
         self._load_history()
 
     def emptyline(self):
-        """ Disable repetition of last command. """
+        """Disable repetition of last command."""
 
         pass
 
     def precmd(self, line):
-        """ Before to execute a line commands. Confirm shell availability and get basic system infos. """
+        """Before to execute a line commands. Confirm shell availability and get basic system infos """
 
         # Skip slack check is not a remote command
         if not line or line.startswith(':set'):
@@ -162,7 +164,7 @@ class Terminal(CmdModules):
         #return stop
 
     def default(self, line):
-        """ Direct command line send. """
+        """Default command line send."""
 
         if not line: return
 
@@ -177,12 +179,12 @@ class Terminal(CmdModules):
         log.info(result)
 
     def do_cd(self, line):
-        """Command "cd" replacement. See "file_cd" help."""
+        """Command "cd" replacement. Type ":help file_cd"."""
 
         self.do_file_cd(line)
 
     def do_ls(self, line):
-        """Command "ls" replacement, called if shell_sh is not enabled. See "file_ls" help."""
+        """Command "ls" replacement, called if shell_sh is not enabled. Type ":help file_ls"."""
 
         if self.session['default_shell'] == 'shell_sh':
             self.default('ls %s' % line)
@@ -210,7 +212,7 @@ class Terminal(CmdModules):
             self.session.set(args[0], args[1])
 
     def _load_modules(self):
-        """ Load all modules assigning corresponding do_* functions. """
+        """Load all modules assigning corresponding do_* functions."""
 
         for module_name, module_class in modules.loaded.items():
 
@@ -229,7 +231,7 @@ class Terminal(CmdModules):
                 (module_name), class_help)
 
     def _load_history(self):
-        """ Load history file and register dump on exit """
+        """Load history file and register dump on exit."""
 
         # Create a file without truncating it in case it exists.
         open(config.history_path, 'a').close()
