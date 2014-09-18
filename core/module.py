@@ -121,7 +121,7 @@ class Module:
         """ Function called on terminal help command """
 
         option_args_help = Template(
-            messages.help.optional_arguments
+            messages.help.details
         ).render(
             module_name = self.name,
             description = self.info['description'],

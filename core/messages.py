@@ -65,7 +65,7 @@ class generate:
     generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
 
 class help:
-    optional_arguments = """
+    details = """
 Description
 ===========
 
@@ -77,8 +77,8 @@ ${ '=' * (len(module_name) + 12 ) }
     ${ module_name } ${ '[options] ' if opt_arguments else '' }${ '<%s>' % '> <'.join(mand_arguments) if mand_arguments else '' }
 
 %if opt_arguments:
-Options (can be stored with e.g. ':set ${module_name}.<option> <value>')
-${ '=' * (len(module_name) + 58) }
+Options (Use ':set ${module_name}.<option> <value>' to store session values)
+${ '=' * (len(module_name) + 62) }
 
 % for arg, value in opt_arguments.items():
     --${arg}=${ '\\n      Default: \\'%s\\'' % value if value and stored_arguments.get(arg) != value else '' }${ '\\n      Stored: \\'%s\\'' % stored_arguments.get(arg) if stored_arguments.get(arg) else '' }${ '\\n      Choices: \\'%s\\'' % '\\', \\''.join(vector_arg[1]) if vector_arg and vector_arg[0] == arg else '' }
