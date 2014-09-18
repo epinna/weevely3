@@ -37,6 +37,8 @@ class ModuleCmd:
             traceback.print_exc()
             raise DevException(messages.vectors.wrong_arguments_type)
 
+        # TODO: the modules that fail on setup should not been called
+        # ever. Add a check here and some in terminal.py
         return self.postprocess(
           modules.loaded[self.module].run_argv(formatted)
         )
