@@ -65,9 +65,11 @@ class StegaRef:
             accept_language_header = self._generate_header_accept_language(
                 referrer_data[1],
                 session_id)
+            accept_header = self._generate_header_accept()
             opener.addheaders = [
                 ('Referer', referrer_data[0]),
-                ('Accept-Language', accept_language_header)
+                ('Accept-Language', accept_language_header),
+                ('Accept', accept_header)
             ]
 
             logfile.debug(
@@ -304,7 +306,7 @@ class StegaRef:
             'text/plain'
         ]
 
-        shuffle(content_types)
+        random.shuffle(content_types)
 
         header = []
 
@@ -313,11 +315,11 @@ class StegaRef:
 
         # Add some other content types with quality
         latest_quality = 9
-        for r in range(0, random.randint(0, len(content_types))):
-            header.append('%s;0.%i,' %(content_types.pop(), last_quality))
-            latest_quality = random.randint(last_quality-2, last_quality)
+        for r in range(0, random.randint(1, len(content_types))):
+            header.append('%s;0.%i,' %(content_types.pop(), latest_quality))
+            latest_quality = random.randint(latest_quality-2, latest_quality)
 
         # Add
         header.append('*/*')
 
-        return header
+        return ''.join(header)
