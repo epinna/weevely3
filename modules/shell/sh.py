@@ -6,7 +6,6 @@ from core import messages
 from core import modules
 import random
 
-
 class Sh(Module):
 
     """Execute Shell commands.
@@ -98,8 +97,10 @@ class Sh(Module):
 
     def run(self, args):
 
-        # Properly quote the quotes
-        args['command'].replace("'", "'\\''")
+        # Escape the single quotes. This does not protect from \' but
+        # avoid to break the query for an unscaped quote.
+
+        args['command'] = args['command'].replace("'", "\\'")
 
         return self.vectors.get_result(
          name = args['vector'],
