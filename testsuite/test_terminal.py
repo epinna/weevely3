@@ -88,3 +88,11 @@ class TerminalTest(BaseTest):
                 messages.terminal.backdoor_unavailable
             )
         )
+
+    @log_capture()
+    def test_quote_error(self, log_captured):
+
+        err_msg = 'Error parsing command: No closing quotation'
+
+        self._assert_exec(':shell_php \'', err_msg, log_captured)
+        self._assert_exec(':set shell_php "', err_msg, log_captured)
