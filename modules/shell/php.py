@@ -34,12 +34,8 @@ class Php(Module):
                 'postfix_string': '',
             })
 
-        self.channel = Channel(
-            self.session['url'],
-            self.session['password'])
-
     def setup(self, args={}):
-        """Basic check if some PHP remote interpreter is working.
+        """Instauration of the PHP channel.
 
         Args:
             args: The dictionary of arguments
@@ -49,14 +45,21 @@ class Php(Module):
 
         """
 
-        enabled = True
+        self.channel = Channel(
+            url = self.session['url'],
+            password = self.session['password'],
+            channel_name = self.session['channel']
+        )
+
+        enabled = False
         rand = str(random.randint(11111, 99999))
 
         command = 'echo(%s);' % rand
         response, code = self.channel.send(command)
 
-        if rand != response:
-            enabled = False
+        if rand == response:
+            enabled = True
+            self.session['channel'] = self.channel.channel_name
 
         # If the response is wrong, warn about the
         # error code

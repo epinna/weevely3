@@ -32,6 +32,7 @@ class Channel:
 
         # Create channel instance
         self.channel_loaded = channel_object(url, password)
+        self.channel_name = channel_name
 
     def send(self, payload):
 

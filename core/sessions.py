@@ -57,6 +57,11 @@ class Session(dict):
                 self[module_name] = value
                 log.info("%s = '%s'" % (module_name, value))
 
+                # If the channel is changed, the basic shell_php should be
+                # setup again.
+                if module_name == 'channel':
+                    self['shell_php']['enabled'] = False
+
 class SessionFile(Session):
 
     def __init__(self, dbpath, volatile = False):

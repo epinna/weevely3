@@ -11,7 +11,6 @@ class sessions:
     error_loading_sessions = 'Session can not be loaded'
     error_storing_s_not_found = 'Error storing argument in session, \'%s\' argument not found or can\'t be set.'
 
-
 class channels:
     error_loading_channel_s = 'Error loading channel \'%s\''
 
