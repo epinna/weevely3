@@ -2,6 +2,7 @@ from core.vectors import Vectors
 from core.weexceptions import DevException
 from core.loggers import log
 from core import messages
+from mako.template import Template
 import shlex
 import getopt
 import utilities
@@ -117,9 +118,18 @@ class Module:
         return True
 
     def help(self):
-        """ Override to implement specific module help """
+        """ Function called on terminal help command """
 
-        log.info(self.info['description'])
+        option_args_help = Template(
+            messages.help.optional_arguments
+        ).render(
+            module_name = self.name,
+            description = self.info['description'],
+            arguments = self.args_optional,
+            vector_arg = (self.vector_argument, self.vectors.get_names())
+        )
+
+        log.info(option_args_help)
 
     def _register_info(self, info):
         self.info = info

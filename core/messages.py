@@ -63,3 +63,16 @@ class generate:
     error_agent_template_s_s = 'Error with agent template \'%s\': %s'
     error_obfuscator_template_s_s = 'Error with obfuscator template \'%s\': %s'
     generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
+
+class help:
+    optional_arguments = """Basic ${module_name} usage
+======================
+${description}
+
+Optional arguments (also settable with ':set ${module_name}.variable value')
+======================================================================
+
+% for arg, value in arguments.items():
+    --${arg}=[value]\t${ '(default: %s)' % value if value else '' }\t${ '(choices: %s)' % ','.join(vector_arg[1]) if vector_arg and vector_arg[0] == arg else '' }
+% endfor
+"""
