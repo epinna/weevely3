@@ -69,7 +69,8 @@ class StegaRef:
             opener.addheaders = [
                 ('Referer', referrer_data[0]),
                 ('Accept-Language', accept_language_header),
-                ('Accept', accept_header)
+                ('Accept', accept_header),
+                ('User-Agent', random.choice(self.agents))
             ]
 
             logfile.debug(
