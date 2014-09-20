@@ -12,13 +12,13 @@ class AgentDEFAULTObfuscatorDefault(BaseDefaultChannel):
         self._incremental_requests(1, 100, 1, 3)
 
     def test_100_1000_requests(self):
-        self._incremental_requests(100, 1000, 5, 15)
+        self._incremental_requests(100, 1000, 90, 300)
 
     def test_1000_10000_requests(self):
-        self._incremental_requests(1000, 10000, 900, 1100)
+        self._incremental_requests(1000, 10000, 900, 3000)
 
-    def test_10000_100000_requests(self):
-        self._incremental_requests(1000, 100000, 40000, 60000)
+    def test_10000_50000_requests(self):
+        self._incremental_requests(10000, 50000, 9000, 30000)
 
 
 @unittest.skipIf(
