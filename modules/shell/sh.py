@@ -1,5 +1,5 @@
 from core.vector import PhpCmd
-from core.module import Module
+from core.module import Module, Status
 from core.loggers import log
 from core.utilities import Os
 from core import messages
@@ -76,14 +76,14 @@ class Sh(Module):
           names = [ args.get('vector', '') ],
             arguments = args_check,
             condition = lambda result: (
-                            # Stop if shell_php is disabled
-                            not self.session['shell_php'].get('enabled') or
-                            # Or if the result is correct
-                            self.session['shell_php'].get('enabled') and result == check_digits
-                            )
+                # Stop if shell_php is in FAIL state
+                self.session['shell_php']['status'] == Status.FAIL or
+                # Or if the result is correct
+                self.session['shell_php']['status'] == Status.RUN and result == check_digits
+                )
             )
 
-        if self.session['shell_php'].get('enabled') and result == check_digits:
+        if self.session['shell_php']['status'] == Status.RUN and result == check_digits:
             self.session['shell_sh']['stored_args']['vector'] = vector_name
             return True
         else:

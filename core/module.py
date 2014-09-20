@@ -7,6 +7,11 @@ import shlex
 import getopt
 import utilities
 
+class Status:
+    IDLE = 0
+    RUN = 1
+    FAIL = 2
+
 class Module:
 
     def __init__(self, session, name):
@@ -21,7 +26,8 @@ class Module:
             self.session[self.name] = {
                 'stored_args': {},
                 'results': {},
-                'enabled': None}
+                'status': Status.IDLE
+            }
 
         self.initialize()
 
@@ -95,9 +101,17 @@ class Module:
             log.warn(messages.module.argument_s_must_be_a_vector % self.vector_argument)
             return
 
-        # If module is not already enable, launch setup()
-        if not self.session[self.name]['enabled']:
-            self.session[self.name]['enabled'] = self.setup(args)
+        # If module status is IDLE, launch setup()
+        if self.session[self.name]['status'] == Status.IDLE:
+            self.session[self.name]['status'] = (
+                Status.RUN if self.setup(args)
+                else Status.FAIL
+            )
+
+        # If module status is FAIL, return
+        if self.session[self.name]['status'] == Status.FAIL:
+            log.warn(messages.module.setup_failed_module_s_inactive % self.name)
+            return
 
         # Merge again stored arguments with current args, cause setup() method could
         # store additional args.
@@ -109,8 +123,7 @@ class Module:
                 )
         )
 
-        if self.session[self.name]['enabled']:
-            return self.run(args)
+        return self.run(args)
 
     def setup(self, args={}):
         """ Override to implement specific module setup """

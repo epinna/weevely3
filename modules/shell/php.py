@@ -34,6 +34,8 @@ class Php(Module):
                 'postfix_string': '',
             })
 
+        self.channel = None
+
     def setup(self, args={}):
         """Instauration of the PHP channel.
 
@@ -45,11 +47,7 @@ class Php(Module):
 
         """
 
-        self.channel = Channel(
-            url = self.session['url'],
-            password = self.session['password'],
-            channel_name = self.session['channel']
-        )
+        self._instantiate_channel()
 
         enabled = False
         rand = str(random.randint(11111, 99999))
@@ -65,12 +63,14 @@ class Php(Module):
         # error code
         self._print_response_status(command, code, response)
 
-        log.debug('PHP check: %s' % enabled)
+        log.debug('PHP shell is %s' % 'running' if enabled else 'failed')
 
         return enabled
 
     def run(self, args):
         """ Run module """
+
+        self._instantiate_channel()
 
         cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
@@ -124,3 +124,15 @@ class Php(Module):
         if (command_last_chars and
               command_last_chars[-1] not in ( ';', '}' )):
             log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
+
+    def _instantiate_channel(self):
+        """The channel presence check and eventual instantation has to be
+        done both in setup() than in run(), to have a slack instantiation"""
+
+        if self.channel: return
+        
+        self.channel = Channel(
+            url = self.session['url'],
+            password = self.session['password'],
+            channel_name = self.session['channel']
+        )

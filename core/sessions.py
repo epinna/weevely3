@@ -2,6 +2,7 @@ from core import messages
 from core.weexceptions import FatalException
 from core.config import sessions_path, sessions_ext
 from core.loggers import log
+from core.module import Status
 import os
 import json
 import glob
@@ -57,10 +58,10 @@ class Session(dict):
                 self[module_name] = value
                 log.info("%s = '%s'" % (module_name, value))
 
-                # If the channel is changed, the basic shell_php should be
-                # setup again.
+                # If the channel is changed, the basic shell_php is moved
+                # to IDLE and must be setup again.
                 if module_name == 'channel':
-                    self['shell_php']['enabled'] = False
+                    self['shell_php']['status'] = Status.IDLE
 
 class SessionFile(Session):
 

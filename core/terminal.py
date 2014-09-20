@@ -3,6 +3,7 @@ from core.loggers import log
 from core import messages
 from core import modules
 from core import config
+from core.module import Status
 import readline
 import cmd
 import glob
@@ -13,7 +14,7 @@ import atexit
 class CmdModules(cmd.Cmd):
 
     identchars = cmd.Cmd.identchars + ':'
-    doc_header = "Documented modules and commands (type :help <module>):"
+    doc_header = "Modules and commands (type :help <module>):"
     nohelp = "[!] No help on %s"
 
     def complete(self, text, state):
@@ -74,9 +75,10 @@ class CmdModules(cmd.Cmd):
             raise EOFError()
         if cmd == '':
             return self.default(line)
-        if cmd.startswith(':'):
+        # Support all commands but also command replacement
+        if cmd.startswith(':') or cmd in ('ls', 'cd'):
             try:
-                func = getattr(self, 'do_' + cmd[1:])
+                func = getattr(self, 'do_' + cmd.lstrip(':'))
             except AttributeError:
                 return self.default(line)
             return func(arg)
@@ -112,31 +114,37 @@ class Terminal(CmdModules):
         if not line or line.startswith(':set'):
             return line
 
-        # Setup shell_sh if is never tried
-        if not self.session['shell_sh']['enabled']:
-            self.session['shell_sh']['enabled'] = modules.loaded['shell_sh'].setup()
-
-        # Check results to set the default shell
-        for shell in ('shell_sh', 'shell_php'):
-            if self.session[shell]['enabled']:
-                self.session['default_shell'] = shell
-                break
-
-        # Check if some shell is loaded
+        # If no default shell is available
         if not self.session.get('default_shell'):
-            log.error(messages.terminal.backdoor_unavailable)
-            return ''
+
+            # Setup shell_sh if is never tried
+            if self.session['shell_sh']['status'] == Status.IDLE:
+                self.session['shell_sh']['status'] = (
+                    Status.RUN if modules.loaded['shell_sh'].setup()
+                    else Status.FAIL
+                )
+
+            for shell in ('shell_sh', 'shell_php'):
+                if self.session[shell]['status'] == Status.RUN:
+                    self.session['default_shell'] = shell
+                    break
+
+            # Re-check if some shell is loaded
+            if not self.session.get('default_shell'):
+                log.error(messages.terminal.backdoor_unavailable)
+                return ''
+
+            # Get hostname and whoami if not set
+            if not self.session['system_info']['results'].get('hostname'):
+                modules.loaded['system_info'].run_argv(["--info=hostname"])
+
+            if not self.session['system_info']['results'].get('whoami'):
+                modules.loaded['system_info'].run_argv(["--info=whoami"])
 
         # Get current working directory if not set
+        # Should be OK to repeat this every time if not set.
         if not self.session['file_cd']['results'].get('cwd'):
             self.do_file_cd(".")
-
-        # Get hostname and whoami if not set
-        if not self.session['system_info']['results'].get('hostname'):
-            modules.loaded['system_info'].run_argv(["--info=hostname"])
-
-        if not self.session['system_info']['results'].get('whoami'):
-            modules.loaded['system_info'].run_argv(["--info=whoami"])
 
         return line
 
@@ -149,7 +157,7 @@ class Terminal(CmdModules):
         else:
             if default_shell == 'shell_sh':
                 prompt = '$'
-            elif default_shell == 'shell_ph':
+            elif default_shell == 'shell_php':
                 prompt = 'PHP>'
             else:
                 prompt = '?'
