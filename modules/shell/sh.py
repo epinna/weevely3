@@ -10,7 +10,7 @@ class Sh(Module):
 
     """Execute Shell commands."""
 
-    def initialize(self):
+    def init(self):
 
         self._register_info(
             {

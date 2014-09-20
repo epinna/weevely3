@@ -11,7 +11,7 @@ class Upload(Module):
 
     """Upload file to remote filesystem."""
 
-    def initialize(self):
+    def init(self):
 
         self._register_info(
             {

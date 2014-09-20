@@ -8,7 +8,7 @@ class Name(Module):
 
     """Find files with matching name."""
 
-    def initialize(self):
+    def init(self):
 
         self._register_info(
             {

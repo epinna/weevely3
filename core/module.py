@@ -15,13 +15,13 @@ class Status:
 class Module:
 
     def __init__(self, session, name):
-        """ Initialize module data structures. """
+        """ init module data structures. """
 
         self.name = name
         self.session = session
         self.vectors = Vectors(session, name)
 
-        # Initialize session db for current session
+        # init session db for current session
         if name not in self.session:
             self.session[self.name] = {
                 'stored_args': {},
@@ -29,7 +29,7 @@ class Module:
                 'status': Status.IDLE
             }
 
-        self.initialize()
+        self.init()
 
     def run_cmdline(self, line):
         """ Function called from terminal to run module. Accepts command line string. """

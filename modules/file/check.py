@@ -9,7 +9,7 @@ class Check(Module):
 
     """Check remote files type, md5, or permissions"""
 
-    def initialize(self):
+    def init(self):
 
         self._register_info(
             {

@@ -31,7 +31,7 @@ class StegaRef:
 
         self.url = url
 
-        # Initialize regexp for the returning data
+        # init regexp for the returning data
         self.re_response = re.compile(
             "<%s>(.*)</%s>" %
             (self.shared_key[

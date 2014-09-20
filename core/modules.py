@@ -18,7 +18,7 @@ def load_modules(session):
         module = __import__(
             'modules.%s.%s' %
             (module_group, module_name), fromlist=["*"])
-        # Initialize class, passing current terminal instance and module
+        # init class, passing current terminal instance and module
         # name
         module_class = getattr(
             module, classname)(

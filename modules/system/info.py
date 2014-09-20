@@ -8,7 +8,7 @@ class Info(Module):
 
     """Collect system information."""
 
-    def initialize(self):
+    def init(self):
 
         self._register_info(
             {

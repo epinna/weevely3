@@ -8,7 +8,7 @@ class Ls(Module):
 
     """List directory content ('ls' replacement)"""
 
-    def initialize(self):
+    def init(self):
 
         self._register_info(
             {
