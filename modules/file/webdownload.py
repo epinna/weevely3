@@ -20,15 +20,6 @@ class Webdownload(Module):
             }
         )
 
-        self._register_arguments(
-            arguments=[
-                'url',
-                'rpath'
-            ],
-            options={
-                'vector' : 'file_put_contents'
-            },
-            vector_argument = 'vector')
 
         self._register_vectors(
             [
@@ -43,6 +34,17 @@ class Webdownload(Module):
             )
             ]
         )
+
+        self._register_arguments(
+            arguments=[
+                'url',
+                'rpath'
+            ],
+            options={
+                'vector' : 'file_put_contents'
+            },
+            vector_argument = 'vector')
+
 
     def run(self, args):
 
