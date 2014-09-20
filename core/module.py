@@ -66,18 +66,18 @@ class Module:
                     '%s=' %
                     a for a in self.args_optional.keys()])
         except getopt.GetoptError as e:
-            log.info('%s\n%s' % (e, self.__doc__))
+            log.info('%s' % (e))
+            self.help()
             return
 
         # If less mandatory arguments are passed, abort
         if len(line_args_mandatory) < len(self.args_mandatory):
-            log.info(
-                '%s\n%s' %
-                (messages.generic.error_missing_arguments_s %
-                 (' '.join(
-                     self.args_mandatory)),
-                    self.__doc__))
+            log.info(messages.generic.error_missing_arguments_s %
+                    (' '.join(self.args_mandatory))
+            )
+            self.help()
             return
+
         # If there are more argument and we expect one, join all the
         # Remaining mandatory arguments
         elif len(line_args_mandatory) > 1 and len(self.args_mandatory) == 1:
