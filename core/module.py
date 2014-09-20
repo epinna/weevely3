@@ -40,7 +40,7 @@ class Module:
             log.warn(messages.generic.error_parsing_command_s % str(e))
             return
 
-        if result is not None:
+        if result not in (None, ''):
             log.info(utilities.stringify(result))
 
         # Data is returned for the testing of _cmdline calls
@@ -84,7 +84,9 @@ class Module:
             line_args_mandatory = [ ' '.join( line_args_mandatory ) ]
 
         # Merge stored arguments with line arguments
-        args = self.session[self.name]['stored_args'].copy()
+        stored_args = self.session[self.name]['stored_args'].copy()
+        args = stored_args.copy()
+
         args.update(
                 dict(
                     (key.strip('-'), value) for
@@ -113,13 +115,12 @@ class Module:
             log.warn(messages.module.setup_failed_module_s_inactive % self.name)
             return
 
-        # Merge again stored arguments with current args, cause setup() method could
-        # store additional args.
-        # TODO: This still need some fix (what if I want to store ''?)
+        # Setup() could has been stored additional args, so all the updated
+        # stored arguments are applied to args
         args.update(
             dict(
                 (key, value) for key, value in self.session[self.name]['stored_args'].items()
-                if value != ''
+                if value != stored_args[key]
                 )
         )
 
