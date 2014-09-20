@@ -25,9 +25,9 @@ class Name(Module):
             ],
             options={
                 'rpath': '.',
-                'equal': '',
+                'contains': '',
                 'case' : '',
-                'recursion' : 'True',
+                'recursive' : 'True',
                 'vector' : 'php_recursive'
             },
             vector_argument = 'vector')
@@ -35,16 +35,14 @@ class Name(Module):
         self._register_vectors(
             [
             PhpCmd("""swp('${args['rpath']}');
-function ckdir($df, $f) { return ($f!='.')&&($f!='..')&&@is_dir($df);} function match($f) {return preg_match("${ \"/%s/%s\" % ( '^%s$' % (args['string']) if args['equal'] else args['string'], 'i' if not args['case'] else '') }",$f);}
+function ckdir($df, $f) { return ($f!='.')&&($f!='..')&&@is_dir($df);} function match($f) {return preg_match("${ \"/%s/%s\" % ( '^%s$' % (args['string']) if not args['contains'] else args['string'], 'i' if not args['case'] else '') }",$f);}
 function swp($d){ $h=@opendir($d);while($f = readdir($h)) { $df=$d.'/'.$f; if(($f!='.')&&($f!='..')&&match($f))
-print($df."\n"); if(@ckdir($df,$f)&&${False if (not args['recursion'] or args['recursion'].lower() == 'false') else True}) @swp($df); }
+print($df."\n"); if(@ckdir($df,$f)&&${False if (not args['recursive'] or args['recursive'].lower() == 'false') else True}) @swp($df); }
 if($h) { @closedir($h); } }""", 'php_recursive'
             ),
-            ShellCmd("""find ${args['rpath']} ${ '-maxdepth 1' if not args['recursion'] else '' } ${ '-name' if args['case'] else '-iname' } "${ '*%s*' % (args['string']) if not args['equal'] else args['string'] }" 2>/dev/null""", "sh_find")
+            ShellCmd("""find ${args['rpath']} ${ '-maxdepth 1' if not args['recursive'] else '' } ${ '-name' if args['case'] else '-iname' } "${ '*%s*' % (args['string']) if args['contains'] else args['string'] }" 2>/dev/null""", "sh_find")
             ]
         )
 
-
     def run(self, args):
-
         return self.vectors.get_result(args['vector'], { 'args' : args })
