@@ -112,7 +112,7 @@ class Module:
 
         # If module status is FAIL, return
         if self.session[self.name]['status'] == Status.FAIL:
-            log.warn(messages.module.setup_failed_module_s_inactive % self.name)
+            log.warn(messages.module.module_s_inactive % self.name)
             return
 
         # Setup() could has been stored additional args, so all the updated
