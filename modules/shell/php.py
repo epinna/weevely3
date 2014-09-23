@@ -3,7 +3,7 @@ from core.module import Module
 from core import messages
 from core import utilities
 from core.channels.channel import Channel
-from core.loggers import log
+from core.loggers import log, dlog
 import random
 
 
@@ -104,7 +104,8 @@ class Php(Module):
 #           )
 #        )
 
-        log.debug(command)
+        log.debug('PAYLOAD %s' % command)
+        dlog.info('== RESPONSE ==\n%s==== END ====' % response)
 
         if response: return
 

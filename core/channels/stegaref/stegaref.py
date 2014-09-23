@@ -1,6 +1,6 @@
 from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
-from core.loggers import logfile
+from core.loggers import dlog
 from core import utilities
 from mako.template import Template
 import core.messages
@@ -73,7 +73,7 @@ class StegaRef:
                 ('User-Agent', random.choice(self.agents))
             ]
 
-            logfile.debug(
+            dlog.debug(
                 '[v:%i/%i] %s %s %s' %
                 (referrer_index,
                  len(referrers_data),
@@ -89,7 +89,7 @@ class StegaRef:
             # Multiple debug string may have been printed, using findall
             matched_debug = self.re_debug.findall(response)
             if matched_debug:
-                logfile.debug('\n'.join(matched_debug))
+                dlog.debug('\n'.join(matched_debug))
 
             matched = self.re_response.search(response)
             if matched and matched.group(1):
@@ -136,8 +136,8 @@ class StegaRef:
 
         remaining_payload = header + obfuscated_payload + footer
 
-        logfile.debug('DATA TO SEND: ' + remaining_payload)
-        logfile.debug('HEADER: %s, FOOTER %s' % (header, footer))
+        dlog.debug('DATA TO SEND: ' + remaining_payload)
+        dlog.debug('HEADER: %s, FOOTER %s' % (header, footer))
 
         referrers = []
 

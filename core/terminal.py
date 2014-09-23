@@ -1,5 +1,5 @@
 from core.weexceptions import FatalException
-from core.loggers import log
+from core.loggers import log, dlog
 from core import messages
 from core import modules
 from core import config
@@ -109,6 +109,8 @@ class Terminal(CmdModules):
 
     def precmd(self, line):
         """Before to execute a line commands. Confirm shell availability and get basic system infos """
+
+        dlog.info('>>>> %s' % line)
 
         # Skip slack check is not a remote command
         if not line or line.startswith(':set'):
