@@ -27,5 +27,5 @@ class Ls(Module):
     def run(self, args):
 
         return PhpCmd("""$p="${dir}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}""").run(
-            **args
+            args
         )
