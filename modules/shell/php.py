@@ -24,11 +24,11 @@ class Php(Module):
 
         self._register_arguments(
             # Declare mandatory commands
-            arguments=[
+            mandatory = [
                 'command'
             ],
             # Declare additional options
-            options={
+            optional = {
                 'prefix_string': '',
                 'post_data': '',
                 'postfix_string': '',

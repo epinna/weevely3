@@ -159,15 +159,15 @@ class Module:
         if not self.info['description']:
             raise DevException(messages.module.error_module_missing_description)
 
-    def _register_arguments(self, arguments = [], options = {}, vector_argument = ''):
+    def _register_arguments(self, mandatory = [], optional = {}, vector_argument = ''):
         """ Register additional modules options """
 
-        self.args_mandatory = arguments
-        self.args_optional = options.copy()
+        self.args_mandatory = mandatory
+        self.args_optional = optional.copy()
 
         # Arguments in session has more priority than registered variables
-        options.update(self.session[self.name]['stored_args'])
-        self.session[self.name]['stored_args'] = options
+        optional.update(self.session[self.name]['stored_args'])
+        self.session[self.name]['stored_args'] = optional
 
         self.vector_argument = vector_argument
 

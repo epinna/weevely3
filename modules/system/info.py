@@ -20,7 +20,7 @@ class Info(Module):
         )
 
         self._register_arguments(
-            options={
+            optional = {
                 'info': '' # Comma separated information to request
             },
             vector_argument = 'info')

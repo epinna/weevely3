@@ -24,12 +24,12 @@ class Upload(Module):
 
         self._register_arguments(
             # Declare mandatory arguments
-            arguments=[
+            mandatory = [
                 'lpath',
                 'rpath'
             ],
             # Declare additional options
-            options={
+            optional = {
                 'content': '',
                 'vector': ''
             },

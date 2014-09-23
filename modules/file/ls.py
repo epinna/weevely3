@@ -20,7 +20,7 @@ class Ls(Module):
         )
 
         self._register_arguments(
-            options={
+            optional = {
                 'dir': '.'
             })
 

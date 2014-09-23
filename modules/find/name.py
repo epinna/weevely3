@@ -20,10 +20,10 @@ class Name(Module):
         )
 
         self._register_arguments(
-            arguments =[
+            mandatory = [
                 'string'
             ],
-            options={
+            optional = {
                 'rpath': '.',
                 'contains': '',
                 'case' : '',

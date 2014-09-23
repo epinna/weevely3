@@ -23,11 +23,11 @@ class Sh(Module):
 
         self._register_arguments(
             # Declare mandatory arguments
-            arguments=[
+            mandatory = [
                 'command'
             ],
             # Declare additional options
-            options={
+            optional = {
                 'stderr_redirection': ' 2>&1',
                 'vector': ''
             },

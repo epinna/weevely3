@@ -22,7 +22,7 @@ class Cd(Module):
 
         self._register_arguments(
             # Declare mandatory arguments
-            arguments=[
+            mandatory = [
                 'dir'
             ])
 

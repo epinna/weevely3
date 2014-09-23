@@ -36,11 +36,11 @@ class Webdownload(Module):
         )
 
         self._register_arguments(
-            arguments=[
+            mandatory = [
                 'url',
                 'rpath'
             ],
-            options={
+            optional = {
                 'vector' : 'file_put_contents'
             },
             vector_argument = 'vector')

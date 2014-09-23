@@ -21,7 +21,7 @@ class Check(Module):
         )
 
         self._register_arguments(
-            arguments=[
+            mandatory = [
                 'rpath',
                 'check'
             ],
