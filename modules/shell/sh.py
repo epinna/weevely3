@@ -31,7 +31,7 @@ class Sh(Module):
                 'stderr_redirection': ' 2>&1',
                 'vector': ''
             },
-            vector_argument = 'vector')
+            bind_to_vectors = 'vector')
 
         self._register_vectors(
             [

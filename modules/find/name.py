@@ -30,7 +30,7 @@ class Name(Module):
                 'recursive' : 'True',
                 'vector' : 'php_recursive'
             },
-            vector_argument = 'vector')
+            bind_to_vectors = 'vector')
 
         self._register_vectors(
             [

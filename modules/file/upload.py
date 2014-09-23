@@ -33,7 +33,7 @@ class Upload(Module):
                 'content': '',
                 'vector': ''
             },
-            vector_argument = 'vector')
+            bind_to_vectors = 'vector')
 
         self._register_vectors(
             [

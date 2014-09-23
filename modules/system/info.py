@@ -23,7 +23,7 @@ class Info(Module):
             optional = {
                 'info': '' # Comma separated information to request
             },
-            vector_argument = 'info')
+            bind_to_vectors = 'info')
 
         self._register_vectors(
             [

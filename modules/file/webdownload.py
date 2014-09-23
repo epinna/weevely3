@@ -43,7 +43,7 @@ class Webdownload(Module):
             optional = {
                 'vector' : 'file_put_contents'
             },
-            vector_argument = 'vector')
+            bind_to_vectors = 'vector')
 
 
     def run(self, args):

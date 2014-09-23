@@ -25,7 +25,7 @@ class Check(Module):
                 'rpath',
                 'check'
             ],
-            vector_argument = 'check')
+            bind_to_vectors = 'check')
 
         self._register_vectors(
             [

@@ -96,11 +96,11 @@ class Module:
         args.update(dict((key, line_args_mandatory.pop(0))
                          for key in self.args_mandatory))
 
-        # Check if argument passed to vector_argument matches with
+        # Check if argument passed to bind_to_vectors matches with
         # some vector
-        vect_arg_value = args.get(self.vector_argument)
+        vect_arg_value = args.get(self.bind_to_vectors)
         if vect_arg_value and vect_arg_value not in self.vectors.get_names():
-            log.warn(messages.module.argument_s_must_be_a_vector % self.vector_argument)
+            log.warn(messages.module.argument_s_must_be_a_vector % self.bind_to_vectors)
             return
 
         # If module status is IDLE, launch setup()
@@ -142,7 +142,7 @@ class Module:
             mand_arguments = self.args_mandatory,
             opt_arguments = self.args_optional,
             stored_arguments = self.session[self.name]['stored_args'],
-            vector_arg = (self.vector_argument, self.vectors.get_names())
+            vector_arg = (self.bind_to_vectors, self.vectors.get_names())
         )
 
         log.info(option_args_help)
@@ -159,7 +159,7 @@ class Module:
         if not self.info['description']:
             raise DevException(messages.module.error_module_missing_description)
 
-    def _register_arguments(self, mandatory = [], optional = {}, vector_argument = ''):
+    def _register_arguments(self, mandatory = [], optional = {}, bind_to_vectors = ''):
         """ Register additional modules options """
 
         self.args_mandatory = mandatory
@@ -169,7 +169,7 @@ class Module:
         optional.update(self.session[self.name]['stored_args'])
         self.session[self.name]['stored_args'] = optional
 
-        self.vector_argument = vector_argument
+        self.bind_to_vectors = bind_to_vectors
 
     def _register_vectors(self, vectors):
         """ Add module vectors """
