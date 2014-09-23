@@ -1,3 +1,4 @@
+import logging.handlers
 import logging
 import sys
 import core.config
@@ -21,33 +22,37 @@ class WeevelyFormatter(logging.Formatter):
         self._fmt = self.FORMATS.get(record.levelno, self.FORMATS['DEFAULT'])
         return logging.Formatter.format(self, record)
 
-def setup_logger(logger_name, log_file = None, level = logging.INFO):
-
-    """Returns the proper logger.
-    When logfile parameter is set, the logger dumps to the file"""
-
-    l = logging.getLogger(logger_name)
-    formatter = WeevelyFormatter()
-
-    if log_file:
-        fileHandler = logging.FileHandler(log_file)
-        fileHandler.setFormatter(formatter)
-        l.addHandler(fileHandler)
-    else:
-        streamHandler = logging.StreamHandler()
-        streamHandler.setFormatter(formatter)
-        l.addHandler(streamHandler)
-
-    l.setLevel(level)
 
 if not os.path.isdir(core.config.base_path):
     os.makedirs(core.config.base_path)
 
-setup_logger('log',
-              level = logging.DEBUG)
-setup_logger('logfile',
-              log_file = os.path.join(core.config.base_path, 'weevely.log'),
-              level = logging.INFO)
+"""Initialize the handler to dump log to files"""
+log_path = os.path.join(core.config.base_path, 'weevely.log')
+file_handler = logging.handlers.RotatingFileHandler(
+    log_path,
+    mode='a',
+    maxBytes=5*1024*1024,
+    backupCount=2,
+    encoding=None,
+    delay=0
+    )
+file_handler.setFormatter(WeevelyFormatter())
 
+"""Initialize the normal handler"""
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(WeevelyFormatter())
+
+"""Initialize the standard logger"""
 log = logging.getLogger('log')
-logfile = logging.getLogger('logfile')
+log.addHandler(file_handler)
+log.addHandler(stream_handler)
+# We can set the a different level for to the two handlers,
+# but the global has to be set to the lowest. Fair enough. 
+log.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.INFO)
+
+"""Initialize the debug logger, that dumps just to logfile"""
+dlog = logging.getLogger('dlog')
+dlog.addHandler(file_handler)
+dlog.setLevel(logging.INFO)
