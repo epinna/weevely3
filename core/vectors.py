@@ -59,8 +59,7 @@ class Vectors(list):
     def get_result(self, name, arguments = {}, store_as_result = ''):
         """Run one vector.
 
-        Run the vectors with specified name. With unspecified names,
-        run all the vectors. Optionally store results.
+        Run the vector with specified name. Optionally store results.
 
         Args:
             arguments: The dictionary of arguments to format the vectors with.
@@ -86,12 +85,12 @@ class Vectors(list):
     def get_results(self, names = [ '' ], arguments = {}, names_to_store_result = [ ]):
         """Run all the vectors.
 
-        Returns a dictionary with the vector names as keys and result as arguments.
-        With unspecified names, run all the vectors. Optionally store results.
+        Returns a dictionary with the vector names as keys and the results as arguments.
+        With unspecified names, execute all the vectors. Optionally store results.
 
         Args:
             arguments: The dictionary of arguments to format the vectors with.
-            names: The names lists of vectors to execute.
+            names: A list of names of vectors to execute.
             names_to_store: The names lists of vectors of which save the
                 returned result.
 
