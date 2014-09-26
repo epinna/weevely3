@@ -1,9 +1,24 @@
+"""
+This module define a Vectors object, used to store the vectors relative to certain
+weevely modules.
+
+Weevely modules have a Vectors object stored in the `self.vectors` attribute.
+This is usually filled calling `_register_vectors()` in the `init()` function,
+and consumed in the `run()` or `check()` methods.
+
+The methods exposed by the Vectors object can be used to get the result of a
+given vector execution with `get_result()`, get all the results of a bunch of
+vectors with `get_results()`, or get the result of the first vector that
+response in the way we want with `find_first_result()`.
+
+"""
+
+from core.utilities import Os
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
 from core import modules
 from core import utilities
 from core import messages
-from core.utilities import Os
 
 class Vectors(list):
 
@@ -14,7 +29,7 @@ class Vectors(list):
 
         list.__init__(self)
 
-    def find_first_result(self, names = [ '' ], arguments = {}, condition = None, store_result = False, store_name = ''):
+    def find_first_result(self, names = [], arguments = {}, condition = None, store_result = False, store_name = ''):
         """ Execute all the vectors returning the result matching the given condition.
 
         Return the name and the result of the first vector that gives the response that satisfy
@@ -26,7 +41,7 @@ class Vectors(list):
             names: The names lists of vectors to execute.
             arguments: The dictionary of arguments to format the vectors with.
             condition: The function to verify the result condition is verified (returns
-                a true value). This has to be a function.
+            a true value). This has to be a function.
             store_result: Store as result. This has to be a boolean.
             store_name: Store the found vector name as argument. This must contain a string
             with the argument.
@@ -86,7 +101,7 @@ class Vectors(list):
             return result
 
 
-    def get_results(self, names = [ '' ], arguments = {}, results_to_store = [ ]):
+    def get_results(self, names = [], arguments = {}, results_to_store = [ ]):
         """Run all the vectors.
 
         Returns a dictionary with the vector names as keys and the results as arguments.
@@ -96,7 +111,7 @@ class Vectors(list):
             names: A list of names of vectors to execute.
             arguments: The dictionary of arguments to format the vectors with.
             results_to_store: The names lists of vectors of which save the
-                returned result.
+            returned result.
 
         Returns:
             A dictionary with all the vector results in the
@@ -120,7 +135,7 @@ class Vectors(list):
         return response
 
     def _os_match(self, os):
-        """Check if vector os is compatible with the remote os"""
+        """Check if vector os is compatible with the remote os."""
 
         os_string = self.session['system_info']['results'].get('os')
 
@@ -132,7 +147,20 @@ class Vectors(list):
         return os in (os_current, Os.ANY)
 
     def get_by_name(self, name):
+        """Get the vector object by name.
+
+        Args:
+            name: the name of the requested vector.
+
+        Returns:
+            The vector object.
+        """
         return next(v for v in self if v.name == name)
 
     def get_names(self):
+        """Get the vectors names.
+
+        Returns:
+            A list of vector names strings.
+        """
         return [ v.name for v in self ]
