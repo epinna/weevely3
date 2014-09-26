@@ -1,3 +1,15 @@
+"""
+This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.
+
+The method `run()` has to be called to execute the payload and get the result.
+
+* `PhpCmd` vector contains PHP code, sent through the `shell_php` module.
+* `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.
+* `ModuleCmd` vector execute the given module with the given options.
+
+ShellCmd and PhpCmd inherit from ModuleCmd class.
+"""
+
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
 from core import modules
@@ -5,6 +17,7 @@ from core import utilities
 from core import messages
 
 class ModuleCmd:
+    """Vector containing module arguments to run via the given module."""
 
     def __init__(self, module, options, name = '', target = 0, postprocess = lambda x: x):
 
@@ -29,6 +42,19 @@ class ModuleCmd:
         return [ Template(option).render(**values) for option in self.options ]
 
     def run(self, format_args = {}):
+        """Run the module with the formatted payload.
+
+        Render the contained payload with mako and pass the result
+        as argument to the given module. The result is processed by the
+        `self.postprocess` method.
+
+        Args:
+            format_arg: Is the dictionary to format the payload with.
+
+        Return:
+            The postprocessed result returned by the `run_argv` call.
+
+        """
 
         try:
             formatted = self.format(format_args)
@@ -42,6 +68,8 @@ class ModuleCmd:
         )
 
 class ShellCmd(ModuleCmd):
+
+    """Vector containing shell command to run via `shell_sh` module. Inherit `ModuleCmd`"""
 
     def __init__(self, payload, name = None, target = 0, postprocess = lambda x: x):
 
@@ -59,6 +87,8 @@ class ShellCmd(ModuleCmd):
 
 
 class PhpCmd(ModuleCmd):
+
+    """Vector containing PHP code to run via `shell_php` module. Inherit `ModuleCmd`"""
 
     def __init__(self, payload, name = None, target = 0, postprocess = lambda x: x):
 

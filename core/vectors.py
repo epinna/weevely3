@@ -30,19 +30,23 @@ class Vectors(list):
         list.__init__(self)
 
     def find_first_result(self, names = [], arguments = {}, condition = None, store_result = False, store_name = ''):
-        """ Execute all the vectors returning the result matching the given condition.
+        """ Execute all the vectors and return the first result matching the given condition.
 
-        Return the name and the result of the first vector that gives the response that satisfy
-        a certain condition.
+        Return the name and the result of the first vector execution response that satisfy
+        the given condition.
 
-        With unspecified names, apply to all the vectors. Optionally store results.
+        With unspecified names, execute all the vectors. Optionally store results.
 
         Args:
             names: The names lists of vectors to execute.
+
             arguments: The dictionary of arguments to format the vectors with.
+
             condition: The function to verify the result condition is verified (returns
             a true value). This has to be a function.
+
             store_result: Store as result. This has to be a boolean.
+
             store_name: Store the found vector name as argument. This must contain a string
             with the argument.
 
@@ -76,13 +80,15 @@ class Vectors(list):
         return None, None
 
     def get_result(self, name, arguments = {}, store_result = ''):
-        """Run one vector.
+        """Execute one vector and return the result.
 
         Run the vector with specified name. Optionally store results.
 
         Args:
             name: The name string of vector to execute.
+
             arguments: The dictionary of arguments to format the vectors with.
+
             store_result: Store as result. This has to be a boolean.
 
         Returns:
@@ -102,15 +108,18 @@ class Vectors(list):
 
 
     def get_results(self, names = [], arguments = {}, results_to_store = [ ]):
-        """Run all the vectors.
+        """Execute all the vectors and return the results.
 
-        Returns a dictionary with the vector names as keys and the results as arguments.
+        Return a dictionary with the vector names as keys and the results as arguments.
         With unspecified names, execute all the vectors. Optionally store results.
 
         Args:
             names: A list of names of vectors to execute.
+
             arguments: The dictionary of arguments to format the vectors with.
+
             results_to_store: The names lists of vectors of which save the
+
             returned result.
 
         Returns:
