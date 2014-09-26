@@ -51,6 +51,6 @@ class Info(Module):
     def run(self, args):
 
         return self.vectors.get_results(
-         names = args['info'].split(','),
-         names_to_store_result = ['whoami', 'hostname', 'dir_sep', 'os']
-         )
+            names = args['info'].split(','),
+            results_to_store = ['whoami', 'hostname', 'dir_sep', 'os']
+        )

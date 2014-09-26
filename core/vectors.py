@@ -14,7 +14,7 @@ class Vectors(list):
 
         list.__init__(self)
 
-    def find_first_result(self, names = [ '' ], arguments = {}, condition = None, store_as_result = '', store_as_argument = ''):
+    def find_first_result(self, names = [ '' ], arguments = {}, condition = None, store_result = False, store_name = ''):
         """ Execute all the vectors returning the result matching the given condition.
 
         Return the name and the result of the first vector that gives the response that satisfy
@@ -27,17 +27,19 @@ class Vectors(list):
             arguments: The dictionary of arguments to format the vectors with.
             condition: The function to verify the result condition is verified (returns
                 a true value). This has to be a function.
-            store_as_result: Store as result
-            store_as_argument: Store as argument
-
+            store_result: Store as result. This has to be a boolean.
+            store_name: Store the found vector name as argument. This must contain a string
+            with the argument.
 
         Returns:
-            A tuple containing the vector name, and the vector result.
+            A tuple with the vector results in the `( vector_name, result )` form.
 
         """
 
         if not callable(condition):
-            raise DevException(messages.vectors.wrong_unless_type)
+            raise DevException(messages.vectors.wrong_condition_type)
+        if not isinstance(store_name, str):
+            raise DevException(messages.vectors.wrong_store_name_type)
 
         for vector in self:
 
@@ -49,25 +51,27 @@ class Vectors(list):
 
             if condition(result):
 
-                if store_as_result:
+                if store_result:
                     self.session[self.module_name]['results'][vector.name] = result
+                if store_name:
+                    self.session[self.module_name]['stored_args'][store_name] = vector.name
 
                 return vector.name, result
 
         return None, None
 
-    def get_result(self, name, arguments = {}, store_as_result = ''):
+    def get_result(self, name, arguments = {}, store_result = ''):
         """Run one vector.
 
         Run the vector with specified name. Optionally store results.
 
         Args:
-            arguments: The dictionary of arguments to format the vectors with.
             name: The name string of vector to execute.
-            store: The boolean value to store the result.
+            arguments: The dictionary of arguments to format the vectors with.
+            store_result: Store as result. This has to be a boolean.
 
         Returns:
-            A string with the execution result.
+            An object with the vector execution result.
 
         """
 
@@ -76,28 +80,27 @@ class Vectors(list):
         if vector and self._os_match(vector.target):
             result = vector.run(arguments)
 
-            if store_as_result:
+            if store_result:
                 self.session[self.module_name]['results'][name] = result
 
             return result
 
 
-    def get_results(self, names = [ '' ], arguments = {}, names_to_store_result = [ ]):
+    def get_results(self, names = [ '' ], arguments = {}, results_to_store = [ ]):
         """Run all the vectors.
 
         Returns a dictionary with the vector names as keys and the results as arguments.
         With unspecified names, execute all the vectors. Optionally store results.
 
         Args:
-            arguments: The dictionary of arguments to format the vectors with.
             names: A list of names of vectors to execute.
-            names_to_store: The names lists of vectors of which save the
+            arguments: The dictionary of arguments to format the vectors with.
+            results_to_store: The names lists of vectors of which save the
                 returned result.
 
         Returns:
-            A dict mapping keys to the corresponding the executed vectors
-            results.
-
+            A dictionary with all the vector results in the
+            `{ vector_name : result }` form.
         """
 
         response = {}
@@ -110,15 +113,14 @@ class Vectors(list):
 
             response[vector.name] = vector.run(arguments)
 
-            if not any(x in vector.name for x in names_to_store_result): continue
+            if not any(x in vector.name for x in results_to_store): continue
 
             self.session[self.module_name]['results'][vector.name] = response[vector.name]
 
         return response
 
     def _os_match(self, os):
-        """Check if vector os is compatible with the remote os
-        """
+        """Check if vector os is compatible with the remote os"""
 
         os_string = self.session['system_info']['results'].get('os')
 
@@ -130,9 +132,7 @@ class Vectors(list):
         return os in (os_current, Os.ANY)
 
     def get_by_name(self, name):
-        for vector in self:
-            if vector.name == name:
-                return vector
+        return next(v for v in self if v.name == name)
 
     def get_names(self):
         return [ v.name for v in self ]
