@@ -2,7 +2,7 @@ Weevely
 =======
 
 > This is a complete rewrite of Weevely, and currently is a beta version. 
-> Any module ported from the old version helps to get closer to the first stable release. Any help is appreciated. Read below for further information.
+> Any module ported from the old version get close the first stable release. Any help is appreciated. Read below for further information.
 
 Weevely is a PHP web shell that provides a weaponized telnet-like interface to administrate a remote web access. 
 
