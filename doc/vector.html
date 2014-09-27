@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Vector classes definition &mdash; weevely-ng 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="weevely-ng 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Vectors list class definition" href="vectors.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vectors.html" title="Vectors list class definition"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">weevely-ng 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vector-classes-definition">
+<h1>Vector classes definition<a class="headerlink" href="#vector-classes-definition" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-core.vector"></span><p>This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.</p>
+<p>The method <cite>run()</cite> has to be called to execute the payload and get the result.</p>
+<ul class="simple">
+<li><cite>PhpCmd</cite> vector contains PHP code, sent through the <cite>shell_php</cite> module.</li>
+<li><cite>ShellCmd</cite> vector contains a shell command, sent through the <cite>shell_sh</cite> module.</li>
+<li><cite>ModuleCmd</cite> vector execute the given module with the given options.</li>
+</ul>
+<p>ShellCmd and PhpCmd inherit from ModuleCmd class.</p>
+<dl class="class">
+<dt id="core.vector.ModuleCmd">
+<em class="property">class </em><tt class="descclassname">core.vector.</tt><tt class="descname">ModuleCmd</tt><big>(</big><em>module</em>, <em>options</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2b25880200c8&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vector.html#ModuleCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vector.ModuleCmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vector containing module arguments to run via the given module.</p>
+<dl class="method">
+<dt id="core.vector.ModuleCmd.run">
+<tt class="descname">run</tt><big>(</big><em>format_args={}</em><big>)</big><a class="reference internal" href="_modules/core/vector.html#ModuleCmd.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vector.ModuleCmd.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the module with the formatted payload.</p>
+<p>Render the contained payload with mako and pass the result
+as argument to the given module. The result is processed by the
+<cite>self.postprocess</cite> method.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>format_arg: Is the dictionary to format the payload with.</dd>
+<dt>Return:</dt>
+<dd>The postprocessed result returned by the <cite>run_argv</cite> call.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="core.vector.PhpCmd">
+<em class="property">class </em><tt class="descclassname">core.vector.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2b2588020398&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vector.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vector.PhpCmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vector containing PHP code to run via <cite>shell_php</cite> module. Inherit <cite>ModuleCmd</cite></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="core.vector.ShellCmd">
+<em class="property">class </em><tt class="descclassname">core.vector.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2b25880202a8&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vector.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vector.ShellCmd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vector containing shell command to run via <cite>shell_sh</cite> module. Inherit <cite>ModuleCmd</cite></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vectors.html"
+                        title="previous chapter">Vectors list class definition</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/vector.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vectors.html" title="Vectors list class definition"
+             >previous</a> |</li>
+        <li><a href="index.html">weevely-ng 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Emilio Pinna.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>
