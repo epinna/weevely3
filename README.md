@@ -26,4 +26,4 @@ Weevely also provides python API which can be used to develop your own module to
 
 #### This is still a version under heavy development and still some features are missing.
 
-If you want to add a new module, or help us to port the old weevely modules, consult the [Wiki](https://github.com/epinna/weevely3/wikii) pages and the [Developing a new module](https://github.com/epinna/weevely3/wiki/developing-a-new-module) tutorial.
+If you want to add a new module, or help us to port the old weevely modules, consult the [Wiki](https://github.com/epinna/weevely3/wiki) pages and the [Developing a new module](https://github.com/epinna/weevely3/wiki/developing-a-new-module) tutorial.
