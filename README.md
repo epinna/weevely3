@@ -8,12 +8,12 @@ Weevely is a PHP web shell that provides a weaponized telnet-like interface to a
 
 Its modules extensiblity provides a terminal to administrate a web account, audit the target security, pivot deeper in the target network, and much more. It is an essential tool for web access administration, web application post exploitation, and access maintaining, even with heavily restricted remote enviroinments. 
 
-#### Some features
+The modules feature:
 
-* Weaponized telnet-like console
+* Weaponized Shell/PHP network console
 * Common server misconfigurations auditing
 * SQL console pivoting on target network 
-* Proxy your HTTP traffic through target
+* HTTP traffic proxy through target
 * Mount target filesystem to local mount point
 * Run scans or pivoted exploiting through target network
 * File transfer from and to target
