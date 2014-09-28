@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>VectorsList class definition &mdash; weevely-ng 3.0.1beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.1beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="weevely-ng 3.0.1beta documentation" href="index.html" />
+    <link rel="prev" title="Vector classes definition" href="vectors.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vectors.html" title="Vector classes definition"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vectorslist-class-definition">
+<h1>VectorsList class definition<a class="headerlink" href="#vectorslist-class-definition" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-core.vectorslist"></span><p>This module define a <cite>VectorsList</cite> object, used to store the vectors relative
+in weevely modules.</p>
+<p>Modules execute <cite>_register_vectors()</cite> at init to initialize a VectorsList list
+as <cite>self.vectors</cite> module attribute.</p>
+<p>The methods exposed by VectorsList can be used to get the result of a
+given vector execution with <cite>get_result()</cite>, get all the results of a bunch of
+vectors with <cite>get_results()</cite>, or get the result of the first vector that
+response in the way we want with <cite>find_first_result()</cite>.</p>
+<dl class="class">
+<dt id="core.vectorslist.VectorsList">
+<em class="property">class </em><tt class="descclassname">core.vectorslist.</tt><tt class="descname">VectorsList</tt><big>(</big><em>session</em>, <em>module_name</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="core.vectorslist.VectorsList.find_first_result">
+<tt class="descname">find_first_result</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>condition=None</em>, <em>store_result=False</em>, <em>store_name=''</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.find_first_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.find_first_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute all the vectors and return the first result matching the given condition.</p>
+<p>Return the name and the result of the first vector execution response that satisfy
+the given condition.</p>
+<p>With unspecified names, execute all the vectors. Optionally store results.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">names (list of str): The list of names of vectors to execute.</p>
+<p>format_args (dict): The arguments dictionary used to format the vectors with.</p>
+<p>condition (function): The function or lambda to check certain conditions on result.
+Must returns boolean.</p>
+<p>store_result (bool): Store as result.</p>
+<p class="last">store_name (str): Store the found vector name in the specified argument.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Tuple. Contains the vector name and execution result in the
+<cite>( vector_name, result )</cite> form.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.vectorslist.VectorsList.get_result">
+<tt class="descname">get_result</tt><big>(</big><em>name</em>, <em>format_args={}</em>, <em>store_result=''</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute one vector and return the result.</p>
+<p>Run the vector with specified name. Optionally store results.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">name (str): The name of vector to execute.</p>
+<p>format_args (dict): The arguments dictionary used to format the vectors with.</p>
+<p class="last">store_result (bool): Store as result.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Object. Contains the vector execution result.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.vectorslist.VectorsList.get_results">
+<tt class="descname">get_results</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>results_to_store=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute all the vectors and return the results.</p>
+<p>With unspecified names, execute all the vectors. Optionally store results.
+Returns a dictionary with results.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">names (list of str): The list of names of vectors to execute.</p>
+<p>format_args (dict): The arguments dictionary used to format the vectors with.</p>
+<p class="last">results_to_store (list of str): The list of names of the vectors which
+store the execution result.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>Dictionary. Contains all the vector results in the
+<cite>{ vector_name : result }</cite> form.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.vectorslist.VectorsList.get_by_name">
+<tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vector object by name.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>name (str): the name of the requested vector.</dd>
+<dt>Returns:</dt>
+<dd>Vector object.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.vectorslist.VectorsList.get_names">
+<tt class="descname">get_names</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vectors names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>List of strings. Contain vectors names.</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vectors.html"
+                        title="previous chapter">Vector classes definition</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/vectorslist.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vectors.html" title="Vector classes definition"
+             >previous</a> |</li>
+        <li><a href="index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Emilio Pinna.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

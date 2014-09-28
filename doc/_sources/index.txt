@@ -22,7 +22,7 @@ Given below the API documentation about the Module class and the Vectors and Vec
    :maxdepth: 2
 
    vectors
-   vector
+   vectorslist
 
 
 Indices and tables

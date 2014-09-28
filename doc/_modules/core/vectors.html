@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>core.vectors &mdash; weevely-ng 0.1 documentation</title>
+    <title>core.vectors &mdash; weevely-ng 3.0.1beta documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1',
+        VERSION:     '3.0.1beta',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="weevely-ng 0.1 documentation" href="../../index.html" />
+    <link rel="top" title="weevely-ng 3.0.1beta documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">weevely-ng 0.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,180 +48,112 @@
             
   <h1>Source code for core.vectors</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This module define a Vectors object, used to store the vectors relative to certain</span>
-<span class="sd">weevely modules.</span>
+<span class="sd">This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.</span>
 
-<span class="sd">Weevely modules have a Vectors object stored in the `self.vectors` attribute.</span>
-<span class="sd">This is usually filled calling `_register_vectors()` in the `init()` function,</span>
-<span class="sd">and consumed in the `run()` or `check()` methods.</span>
+<span class="sd">The method `run()` of every class should be redefined to execute the</span>
+<span class="sd">wanted payloads and get the results.</span>
 
-<span class="sd">The methods exposed by the Vectors object can be used to get the result of a</span>
-<span class="sd">given vector execution with `get_result()`, get all the results of a bunch of</span>
-<span class="sd">vectors with `get_results()`, or get the result of the first vector that</span>
-<span class="sd">response in the way we want with `find_first_result()`.</span>
+<span class="sd">* `PhpCmd` vector contains PHP code, sent through the `shell_php` module.</span>
+<span class="sd">* `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.</span>
+<span class="sd">* `ModuleCmd` vector execute the given module with the given arguments.</span>
 
+<span class="sd">ShellCmd and PhpCmd inherit from ModuleCmd class.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">core.utilities</span> <span class="kn">import</span> <span class="n">Os</span>
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span><span class="p">,</span> <span class="n">ModuleError</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">modules</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">utilities</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
 
-<div class="viewcode-block" id="Vectors"><a class="viewcode-back" href="../../vectors.html#core.vectors.Vectors">[docs]</a><span class="k">class</span> <span class="nc">Vectors</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
+<div class="viewcode-block" id="ModuleCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ModuleCmd">[docs]</a><span class="k">class</span> <span class="nc">ModuleCmd</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Vector containing module arguments to run via the given module.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">module_name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">module_name</span> <span class="o">=</span> <span class="n">module_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="k">else</span> <span class="n">utilities</span><span class="o">.</span><span class="n">randstr</span><span class="p">()</span>
 
-        <span class="nb">list</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arguments</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Vectors.find_first_result"><a class="viewcode-back" href="../../vectors.html#core.vectors.Vectors.find_first_result">[docs]</a>    <span class="k">def</span> <span class="nf">find_first_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">condition</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">store_result</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">store_name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Execute all the vectors and return the first result matching the given condition.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">target</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_target_type</span><span class="p">)</span>
 
-<span class="sd">        Return the name and the result of the first vector execution response that satisfy</span>
-<span class="sd">        the given condition.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">postprocess</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_postprocessing_type</span><span class="p">)</span>
 
-<span class="sd">        With unspecified names, execute all the vectors. Optionally store results.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            names: The names lists of vectors to execute.</span>
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span> <span class="n">Template</span><span class="p">(</span><span class="n">option</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span> <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="p">]</span>
 
-<span class="sd">            arguments: The dictionary of arguments to format the vectors with.</span>
+<div class="viewcode-block" id="ModuleCmd.run"><a class="viewcode-back" href="../../vectors.html#core.vectors.ModuleCmd.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_args</span> <span class="o">=</span> <span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Run the module with the formatted payload.</span>
 
-<span class="sd">            condition: The function to verify the result condition is verified (returns</span>
-<span class="sd">            a true value). This has to be a function.</span>
-
-<span class="sd">            store_result: Store as result. This has to be a boolean.</span>
-
-<span class="sd">            store_name: Store the found vector name as argument. This must contain a string</span>
-<span class="sd">            with the argument.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A tuple with the vector results in the `( vector_name, result )` form.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_condition_type</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">store_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_store_name_type</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span> <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
-
-            <span class="n">result</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">condition</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
-
-                <span class="k">if</span> <span class="n">store_result</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">][</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
-                <span class="k">if</span> <span class="n">store_name</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">][</span><span class="n">store_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span>
-
-                <span class="k">return</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">result</span>
-
-        <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
-</div>
-<div class="viewcode-block" id="Vectors.get_result"><a class="viewcode-back" href="../../vectors.html#core.vectors.Vectors.get_result">[docs]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">store_result</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Execute one vector and return the result.</span>
-
-<span class="sd">        Run the vector with specified name. Optionally store results.</span>
+<span class="sd">        Render the contained payload with mako and pass the result</span>
+<span class="sd">        as argument to the given module. The result is processed by the</span>
+<span class="sd">        `self.postprocess` method.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name: The name string of vector to execute.</span>
+<span class="sd">            format_arg (dict): The dictionary to format the payload with.</span>
 
-<span class="sd">            arguments: The dictionary of arguments to format the vectors with.</span>
-
-<span class="sd">            store_result: Store as result. This has to be a boolean.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An object with the vector execution result.</span>
+<span class="sd">        Return:</span>
+<span class="sd">            Object. Contains the postprocessed result of the `run_argv`</span>
+<span class="sd">            module execution.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">formatted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">traceback</span>
+            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_arguments_type</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">vector</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span>
+          <span class="n">modules</span><span class="o">.</span><span class="n">loaded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
+        <span class="p">)</span>
+</div></div>
+<div class="viewcode-block" id="ShellCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ShellCmd">[docs]</a><span class="k">class</span> <span class="nc">ShellCmd</span><span class="p">(</span><span class="n">ModuleCmd</span><span class="p">):</span>
 
-            <span class="k">if</span> <span class="n">store_result</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="sd">&quot;&quot;&quot;Vector containing shell command to run via `shell_sh` module. Inherit `ModuleCmd`&quot;&quot;&quot;</span>
 
-            <span class="k">return</span> <span class="n">result</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
+
+        <span class="n">ModuleCmd</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;shell_sh&#39;</span><span class="p">,</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">],</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
+            <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
+        <span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="Vectors.get_results"><a class="viewcode-back" href="../../vectors.html#core.vectors.Vectors.get_results">[docs]</a>    <span class="k">def</span> <span class="nf">get_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">results_to_store</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;Execute all the vectors and return the results.</span>
+<div class="viewcode-block" id="PhpCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpCmd">[docs]</a><span class="k">class</span> <span class="nc">PhpCmd</span><span class="p">(</span><span class="n">ModuleCmd</span><span class="p">):</span>
 
-<span class="sd">        Return a dictionary with the vector names as keys and the results as arguments.</span>
-<span class="sd">        With unspecified names, execute all the vectors. Optionally store results.</span>
+    <span class="sd">&quot;&quot;&quot;Vector containing PHP code to run via `shell_php` module. Inherit `ModuleCmd`&quot;&quot;&quot;</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            names: A list of names of vectors to execute.</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
 
-<span class="sd">            arguments: The dictionary of arguments to format the vectors with.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
 
-<span class="sd">            results_to_store: The names lists of vectors of which save the</span>
-
-<span class="sd">            returned result.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A dictionary with all the vector results in the</span>
-<span class="sd">            `{ vector_name : result }` form.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">response</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span> <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
-
-            <span class="n">response</span><span class="p">[</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">arguments</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">results_to_store</span><span class="p">):</span> <span class="k">continue</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">][</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">response</span>
-</div>
-    <span class="k">def</span> <span class="nf">_os_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">os</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if vector os is compatible with the remote os.&quot;&quot;&quot;</span>
-
-        <span class="n">os_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s">&#39;system_info&#39;</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;os&#39;</span><span class="p">)</span>
-
-        <span class="c"># If os_string is not set, just return True and continue</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os_string</span><span class="p">:</span> <span class="k">return</span> <span class="bp">True</span>
-
-        <span class="n">os_current</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">WIN</span> <span class="k">if</span> <span class="n">os_string</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;win&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">Os</span><span class="o">.</span><span class="n">NIX</span>
-
-        <span class="k">return</span> <span class="n">os</span> <span class="ow">in</span> <span class="p">(</span><span class="n">os_current</span><span class="p">,</span> <span class="n">Os</span><span class="o">.</span><span class="n">ANY</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Vectors.get_by_name"><a class="viewcode-back" href="../../vectors.html#core.vectors.Vectors.get_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the vector object by name.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            name: the name of the requested vector.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The vector object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">name</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="Vectors.get_names"><a class="viewcode-back" href="../../vectors.html#core.vectors.Vectors.get_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get the vectors names.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A list of vector names strings.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[</span> <span class="n">v</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span> <span class="p">]</span></div></div>
+        <span class="n">ModuleCmd</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;shell_php&#39;</span><span class="p">,</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">],</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
+            <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
+        <span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -255,7 +187,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">weevely-ng 0.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
