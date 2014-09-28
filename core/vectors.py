@@ -1,7 +1,8 @@
 """
 This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.
 
-The method `run()` has to be called to execute the payload and get the result.
+The method `run()` of every class should be redefined to execute the
+wanted payloads and get the results.
 
 * `PhpCmd` vector contains PHP code, sent through the `shell_php` module.
 * `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.
@@ -49,10 +50,11 @@ class ModuleCmd:
         `self.postprocess` method.
 
         Args:
-            format_arg: Is the dictionary to format the payload with.
+            format_arg (dict): The dictionary to format the payload with.
 
         Return:
-            The postprocessed result returned by the `run_argv` call.
+            Object. Contains the postprocessed result of the `run_argv`
+            module execution.
 
         """
 

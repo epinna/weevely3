@@ -1,10 +1,9 @@
 """
-This module define a VectorsList object, used to store the vectors relative
-to certain weevely modules.
+This module define a `VectorsList` object, used to store the vectors relative
+in weevely modules.
 
-Weevely modules have a Vectors object stored in the `self.vectors` attribute.
-This is usually filled calling `_register_vectors()` in the `init()` function,
-and consumed in the `run()` or `check()` methods.
+Modules execute `_register_vectors()` at init to initialize a VectorsList list
+as `self.vectors` module attribute.
 
 The methods exposed by VectorsList can be used to get the result of a
 given vector execution with `get_result()`, get all the results of a bunch of
@@ -38,20 +37,20 @@ class VectorsList(list):
         With unspecified names, execute all the vectors. Optionally store results.
 
         Args:
-            names: The names lists of vectors to execute.
+            names (list of str): The list of names of vectors to execute.
 
-            arguments: The dictionary of arguments to format the vectors with.
+            arguments (dict): The arguments dictionary used to format the vectors with.
 
-            condition: The function to verify the result condition is verified (returns
-            a true value). This has to be a function.
+            condition (function): The function or lambda to check certain conditions on result.
+            Must returns boolean.
 
-            store_result: Store as result. This has to be a boolean.
+            store_result (bool): Store as result.
 
-            store_name: Store the found vector name as argument. This must contain a string
-            with the argument.
+            store_name (str): Store the found vector name in the specified argument.
 
         Returns:
-            A tuple with the vector results in the `( vector_name, result )` form.
+            Tuple. Contains the vector name and execution result in the
+            `( vector_name, result )` form.
 
         """
 
@@ -85,14 +84,14 @@ class VectorsList(list):
         Run the vector with specified name. Optionally store results.
 
         Args:
-            name: The name string of vector to execute.
+            name (str): The name of vector to execute.
 
-            arguments: The dictionary of arguments to format the vectors with.
+            arguments (dict): The arguments dictionary used to format the vectors with.
 
-            store_result: Store as result. This has to be a boolean.
+            store_result (bool): Store as result.
 
         Returns:
-            An object with the vector execution result.
+            Object. Contains the vector execution result.
 
         """
 
@@ -114,16 +113,15 @@ class VectorsList(list):
         With unspecified names, execute all the vectors. Optionally store results.
 
         Args:
-            names: A list of names of vectors to execute.
+            names (list of str): The list of names of vectors to execute.
 
-            arguments: The dictionary of arguments to format the vectors with.
+            arguments (dict): The arguments dictionary used to format the vectors with.
 
-            results_to_store: The names lists of vectors of which save the
-
-            returned result.
+            results_to_store (list of str): The list of names of the vectors which
+            store the execution result.
 
         Returns:
-            A dictionary with all the vector results in the
+            Dictionary. Contains all the vector results in the
             `{ vector_name : result }` form.
         """
 
@@ -159,10 +157,10 @@ class VectorsList(list):
         """Get the vector object by name.
 
         Args:
-            name: the name of the requested vector.
+            name (str): the name of the requested vector.
 
         Returns:
-            The vector object.
+            Vector object.
         """
         return next(v for v in self if v.name == name)
 
@@ -170,6 +168,6 @@ class VectorsList(list):
         """Get the vectors names.
 
         Returns:
-            A list of vector names strings.
+            List of strings. Contain vectors names.
         """
         return [ v.name for v in self ]
