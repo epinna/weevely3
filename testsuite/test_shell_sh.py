@@ -1,5 +1,5 @@
 from testsuite.base_test import BaseTest
-from core.vector import PhpCmd
+from core.vectors import PhpCmd
 from core.utilities import Os
 from core import modules
 from core.sessions import SessionURL

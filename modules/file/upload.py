@@ -1,4 +1,4 @@
-from core.vector import PhpCmd, ModuleCmd
+from core.vectors import PhpCmd, ModuleCmd
 from core.module import Module
 from core import messages
 from core.loggers import log
