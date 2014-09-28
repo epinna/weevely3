@@ -19,7 +19,7 @@ class SystemInfo(BaseTest):
         # Spoil all the module sessions but the safe one
         for i in range(0, len(modules.loaded['shell_sh'].vectors)):
             name = modules.loaded['shell_sh'].vectors[i].name
-            payload = modules.loaded['shell_sh'].vectors[i].options[0]
+            payload = modules.loaded['shell_sh'].vectors[i].arguments[0]
 
             if name != vector_safe_name:
                 modules.loaded['shell_sh'].vectors[i] = PhpCmd('\'"%s' % payload, name)

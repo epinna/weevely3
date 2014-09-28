@@ -6,7 +6,7 @@ wanted payloads and get the results.
 
 * `PhpCmd` vector contains PHP code, sent through the `shell_php` module.
 * `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.
-* `ModuleCmd` vector execute the given module with the given options.
+* `ModuleCmd` vector execute the given module with the given arguments.
 
 ShellCmd and PhpCmd inherit from ModuleCmd class.
 """
@@ -20,12 +20,12 @@ from core import messages
 class ModuleCmd:
     """Vector containing module arguments to run via the given module."""
 
-    def __init__(self, module, options, name = '', target = 0, postprocess = lambda x: x):
+    def __init__(self, module, arguments, name = '', target = 0, postprocess = lambda x: x):
 
         self.name = name if name else utilities.randstr()
 
-        if isinstance(options, list):
-            self.options = options
+        if isinstance(arguments, list):
+            self.arguments = arguments
         else:
             raise DevException(messages.vectors.wrong_payload_type)
 
@@ -40,7 +40,7 @@ class ModuleCmd:
         self.postprocess = postprocess
 
     def format(self, values):
-        return [ Template(option).render(**values) for option in self.options ]
+        return [ Template(option).render(**values) for option in self.arguments ]
 
     def run(self, format_args = {}):
         """Run the module with the formatted payload.
@@ -81,7 +81,7 @@ class ShellCmd(ModuleCmd):
         ModuleCmd.__init__(
             self,
             module = 'shell_sh',
-            options = [ payload ],
+            arguments = [ payload ],
             name = name,
             target = target,
             postprocess = postprocess
@@ -100,7 +100,7 @@ class PhpCmd(ModuleCmd):
         ModuleCmd.__init__(
             self,
             module = 'shell_php',
-            options = [ payload ],
+            arguments = [ payload ],
             name = name,
             target = target,
             postprocess = postprocess
