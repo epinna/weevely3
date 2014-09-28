@@ -28,7 +28,7 @@ class VectorsList(list):
 
         list.__init__(self)
 
-    def find_first_result(self, names = [], arguments = {}, condition = None, store_result = False, store_name = ''):
+    def find_first_result(self, names = [], format_args = {}, condition = None, store_result = False, store_name = ''):
         """ Execute all the vectors and return the first result matching the given condition.
 
         Return the name and the result of the first vector execution response that satisfy
@@ -39,7 +39,7 @@ class VectorsList(list):
         Args:
             names (list of str): The list of names of vectors to execute.
 
-            arguments (dict): The arguments dictionary used to format the vectors with.
+            format_args (dict): The arguments dictionary used to format the vectors with.
 
             condition (function): The function or lambda to check certain conditions on result.
             Must returns boolean.
@@ -65,7 +65,7 @@ class VectorsList(list):
 
             if not any(x in vector.name for x in names): continue
 
-            result = vector.run(arguments)
+            result = vector.run(format_args)
 
             if condition(result):
 
@@ -78,7 +78,7 @@ class VectorsList(list):
 
         return None, None
 
-    def get_result(self, name, arguments = {}, store_result = ''):
+    def get_result(self, name, format_args = {}, store_result = ''):
         """Execute one vector and return the result.
 
         Run the vector with specified name. Optionally store results.
@@ -86,7 +86,7 @@ class VectorsList(list):
         Args:
             name (str): The name of vector to execute.
 
-            arguments (dict): The arguments dictionary used to format the vectors with.
+            format_args (dict): The arguments dictionary used to format the vectors with.
 
             store_result (bool): Store as result.
 
@@ -98,7 +98,7 @@ class VectorsList(list):
         vector = self.get_by_name(name)
 
         if vector and self._os_match(vector.target):
-            result = vector.run(arguments)
+            result = vector.run(format_args)
 
             if store_result:
                 self.session[self.module_name]['results'][name] = result
@@ -106,16 +106,16 @@ class VectorsList(list):
             return result
 
 
-    def get_results(self, names = [], arguments = {}, results_to_store = [ ]):
+    def get_results(self, names = [], format_args = {}, results_to_store = [ ]):
         """Execute all the vectors and return the results.
 
-        Return a dictionary with the vector names as keys and the results as arguments.
         With unspecified names, execute all the vectors. Optionally store results.
+        Returns a dictionary with results.
 
         Args:
             names (list of str): The list of names of vectors to execute.
 
-            arguments (dict): The arguments dictionary used to format the vectors with.
+            format_args (dict): The arguments dictionary used to format the vectors with.
 
             results_to_store (list of str): The list of names of the vectors which
             store the execution result.
@@ -133,7 +133,7 @@ class VectorsList(list):
 
             if not any(x in vector.name for x in names): continue
 
-            response[vector.name] = vector.run(arguments)
+            response[vector.name] = vector.run(format_args)
 
             if not any(x in vector.name for x in results_to_store): continue
 

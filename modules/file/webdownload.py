@@ -50,5 +50,5 @@ class Webdownload(Module):
 
         return self.vectors.get_result(
          name = args['vector'],
-         arguments = args
+         format_args = args
         )

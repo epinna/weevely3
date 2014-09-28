@@ -73,7 +73,7 @@ class Sh(Module):
         (vector_name,
          result) = self.vectors.find_first_result(
           names = [ args.get('vector', '') ],
-            arguments = args_check,
+            format_args = args_check,
             condition = lambda result: (
                 # Stop if shell_php is in FAIL state
                 self.session['shell_php']['status'] == Status.FAIL or
@@ -97,5 +97,5 @@ class Sh(Module):
 
         return self.vectors.get_result(
          name = args['vector'],
-         arguments = args
+         format_args = args
         )

@@ -72,5 +72,5 @@ class Check(Module):
 
         return self.vectors.get_result(
          name = args['check'],
-         arguments = args
+         format_args = args
         )

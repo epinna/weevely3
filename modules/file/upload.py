@@ -73,6 +73,6 @@ class Upload(Module):
             return
 
         vector_name, result = self.vectors.find_first_result(
-         arguments = { 'args' : args, 'content' : content },
+         format_args = { 'args' : args, 'content' : content },
          condition = lambda result: True if result == '1' else False
         )
