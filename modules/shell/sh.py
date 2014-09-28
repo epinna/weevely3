@@ -12,7 +12,7 @@ class Sh(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -21,7 +21,7 @@ class Sh(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             # Declare mandatory arguments
             mandatory = [
                 'command'
@@ -33,7 +33,7 @@ class Sh(Module):
             },
             bind_to_vectors = 'vector')
 
-        self._register_vectors(
+        self.register_vectors(
             [
             # All the system-like calls has to be properly wrapped between single quotes
             PhpCmd("""@system('${command}${stderr_redirection}');""", "system"),

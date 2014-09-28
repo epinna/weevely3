@@ -11,7 +11,7 @@ class Check(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -20,14 +20,14 @@ class Check(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             mandatory = [
                 'rpath',
                 'check'
             ],
             bind_to_vectors = 'check')
 
-        self._register_vectors(
+        self.register_vectors(
             [
             PhpCmd(
               "$f='${rpath}';((file_exists($f)||is_readable($f)||is_writable($f)||is_file($f)||is_dir($f))&&print(1))||print(0);",

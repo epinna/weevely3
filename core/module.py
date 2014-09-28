@@ -32,7 +32,17 @@ class Module:
         self.init()
 
     def run_cmdline(self, line):
-        """ Function called from terminal to run module. Accepts command line string. """
+        """Execute the module from command line.
+
+        Get command line string as argument. Called from terminal.
+
+        Args:
+            line (str): string containing the module arguments,
+            splitted and passed to `run()`.
+
+        Return:
+            Object. The result of the module execution.
+        """
 
         try:
             result = self.run_argv(shlex.split(line))
@@ -47,16 +57,16 @@ class Module:
         return result
 
     def run_argv(self, argv):
-        """ Main function to run module.
+        """Execute the module.
 
-        Receives arguments as list, parse with getopt, and validate
-        them. Then calls setup() and run() of module.
+        Get arguments list as argument. The arguments are parsed with getopt,
+        and validated. Then calls setup() and run() of module.
 
         Args:
-            argv: The list of arguments to execute the module with.
+            argv (list of str): The list of arguments passed to `run()`.
 
         Returns:
-            An object as result of the module run.
+            Object. The result of the module execution.
 
         """
 
@@ -127,7 +137,7 @@ class Module:
         return self.run(args)
 
     def setup(self, args={}):
-        """ Override to implement specific module setup """
+        """Override to implement specific module setup"""
 
         return True
 
@@ -147,7 +157,7 @@ class Module:
 
         log.info(option_args_help)
 
-    def _register_info(self, info):
+    def register_info(self, info):
         self.info = info
 
         # Add description from module __doc__ if missing
@@ -159,7 +169,7 @@ class Module:
         if not self.info['description']:
             raise DevException(messages.module.error_module_missing_description)
 
-    def _register_arguments(self, mandatory = [], optional = {}, bind_to_vectors = ''):
+    def register_arguments(self, mandatory = [], optional = {}, bind_to_vectors = ''):
         """ Register additional modules options """
 
         self.args_mandatory = mandatory
@@ -171,7 +181,7 @@ class Module:
 
         self.bind_to_vectors = bind_to_vectors
 
-    def _register_vectors(self, vectors):
+    def register_vectors(self, vectors):
         """ Add module vectors """
 
         self.vectors.extend(vectors)

@@ -13,7 +13,7 @@ class Php(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -22,7 +22,7 @@ class Php(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             # Declare mandatory commands
             mandatory = [
                 'command'

@@ -13,7 +13,7 @@ class Upload(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -22,7 +22,7 @@ class Upload(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             # Declare mandatory arguments
             mandatory = [
                 'lpath',
@@ -35,7 +35,7 @@ class Upload(Module):
             },
             bind_to_vectors = 'vector')
 
-        self._register_vectors(
+        self.register_vectors(
             [
             PhpCmd(
               "(file_put_contents('${rpath}', base64_decode('${content}'))&&print(1)) || print(0);",

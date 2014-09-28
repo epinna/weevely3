@@ -10,7 +10,7 @@ class Info(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -19,13 +19,13 @@ class Info(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             optional = {
                 'info': '' # Comma separated information to request
             },
             bind_to_vectors = 'info')
 
-        self._register_vectors(
+        self.register_vectors(
             [
             PhpCmd("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
             PhpCmd("$u=@posix_getpwuid(@posix_geteuid());if($u){$u=$u['name'];} else{$u=getenv('username');} print($u);", 'whoami'),

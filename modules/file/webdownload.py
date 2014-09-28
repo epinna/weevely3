@@ -11,7 +11,7 @@ class Webdownload(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -21,7 +21,7 @@ class Webdownload(Module):
         )
 
 
-        self._register_vectors(
+        self.register_vectors(
             [
             PhpCmd("""@file_put_contents("${rpath}", file_get_contents("${url}"));""",
               name = "file_put_contents"
@@ -35,7 +35,7 @@ class Webdownload(Module):
             ]
         )
 
-        self._register_arguments(
+        self.register_arguments(
             mandatory = [
                 'url',
                 'rpath'

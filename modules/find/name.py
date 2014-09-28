@@ -10,7 +10,7 @@ class Name(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -19,7 +19,7 @@ class Name(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             mandatory = [
                 'expression'
             ],
@@ -32,7 +32,7 @@ class Name(Module):
             },
             bind_to_vectors = 'vector')
 
-        self._register_vectors(
+        self.register_vectors(
             [
             PhpCmd("""swp('${rpath}');
 function ckdir($df, $f) { return ($f!='.')&&($f!='..')&&@is_dir($df);} function match($f) {return preg_match("${ \"/%s/%s\" % ( '^%s$' % (expression) if not contains else expression, 'i' if not case else '') }",$f);}

@@ -10,7 +10,7 @@ class Ls(Module):
 
     def init(self):
 
-        self._register_info(
+        self.register_info(
             {
                 'author': [
                     'Emilio Pinna'
@@ -19,7 +19,7 @@ class Ls(Module):
             }
         )
 
-        self._register_arguments(
+        self.register_arguments(
             optional = {
                 'dir': '.'
             })
