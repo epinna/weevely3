@@ -1,4 +1,4 @@
-from core.vectors import Vectors
+from core.vectorslist import VectorsList
 from core.weexceptions import DevException
 from core.loggers import log
 from core import messages
@@ -19,7 +19,7 @@ class Module:
 
         self.name = name
         self.session = session
-        self.vectors = Vectors(session, name)
+        self.vectors = VectorsList(session, name)
 
         # init session db for current session
         if name not in self.session:

@@ -1,12 +1,12 @@
 """
-This module define a Vectors object, used to store the vectors relative to certain
-weevely modules.
+This module define a VectorsList object, used to store the vectors relative
+to certain weevely modules.
 
 Weevely modules have a Vectors object stored in the `self.vectors` attribute.
 This is usually filled calling `_register_vectors()` in the `init()` function,
 and consumed in the `run()` or `check()` methods.
 
-The methods exposed by the Vectors object can be used to get the result of a
+The methods exposed by VectorsList can be used to get the result of a
 given vector execution with `get_result()`, get all the results of a bunch of
 vectors with `get_results()`, or get the result of the first vector that
 response in the way we want with `find_first_result()`.
@@ -20,7 +20,7 @@ from core import modules
 from core import utilities
 from core import messages
 
-class Vectors(list):
+class VectorsList(list):
 
     def __init__(self, session, module_name):
 
