@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="weevely-ng 3.0.1beta documentation" href="index.html" />
     <link rel="next" title="VectorsList class definition" href="vectorslist.html" />
-    <link rel="prev" title="Module Development API Documentation" href="index.html" /> 
+    <link rel="prev" title="Module class definition" href="module.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,7 +41,7 @@
           <a href="vectorslist.html" title="VectorsList class definition"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Module Development API Documentation"
+          <a href="module.html" title="Module class definition"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li> 
       </ul>
@@ -58,9 +58,7 @@
 <ul class="simple">
 </ul>
 </div>
-<span class="target" id="module-core.vectors"></span><p>This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.</p>
-<p>The method <cite>run()</cite> of every class should be redefined to execute the
-wanted payloads and get the results.</p>
+<span class="target" id="module-core.vectors"></span><p>The module <cite>core.vectors</cite> defines the following vectors classes.</p>
 <ul class="simple">
 <li><cite>PhpCmd</cite> vector contains PHP code, sent through the <cite>shell_php</cite> module.</li>
 <li><cite>ShellCmd</cite> vector contains a shell command, sent through the <cite>shell_sh</cite> module.</li>
@@ -69,7 +67,7 @@ wanted payloads and get the results.</p>
 <p>ShellCmd and PhpCmd inherit from ModuleCmd class.</p>
 <dl class="class">
 <dt id="core.vectors.ModuleCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ModuleCmd</tt><big>(</big><em>module</em>, <em>arguments</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2b6e642ec938&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleCmd" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ModuleCmd</tt><big>(</big><em>module</em>, <em>arguments</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2ae2ca129410&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vector containing module arguments to run via the given module.</p>
 <dl class="method">
 <dt id="core.vectors.ModuleCmd.run">
@@ -91,13 +89,13 @@ module execution.</dd>
 
 <dl class="class">
 <dt id="core.vectors.PhpCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2b6e642ecc08&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2ae2ca1296e0&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vector containing PHP code to run via <cite>shell_php</cite> module. Inherit <cite>ModuleCmd</cite></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="core.vectors.ShellCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2b6e642ecb18&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=&lt;function &lt;lambda&gt; at 0x2ae2ca1295f0&gt;</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vector containing shell command to run via <cite>shell_sh</cite> module. Inherit <cite>ModuleCmd</cite></p>
 </dd></dl>
 
@@ -110,8 +108,8 @@ module execution.</dd>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Module Development API Documentation</a></p>
+  <p class="topless"><a href="module.html"
+                        title="previous chapter">Module class definition</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="vectorslist.html"
                         title="next chapter">VectorsList class definition</a></p>
@@ -150,7 +148,7 @@ module execution.</dd>
           <a href="vectorslist.html" title="VectorsList class definition"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Module Development API Documentation"
+          <a href="module.html" title="Module class definition"
              >previous</a> |</li>
         <li><a href="index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li> 
       </ul>

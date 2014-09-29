@@ -1,0 +1,429 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>core.module &mdash; weevely-ng 3.0.1beta documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '3.0.1beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="weevely-ng 3.0.1beta documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for core.module</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The module `core.module` defines the `Module` class.</span>
+
+<span class="sd">The `Module` class has to be inherited to create a new weevely module.</span>
+
+<span class="sd">Normally, the following methods have to be overridden:</span>
+
+<span class="sd">* `init()`: This defines the basic module initialization. The `init()` method normally calls `register_info()`, `register_vectors()` and `register_arguments()`.</span>
+<span class="sd">* `check()`: This is called at the first run. Check and set the module status.</span>
+<span class="sd">* `run()`: This function is called on module run.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">core.vectorslist</span> <span class="kn">import</span> <span class="n">VectorsList</span>
+<span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span>
+<span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
+<span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">getopt</span>
+<span class="kn">import</span> <span class="nn">utilities</span>
+
+<div class="viewcode-block" id="Status"><a class="viewcode-back" href="../../module.html#core.module.Status">[docs]</a><span class="k">class</span> <span class="nc">Status</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Represent the module statuses.</span>
+
+<span class="sd">    Is stored in session[module][status] and is set by `setup()` call at the first run.</span>
+
+<span class="sd">    * Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the `Module.setup()` function is automatically called.</span>
+
+<span class="sd">    * Status.RUN: The module is properly running and can be call.</span>
+
+<span class="sd">    * Status.FAIL: The module setup failed. The execution of this module is automatically skipped.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IDLE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">RUN</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">FAIL</span> <span class="o">=</span> <span class="mi">2</span>
+</div>
+<div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../module.html#core.module.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Module object constructor.</span>
+
+<span class="sd">        This call the overridable `init()` method.</span>
+
+<span class="sd">        Normally does not need to be overridden.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span> <span class="o">=</span> <span class="n">VectorsList</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="c"># init session db for current session</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&#39;stored_args&#39;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s">&#39;results&#39;</span><span class="p">:</span> <span class="p">{},</span>
+                <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span>
+            <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">run_cmdline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute the module from command line.</span>
+
+<span class="sd">        Get command line string as argument. Called from terminal.</span>
+
+<span class="sd">        Normally does not need to be overridden.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            line (str): string containing the module arguments.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Object. The result of the module execution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">generic</span><span class="o">.</span><span class="n">error_parsing_command_s</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">utilities</span><span class="o">.</span><span class="n">stringify</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+        <span class="c"># Data is returned for the testing of _cmdline calls</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">run_argv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argv</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute the module.</span>
+
+<span class="sd">        Get arguments list as argument. The arguments are parsed with getopt,</span>
+<span class="sd">        and validated. Then calls setup() and run() of module.</span>
+
+<span class="sd">        Normally does not need to be overridden.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            argv (list of str): The list of arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Object. The result of the module execution.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">line_args_optional</span><span class="p">,</span> <span class="n">line_args_mandatory</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span>
+                <span class="n">argv</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="p">[</span>
+                    <span class="s">&#39;</span><span class="si">%s</span><span class="s">=&#39;</span> <span class="o">%</span>
+                    <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_optional</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+        <span class="k">except</span> <span class="n">getopt</span><span class="o">.</span><span class="n">GetoptError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="c"># If less mandatory arguments are passed, abort</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_args_mandatory</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">generic</span><span class="o">.</span><span class="n">error_missing_arguments_s</span> <span class="o">%</span>
+                    <span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="c"># If there are more argument and we expect one, join all the</span>
+        <span class="c"># Remaining mandatory arguments</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_args_mandatory</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">line_args_mandatory</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">line_args_mandatory</span> <span class="p">)</span> <span class="p">]</span>
+
+        <span class="c"># Merge stored arguments with line arguments</span>
+        <span class="n">stored_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="n">stored_args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="nb">dict</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span>
+                    <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">line_args_optional</span><span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">line_args_mandatory</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">))</span>
+
+        <span class="c"># Check if argument passed to bind_to_vectors matches with</span>
+        <span class="c"># some vector</span>
+        <span class="n">vect_arg_value</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">vect_arg_value</span> <span class="ow">and</span> <span class="n">vect_arg_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">get_names</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">argument_s_must_be_a_vector</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c"># If module status is IDLE, launch setup()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="c"># If module status is FAIL, return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAIL</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">module_s_inactive</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c"># Setup() could has been stored additional args, so all the updated</span>
+        <span class="c"># stored arguments are applied to args</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">stored_args</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Module.init"><a class="viewcode-back" href="../../module.html#core.module.Module.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Module initialization.</span>
+
+<span class="sd">        Called at boot.</span>
+
+<span class="sd">        Must be overriden to set the basic Module data.</span>
+
+<span class="sd">        This normally calls `register_info()`, `register_vectors()` and `register_arguments()`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_init_method_required</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Module.setup"><a class="viewcode-back" href="../../module.html#core.module.Module.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&quot;&quot;&quot;Module first setup.</span>
+
+<span class="sd">        Called at the first module run per session.</span>
+
+<span class="sd">        Override this to implement the module setup.</span>
+
+<span class="sd">        This should perform the basic check of the module compatibility</span>
+<span class="sd">        with the remote enviroinment, and return the module Status value.</span>
+
+<span class="sd">        If not overridden, always returns Status.RUN.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (dictionary): Argument passed to the module</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Status value. Must be Status.RUN, Status.FAIL, or Status.IDLE.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUN</span>
+</div>
+<div class="viewcode-block" id="Module.run"><a class="viewcode-back" href="../../module.html#core.module.Module.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Module execution.</span>
+
+<span class="sd">        Called at every the module executions.</span>
+
+<span class="sd">        Override this to implement the module behaviour.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            args (dictionary): Argument passed to the module</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Object containing the execution result.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span>
+</div>
+    <span class="k">def</span> <span class="nf">help</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function called on terminal help command.</span>
+
+<span class="sd">        This is binded with the terminal `help_module()` method.</span>
+
+<span class="sd">        Normally does not need to be overridden.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">option_args_help</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">help</span><span class="o">.</span><span class="n">details</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
+            <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">],</span>
+            <span class="n">mand_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">,</span>
+            <span class="n">opt_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_optional</span><span class="p">,</span>
+            <span class="n">stored_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">],</span>
+            <span class="n">vector_arg</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">get_names</span><span class="p">())</span>
+        <span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">option_args_help</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Module.register_info"><a class="viewcode-back" href="../../module.html#core.module.Module.register_info">[docs]</a>    <span class="k">def</span> <span class="nf">register_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register the module basic information.</span>
+
+<span class="sd">        The human-readable description is automatically read from the object</span>
+<span class="sd">        docstring. With no description set, raise an exception.</span>
+
+<span class="sd">        Arbitrary fields can be used.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            info (dict): Module information.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            DevException: Missing description</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
+
+        <span class="c"># Add description from module __doc__ if missing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_module_missing_description</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Module.register_arguments"><a class="viewcode-back" href="../../module.html#core.module.Module.register_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">register_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mandatory</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">optional</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">bind_to_vectors</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register the module arguments.</span>
+
+<span class="sd">        Register mandatory and optional arguments.</span>
+
+<span class="sd">        An argument can be binded to the vectors names to limit the user choices</span>
+<span class="sd">        to the vectors names.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mandatory (list of string): List of mandatory arguments.</span>
+
+<span class="sd">            optional (dict of strings): Dictionary whith optional arguments as</span>
+<span class="sd">            keys, and default values as values.</span>
+
+<span class="sd">            bind_to_vectors (string): Limit the given argument choices to the</span>
+<span class="sd">            vectors names stored in `self.vectors`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span> <span class="o">=</span> <span class="n">mandatory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args_optional</span> <span class="o">=</span> <span class="n">optional</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c"># Arguments in session has more priority than registered variables</span>
+        <span class="n">optional</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">optional</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span> <span class="o">=</span> <span class="n">bind_to_vectors</span>
+</div>
+<div class="viewcode-block" id="Module.register_vectors"><a class="viewcode-back" href="../../module.html#core.module.Module.register_vectors">[docs]</a>    <span class="k">def</span> <span class="nf">register_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register the module vectors.</span>
+
+<span class="sd">        The passed vectors are stored in `self.vectors`, a VectorsList object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vectors (list of vectors objects): List of ShellCmd, PhpCmd, and</span>
+<span class="sd">            ModuleCmd to use as module vectors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">_store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Store persistent module result.</span>
+
+<span class="sd">        Store data in the module session structure as result.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field (string): The key name to label the result.</span>
+
+<span class="sd">            value (obj): The result to store.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">][</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_get_stored_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">module</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get stored module result.</span>
+
+<span class="sd">        Get the modle result stored in the session structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field (string): The key name which contains the result.</span>
+
+<span class="sd">            module (string): The module name. If not set, the current</span>
+<span class="sd">            module is used.</span>
+
+<span class="sd">            default: The value to be returned in case key does not exist.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="n">module</span><span class="p">][</span>
+                <span class="s">&#39;results&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Emilio Pinna.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

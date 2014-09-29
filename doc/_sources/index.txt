@@ -21,6 +21,7 @@ Given below the API documentation about the Module class and the Vectors and Vec
 .. toctree::
    :maxdepth: 2
 
+   module
    vectors
    vectorslist
 

@@ -1,0 +1,230 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Module class definition &mdash; weevely-ng 3.0.1beta documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '3.0.1beta',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="weevely-ng 3.0.1beta documentation" href="index.html" />
+    <link rel="next" title="Vector classes definition" href="vectors.html" />
+    <link rel="prev" title="Module Development API Documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vectors.html" title="Vector classes definition"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Module Development API Documentation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-class-definition">
+<h1>Module class definition<a class="headerlink" href="#module-class-definition" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-core.module"></span><p>The module <cite>core.module</cite> defines the <cite>Module</cite> class.</p>
+<p>The <cite>Module</cite> class has to be inherited to create a new weevely module.</p>
+<p>Normally, the following methods have to be overridden:</p>
+<ul class="simple">
+<li><cite>init()</cite>: This defines the basic module initialization. The <cite>init()</cite> method normally calls <cite>register_info()</cite>, <cite>register_vectors()</cite> and <cite>register_arguments()</cite>.</li>
+<li><cite>check()</cite>: This is called at the first run. Check and set the module status.</li>
+<li><cite>run()</cite>: This function is called on module run.</li>
+</ul>
+<dl class="class">
+<dt id="core.module.Status">
+<em class="property">class </em><tt class="descclassname">core.module.</tt><tt class="descname">Status</tt><a class="reference internal" href="_modules/core/module.html#Status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represent the module statuses.</p>
+<p>Is stored in session[module][status] and is set by <cite>setup()</cite> call at the first run.</p>
+<ul class="simple">
+<li>Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the <cite>Module.setup()</cite> function is automatically called.</li>
+<li>Status.RUN: The module is properly running and can be call.</li>
+<li>Status.FAIL: The module setup failed. The execution of this module is automatically skipped.</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="core.module.Module">
+<em class="property">class </em><tt class="descclassname">core.module.</tt><tt class="descname">Module</tt><big>(</big><em>session</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="core.module.Module.init">
+<tt class="descclassname">Module.</tt><tt class="descname">init</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module initialization.</p>
+<p>Called at boot.</p>
+<p>Must be overriden to set the basic Module data.</p>
+<p>This normally calls <cite>register_info()</cite>, <cite>register_vectors()</cite> and <cite>register_arguments()</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.module.Module.register_info">
+<tt class="descclassname">Module.</tt><tt class="descname">register_info</tt><big>(</big><em>info</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.register_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.register_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register the module basic information.</p>
+<p>The human-readable description is automatically read from the object
+docstring. With no description set, raise an exception.</p>
+<p>Arbitrary fields can be used.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>info (dict): Module information.</dd>
+<dt>Raises:</dt>
+<dd>DevException: Missing description</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.module.Module.register_vectors">
+<tt class="descclassname">Module.</tt><tt class="descname">register_vectors</tt><big>(</big><em>vectors</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.register_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.register_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register the module vectors.</p>
+<p>The passed vectors are stored in <cite>self.vectors</cite>, a VectorsList object.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>vectors (list of vectors objects): List of ShellCmd, PhpCmd, and
+ModuleCmd to use as module vectors.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.module.Module.register_arguments">
+<tt class="descclassname">Module.</tt><tt class="descname">register_arguments</tt><big>(</big><em>mandatory=[]</em>, <em>optional={}</em>, <em>bind_to_vectors=''</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.register_arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.register_arguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register the module arguments.</p>
+<p>Register mandatory and optional arguments.</p>
+<p>An argument can be binded to the vectors names to limit the user choices
+to the vectors names.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">mandatory (list of string): List of mandatory arguments.</p>
+<p>optional (dict of strings): Dictionary whith optional arguments as
+keys, and default values as values.</p>
+<p class="last">bind_to_vectors (string): Limit the given argument choices to the
+vectors names stored in <cite>self.vectors</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.module.Module.setup">
+<tt class="descclassname">Module.</tt><tt class="descname">setup</tt><big>(</big><em>args={}</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module first setup.</p>
+<p>Called at the first module run per session.</p>
+<p>Override this to implement the module setup.</p>
+<p>This should perform the basic check of the module compatibility
+with the remote enviroinment, and return the module Status value.</p>
+<p>If not overridden, always returns Status.RUN.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>args (dictionary): Argument passed to the module</dd>
+<dt>Returns:</dt>
+<dd>Status value. Must be Status.RUN, Status.FAIL, or Status.IDLE.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.module.Module.run">
+<tt class="descclassname">Module.</tt><tt class="descname">run</tt><big>(</big><em>args</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Module execution.</p>
+<p>Called at every the module executions.</p>
+<p>Override this to implement the module behaviour.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>args (dictionary): Argument passed to the module</dd>
+<dt>Returns:</dt>
+<dd>Object containing the execution result.</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Module Development API Documentation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vectors.html"
+                        title="next chapter">Vector classes definition</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/module.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vectors.html" title="Vector classes definition"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Module Development API Documentation"
+             >previous</a> |</li>
+        <li><a href="index.html">weevely-ng 3.0.1beta documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Emilio Pinna.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

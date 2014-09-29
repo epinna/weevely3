@@ -48,16 +48,14 @@
             
   <h1>Source code for core.vectors</h1><div class="highlight"><pre>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.</span>
-
-<span class="sd">The method `run()` of every class should be redefined to execute the</span>
-<span class="sd">wanted payloads and get the results.</span>
+<span class="sd">The module `core.vectors` defines the following vectors classes.</span>
 
 <span class="sd">* `PhpCmd` vector contains PHP code, sent through the `shell_php` module.</span>
 <span class="sd">* `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.</span>
 <span class="sd">* `ModuleCmd` vector execute the given module with the given arguments.</span>
 
 <span class="sd">ShellCmd and PhpCmd inherit from ModuleCmd class.</span>
+
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
