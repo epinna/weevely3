@@ -1,5 +1,6 @@
 from core.vectors import PhpCmd, ShellCmd
 from core.module import Module
+from core.loggers import log
 from core import messages
 import random
 
