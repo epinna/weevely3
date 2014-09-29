@@ -1,30 +1,18 @@
 #!/usr/bin/env python
 
-"""Generate obfuscated backdoor.
-
-Usage:
-  generate.py <password> <output file>
-  generate.py [--obfuscator=<obfuscator> --agent=<agent>] <password> <output file>
-
-Options:
-  --obfuscator=<obfuscator>    Backdoor obfuscator [default: obfusc1_php].
-  --agent=<agent>              Backdoor agent [default: stegaref_php].
-
-"""
+"""Generate obfuscated backdoor."""
 
 from mako.template import Template
 from core.weexceptions import FatalException
 from core.loggers import log
+from core.config import agent_templates_folder_path, obfuscators_templates_folder_path
 from core import messages
-import getopt
+import argparse
 import os
 import sys
+import glob
 
-agent_templates_folder_path = 'bd/agents/'
-obfuscators_templates_folder_path = 'bd/obfuscators/'
-
-
-def generate(password, obfuscator='obfusc1_php', agent='stegaref_php'):
+def generate(password, obfuscator = 'obfusc1_php', agent = 'stegaref_php'):
 
     obfuscator_path = os.path.join(
         obfuscators_templates_folder_path,
@@ -72,31 +60,42 @@ def save_generated(obfuscated, output):
 
 if __name__ == '__main__':
 
-    try:
-        line_args_optional, line_args_mandatory = getopt.getopt(
-            sys.argv[
-                1:], '', [
-                'obfuscator=', 'agent='])
-    except getopt.GetoptError as e:
-        log.info('%s\n%s' % (e, __doc__))
-    else:
+    agents_available = [
+        os.path.split(agent)[1].split('.')[0] for agent in
+        glob.glob('%s/*.tpl' % agent_templates_folder_path)
+    ]
 
-        if len(line_args_mandatory) != 2:
-            log.info(
-                '%s\n%s' %
-                (messages.generic.error_missing_arguments_s %
-                 '', __doc__))
-        else:
-            password, output = line_args_mandatory
-            dict_args_optionals = dict(
-                (key.strip('-'),
-                 value) for (
-                    key,
-                    value) in line_args_optional)
+    obfuscators_available = [
+        os.path.split(agent)[1].split('.')[0] for agent in
+        glob.glob('%s/*.tpl' % obfuscators_templates_folder_path)
+    ]
 
-            obfuscated = generate(password, **dict_args_optionals)
-            save_generated(obfuscated, output)
+    argparser = argparse.ArgumentParser(description = __doc__)
+    argparser.add_argument('password', help = 'The agent password')
+    argparser.add_argument('path', help = 'Where save the generated agent')
+    argparser.add_argument(
+        '-obfuscator',
+        help = argparse.SUPPRESS, #The obfuscation method
+        choices = obfuscators_available,
+        default = 'obfusc1_php'
+        )
+    argparser.add_argument(
+        '-agent',
+        help = argparse.SUPPRESS, #The agent channel type
+        choices = agents_available,
+        default = 'stegaref_php'
+        )
 
-            log.info(
-                messages.generate.generated_backdoor_with_password_s_in_s_size_i %
-                (password, output, len(obfuscated)))
+    args = argparser.parse_args()
+
+    obfuscated = generate(
+        password = args.password,
+        obfuscator = args.obfuscator,
+        agent = args.agent
+    )
+
+    save_generated(obfuscated, args.path)
+
+    log.info(
+        messages.generate.generated_backdoor_with_password_s_in_s_size_i %
+        (args.password, args.path, len(obfuscated)))
