@@ -67,7 +67,7 @@
 <div class="viewcode-block" id="ModuleCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ModuleCmd">[docs]</a><span class="k">class</span> <span class="nc">ModuleCmd</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Vector containing module arguments to run via the given module.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="k">else</span> <span class="n">utilities</span><span class="o">.</span><span class="n">randstr</span><span class="p">()</span>
 
@@ -79,7 +79,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">target</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_target_type</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">postprocess</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">postprocess</span><span class="p">)</span> <span class="ow">and</span> <span class="n">postprocess</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_postprocessing_type</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
@@ -112,15 +112,18 @@
             <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_arguments_type</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span>
-          <span class="n">modules</span><span class="o">.</span><span class="n">loaded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">modules</span><span class="o">.</span><span class="n">loaded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
 </div></div>
 <div class="viewcode-block" id="ShellCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ShellCmd">[docs]</a><span class="k">class</span> <span class="nc">ShellCmd</span><span class="p">(</span><span class="n">ModuleCmd</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Vector containing shell command to run via `shell_sh` module. Inherit `ModuleCmd`&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
@@ -139,7 +142,7 @@
 
     <span class="sd">&quot;&quot;&quot;Vector containing PHP code to run via `shell_php` module. Inherit `ModuleCmd`&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
