@@ -35,6 +35,7 @@ class vectors:
 class module:
     argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'
     error_module_missing_description = 'Error, module description is missing'
+    error_init_method_required = 'Error, the init() method definition is required in Modules'
     module_s_inactive = 'Module %s is inactive, skipped'
 
 class module_file_cd:

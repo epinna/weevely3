@@ -1,22 +1,15 @@
 """
-This module defines the Module class.
+The module `core.module` defines the `Module` class.
 
-The Module class must be inherited to create a new weevely module.
+The `Module` class has to be inherited to create a new weevely module.
 
-Normally, the following methods has to be overridden:
+Normally, the following methods have to be overridden:
 
-* `init()`: This defines the basic module initialization.
-* `check()`: This is called at the first run. Check and set the module
-status.
-* `run()`: The function called on module run.
-
-The `init()` method should normally calls `register_info`,
-`register_vectors` and `register_arguments` to set the minimum module
-information.
+* `init()`: This defines the basic module initialization. The `init()` method normally calls `register_info()`, `register_vectors()` and `register_arguments()`.
+* `check()`: This is called at the first run. Check and set the module status.
+* `run()`: This function is called on module run.
 
 """
-
-
 
 from core.vectorslist import VectorsList
 from core.weexceptions import DevException
@@ -28,17 +21,15 @@ import getopt
 import utilities
 
 class Status:
-    """Represent the module possible statuses.
+    """Represent the module statuses.
 
-    * Status.IDLE: The module is inactive. This state is set if the module
-    has been never been setup, of if it needs a new setup. If a module
-    is run in this state, the `Module.setup()` function is automatically
-    called.
+    Is stored in session[module][status] and is set by `setup()` call at the first run.
+
+    * Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the `Module.setup()` function is automatically called.
 
     * Status.RUN: The module is properly running and can be call.
 
-    * Status.FAIL: The module setup failed. The execution of this module is
-    automatically skipped.
+    * Status.FAIL: The module setup failed. The execution of this module is automatically skipped.
     """
 
     IDLE = 0
@@ -174,18 +165,29 @@ class Module:
 
         return self.run(args)
 
+    def init(self):
+        """Module initialization.
+
+        Called at boot.
+
+        Must be overriden to set the basic Module data.
+
+        This normally calls `register_info()`, `register_vectors()` and `register_arguments()`.
+        """
+
+        raise DevException(messages.module.error_init_method_required)
+
     def setup(self, args={}):
         """Module first setup.
 
-        Called at the first module run.
+        Called at the first module run per session.
 
-        Override to implement specific module setup.
+        Override this to implement the module setup.
 
         This should perform the basic check of the module compatibility
-        with the remote enviroinment, and return the module status as
-        Status value.
+        with the remote enviroinment, and return the module Status value.
 
-        If not overridden, returns always Status.RUN.
+        If not overridden, always returns Status.RUN.
 
         Args:
             args (dictionary): Argument passed to the module
@@ -202,7 +204,7 @@ class Module:
 
         Called at every the module executions.
 
-        Override to implement the module behaviour.
+        Override this to implement the module behaviour.
 
         Args:
             args (dictionary): Argument passed to the module
