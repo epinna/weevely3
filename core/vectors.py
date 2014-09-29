@@ -18,7 +18,7 @@ from core import messages
 class ModuleCmd:
     """Vector containing module arguments to run via the given module."""
 
-    def __init__(self, module, arguments, name = '', target = 0, postprocess = lambda x: x):
+    def __init__(self, module, arguments, name = '', target = 0, postprocess = None):
 
         self.name = name if name else utilities.randstr()
 
@@ -30,7 +30,7 @@ class ModuleCmd:
         if not isinstance(target, int) or not target < 3:
             raise DevException(messages.vectors.wrong_target_type)
 
-        if not callable(postprocess):
+        if not callable(postprocess) and postprocess is not None:
             raise DevException(messages.vectors.wrong_postprocessing_type)
 
         self.module = module
@@ -63,15 +63,18 @@ class ModuleCmd:
             traceback.print_exc()
             raise DevException(messages.vectors.wrong_arguments_type)
 
-        return self.postprocess(
-          modules.loaded[self.module].run_argv(formatted)
-        )
+        result = modules.loaded[self.module].run_argv(formatted)
+
+        if self.postprocess:
+            result = self.postprocess(result)
+
+        return result
 
 class ShellCmd(ModuleCmd):
 
     """Vector containing shell command to run via `shell_sh` module. Inherit `ModuleCmd`"""
 
-    def __init__(self, payload, name = None, target = 0, postprocess = lambda x: x):
+    def __init__(self, payload, name = None, target = 0, postprocess = None):
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -90,7 +93,7 @@ class PhpCmd(ModuleCmd):
 
     """Vector containing PHP code to run via `shell_php` module. Inherit `ModuleCmd`"""
 
-    def __init__(self, payload, name = None, target = 0, postprocess = lambda x: x):
+    def __init__(self, payload, name = None, target = 0, postprocess = None):
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
