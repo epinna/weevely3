@@ -1,3 +1,23 @@
+"""
+This module defines the Module class.
+
+The Module class must be inherited to create a new weevely module.
+
+Normally, the following methods has to be overridden:
+
+* `init()`: This defines the basic module initialization.
+* `check()`: This is called at the first run. Check and set the module
+status.
+* `run()`: The function called on module run.
+
+The `init()` method should normally calls `register_info`,
+`register_vectors` and `register_arguments` to set the minimum module
+information.
+
+"""
+
+
+
 from core.vectorslist import VectorsList
 from core.weexceptions import DevException
 from core.loggers import log
@@ -8,6 +28,19 @@ import getopt
 import utilities
 
 class Status:
+    """Represent the module possible statuses.
+
+    * Status.IDLE: The module is inactive. This state is set if the module
+    has been never been setup, of if it needs a new setup. If a module
+    is run in this state, the `Module.setup()` function is automatically
+    called.
+
+    * Status.RUN: The module is properly running and can be call.
+
+    * Status.FAIL: The module setup failed. The execution of this module is
+    automatically skipped.
+    """
+
     IDLE = 0
     RUN = 1
     FAIL = 2
@@ -15,7 +48,12 @@ class Status:
 class Module:
 
     def __init__(self, session, name):
-        """ init module data structures. """
+        """Module object constructor.
+
+        This call the overridable `init()` method.
+
+        Normally does not need to be overridden.
+        """
 
         self.name = name
         self.session = session
@@ -35,6 +73,8 @@ class Module:
         """Execute the module from command line.
 
         Get command line string as argument. Called from terminal.
+
+        Normally does not need to be overridden.
 
         Args:
             line (str): string containing the module arguments.
@@ -60,6 +100,8 @@ class Module:
 
         Get arguments list as argument. The arguments are parsed with getopt,
         and validated. Then calls setup() and run() of module.
+
+        Normally does not need to be overridden.
 
         Args:
             argv (list of str): The list of arguments.
@@ -133,10 +175,17 @@ class Module:
         return self.run(args)
 
     def setup(self, args={}):
-        """Override to implement specific module setup.
+        """Module first setup.
 
-        This returns the Status of the module. A module which does not override
-        this method is considered always in a runnning status.
+        Called at the first module run.
+
+        Override to implement specific module setup.
+
+        This should perform the basic check of the module compatibility
+        with the remote enviroinment, and return the module status as
+        Status value.
+
+        If not overridden, returns always Status.RUN.
 
         Args:
             args (dictionary): Argument passed to the module
@@ -148,8 +197,30 @@ class Module:
 
         return Status.RUN
 
+    def run(self, args):
+        """Module execution.
+
+        Called at every the module executions.
+
+        Override to implement the module behaviour.
+
+        Args:
+            args (dictionary): Argument passed to the module
+
+        Returns:
+            Object containing the execution result.
+
+        """
+
+        return
+
     def help(self):
-        """ Function called on terminal help command """
+        """Function called on terminal help command.
+
+        This is binded with the terminal `help_module()` method.
+
+        Normally does not need to be overridden.
+        """
 
         option_args_help = Template(
             messages.help.details
@@ -165,6 +236,21 @@ class Module:
         log.info(option_args_help)
 
     def register_info(self, info):
+        """Register the module basic information.
+
+        The human-readable description is automatically read from the object
+        docstring. With no description set, raise an exception.
+
+        Arbitrary fields can be used.
+
+        Args:
+            info (dict): Module information.
+
+        Raises:
+            DevException: Missing description
+
+        """
+
         self.info = info
 
         # Add description from module __doc__ if missing
@@ -177,7 +263,22 @@ class Module:
             raise DevException(messages.module.error_module_missing_description)
 
     def register_arguments(self, mandatory = [], optional = {}, bind_to_vectors = ''):
-        """ Register additional modules options """
+        """Register the module arguments.
+
+        Register mandatory and optional arguments.
+
+        An argument can be binded to the vectors names to limit the user choices
+        to the vectors names.
+
+        Args:
+            mandatory (list of string): List of mandatory arguments.
+
+            optional (dict of strings): Dictionary whith optional arguments as
+            keys, and default values as values.
+
+            bind_to_vectors (string): Limit the given argument choices to the
+            vectors names stored in `self.vectors`.
+        """
 
         self.args_mandatory = mandatory
         self.args_optional = optional.copy()
@@ -189,17 +290,43 @@ class Module:
         self.bind_to_vectors = bind_to_vectors
 
     def register_vectors(self, vectors):
-        """ Add module vectors """
+        """Register the module vectors.
+
+        The passed vectors are stored in `self.vectors`, a VectorsList object.
+
+        Args:
+            vectors (list of vectors objects): List of ShellCmd, PhpCmd, and
+            ModuleCmd to use as module vectors.
+        """
 
         self.vectors.extend(vectors)
 
     def _store_result(self, field, value):
-        """ Save persistent data """
+        """Store persistent module result.
+
+        Store data in the module session structure as result.
+
+        Args:
+            field (string): The key name to label the result.
+
+            value (obj): The result to store.
+        """
 
         self.session[self.name]['results'][field] = value
 
     def _get_stored_result(self, field, module = None, default=None):
-        """ Recover saved data """
+        """Get stored module result.
+
+        Get the modle result stored in the session structure.
+
+        Args:
+            field (string): The key name which contains the result.
+
+            module (string): The module name. If not set, the current
+            module is used.
+
+            default: The value to be returned in case key does not exist.
+        """
 
         if module is not None:
             return self.session[module][
