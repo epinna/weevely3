@@ -81,8 +81,7 @@ class Module:
             log.warn(messages.generic.error_parsing_command_s % str(e))
             return
 
-        if result not in (None, ''):
-            log.info(utilities.stringify(result))
+        self.print_result(result)
 
         # Data is returned for the testing of _cmdline calls
         return result
@@ -225,7 +224,7 @@ class Module:
     def run(self, args):
         """Module execution.
 
-        Called at every the module executions.
+        Called at every module executions.
 
         Override this to implement the module behaviour.
 
@@ -325,6 +324,22 @@ class Module:
         """
 
         self.vectors.extend(vectors)
+
+    def print_result(self, result):
+        """Format and print execution result.
+
+        Called at every executions from command line.
+
+        Override this to implement a different result print format.
+
+        Args:
+            result (Object): The result to format and print.
+
+        """
+
+        if result not in (None, ''):
+            log.info(utilities.stringify(result))
+
 
     def _store_result(self, field, value):
         """Store persistent module result.
