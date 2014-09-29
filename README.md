@@ -1,16 +1,25 @@
-Weevely 
+Weevely3 
 =======
 
-> This is a complete rewrite of Weevely, and currently is a beta version. 
-> Any module ported from the old version get close the first stable release. Any help is appreciated. Read below for further information.
+> Weevely3 is a complete rewrite of [Weevely](https://github.com/epinna/Weevely), the web shell for penetration testing included in [Kali](http://www.kali.org/) and [BackBox](http://www.kali.org/) Linux
+
+
+> This is project is still in a beta version, and a lot of features are currently missing.
+
+
+> If you are a developer or a curious user and desire to contribute, you can to start reading the tutorial [Developing a new module ](https://github.com/epinna/weevely3/wiki/developing-a-new-module) and the [TODO list](https://github.com/epinna/weevely3/issues/1).
 
 Weevely is a PHP web shell that provides a weaponized telnet-like interface to administrate a remote web access.
 
-Its modules extends the terminal providing a layer to interact to the target to administrate a web account, audit the target security, pivot deeper in the target network, and much more. It is an essential tool for web application post exploitation and access maintaining, even with heavily restricted remote environments. 
+It is a swiss army knife to administrate a web account, even in restricted remote environments. It is an essential tool for web application post exploitation and access maintaining, can be used to audit target security, pivot deeper in the target network, and much more. 
+
+**The modular framework**
+
+Weevely modules extends the terminal providing a layer to interact to the target. 
 
 The modules feature:
 
-* Weaponized Shell/PHP network console
+* Weaponized Shell/PHP telnet-like network terminal
 * Common server misconfigurations auditing
 * SQL console pivoting on target network 
 * HTTP traffic proxy through target
@@ -20,10 +29,12 @@ The modules feature:
 * Spawn reverse and direct TCP shells
 * Bruteforce SQL accounts through target system users
 
+**Modules**
+
 The code is dynamically injected and so extended over the network at run-time. This keep a very small footprint backdoor, even providing an completely extensible environment. The backdoor agent code is polymorphic and hardly detectable from AV and HIDS, and the communication are covered and obfuscated within the HTTP protocol using steganographic techniques.
+
+**Modules development**
 
 Weevely also provides python API which can be used to develop your own module to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.
 
-#### This is still a version under heavy development and still some features are missing.
-
-If you want to add a new module, or help us to port the old weevely modules, consult the [Wiki](https://github.com/epinna/weevely3/wiki) pages and the [Developing a new module](https://github.com/epinna/weevely3/wiki/developing-a-new-module) tutorial.
+> This is still a version under heavy development and still some features are missing.
