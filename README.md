@@ -31,7 +31,7 @@ The modules feature:
 
 **The agent**
 
-The remote backdoor is a very low footprint agents that receives the code dynamically injected from the client, extending the server functionalities over the network at run-time. The backdoor agent code is polymorphic and hardly detectable from AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
+The remote backdoor is a very low footprint agent that receives the dynamically injected code from the client, extending the server functionalities over the network at run-time. The backdoor agent code is polymorphic and hardly detectable from AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
 
 **Modules development**
 
