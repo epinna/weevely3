@@ -1,5 +1,5 @@
 from mako.template import Template
-from core.module import Module
+from core.module import Module, Status
 from core import messages
 from core import utilities
 from core.channels.channel import Channel
@@ -37,35 +37,32 @@ class Php(Module):
         self.channel = None
 
     def setup(self, args={}):
-        """Instauration of the PHP channel.
-
-        Args:
-            args: The dictionary of arguments
-
-        Returns:
-            Returns true or false if the module is enable or not.
-
-        """
+        """Instauration of the PHP channel. Returns the module status."""
 
         self._instantiate_channel()
 
-        enabled = False
         rand = str(random.randint(11111, 99999))
 
         command = 'echo(%s);' % rand
         response, code = self.channel.send(command)
 
         if rand == response:
-            enabled = True
+            status = Status.RUN
             self.session['channel'] = self.channel.channel_name
+        else:
+            status = Status.FAIL
 
         # If the response is wrong, warn about the
         # error code
         self._print_response_status(command, code, response)
 
-        log.debug('PHP shell is %s' % 'running' if enabled else 'failed')
+        log.debug(
+            'PHP shell is %s' % (
+                'running' if status == Status.RUN else 'failed'
+            )
+        )
 
-        return enabled
+        return status
 
     def run(self, args):
         """ Run module """

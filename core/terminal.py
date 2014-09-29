@@ -121,10 +121,7 @@ class Terminal(CmdModules):
 
             # Setup shell_sh if is never tried
             if self.session['shell_sh']['status'] == Status.IDLE:
-                self.session['shell_sh']['status'] = (
-                    Status.RUN if modules.loaded['shell_sh'].setup()
-                    else Status.FAIL
-                )
+                self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
 
             for shell in ('shell_sh', 'shell_php'):
                 if self.session[shell]['status'] == Status.RUN:

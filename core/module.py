@@ -37,8 +37,7 @@ class Module:
         Get command line string as argument. Called from terminal.
 
         Args:
-            line (str): string containing the module arguments,
-            splitted and passed to `run()`.
+            line (str): string containing the module arguments.
 
         Return:
             Object. The result of the module execution.
@@ -63,7 +62,7 @@ class Module:
         and validated. Then calls setup() and run() of module.
 
         Args:
-            argv (list of str): The list of arguments passed to `run()`.
+            argv (list of str): The list of arguments.
 
         Returns:
             Object. The result of the module execution.
@@ -115,10 +114,7 @@ class Module:
 
         # If module status is IDLE, launch setup()
         if self.session[self.name]['status'] == Status.IDLE:
-            self.session[self.name]['status'] = (
-                Status.RUN if self.setup(args)
-                else Status.FAIL
-            )
+            self.session[self.name]['status'] = self.setup(args)
 
         # If module status is FAIL, return
         if self.session[self.name]['status'] == Status.FAIL:
@@ -137,9 +133,20 @@ class Module:
         return self.run(args)
 
     def setup(self, args={}):
-        """Override to implement specific module setup"""
+        """Override to implement specific module setup.
 
-        return True
+        This returns the Status of the module. A module which does not override
+        this method is considered always in a runnning status.
+
+        Args:
+            args (dictionary): Argument passed to the module
+
+        Returns:
+            Status value. Must be Status.RUN, Status.FAIL, or Status.IDLE.
+
+        """
+
+        return Status.RUN
 
     def help(self):
         """ Function called on terminal help command """

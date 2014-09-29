@@ -59,7 +59,7 @@ class Sh(Module):
             args: The dictionary of arguments
 
         Returns:
-            Returns true or false if the module is enable or not.
+            Status value, must be Status.RUN, Status.FAIL, or Status.IDLE.
 
         """
 
@@ -84,9 +84,9 @@ class Sh(Module):
 
         if self.session['shell_php']['status'] == Status.RUN and result == check_digits:
             self.session['shell_sh']['stored_args']['vector'] = vector_name
-            return True
+            return Status.RUN
         else:
-            return False
+            return Status.FAIL
 
     def run(self, args):
 
