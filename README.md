@@ -29,12 +29,10 @@ The modules feature:
 * Spawn reverse and direct TCP shells
 * Bruteforce SQL accounts through target system users
 
-**Modules**
+**The agent**
 
-The code is dynamically injected and so extended over the network at run-time. This keep a very small footprint backdoor, even providing an completely extensible environment. The backdoor agent code is polymorphic and hardly detectable from AV and HIDS, and the communication are covered and obfuscated within the HTTP protocol using steganographic techniques.
+The code run on the remote target is dynamically injected and so extended over the network at run-time. This allows to have a backdoor with a very low footprint and stil provide a completely extensible environment. The backdoor agent code is polymorphic and hardly detectable from AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
 
 **Modules development**
 
 Weevely also provides python API which can be used to develop your own module to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.
-
-> This is still a version under heavy development and still some features are missing.
