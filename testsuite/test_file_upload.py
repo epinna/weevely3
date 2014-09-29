@@ -129,3 +129,35 @@ class FileUpload(BaseTest):
 
         # Now force
         self.assertTrue(self.run_argv([ 'f5', '-content', 'CONTENT', '-force', '-vector', 'fwrite' ]))
+
+    @log_capture()
+    def test_upload_binary(self, log_captured):
+
+        binary_content = '\xbe\x00\xc8d\xf8d\x08\xe4'
+
+        # Upload content
+        self.filenames.append('f6')
+        self.assertTrue(self.run_argv([ self.filenames[-1], '-content', binary_content ]))
+
+        # Upload lfile
+        temp_file = tempfile.NamedTemporaryFile()
+        temp_file.write(binary_content)
+        self.filenames.append('f7')
+        self.assertTrue(self.run_argv([ temp_file.name, self.filenames[-1] ]))
+        temp_file.close()
+
+    @log_capture()
+    def test_upload_binary_fwrite(self, log_captured):
+
+        binary_content = '\xbe\x00\xc8d\xf8d\x08\xe4'
+
+        # Upload content
+        self.filenames.append('f6')
+        self.assertTrue(self.run_argv([ self.filenames[-1], '-content', binary_content, '-vector', 'fwrite' ]))
+
+        # Upload lfile
+        temp_file = tempfile.NamedTemporaryFile()
+        temp_file.write(binary_content)
+        self.filenames.append('f7')
+        self.assertTrue(self.run_argv([ temp_file.name, self.filenames[-1], '-vector', 'fwrite' ]))
+        temp_file.close()
