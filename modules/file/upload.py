@@ -37,10 +37,10 @@ class Upload(Module):
         )
 
         self.register_arguments([
-          { 'name' : 'lpath', 'help' : 'Local file path' },
+          { 'name' : 'lpath', 'help' : 'Local file path', 'nargs' : '?' },
           { 'name' : 'rpath', 'help' : 'Remote file path' },
           { 'name' : '-force', 'help' : 'Force overwrite', 'action' : 'store_true', 'default' : False },
-          { 'name' : '-content', 'default' : ''},
+          { 'name' : '-content', 'help' : 'Optionally specify the file content'},
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
         ])
 
@@ -48,9 +48,12 @@ class Upload(Module):
 
         # Load local file
         content_orig = args.get('content')
-        if not content_orig:
+        if content_orig == None:
 
             lpath = args.get('lpath')
+            if not lpath:
+                log.warning(messages.module_file_upload.error_content_lpath_required)
+                return
 
             try:
                 content_orig = open(lpath, 'r').read()

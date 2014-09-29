@@ -49,7 +49,6 @@ class module_file_cd:
     failed_directory_change_to_s = "Failed cd '%s': no such directory or permission denied"
     error_getting_ossep = "Error getting remote directory separator"
 
-
 class module_file_ls:
     failed_list_file_in_directory_s = "Failed list file in directory '%s': no such directory or permission denied"
     failed_list_file_in_directory_s_unknown = "Failed list file in directory '%s': unknown error"
@@ -59,6 +58,7 @@ class module_file_download:
     skipping_md5_check = "Skipping MD5 check, the file integrity can't be checked"
 
 class module_file_upload:
+    error_content_lpath_required = "Error, argument 'lpath' or 'content' is required"
     failed_upload_file = "File upload failed, please check remote path and permissions"
     failed_md5_check = "Failed MD5 check, the integrity check is wrong or not available"
 
