@@ -4,7 +4,7 @@ Weevely3
 > Weevely3 is a complete rewrite of [Weevely](https://github.com/epinna/Weevely), the web shell for penetration testing included in [Kali](http://www.kali.org/) and [BackBox](http://www.kali.org/) Linux
 
 
-> This is project is still in a beta version, and a lot of features are currently missing.
+> This project is still at version 3.0beta and a lot of features are currently missing.
 
 
 > If you are a developer or a curious user and desire to contribute, you can to start reading the tutorial [Developing a new module ](https://github.com/epinna/weevely3/wiki/developing-a-new-module) and the [TODO list](https://github.com/epinna/weevely3/issues/1).
