@@ -87,13 +87,13 @@ class CmdModules(cmd.Cmd):
             return self.default(line)
 
 
-    def do_help(self, arg, cmd):
+    def do_help(self, arg, command):
         """Fixed help.
 
         Wrap the help cause now the do_* functions
         get two arguments"""
 
-        return CmdModules.do_help(self, arg)
+        return cmd.Cmd.do_help(self, arg)
 
 class Terminal(CmdModules):
 
