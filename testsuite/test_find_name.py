@@ -71,37 +71,37 @@ class FindName(BaseTest):
 
         # find file[0] (case insensitive, recursive, not contains) -> file[0], file[1]
         filep, filen = os.path.split(self.files_rel[0])
-        self.assertEqual(self.run_argv([ filen ]), './%s\n./%s' % (self.files_rel[0], self.files_rel[1]))
+        self.assertItemsEqual(self.run_argv([ filen ]), [ './%s' %d for d in (self.files_rel[0], self.files_rel[1]) ])
 
         # find file[0] (case sensitive, recursive, not contains) -> file[0]
         filep, filen = os.path.split(self.files_rel[0])
-        self.assertEqual(self.run_argv([ '--case=True', filen ]), './%s' % (self.files_rel[0]))
+        self.assertItemsEqual(self.run_argv([ '--case=True', filen ]), [ './%s' % (self.files_rel[0]) ])
 
         # find the end of file[0] (case insensitive, recursive, contains) -> file[0], file[1]
         filep, filen = os.path.split(self.files_rel[0])
-        self.assertEqual(
+        self.assertItemsEqual(
             self.run_argv(
                 [ '--contains=True',
                 filen[-3:] ]
             ),
-            './%s\n./%s' % (self.files_rel[0], self.files_rel[1])
+            [ './%s' %d for d in (self.files_rel[0], self.files_rel[1]) ] 
         )
 
         # find file[0] not recursive -> none
         filep, filen = os.path.split(self.files_rel[0])
-        self.assertEqual(self.run_argv([ '--recursive=False', filen ]), '')
+        self.assertItemsEqual(self.run_argv([ '--recursive=False', filen ]), [ '' ])
 
         # find file[3] (case insensitive, recursive, not contains) -> file[0], file[1]
         filep, filen = os.path.split(self.files_rel[3])
-        self.assertEqual(self.run_argv([ filen ]), './%s' % (self.files_rel[3]))
+        self.assertItemsEqual(self.run_argv([ filen ]), [ './%s' % (self.files_rel[3]) ])
 
         # find file[1] with wrong rpath (case insensitive, recursive, not contains) -> none
         filep, filen = os.path.split(self.files_rel[1])
-        self.assertEqual(self.run_argv([ '--rpath=%s' % (self.folders_rel[-1]), filen ]), '')
+        self.assertItemsEqual(self.run_argv([ '--rpath=%s' % (self.folders_rel[-1]), filen ]), [ '' ])
 
         # find file[1] with right path and no recursive. Set all the params.
         filep, filen = os.path.split(self.files_rel[1])
-        self.assertEqual(
+        self.assertItemsEqual(
             self.run_argv(
                 [
                 '--rpath=%s' % (self.folders_rel[1]),
@@ -111,8 +111,8 @@ class FindName(BaseTest):
                 filen[-3:]
                 ]
             ),
-        '%s' % (self.files_rel[1]))
+        [ '%s' % (self.files_rel[1]) ])
 
         # find file[0] with sh vector (case insensitive, recursive, not contains) -> file[0], file[1]
         filep, filen = os.path.split(self.files_rel[0])
-        self.assertEqual(self.run_argv([ '--vector=sh_find', filen ]), './%s\n./%s' % (self.files_rel[0], self.files_rel[1]))
+        self.assertItemsEqual(self.run_argv([ '--vector=sh_find', filen ]), [ './%s' %d for d in (self.files_rel[0], self.files_rel[1]) ] )

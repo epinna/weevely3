@@ -5,10 +5,6 @@ import itertools
 import types
 import prettytable
 
-# Use an unambiguous FIELD_SEP when we pack result 
-# server side.
-FIELD_SEPARATOR = "\x00"
-
 def chunks_equal(l, n):
     """ Yield n successive chunks from l.
     """
