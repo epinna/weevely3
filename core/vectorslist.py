@@ -1,9 +1,9 @@
 """
-This module define a `VectorsList` object, used to store the vectors relative
-in weevely modules.
+The module `core.vectorslist` defines a `VectorsList` object, normally used
+to store the module vectors.
 
-Modules execute `_register_vectors()` at init to initialize a VectorsList list
-as `self.vectors` module attribute.
+Module class executes `_register_vectors()` at init to initialize the `VectorsList`
+object as `self.vectors` module attribute.
 
 The methods exposed by VectorsList can be used to get the result of a
 given vector execution with `get_result()`, get all the results of a bunch of

@@ -1,14 +1,12 @@
 """
-This module defines the vector classes ModuleCmd, ShellCmd, and PhpCmd.
-
-The method `run()` of every class should be redefined to execute the
-wanted payloads and get the results.
+The module `core.vectors` defines the following vectors classes.
 
 * `PhpCmd` vector contains PHP code, sent through the `shell_php` module.
 * `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.
 * `ModuleCmd` vector execute the given module with the given arguments.
 
 ShellCmd and PhpCmd inherit from ModuleCmd class.
+
 """
 
 from mako.template import Template
