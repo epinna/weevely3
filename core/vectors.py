@@ -17,23 +17,25 @@ from core import messages
 
 class ModuleCmd:
 
+    """Vector to execute modules.
+
+    This vector is used to execute other modules.
+
+    Args:
+        module (str): Module name.
+
+        arguments (list of str): arguments passed as command line splitted string, e.g. `[ '--optional=o', 'mandatory1, .. ]`.
+
+        name (str): This vector name.
+
+        target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
+
+        postprocess (func): The function which postprocess the execution result.
+
+    """
+
     def __init__(self, module, arguments, name = '', target = 0, postprocess = None):
-        """Vector to execute modules.
 
-        This vector is used to execute other modules.
-
-        Args:
-            module (str): Module name.
-
-            arguments (list of str): arguments passed as command line splitted string, e.g. `[ '--optional=o', 'mandatory1, .. ]`.
-
-            name (str): This vector name.
-
-            target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
-
-            postprocess (func): The function which postprocess the execution result.
-
-        """
         self.name = name if name else utilities.randstr()
 
         if isinstance(arguments, list):
@@ -86,22 +88,22 @@ class ModuleCmd:
 
 class ShellCmd(ModuleCmd):
 
+    """This vector contains a shell command.
+
+    The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.
+
+    Args:
+        payload (str): Command line to execute.
+
+        name (str): This vector name.
+
+        target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
+
+        postprocess (func): The function which postprocess the execution result.
+
+    """
+
     def __init__(self, payload, name = None, target = 0, postprocess = None):
-
-        """This vector contains a shell command.
-
-        The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.
-
-        Args:
-            payload (str): Command line to execute.
-
-            name (str): This vector name.
-
-            target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
-
-            postprocess (func): The function which postprocess the execution result.
-
-        """
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -118,22 +120,22 @@ class ShellCmd(ModuleCmd):
 
 class PhpCmd(ModuleCmd):
 
+    """This vector contains PHP code.
+
+    The shell command is executed via the module `shell_php`. Inherit `ModuleCmd`.
+
+    Args:
+        payload (str): PHP code to execute.
+
+        name (str): This vector name.
+
+        target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
+
+        postprocess (func): The function which postprocess the execution result.
+
+    """
+
     def __init__(self, payload, name = None, target = 0, postprocess = None):
-
-        """This vector contains PHP code.
-
-        The shell command is executed via the module `shell_php`. Inherit `ModuleCmd`.
-
-        Args:
-            payload (str): PHP code to execute.
-
-            name (str): This vector name.
-
-            target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
-
-            postprocess (func): The function which postprocess the execution result.
-
-        """
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
