@@ -1,7 +1,7 @@
 from core.vectors import PhpCmd
 from core.module import Module, Status
 from core.loggers import log
-from core.utilities import Os
+from core.vectors import Os
 from core import messages
 from core import modules
 import random

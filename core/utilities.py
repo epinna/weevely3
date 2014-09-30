@@ -5,11 +5,6 @@ import itertools
 import types
 import prettytable
 
-class Os:
-    ANY = 0
-    NIX = 1
-    WIN = 2
-
 def chunks_equal(l, n):
     """ Yield n successive chunks from l.
     """

@@ -15,6 +15,22 @@ from core import modules
 from core import utilities
 from core import messages
 
+class Os:
+    """Represent the operating system vector compatibility.
+
+    Is passed as `target` argument at vector declaring.
+
+    * `Os.ANY` if the vector is compatible with every operating system
+
+    * `Os.NIX` if the vector is compatible only with Unix/Linux enviroinments
+    
+    * `Os.WIN` if the vector is compatible only with Microsoft Windows enviroinments
+
+    """
+    ANY = 0
+    NIX = 1
+    WIN = 2
+
 class ModuleCmd:
 
     """This vector contains commands to execute other modules.

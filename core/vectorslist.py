@@ -12,7 +12,7 @@ response in the way we want with `find_first_result()`.
 
 """
 
-from core.utilities import Os
+from core.vectors import Os
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
 from core import modules
