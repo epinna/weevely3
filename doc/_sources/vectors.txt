@@ -7,7 +7,6 @@ ModuleCmd, PhpCmd, and ShellCmd vectors classes definition
 ==========================================================
 
 .. toctree::
-   :maxdepth: 2
 
 .. automodule:: core.vectors
 

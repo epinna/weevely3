@@ -19,7 +19,6 @@ For a quick start about the module structure of a basic module read the `Develop
 Given below the API documentation about the Module class and the Vectors and VectorsList data structure classes.
 
 .. toctree::
-   :maxdepth: 2
 
    module
    vectors
