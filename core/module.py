@@ -23,13 +23,13 @@ import utilities
 class Status:
     """Represent the module statuses.
 
-    Is stored in session[module][status] and is set by `setup()` call at the first run.
+    It is stored in the session to keep track of the module status. It is set by `setup()` at the first module run.
 
-    * Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the `Module.setup()` function is automatically called.
+    * Status.IDLE: Inactive module. The module has been never been setup or needs a new setup. If a module is run when IDLE, the `setup()` function is automatically called on the first module run.
 
-    * Status.RUN: The module is properly running and can be call.
+    * Status.RUN: The module is properly running and can be called.
 
-    * Status.FAIL: The module setup failed. The execution of this module is automatically skipped.
+    * Status.FAIL: The previous setup failed and the module is disabled. Every execution of this module is automatically skipped.
     """
 
     IDLE = 0
