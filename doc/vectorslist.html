@@ -64,10 +64,10 @@ vectors with <cite>get_results()</cite>, or get the result of the first vector t
 response in the way we want with <cite>find_first_result()</cite>.</p>
 <dl class="class">
 <dt id="core.vectorslist.VectorsList">
-<em class="property">class </em><tt class="descclassname">core.vectorslist.</tt><tt class="descname">VectorsList</tt><big>(</big><em>session</em>, <em>module_name</em><big>)</big><a class="headerlink" href="#core.vectorslist.VectorsList" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectorslist.</tt><tt class="descname">VectorsList</tt><big>(</big><em>session</em>, <em>module_name</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
 <dt id="core.vectorslist.VectorsList.find_first_result">
-<tt class="descname">find_first_result</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>condition=None</em>, <em>store_result=False</em>, <em>store_name=''</em><big>)</big><a class="headerlink" href="#core.vectorslist.VectorsList.find_first_result" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">find_first_result</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>condition=None</em>, <em>store_result=False</em>, <em>store_name=''</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.find_first_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.find_first_result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute all the vectors and return the first result matching the given condition.</p>
 <p>Return the name and the result of the first vector execution response that satisfy
 the given condition.</p>
@@ -88,30 +88,8 @@ Must returns boolean.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="core.vectorslist.VectorsList.get_by_name">
-<tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#core.vectorslist.VectorsList.get_by_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the vector object by name.</p>
-<dl class="docutils">
-<dt>Args:</dt>
-<dd>name (str): the name of the requested vector.</dd>
-<dt>Returns:</dt>
-<dd>Vector object.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="core.vectorslist.VectorsList.get_names">
-<tt class="descname">get_names</tt><big>(</big><big>)</big><a class="headerlink" href="#core.vectorslist.VectorsList.get_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the vectors names.</p>
-<dl class="docutils">
-<dt>Returns:</dt>
-<dd>List of strings. Contain vectors names.</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="core.vectorslist.VectorsList.get_result">
-<tt class="descname">get_result</tt><big>(</big><em>name</em>, <em>format_args={}</em>, <em>store_result=''</em><big>)</big><a class="headerlink" href="#core.vectorslist.VectorsList.get_result" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_result</tt><big>(</big><em>name</em>, <em>format_args={}</em>, <em>store_result=''</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute one vector and return the result.</p>
 <p>Run the vector with specified name. Optionally store results.</p>
 <dl class="docutils">
@@ -127,7 +105,7 @@ Must returns boolean.</p>
 
 <dl class="method">
 <dt id="core.vectorslist.VectorsList.get_results">
-<tt class="descname">get_results</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>results_to_store=[]</em><big>)</big><a class="headerlink" href="#core.vectorslist.VectorsList.get_results" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get_results</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>results_to_store=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute all the vectors and return the results.</p>
 <p>With unspecified names, execute all the vectors. Optionally store results.
 Returns a dictionary with results.</p>
@@ -141,6 +119,28 @@ store the execution result.</p>
 <dt>Returns:</dt>
 <dd>Dictionary. Contains all the vector results in the
 <cite>{ vector_name : result }</cite> form.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.vectorslist.VectorsList.get_by_name">
+<tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vector object by name.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>name (str): the name of the requested vector.</dd>
+<dt>Returns:</dt>
+<dd>Vector object.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="core.vectorslist.VectorsList.get_names">
+<tt class="descname">get_names</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vectors names.</p>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>List of strings. Contain vectors names.</dd>
 </dl>
 </dd></dl>
 
