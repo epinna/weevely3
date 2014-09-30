@@ -50,7 +50,7 @@ log.addHandler(stream_handler)
 # but the global has to be set to the lowest. Fair enough.
 log.setLevel(logging.DEBUG)
 file_handler.setLevel(logging.DEBUG)
-stream_handler.setLevel(logging.DEBUG)
+stream_handler.setLevel(logging.INFO)
 
 """Initialize the debug logger, that dumps just to logfile"""
 dlog = logging.getLogger('dlog')

@@ -24,9 +24,9 @@ class Perms(Module):
                 'rpath'
             ],
             optional = {
-                'rpath': '.', # Remote path
-                'quit': '', # Quit after first find
-                'type' : '', # File type f or d
+                'rpath': '.', 
+                'quit': '',
+                'type' : '',
                 'writable' : '',
                 'readable' : '',
                 'executable' : '',

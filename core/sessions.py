@@ -1,13 +1,15 @@
 from core import messages
 from core.weexceptions import FatalException
 from core.config import sessions_path, sessions_ext
-from core.loggers import log
+from core.loggers import log, stream_handler
 from core.module import Status
 import os
 import json
 import glob
+import logging
 import urlparse
 import atexit
+import ast
 
 print_filters = [
     'debug',
@@ -41,7 +43,27 @@ class Session(dict):
                 if any(f for f in print_filters if f == mod_name):
                     log.info("%s = '%s'" % (mod_name, mod_value))
 
+    def action_debug(self, module_argument, value):
+
+        if value:
+            stream_handler.setLevel(logging.DEBUG)
+        else:
+            stream_handler.setLevel(logging.INFO)
+
     def set(self, module_argument, value):
+
+        # Do a safe evaluation of the value
+        try:
+            value = ast.literal_eval(value)
+        except:
+            pass
+
+        # If action_<module_argument> function exists, trigger the action
+        action_name = 'action_%s' % (module_argument.replace('.','_'))
+        if hasattr(self, action_name):
+            action_func = getattr(self, action_name)
+            if hasattr(action_func, '__call__'):
+                action_func(module_argument, value)
 
         if module_argument.count('.') == 1:
             module_name, arg_name = module_argument.split('.')
@@ -56,7 +78,7 @@ class Session(dict):
                 log.warn(messages.sessions.error_storing_s_not_found % (module_name))
             else:
                 self[module_name] = value
-                log.info("%s = '%s'" % (module_name, value))
+                log.info("%s = %s" % (module_name, value))
 
                 # If the channel is changed, the basic shell_php is moved
                 # to IDLE and must be setup again.
