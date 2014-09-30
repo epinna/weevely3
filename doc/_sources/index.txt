@@ -8,7 +8,7 @@ Module Development API Documentation
 
 Modules are the component that extends the weevely core executing dinamically code on the target.
 
-Modules contain portions of PHP payloads, called vectors, that are dynamically sent and executed to the target machine and extend the weevely core for a variety of post exploitation tasks.
+Modules contain certain vectors objects, containing the payload that is dynamically sent and executed to the target machine in order to extend the weevely core for a variety of post exploitation tasks.
 
 Modules can call other modules, like you do in the weevely terminal. The modules cohesion provides a layer to interact with the target operating system, in order to administrate a web account, audit the target security, pivot deeper in the target network, and much more.
 
