@@ -1,9 +1,9 @@
 """
 The module `core.vectors` defines the following vectors classes.
 
+* `ModuleCmd` vector executes a given module with given arguments.
 * `PhpCmd` vector contains PHP code, executed via `shell_php` module.
 * `ShellCmd` vector contains a shell command, executed via `shell_sh` module.
-* `ModuleCmd` vector executes a given module with given arguments.
 
 ShellCmd and PhpCmd inherit from ModuleCmd class.
 
@@ -18,12 +18,12 @@ from core import messages
 class Os:
     """Represent the operating system vector compatibility.
 
-    Is passed as `target` argument at vector declaring.
+    It is passed as vectors `target` argument.
 
     * `Os.ANY` if the vector is compatible with every operating system
 
     * `Os.NIX` if the vector is compatible only with Unix/Linux enviroinments
-    
+
     * `Os.WIN` if the vector is compatible only with Microsoft Windows enviroinments
 
     """
@@ -42,7 +42,7 @@ class ModuleCmd:
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector. It is defined as Os enum.
+        target (Os): The operating system supported by the vector.
 
         postprocess (func): The function which postprocess the execution result.
 
@@ -68,12 +68,20 @@ class ModuleCmd:
         self.postprocess = postprocess
 
     def format(self, values):
-        """Format the payload.
+        """Format the arguments.
 
-        This is formatted using the Mako template syntax
+        This format the vector payloads using Mako template.
+
+        Args:
+            values (dict): The values passed as arguments of Mako
+            `template.Template(arg[n]).render(**values)`
+
+        Returns:
+            A list of string containing the formatted payloads.
+
         """
 
-        return [ Template(option).render(**values) for option in self.arguments ]
+        return [ Template(arg).render(**values) for arg in self.arguments ]
 
     def run(self, format_args = {}):
         """Run the module with the formatted payload.
@@ -116,7 +124,7 @@ class ShellCmd(ModuleCmd):
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector. It is defined as Os enum.
+        target (Os): The operating system supported by the vector.
 
         postprocess (func): The function which postprocess the execution result.
 
@@ -148,7 +156,7 @@ class PhpCmd(ModuleCmd):
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector. It is defined as Os enum.
+        target (Os): The operating system supported by the vector.
 
         postprocess (func): The function which postprocess the execution result.
 
