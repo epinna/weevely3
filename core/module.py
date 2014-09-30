@@ -19,17 +19,18 @@ from mako.template import Template
 import shlex
 import getopt
 import utilities
+import ast
 
 class Status:
     """Represent the module statuses.
 
-    It is stored in the session to keep track of the module status. It is set by `setup()` at the first module run.
+    Is stored in session[module][status] and is set by `setup()` call at the first run.
 
-    * Status.IDLE: Inactive module. The module has been never been setup or needs a new setup. If a module is run when IDLE, the `setup()` function is automatically called on the first module run.
+    * Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the `Module.setup()` function is automatically called.
 
-    * Status.RUN: The module is properly running and can be called.
+    * Status.RUN: The module is properly running and can be call.
 
-    * Status.FAIL: The previous setup failed and the module is disabled. Every execution of this module is automatically skipped.
+    * Status.FAIL: The module setup failed. The execution of this module is automatically skipped.
     """
 
     IDLE = 0
@@ -103,7 +104,7 @@ class Module:
         """
 
         try:
-            line_args_optional, line_args_mandatory = getopt.getopt(
+            parsed_optional, parsed_mandatory = getopt.getopt(
                 argv, '', [
                     '%s=' %
                     a for a in self.args_optional.keys()])
@@ -111,6 +112,28 @@ class Module:
             log.info('%s' % (e))
             self.help()
             return
+
+        # Do a safe evaluation of the mandatory arguments
+        line_args_mandatory = []
+        for arg in parsed_mandatory:
+            try:
+                value = ast.literal_eval(arg)
+            except:
+                # Is an invaluable, use as string
+                value = arg
+
+            line_args_mandatory.append(arg)
+
+        # Do a safe evaluation of the optional arguments
+        line_args_optional = []
+        for argfield, argvalue in parsed_optional:
+            try:
+                value = ast.literal_eval(argvalue)
+            except:
+                # Is an invaluable, use as string
+                value = argvalue
+
+            line_args_optional.append((argfield, value))
 
         # If less mandatory arguments are passed, abort
         if len(line_args_mandatory) < len(self.args_mandatory):
