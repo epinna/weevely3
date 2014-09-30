@@ -1,9 +1,9 @@
 """
 The module `core.vectors` defines the following vectors classes.
 
-* `PhpCmd` vector contains PHP code, sent through the `shell_php` module.
-* `ShellCmd` vector contains a shell command, sent through the `shell_sh` module.
-* `ModuleCmd` vector execute the given module with the given arguments.
+* `PhpCmd` vector contains PHP code, executed via `shell_php` module.
+* `ShellCmd` vector contains a shell command, executed via `shell_sh` module.
+* `ModuleCmd` vector executes a given module with given arguments.
 
 ShellCmd and PhpCmd inherit from ModuleCmd class.
 
@@ -17,9 +17,7 @@ from core import messages
 
 class ModuleCmd:
 
-    """Vector to execute modules.
-
-    This vector is used to execute other modules.
+    """This vector contains commands to execute other modules.
 
     Args:
         module (str): Module name.
@@ -28,7 +26,7 @@ class ModuleCmd:
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
+        target (Os): The operating system supported by the vector. It is defined as Os enum.
 
         postprocess (func): The function which postprocess the execution result.
 
@@ -54,6 +52,11 @@ class ModuleCmd:
         self.postprocess = postprocess
 
     def format(self, values):
+        """Format the payload.
+
+        This is formatted using the Mako template syntax
+        """
+
         return [ Template(option).render(**values) for option in self.arguments ]
 
     def run(self, format_args = {}):
@@ -97,7 +100,7 @@ class ShellCmd(ModuleCmd):
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
+        target (Os): The operating system supported by the vector. It is defined as Os enum.
 
         postprocess (func): The function which postprocess the execution result.
 
@@ -122,14 +125,14 @@ class PhpCmd(ModuleCmd):
 
     """This vector contains PHP code.
 
-    The shell command is executed via the module `shell_php`. Inherit `ModuleCmd`.
+    The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.
 
     Args:
         payload (str): PHP code to execute.
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector. It ss an int defined in Os enum.
+        target (Os): The operating system supported by the vector. It is defined as Os enum.
 
         postprocess (func): The function which postprocess the execution result.
 
