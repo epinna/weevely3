@@ -62,8 +62,7 @@ class Module:
 
         self.argparser = argparse.ArgumentParser(
             prog = self.name,
-            description = self.__doc__,
-            add_help = False
+            description = self.__doc__
         )
 
         self.init()
@@ -236,7 +235,6 @@ class Module:
         """Register the module arguments.
 
         Register arguments to be added to the argparse parser.
-
 
         Args:
             arguments (dict of dict): Dictionary in the form of
