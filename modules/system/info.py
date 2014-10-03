@@ -22,7 +22,15 @@ class Info(Module):
         self.register_vectors(
             [
             PhpCmd("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
-            PhpCmd("$u=@posix_getpwuid(@posix_geteuid());if($u){$u=$u['name'];} else{$u=getenv('username');} print($u);", 'whoami'),
+            PhpCmd("""
+                $u=@posix_getpwuid(@posix_geteuid());
+                if($u){
+                    $u=$u['name'];
+                } else {
+                    $u=getenv('username');
+                }
+                print($u);
+            """, 'whoami'),
             PhpCmd("print(@gethostname());", 'hostname'),
             PhpCmd("@print(getcwd());", 'cwd'),
             PhpCmd("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
@@ -38,7 +46,16 @@ class Info(Module):
             ),
             PhpCmd('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
             PhpCmd('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
-            PhpCmd("$v=''; if(function_exists( 'phpversion' )) { $v=phpversion(); } elseif(defined('PHP_VERSION')) { $v=PHP_VERSION; } elseif(defined('PHP_VERSION_ID')) { $v=PHP_VERSION_ID; } print($v);", 'php_version')
+            PhpCmd("""
+                $v='';
+                if(function_exists('phpversion')) {
+                    $v=phpversion();
+                } elseif(defined('PHP_VERSION')) {
+                    $v=PHP_VERSION;
+                } elseif(defined('PHP_VERSION_ID')) {
+                    $v=PHP_VERSION_ID;
+                }
+                print($v);""", 'php_version')
             ]
         )
 

@@ -23,7 +23,7 @@ class Webdownload(Module):
 
         self.register_vectors(
             [
-            PhpCmd("""@file_put_contents("${rpath}", file_get_contents("${url}"));""",
+            PhpCmd("""@file_put_contents("${rpath}",file_get_contents("${url}"));""",
               name = "file_put_contents"
             ),
             ShellCmd("""wget ${url} -O ${rpath}""",
@@ -40,8 +40,6 @@ class Webdownload(Module):
           'rpath' : { 'help' : 'Remote file path' },
           '-vector' : { 'choices' : self.vectors.get_names(), 'default' : "file_put_contents" },
         })
-
-
 
     def run(self, args):
 

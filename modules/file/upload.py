@@ -25,12 +25,12 @@ class Upload(Module):
         self.register_vectors(
             [
             PhpCmd(
-              "(file_put_contents('${rpath}', base64_decode('${content}'))&&print(1)) || print(0);",
+              "(file_put_contents('${rpath}',base64_decode('${content}'))&&print(1))||print(0);",
               name = 'file_put_contents'
               ),
 
             PhpCmd(
-              """($h=fopen("${rpath}","a+")&&fwrite($h, base64_decode('${content}'))&&fclose($h)&&print(1)) || print(0);""",
+              """($h=fopen("${rpath}","a+")&&fwrite($h,base64_decode('${content}'))&&fclose($h)&&print(1))||print(0);""",
               name = "fwrite"
               )
             ]
