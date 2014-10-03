@@ -61,24 +61,26 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">core.vectorslist</span> <span class="kn">import</span> <span class="n">VectorsList</span>
+<span class="kn">from</span> <span class="nn">core.vectors</span> <span class="kn">import</span> <span class="n">ModuleCmd</span>
 <span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span>
 <span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">import</span> <span class="nn">getopt</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">utilities</span>
+<span class="kn">import</span> <span class="nn">ast</span>
 
 <div class="viewcode-block" id="Status"><a class="viewcode-back" href="../../module.html#core.module.Status">[docs]</a><span class="k">class</span> <span class="nc">Status</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Represent the module statuses.</span>
 
-<span class="sd">    It is stored in the session to keep track of the module status. It is set by `setup()` at the first module run.</span>
+<span class="sd">    Is stored in session[module][status] and is set by `setup()` call at the first run.</span>
 
-<span class="sd">    * Status.IDLE: Inactive module. The module has been never been setup or needs a new setup. If a module is run when IDLE, the `setup()` function is automatically called on the first module run.</span>
+<span class="sd">    * Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the `Module.setup()` function is automatically called.</span>
 
-<span class="sd">    * Status.RUN: The module is properly running and can be called.</span>
+<span class="sd">    * Status.RUN: The module is properly running and can be call.</span>
 
-<span class="sd">    * Status.FAIL: The previous setup failed and the module is disabled. Every execution of this module is automatically skipped.</span>
+<span class="sd">    * Status.FAIL: The module setup failed. The execution of this module is automatically skipped.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">IDLE</span> <span class="o">=</span> <span class="mi">0</span>
@@ -107,6 +109,11 @@
                 <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span>
             <span class="p">}</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+            <span class="n">prog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">run_cmdline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
@@ -126,11 +133,11 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">traceback</span><span class="p">;</span> <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">generic</span><span class="o">.</span><span class="n">error_parsing_command_s</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">result</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">utilities</span><span class="o">.</span><span class="n">stringify</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">print_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
         <span class="c"># Data is returned for the testing of _cmdline calls</span>
         <span class="k">return</span> <span class="n">result</span>
@@ -151,48 +158,20 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">line_args_optional</span><span class="p">,</span> <span class="n">line_args_mandatory</span> <span class="o">=</span> <span class="n">getopt</span><span class="o">.</span><span class="n">getopt</span><span class="p">(</span>
-                <span class="n">argv</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="p">[</span>
-                    <span class="s">&#39;</span><span class="si">%s</span><span class="s">=&#39;</span> <span class="o">%</span>
-                    <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_optional</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
-        <span class="k">except</span> <span class="n">getopt</span><span class="o">.</span><span class="n">GetoptError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
-            <span class="k">return</span>
-
-        <span class="c"># If less mandatory arguments are passed, abort</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_args_mandatory</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">):</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">generic</span><span class="o">.</span><span class="n">error_missing_arguments_s</span> <span class="o">%</span>
-                    <span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">))</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">help</span><span class="p">()</span>
-            <span class="k">return</span>
-
-        <span class="c"># If there are more argument and we expect one, join all the</span>
-        <span class="c"># Remaining mandatory arguments</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">line_args_mandatory</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">line_args_mandatory</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="n">line_args_mandatory</span> <span class="p">)</span> <span class="p">]</span>
-
         <span class="c"># Merge stored arguments with line arguments</span>
         <span class="n">stored_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">stored_args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-                <span class="nb">dict</span><span class="p">(</span>
-                    <span class="p">(</span><span class="n">key</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span>
-                    <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">line_args_optional</span><span class="p">)</span>
-                <span class="p">)</span>
-
-        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">line_args_mandatory</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-                         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">))</span>
-
-        <span class="c"># Check if argument passed to bind_to_vectors matches with</span>
-        <span class="c"># some vector</span>
-        <span class="n">vect_arg_value</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">vect_arg_value</span> <span class="ow">and</span> <span class="n">vect_arg_value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">get_names</span><span class="p">():</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">argument_s_must_be_a_vector</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">user_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">SystemExit</span><span class="p">:</span>
             <span class="k">return</span>
+
+        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="nb">dict</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">user_args</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c"># If module status is IDLE, launch setup()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span><span class="p">:</span>
@@ -208,7 +187,7 @@
         <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="nb">dict</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">stored_args</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">stored_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="p">)</span>
 
@@ -251,7 +230,7 @@
 <div class="viewcode-block" id="Module.run"><a class="viewcode-back" href="../../module.html#core.module.Module.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Module execution.</span>
 
-<span class="sd">        Called at every the module executions.</span>
+<span class="sd">        Called at every module executions.</span>
 
 <span class="sd">        Override this to implement the module behaviour.</span>
 
@@ -273,18 +252,7 @@
 <span class="sd">        Normally does not need to be overridden.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">option_args_help</span> <span class="o">=</span> <span class="n">Template</span><span class="p">(</span>
-            <span class="n">messages</span><span class="o">.</span><span class="n">help</span><span class="o">.</span><span class="n">details</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span>
-            <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">],</span>
-            <span class="n">mand_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span><span class="p">,</span>
-            <span class="n">opt_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args_optional</span><span class="p">,</span>
-            <span class="n">stored_arguments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">],</span>
-            <span class="n">vector_arg</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">get_names</span><span class="p">())</span>
-        <span class="p">)</span>
-
-        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">option_args_help</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_argv</span><span class="p">([</span> <span class="s">&#39;-h&#39;</span> <span class="p">])</span>
 
 <div class="viewcode-block" id="Module.register_info"><a class="viewcode-back" href="../../module.html#core.module.Module.register_info">[docs]</a>    <span class="k">def</span> <span class="nf">register_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Register the module basic information.</span>
@@ -304,41 +272,39 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="n">info</span>
 
-        <span class="c"># Add description from module __doc__ if missing</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span>  <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">)</span>
             <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="s">&#39;description&#39;</span><span class="p">]:</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_module_missing_description</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Module.register_arguments"><a class="viewcode-back" href="../../module.html#core.module.Module.register_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">register_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mandatory</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">optional</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">bind_to_vectors</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Module.register_arguments"><a class="viewcode-back" href="../../module.html#core.module.Module.register_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">register_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;Register the module arguments.</span>
 
-<span class="sd">        Register mandatory and optional arguments.</span>
-
-<span class="sd">        An argument can be binded to the vectors names to limit the user choices</span>
-<span class="sd">        to the vectors names.</span>
+<span class="sd">        Register arguments to be added to the argparse parser.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            mandatory (list of string): List of mandatory arguments.</span>
-
-<span class="sd">            optional (dict of strings): Dictionary whith optional arguments as</span>
-<span class="sd">            keys, and default values as values.</span>
-
-<span class="sd">            bind_to_vectors (string): Limit the given argument choices to the</span>
-<span class="sd">            vectors names stored in `self.vectors`.</span>
+<span class="sd">            arguments (dict of dict): Dictionary in the form of</span>
+<span class="sd">            `&#39;arg1&#39; : { &#39;opts&#39; : &#39;&#39;, .. }, &#39;arg1&#39; : { &#39;opts&#39; : &#39;&#39;, .. }, ..`</span>
+<span class="sd">            to be passed to the `ArgumentParser.add_argument()` method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">args_mandatory</span> <span class="o">=</span> <span class="n">mandatory</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">args_optional</span> <span class="o">=</span> <span class="n">optional</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_opts</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
 
-        <span class="c"># Arguments in session has more priority than registered variables</span>
-        <span class="n">optional</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">optional</span>
+                <span class="c"># Handle if the argument registration is done before</span>
+                <span class="c"># The vector registration. This should at least warn</span>
+                <span class="k">if</span> <span class="n">arg_opts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;choices&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="p">[]:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_choices_s_s_empty</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                                        <span class="n">arg_name</span><span class="p">))</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">bind_to_vectors</span> <span class="o">=</span> <span class="n">bind_to_vectors</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_opts</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_setting_arguments_s</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
 </div>
 <div class="viewcode-block" id="Module.register_vectors"><a class="viewcode-back" href="../../module.html#core.module.Module.register_vectors">[docs]</a>    <span class="k">def</span> <span class="nf">register_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Register the module vectors.</span>
@@ -352,6 +318,22 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
 </div>
+    <span class="k">def</span> <span class="nf">print_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format and print execution result.</span>
+
+<span class="sd">        Called at every executions from command line.</span>
+
+<span class="sd">        Override this to implement a different result print format.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            result (Object): The result to format and print.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">utilities</span><span class="o">.</span><span class="n">stringify</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+
     <span class="k">def</span> <span class="nf">_store_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Store persistent module result.</span>
 

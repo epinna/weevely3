@@ -127,6 +127,8 @@ module execution.</dd>
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains PHP code.</p>
 <p>The PHP code is executed via the module <cite>shell_php</cite>. Inherit <cite>ModuleCmd</cite>.</p>
+<p>The formatted payload is minified removing comments, tabs, and end of line.
+Avoid to use white space characters since could break your payload.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">payload (str): PHP code to execute.</p>
@@ -135,6 +137,20 @@ module execution.</dd>
 <p class="last">postprocess (func): The function which postprocess the execution result.</p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="core.vectors.PhpCmd.format">
+<tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format and minify the payload.</p>
+<p>This format the vector payloads using Mako template. Then minify it.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>values (dict): The values passed as arguments of Mako
+<cite>template.Template(arg[n]).render(**values)</cite></dd>
+<dt>Returns:</dt>
+<dd>A list of string containing the formatted payloads.</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -142,6 +158,7 @@ module execution.</dd>
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains a shell command.</p>
 <p>The shell command is executed via the module <cite>shell_sh</cite>. Inherit <cite>ModuleCmd</cite>.</p>
+<p>The formatted payload is minified removing multiple whitespaces.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">payload (str): Command line to execute.</p>

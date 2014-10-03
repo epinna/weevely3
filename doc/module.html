@@ -70,11 +70,11 @@
 <dt id="core.module.Status">
 <em class="property">class </em><tt class="descclassname">core.module.</tt><tt class="descname">Status</tt><a class="reference internal" href="_modules/core/module.html#Status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Status" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represent the module statuses.</p>
-<p>It is stored in the session to keep track of the module status. It is set by <cite>setup()</cite> at the first module run.</p>
+<p>Is stored in session[module][status] and is set by <cite>setup()</cite> call at the first run.</p>
 <ul class="simple">
-<li>Status.IDLE: Inactive module. The module has been never been setup or needs a new setup. If a module is run when IDLE, the <cite>setup()</cite> function is automatically called on the first module run.</li>
-<li>Status.RUN: The module is properly running and can be called.</li>
-<li>Status.FAIL: The previous setup failed and the module is disabled. Every execution of this module is automatically skipped.</li>
+<li>Status.IDLE: The module is inactive. This state is set if the module has been never been setup, of if it needs a new setup. If a module is run in this state, the <cite>Module.setup()</cite> function is automatically called.</li>
+<li>Status.RUN: The module is properly running and can be call.</li>
+<li>Status.FAIL: The module setup failed. The execution of this module is automatically skipped.</li>
 </ul>
 </dd></dl>
 
@@ -121,19 +121,14 @@ ModuleCmd to use as module vectors.</dd>
 
 <dl class="method">
 <dt id="core.module.Module.register_arguments">
-<tt class="descclassname">Module.</tt><tt class="descname">register_arguments</tt><big>(</big><em>mandatory=[]</em>, <em>optional={}</em>, <em>bind_to_vectors=''</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.register_arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.register_arguments" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Module.</tt><tt class="descname">register_arguments</tt><big>(</big><em>arguments={}</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.register_arguments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.register_arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register the module arguments.</p>
-<p>Register mandatory and optional arguments.</p>
-<p>An argument can be binded to the vectors names to limit the user choices
-to the vectors names.</p>
+<p>Register arguments to be added to the argparse parser.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd><p class="first">mandatory (list of string): List of mandatory arguments.</p>
-<p>optional (dict of strings): Dictionary whith optional arguments as
-keys, and default values as values.</p>
-<p class="last">bind_to_vectors (string): Limit the given argument choices to the
-vectors names stored in <cite>self.vectors</cite>.</p>
-</dd>
+<dd>arguments (dict of dict): Dictionary in the form of
+<cite>&#8216;arg1&#8217; : { &#8216;opts&#8217; : &#8216;&#8217;, .. }, &#8216;arg1&#8217; : { &#8216;opts&#8217; : &#8216;&#8217;, .. }, ..</cite>
+to be passed to the <cite>ArgumentParser.add_argument()</cite> method.</dd>
 </dl>
 </dd></dl>
 
@@ -158,7 +153,7 @@ with the remote enviroinment, and return the module Status value.</p>
 <dt id="core.module.Module.run">
 <tt class="descclassname">Module.</tt><tt class="descname">run</tt><big>(</big><em>args</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Module execution.</p>
-<p>Called at every the module executions.</p>
+<p>Called at every module executions.</p>
 <p>Override this to implement the module behaviour.</p>
 <dl class="docutils">
 <dt>Args:</dt>

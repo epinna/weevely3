@@ -60,9 +60,11 @@
 
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span><span class="p">,</span> <span class="n">ModuleError</span>
+<span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">modules</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">utilities</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
 <div class="viewcode-block" id="Os"><a class="viewcode-back" href="../../vectors.html#core.vectors.Os">[docs]</a><span class="k">class</span> <span class="nc">Os</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Represent the operating system vector compatibility.</span>
@@ -151,8 +153,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">formatted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">traceback</span>
-            <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+            <span class="kn">import</span> <span class="nn">traceback</span><span class="p">;</span> <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_arguments_type</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">modules</span><span class="o">.</span><span class="n">loaded</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">]</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">formatted</span><span class="p">)</span>
@@ -162,11 +163,85 @@
 
         <span class="k">return</span> <span class="n">result</span>
 </div></div>
-<div class="viewcode-block" id="ShellCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ShellCmd">[docs]</a><span class="k">class</span> <span class="nc">ShellCmd</span><span class="p">(</span><span class="n">ModuleCmd</span><span class="p">):</span>
+<div class="viewcode-block" id="PhpCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpCmd">[docs]</a><span class="k">class</span> <span class="nc">PhpCmd</span><span class="p">(</span><span class="n">ModuleCmd</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;This vector contains PHP code.</span>
+
+<span class="sd">    The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.</span>
+
+<span class="sd">    The formatted payload is minified removing comments, tabs, and end of line.</span>
+<span class="sd">    Avoid to use white space characters since could break your payload.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        payload (str): PHP code to execute.</span>
+
+<span class="sd">        name (str): This vector name.</span>
+
+<span class="sd">        target (Os): The operating system supported by the vector.</span>
+
+<span class="sd">        postprocess (func): The function which postprocess the execution result.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
+
+        <span class="n">ModuleCmd</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;shell_php&#39;</span><span class="p">,</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">],</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
+            <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="PhpCmd.format"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpCmd.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Format and minify the payload.</span>
+
+<span class="sd">        This format the vector payloads using Mako template. Then minify it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            values (dict): The values passed as arguments of Mako</span>
+<span class="sd">            `template.Template(arg[n]).render(**values)`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of string containing the formatted payloads.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minify</span><span class="p">(</span>
+                    <span class="n">Template</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
+                 <span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span>
+                <span class="p">]</span>
+
+</div>
+    <span class="k">def</span> <span class="nf">_minify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
+
+        <span class="c"># Remove multiple whitespaces</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;[ ]+&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+        <span class="c"># Removes multi-line comments and does not create</span>
+        <span class="c"># a blank line, also treats white spaces/tabs</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;^[ </span><span class="se">\t</span><span class="s">]*/\*.*?\*/[ </span><span class="se">\t</span><span class="s">]*[</span><span class="se">\r\n</span><span class="s">]&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+        <span class="c"># Remove single line comments</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;^[ </span><span class="se">\t</span><span class="s">]*//.*[ </span><span class="se">\t</span><span class="s">]*[</span><span class="se">\r\n</span><span class="s">]&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+        <span class="c"># Remove eols and tabs</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;[</span><span class="se">\r\n\t</span><span class="s">]*&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">body</span>
+
+</div>
+<div class="viewcode-block" id="ShellCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ShellCmd">[docs]</a><span class="k">class</span> <span class="nc">ShellCmd</span><span class="p">(</span><span class="n">PhpCmd</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;This vector contains a shell command.</span>
 
 <span class="sd">    The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.</span>
+
+<span class="sd">    The formatted payload is minified removing multiple whitespaces.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        payload (str): Command line to execute.</span>
@@ -193,37 +268,11 @@
             <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
         <span class="p">)</span>
 
-</div>
-<div class="viewcode-block" id="PhpCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpCmd">[docs]</a><span class="k">class</span> <span class="nc">PhpCmd</span><span class="p">(</span><span class="n">ModuleCmd</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;This vector contains PHP code.</span>
+    <span class="k">def</span> <span class="nf">_minify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
 
-<span class="sd">    The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        payload (str): PHP code to execute.</span>
-
-<span class="sd">        name (str): This vector name.</span>
-
-<span class="sd">        target (Os): The operating system supported by the vector.</span>
-
-<span class="sd">        postprocess (func): The function which postprocess the execution result.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
-
-        <span class="n">ModuleCmd</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span>
-            <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;shell_php&#39;</span><span class="p">,</span>
-            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">],</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
-            <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
-        <span class="p">)</span></div>
+        <span class="c"># Remove multiple whitespaces</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;[ ]+&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
