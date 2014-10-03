@@ -24,8 +24,12 @@ set_filters = [
 class Session(dict):
 
     def _session_save_atexit(self):
-        path = self['path']
-        yaml.dump(dict(self), open(path, 'w'), default_flow_style=False)
+
+        yaml.dump(
+            dict(self),
+            open(self['path'], 'w'),
+            default_flow_style = False
+        )
 
     def print_to_user(self, module_filter = ''):
 
