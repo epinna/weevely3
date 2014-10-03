@@ -49,6 +49,8 @@ class module_file_ls:
     failed_list_file_in_directory_s = "Failed list file in directory '%s': no such directory or permission denied"
     failed_list_file_in_directory_s_unknown = "Failed list file in directory '%s': unknown error"
 
+class module_file_download:
+    failed_download_file = "File download failed"
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
