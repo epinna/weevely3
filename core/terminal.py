@@ -135,10 +135,10 @@ class Terminal(CmdModules):
 
             # Get hostname and whoami if not set
             if not self.session['system_info']['results'].get('hostname'):
-                modules.loaded['system_info'].run_argv(["--info=hostname"])
+                modules.loaded['system_info'].run_argv([ "-info", "hostname"])
 
             if not self.session['system_info']['results'].get('whoami'):
-                modules.loaded['system_info'].run_argv(["--info=whoami"])
+                modules.loaded['system_info'].run_argv(["-info", "whoami"])
 
         # Get current working directory if not set
         # Should be OK to repeat this every time if not set.

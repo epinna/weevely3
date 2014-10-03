@@ -35,15 +35,12 @@ class Webdownload(Module):
             ]
         )
 
-        self.register_arguments(
-            mandatory = [
-                'url',
-                'rpath'
-            ],
-            optional = {
-                'vector' : 'file_put_contents'
-            },
-            bind_to_vectors = 'vector')
+        self.register_arguments({
+          'url' : { 'help' : 'URL to download remotely' },
+          'rpath' : { 'help' : 'Remote file path' },
+          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : "file_put_contents" },
+        })
+
 
 
     def run(self, args):

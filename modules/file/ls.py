@@ -19,13 +19,12 @@ class Ls(Module):
             }
         )
 
-        self.register_arguments(
-            optional = {
-                'dir': '.'
-            })
+        self.register_arguments({
+          'dir' : { 'help' : 'Target folder', 'default' : '.' }
+        })
 
     def run(self, args):
-	
+
         return PhpCmd(
                 """$p="${dir}";if(@is_dir($p)){$d=@opendir($p);$a=array();if($d){while(($f=@readdir($d))){$a[]=$f;};sort($a);print(join('\n', $a));}}""",
                 postprocess = lambda x: x.split('\n')

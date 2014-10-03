@@ -22,17 +22,12 @@ class Php(Module):
             }
         )
 
-        self.register_arguments(
-            # Declare mandatory commands
-            mandatory = [
-                'command'
-            ],
-            # Declare additional options
-            optional = {
-                'prefix_string': '',
-                'post_data': '',
-                'postfix_string': '',
-            })
+        self.register_arguments({
+          'command' : { 'help' : 'PHP code enclosed with brackets and terminated by semi-comma', 'nargs' : '+' },
+          '-prefix-string' : { 'default' : '' },
+          '-post_data' : {},
+          '-postfix-string' : { 'default' : '' },
+        })
 
         self.channel = None
 
@@ -74,7 +69,7 @@ class Php(Module):
 
         # Compose command with cwd, pre_command, and post_command option.
         args.update({ 'chdir' : chdir })
-        command = Template("${chdir}${prefix_string}${command}${postfix_string}").render(**args)
+        command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""").render(**args)
 
         # Send command
         response, code = self.channel.send(command)

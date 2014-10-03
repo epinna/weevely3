@@ -131,7 +131,7 @@ class VectorsList(list):
 
             if not self._os_match(vector.target): continue
 
-            if not any(x in vector.name for x in names): continue
+            if names and not any(x in vector.name for x in names): continue
 
             response[vector.name] = vector.run(format_args)
 
@@ -162,7 +162,7 @@ class VectorsList(list):
         Returns:
             Vector object.
         """
-        return next(v for v in self if v.name == name)
+        return next((v for v in self if v.name == name), None)
 
     def get_names(self):
         """Get the vectors names.

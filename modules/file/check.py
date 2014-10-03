@@ -20,13 +20,6 @@ class Check(Module):
             }
         )
 
-        self.register_arguments(
-            mandatory = [
-                'rpath',
-                'check'
-            ],
-            bind_to_vectors = 'check')
-
         self.register_vectors(
             [
             PhpCmd(
@@ -67,6 +60,11 @@ class Check(Module):
             )
             ]
         )
+
+        self.register_arguments({
+          'rpath' : { 'help' : 'Target path' },
+          'check' : { 'choices' : self.vectors.get_names() },
+        })
 
     def run(self, args):
 

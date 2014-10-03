@@ -22,19 +22,6 @@ class Upload(Module):
             }
         )
 
-        self.register_arguments(
-            # Declare mandatory arguments
-            mandatory = [
-                'lpath',
-                'rpath'
-            ],
-            # Declare additional options
-            optional = {
-                'content': '',
-                'vector': ''
-            },
-            bind_to_vectors = 'vector')
-
         self.register_vectors(
             [
             PhpCmd(
@@ -48,6 +35,13 @@ class Upload(Module):
               )
             ]
         )
+
+        self.register_arguments({
+          'lpath' : { 'help' : 'Local file path' },
+          'rpath' : { 'help' : 'Remote file path' },
+          'content' : {},
+          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
+        })
 
     def run(self, args):
 

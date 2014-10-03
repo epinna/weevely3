@@ -21,18 +21,6 @@ class Sh(Module):
             }
         )
 
-        self.register_arguments(
-            # Declare mandatory arguments
-            mandatory = [
-                'command'
-            ],
-            # Declare additional options
-            optional = {
-                'stderr_redirection': ' 2>&1',
-                'vector': ''
-            },
-            bind_to_vectors = 'vector')
-
         self.register_vectors(
             [
             # All the system-like calls has to be properly wrapped between single quotes
@@ -48,6 +36,12 @@ class Sh(Module):
             PhpCmd("""$p=@pcntl_fork(); if(!$p){@pcntl_exec("/bin/sh",Array("-c",'${command}'));} else {@pcntl_waitpid($p,$status);}""",
                 name="pcntl", target=Os.NIX),
             ])
+
+        self.register_arguments({
+          'command' : { 'help' : 'Shell command', 'nargs' : '+' },
+          '-stderr_redirection' : { 'default' : ' 2>&1' },
+          '-vector' : { 'choices' : self.vectors.get_names() },
+        })
 
     def setup(self, args={}):
         """Probe all vectors to find a working system-like function.
@@ -90,10 +84,12 @@ class Sh(Module):
 
     def run(self, args):
 
+        # Join the command list and
+
         # Escape the single quotes. This does not protect from \' but
         # avoid to break the query for an unscaped quote.
 
-        args['command'] = args['command'].replace("'", "\\'")
+        args['command'] = ' '.join(args['command']).replace("'", "\\'")
 
         return self.vectors.get_result(
          name = args['vector'],

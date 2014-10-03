@@ -20,11 +20,9 @@ class Cd(Module):
             }
         )
 
-        self.register_arguments(
-            # Declare mandatory arguments
-            mandatory = [
-                'dir'
-            ])
+        self.register_arguments({
+          'dir' : { 'help' : 'Target folder', 'default' : '.', 'nargs' : '?' }
+        })
 
     def run(self, args):
 

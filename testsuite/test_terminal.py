@@ -40,10 +40,10 @@ class TerminalTest(BaseTest):
         self._assert_exec(':shell_php "echo(1); echo(2);"', '12', log_captured)
 
         # Module with mandatory and optional arguments properly passed
-        self._assert_exec(':shell_php --postfix_string=" echo(3);" "echo(1); echo(2);"', '123', log_captured)
+        self._assert_exec(':shell_php -postfix-string echo(3); "echo(1); echo(2);"', '123', log_captured)
 
         # Module with mandatory and optional arguments wrongly passed but precisely fixed
-        self._assert_exec(':shell_php --postfix_string=" echo(3);" echo(1); echo(2);', '123', log_captured)
+        self._assert_exec(':shell_php -postfix-string echo(3); echo(1); echo(2);', '123', log_captured)
 
     @log_capture()
     def test_session(self, log_captured):

@@ -19,12 +19,6 @@ class Info(Module):
             }
         )
 
-        self.register_arguments(
-            optional = {
-                'info': '' # Comma separated information to request
-            },
-            bind_to_vectors = 'info')
-
         self.register_vectors(
             [
             PhpCmd("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
@@ -48,9 +42,13 @@ class Info(Module):
             ]
         )
 
+        self.register_arguments({
+          '-info' : { 'help' : 'Check give information', 'choices' : self.vectors.get_names(), 'nargs' : '+' }
+        })
+
     def run(self, args):
 
         return self.vectors.get_results(
-            names = args['info'].split(','),
-            results_to_store = ['whoami', 'hostname', 'dir_sep', 'os']
+            names = args.get('info', []),
+            results_to_store = ('whoami', 'hostname', 'dir_sep', 'os')
         )

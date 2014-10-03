@@ -20,22 +20,6 @@ class Perms(Module):
             }
         )
 
-        self.register_arguments(
-            mandatory = [
-                'rpath'
-            ],
-            optional = {
-                'rpath': '.', 
-                'quit': '',
-                'type' : '',
-                'writable' : '',
-                'readable' : '',
-                'executable' : '',
-                'recursive' : True,
-                'vector' : 'php_recursive'
-            },
-            bind_to_vectors = 'vector')
-
         self.register_vectors(
             [
             PhpCmd(
@@ -49,17 +33,27 @@ $h=@opendir($d); while ($f = @readdir($h)) { if(substr($fdir,0,1)=='/') { $df='/
 $df.=join('/', array(trim($d, '/'), trim($f, '/')));
 if(($f!='.')&&($f!='..')&&ckprint($df,$t,$a) && ($q!="")) return;
 if(($f!='.')&&($f!='..')&&cktp($df,'d')&&$r){@swp($fdir, $df, $t, $a, $q,$r);}
-} if($h) { closedir($h); } }""", 
+} if($h) { closedir($h); } }""",
              name = 'php_recursive',
              postprocess = lambda x: x.split('\n')
             ),
             ShellCmd(
-              payload = """find ${rpath} ${ '-maxdepth 1' if not recursive else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' } 2>/dev/null""", 
+              payload = """find ${rpath} ${ '-maxdepth 1' if not recursive else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' } 2>/dev/null""",
               name = "sh_find",
               postprocess = lambda x: x.split('\n')
             )
             ]
         )
+
+        self.register_arguments({
+          'rpath' : { 'help' : 'Starting path' },
+          '-quit' : { 'action' : 'store_true', 'default' : False, 'help' : 'Quit at first result' },
+          '-writable' : { 'action' : 'store_true' },
+          '-readable' : { 'action' : 'store_true' },
+          '-executable' : { 'action' : 'store_true' },
+          '-recursive' : { 'action' : 'store_true', 'default' : True },
+          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
+        })
 
     def run(self, args):
         return self.vectors.get_result(args['vector'], args)

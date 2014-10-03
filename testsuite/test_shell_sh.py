@@ -41,7 +41,7 @@ class SystemInfo(BaseTest):
         vector_safe_name = 'proc_open'
 
         # Check correctness of execution
-        self.assertEqual(self.run_argv(["--vector=%s" % vector_safe_name, "echo 1"]), "1");
+        self.assertEqual(self.run_argv(["-vector", vector_safe_name, "echo 1"]), "1");
 
         # Check stored vector
         self.assertEqual(self.session['shell_sh']['stored_args']['vector'], vector_safe_name)
@@ -54,7 +54,7 @@ class SystemInfo(BaseTest):
         modules.loaded['shell_sh'].vectors.append(PhpCmd("echo(1);", name=bogus_vector, target=Os.WIN))
 
         # Check if called forced the bogusv vector name, returns Null
-        self.assertIsNone(self.run_argv(["--vector=%s" % (bogus_vector), "echo 1"]));
+        self.assertIsNone(self.run_argv(["-vector", bogus_vector, "echo 1"]));
 
     def test_vector_all_os(self):
 

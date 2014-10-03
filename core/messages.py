@@ -33,10 +33,12 @@ class vectors:
     wrong_store_name_type = 'Wrong argument type, a string with an argument name is required'
 
 class module:
+    error_setting_arguments_s = 'Error setting arguments: %s'
     argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'
     error_module_missing_description = 'Error, module description is missing'
     error_init_method_required = 'Error, the init() method definition is required in Modules'
-    module_s_inactive = 'Module %s is inactive, skipped'
+    module_s_inactive = 'Module \'%s\' is inactive, skipped'
+    error_choices_s_s_empty = 'Choices for \'%s\' argument \'%s\' is empty. Please check if vectors are declared before arguments.'
 
 class module_file_cd:
     failed_directory_change_to_s = "Failed cd '%s': no such directory or permission denied"
@@ -63,25 +65,3 @@ class generate:
     error_agent_template_s_s = 'Error with agent template \'%s\': %s'
     error_obfuscator_template_s_s = 'Error with obfuscator template \'%s\': %s'
     generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
-
-class help:
-    details = """
-Description
-===========
-
-${description}
-
-Basic ${module_name} usage
-${ '=' * (len(module_name) + 12 ) }
-
-    ${ module_name } ${ '[options] ' if opt_arguments else '' }${ '<%s>' % '> <'.join(mand_arguments) if mand_arguments else '' }
-
-%if opt_arguments:
-Options (Use ':set ${module_name}.<option> <value>' to store session values)
-${ '=' * (len(module_name) + 62) }
-
-% for arg, value in opt_arguments.items():
-    --${arg}=${ '\\n      Default: \\'%s\\'' % value if value and stored_arguments.get(arg) != value else '' }${ '\\n      Stored: \\'%s\\'' % stored_arguments.get(arg) if stored_arguments.get(arg) else '' }${ '\\n      Choices: \\'%s\\'' % '\\', \\''.join(vector_arg[1]) if vector_arg and vector_arg[0] == arg else '' }
-% endfor
-% endif
-"""

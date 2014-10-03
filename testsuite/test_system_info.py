@@ -23,10 +23,9 @@ class SystemInfo(BaseTest):
 
         # Get just one info
         self.assertEqual(
-                      os.path.split(self.run_argv(["--info=script"])['script'])[1],
+                      os.path.split(self.run_argv(["-info", "script"])['script'])[1],
                       os.path.split(self.path)[1]
         );
 
         # Pass unexistant info
-        self.assertIsNone(self.run_argv(["--info=BOGUS"]));
-        self.assertEqual(messages.module.argument_s_must_be_a_vector % 'info', log_captured.records[-1].msg)
+        self.assertIsNone(self.run_argv(["-info", "BOGUS"]));

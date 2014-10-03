@@ -20,18 +20,6 @@ class Name(Module):
             }
         )
 
-        self.register_arguments(
-            mandatory = [
-                'expression'
-            ],
-            optional = {
-                'rpath': '.',
-                'contains': '',
-                'case' : '',
-                'recursive' : 'True',
-                'vector' : 'php_recursive'
-            },
-            bind_to_vectors = 'vector')
 
         self.register_vectors(
             [
@@ -39,18 +27,27 @@ class Name(Module):
               payload = """swp('${rpath}');
 function ckdir($df, $f) { return ($f!='.')&&($f!='..')&&@is_dir($df);} function match($f) {return preg_match("${ \"/%s/%s\" % ( '^%s$' % (expression) if not contains else expression, 'i' if not case else '') }",$f);}
 function swp($d){ $h=@opendir($d);while($f = readdir($h)) { $df=$d.'/'.$f; if(($f!='.')&&($f!='..')&&match($f))
-print($df."\n"); if(@ckdir($df,$f)&&${False if (not recursive or recursive.lower() == 'false') else True}) @swp($df); }
-if($h) { @closedir($h); } }""", 
+print($df."\n"); if(@ckdir($df,$f)&&${not no_recursion}) @swp($df); }
+if($h) { @closedir($h); } }""",
               name = 'php_recursive',
               postprocess = lambda x: x.split('\n')
             ),
             ShellCmd(
-              payload = """find ${rpath} ${ '-maxdepth 1' if not recursive else '' } ${ '-name' if case else '-iname' } "${ '*%s*' % (expression) if contains else expression }" 2>/dev/null""", 
+              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-name' if case else '-iname' } "${ '*%s*' % (expression) if contains else expression }" 2>/dev/null""",
               name = "sh_find",
               postprocess = lambda x: x.split('\n')
             )
             ]
         )
+
+        self.register_arguments({
+          'expression' : {  'help' : 'Expression to mach with the file names' },
+          'rpath' : { 'help' : 'Starting path' },
+          '-contains' : { 'action' : 'store_true', 'default' : False },
+          '-case' : { 'action' : 'store_true', 'default' : False },
+          '-no-recursion' : { 'action' : 'store_true', 'default' : False },
+          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
+        })
 
     def run(self, args):
         return self.vectors.get_result(args['vector'], args)

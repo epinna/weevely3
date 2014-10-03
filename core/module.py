@@ -12,12 +12,13 @@ Normally, the following methods have to be overridden:
 """
 
 from core.vectorslist import VectorsList
+from core.vectors import ModuleCmd
 from core.weexceptions import DevException
 from core.loggers import log
 from core import messages
 from mako.template import Template
 import shlex
-import getopt
+import argparse
 import utilities
 import ast
 
@@ -58,6 +59,12 @@ class Module:
                 'results': {},
                 'status': Status.IDLE
             }
+
+        self.argparser = argparse.ArgumentParser(
+            prog = self.name,
+            description = self.__doc__,
+            add_help = False
+        )
 
         self.init()
 
@@ -102,70 +109,20 @@ class Module:
 
         """
 
-        try:
-            parsed_optional, parsed_mandatory = getopt.getopt(
-                argv, '', [
-                    '%s=' %
-                    a for a in self.args_optional.keys()])
-        except getopt.GetoptError as e:
-            log.info('%s' % (e))
-            self.help()
-            return
-
-        # Do a safe evaluation of the mandatory arguments
-        line_args_mandatory = []
-        for arg in parsed_mandatory:
-            try:
-                value = ast.literal_eval(arg)
-            except:
-                # Is an invaluable, use as string
-                value = arg
-
-            line_args_mandatory.append(arg)
-
-        # Do a safe evaluation of the optional arguments
-        line_args_optional = []
-        for argfield, argvalue in parsed_optional:
-            try:
-                value = ast.literal_eval(argvalue)
-            except:
-                # Is an invaluable, use as string
-                value = argvalue
-
-            line_args_optional.append((argfield, value))
-
-        # If less mandatory arguments are passed, abort
-        if len(line_args_mandatory) < len(self.args_mandatory):
-            log.info(messages.generic.error_missing_arguments_s %
-                    (' '.join(self.args_mandatory))
-            )
-            self.help()
-            return
-
-        # If there are more argument and we expect one, join all the
-        # Remaining mandatory arguments
-        elif len(line_args_mandatory) > 1 and len(self.args_mandatory) == 1:
-            line_args_mandatory = [ ' '.join( line_args_mandatory ) ]
-
         # Merge stored arguments with line arguments
         stored_args = self.session[self.name]['stored_args'].copy()
         args = stored_args.copy()
 
-        args.update(
-                dict(
-                    (key.strip('-'), value) for
-                    (key, value) in line_args_optional)
-                )
-
-        args.update(dict((key, line_args_mandatory.pop(0))
-                         for key in self.args_mandatory))
-
-        # Check if argument passed to bind_to_vectors matches with
-        # some vector
-        vect_arg_value = args.get(self.bind_to_vectors)
-        if vect_arg_value and vect_arg_value not in self.vectors.get_names():
-            log.warn(messages.module.argument_s_must_be_a_vector % self.bind_to_vectors)
+        try:
+            user_args = self.argparser.parse_args(argv)
+        except SystemExit:
             return
+
+        args.update(
+            dict(
+                (key, value) for key, value in user_args.__dict__.items() if value != None
+            )
+        )
 
         # If module status is IDLE, launch setup()
         if self.session[self.name]['status'] == Status.IDLE:
@@ -181,7 +138,7 @@ class Module:
         args.update(
             dict(
                 (key, value) for key, value in self.session[self.name]['stored_args'].items()
-                if value != stored_args[key]
+                if value != stored_args.get(key)
                 )
         )
 
@@ -246,18 +203,7 @@ class Module:
         Normally does not need to be overridden.
         """
 
-        option_args_help = Template(
-            messages.help.details
-        ).render(
-            module_name = self.name,
-            description = self.info['description'],
-            mand_arguments = self.args_mandatory,
-            opt_arguments = self.args_optional,
-            stored_arguments = self.session[self.name]['stored_args'],
-            vector_arg = (self.bind_to_vectors, self.vectors.get_names())
-        )
-
-        log.info(option_args_help)
+        self.run_argv([ '-h' ])
 
     def register_info(self, info):
         """Register the module basic information.
@@ -277,41 +223,40 @@ class Module:
 
         self.info = info
 
-        # Add description from module __doc__ if missing
-        self.info['description'] = (
+        self.argparser.description =  (
             self.info.get('description')
             if self.info.get('description')
             else self.__doc__.strip()
         )
-        if not self.info['description']:
+
+        if not self.argparser.description:
             raise DevException(messages.module.error_module_missing_description)
 
-    def register_arguments(self, mandatory = [], optional = {}, bind_to_vectors = ''):
+    def register_arguments(self, arguments = {}):
         """Register the module arguments.
 
-        Register mandatory and optional arguments.
+        Register arguments to be added to the argparse parser.
 
-        An argument can be binded to the vectors names to limit the user choices
-        to the vectors names.
 
         Args:
-            mandatory (list of string): List of mandatory arguments.
-
-            optional (dict of strings): Dictionary whith optional arguments as
-            keys, and default values as values.
-
-            bind_to_vectors (string): Limit the given argument choices to the
-            vectors names stored in `self.vectors`.
+            arguments (dict of dict): Dictionary in the form of
+            `'arg1' : { 'opts' : '', .. }, 'arg1' : { 'opts' : '', .. }, ..`
+            to be passed to the `ArgumentParser.add_argument()` method.
         """
 
-        self.args_mandatory = mandatory
-        self.args_optional = optional.copy()
+        try:
+            for arg_name, arg_opts in arguments.items():
 
-        # Arguments in session has more priority than registered variables
-        optional.update(self.session[self.name]['stored_args'])
-        self.session[self.name]['stored_args'] = optional
+                # Handle if the argument registration is done before
+                # The vector registration. This should at least warn
+                if arg_opts.get('choices') == []:
+                    log.warn(messages.module.error_choices_s_s_empty % (self.name,
+                                                                        arg_name))
 
-        self.bind_to_vectors = bind_to_vectors
+                self.argparser.add_argument(arg_name, **arg_opts)
+        except Exception as e:
+            raise DevException(messages.module.error_setting_arguments_s % (e))
+
 
     def register_vectors(self, vectors):
         """Register the module vectors.
