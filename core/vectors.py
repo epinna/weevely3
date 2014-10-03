@@ -11,9 +11,11 @@ ShellCmd and PhpCmd inherit from ModuleCmd class.
 
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
+from core.loggers import log
 from core import modules
 from core import utilities
 from core import messages
+import re
 
 class Os:
     """Represent the operating system vector compatibility.
@@ -112,38 +114,6 @@ class ModuleCmd:
 
         return result
 
-class ShellCmd(ModuleCmd):
-
-    """This vector contains a shell command.
-
-    The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.
-
-    Args:
-        payload (str): Command line to execute.
-
-        name (str): This vector name.
-
-        target (Os): The operating system supported by the vector.
-
-        postprocess (func): The function which postprocess the execution result.
-
-    """
-
-    def __init__(self, payload, name = None, target = 0, postprocess = None):
-
-        if not isinstance(payload, basestring):
-            raise DevException(messages.vectors.wrong_payload_type)
-
-        ModuleCmd.__init__(
-            self,
-            module = 'shell_sh',
-            arguments = [ payload ],
-            name = name,
-            target = target,
-            postprocess = postprocess
-        )
-
-
 class PhpCmd(ModuleCmd):
 
     """This vector contains PHP code.
@@ -179,7 +149,7 @@ class PhpCmd(ModuleCmd):
         )
 
     def format(self, values):
-        """Format and minify the PHP payload.
+        """Format and minify the payload.
 
         This format the vector payloads using Mako template. Then minify it.
 
@@ -192,7 +162,63 @@ class PhpCmd(ModuleCmd):
 
         """
 
-        return [ utilities.minify_php(
+        return [ self._minify(
                     Template(arg).render(**values)
                  ) for arg in self.arguments
                 ]
+
+
+    def _minify(self, body):
+
+        # Remove multiple whitespaces
+        body = re.sub('[ ]+', ' ', body)
+
+        # Removes multi-line comments and does not create
+        # a blank line, also treats white spaces/tabs
+        body = re.sub('^[ \t]*/\*.*?\*/[ \t]*[\r\n]', '', body, re.DOTALL)
+
+        # Remove single line comments
+        body = re.sub('^[ \t]*//.*[ \t]*[\r\n]', '', body)
+
+        # Remove eols and tabs
+        body = re.sub('[\r\n\t]*', '', body)
+
+        return body
+
+
+class ShellCmd(PhpCmd):
+
+    """This vector contains a shell command.
+
+    The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.
+
+    Args:
+        payload (str): Command line to execute.
+
+        name (str): This vector name.
+
+        target (Os): The operating system supported by the vector.
+
+        postprocess (func): The function which postprocess the execution result.
+
+    """
+
+    def __init__(self, payload, name = None, target = 0, postprocess = None):
+
+        if not isinstance(payload, basestring):
+            raise DevException(messages.vectors.wrong_payload_type)
+
+        ModuleCmd.__init__(
+            self,
+            module = 'shell_sh',
+            arguments = [ payload ],
+            name = name,
+            target = target,
+            postprocess = postprocess
+        )
+
+
+    def _minify(self, body):
+
+        # Remove multiple whitespaces
+        return re.sub('[ ]+', ' ', body)
