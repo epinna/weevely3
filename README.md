@@ -13,7 +13,7 @@ Weevely is a PHP web shell that provides a weaponized telnet-like interface to a
 
 It is a swiss army knife to administrate a web account, even in restricted remote environments. Weevely is an essential tool for web application post exploitation, access maintaining, target security audit, pivot deeper in the target network, and much more. 
 
-**The modular framework**
+### The modular framework
 
 Weevely modules extend the terminal providing a layer to interact to the remote target. 
 
@@ -29,11 +29,11 @@ The modules feature:
 * Spawn reverse and direct TCP shells
 * Bruteforce SQL accounts through target system users
 
-**The agent**
+### The backdoor agent
 
-The remote backdoor is a very low footprint agent that receives the dynamically injected code from the client, extending the client functionalities over the network at run-time. The backdoor agent code is polymorphic and hardly detectable from AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
+The remote agent is a very low footprint agent that receives the dynamically injected code from the client, extending the client functionalities over the network at run-time. The agent code is polymorphic and hardly detectable from AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
 
-**Modules development**
+### Modules development
 
 Weevely also provides python API which can be used to develop your own module to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.
 
