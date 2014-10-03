@@ -4,7 +4,7 @@ from core.config import sessions_path, sessions_ext
 from core.loggers import log, stream_handler
 from core.module import Status
 import os
-import json
+import yaml
 import glob
 import logging
 import urlparse
@@ -25,7 +25,7 @@ class Session(dict):
 
     def _session_save_atexit(self):
         path = self['path']
-        json.dump(self, open(path, 'w'))
+        yaml.dump(dict(self), open(path, 'w'), default_flow_style=False)
 
     def print_to_user(self, module_filter = ''):
 
@@ -51,12 +51,6 @@ class Session(dict):
             stream_handler.setLevel(logging.INFO)
 
     def set(self, module_argument, value):
-
-        # Do a safe evaluation of the value
-        try:
-            value = ast.literal_eval(value)
-        except:
-            pass
 
         # If action_<module_argument> function exists, trigger the action
         action_name = 'action_%s' % (module_argument.replace('.','_'))
@@ -90,7 +84,7 @@ class SessionFile(Session):
     def __init__(self, dbpath, volatile = False):
 
         try:
-            sessiondb = json.load(open(dbpath, 'r'))
+            sessiondb = yaml.load(open(dbpath, 'r').read())
         except Exception as e:
             log.warn(
                 messages.generic.error_loading_file_s_s %
@@ -139,7 +133,7 @@ class SessionURL(Session):
         for dbpath in sessions_available:
 
             try:
-                sessiondb = json.load(open(dbpath, 'r'))
+                sessiondb = yaml.load(open(dbpath, 'r').read())
             except Exception as e:
                 log.warn(
                     messages.generic.error_loading_file_s_s %
@@ -179,9 +173,9 @@ class SessionURL(Session):
                     {   'path': dbpath,
                         'url': url,
                         'password': password,
-                        'debug': '',
-                        'channel' : '',
-                        'default_shell' : ''
+                        'debug': False,
+                        'channel' : None,
+                        'default_shell' : None
                     }
                 )
 
