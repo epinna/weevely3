@@ -29,11 +29,11 @@ The modules feature:
 * Spawn reverse and direct TCP shells
 * Bruteforce SQL accounts through target system users
 
-## The backdoor agent
+### The backdoor agent
 
 The remote agent is a very low footprint agent that receives the dynamically injected code from the client, extending the client functionalities over the network at run-time. The agent code is polymorphic and hardly detectable from AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
 
-## Modules development
+### Modules development
 
 Weevely also provides python API which can be used to develop your own module to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.
 
