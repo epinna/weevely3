@@ -63,7 +63,7 @@ class VectorsList(list):
 
             if not self._os_match(vector.target): continue
 
-            if not any(x in vector.name for x in names): continue
+            if names and not any(x in vector.name for x in names): continue
 
             result = vector.run(format_args)
 
