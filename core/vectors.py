@@ -102,8 +102,7 @@ class ModuleCmd:
         try:
             formatted = self.format(format_args)
         except TypeError as e:
-            import traceback
-            traceback.print_exc()
+            import traceback; log.debug(traceback.format_exc())
             raise DevException(messages.vectors.wrong_arguments_type)
 
         result = modules.loaded[self.module].run_argv(formatted)
@@ -151,6 +150,9 @@ class PhpCmd(ModuleCmd):
 
     The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.
 
+    The formatted payload is minified removing comments, tabs, and end of line.
+    Avoid using white space characters since could break your payload.
+
     Args:
         payload (str): PHP code to execute.
 
@@ -175,3 +177,22 @@ class PhpCmd(ModuleCmd):
             target = target,
             postprocess = postprocess
         )
+
+    def format(self, values):
+        """Format and minify the PHP payload.
+
+        This format the vector payloads using Mako template. Then minify it.
+
+        Args:
+            values (dict): The values passed as arguments of Mako
+            `template.Template(arg[n]).render(**values)`
+
+        Returns:
+            A list of string containing the formatted payloads.
+
+        """
+
+        return [ utilities.minify_php(
+                    Template(arg).render(**values)
+                 ) for arg in self.arguments
+                ]

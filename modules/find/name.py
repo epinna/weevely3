@@ -27,7 +27,7 @@ class Name(Module):
               payload = """swp('${rpath}');
 function ckdir($df, $f) { return ($f!='.')&&($f!='..')&&@is_dir($df);} function match($f) {return preg_match("${ \"/%s/%s\" % ( '^%s$' % (expression) if not contains else expression, 'i' if not case else '') }",$f);}
 function swp($d){ $h=@opendir($d);while($f = readdir($h)) { $df=$d.'/'.$f; if(($f!='.')&&($f!='..')&&match($f))
-print($df."\n"); if(@ckdir($df,$f)&&${not no_recursion}) @swp($df); }
+print($df.PHP_EOL); if(@ckdir($df,$f)&&${not no_recursion}) @swp($df); }
 if($h) { @closedir($h); } }""",
               name = 'php_recursive',
               postprocess = lambda x: x.split('\n')

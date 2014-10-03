@@ -24,7 +24,7 @@ class Perms(Module):
             [
             PhpCmd(
               payload = """swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }','${ '1' if quit else '' }', ${not no_recursion});
-function ckprint($df,$t,$a) { if(cktp($df,$t)&&@ckattr($df,$a)) { print($df."\\n"); return True;}   }
+function ckprint($df,$t,$a) { if(cktp($df,$t)&&@ckattr($df,$a)) { print($df.PHP_EOL); return True;}   }
 function ckattr($df, $a) { $w=strstr($a,"w");$r=strstr($a,"r");$x=strstr($a,"x"); return ($a=='')||(!$w||is_writable($df))&&(!$r||is_readable($df))&&(!$x||is_executable($df)); }
 function cktp($df, $t) { return ($t==''||($t=='f'&&@is_file($df))||($t=='d'&&@is_dir($df))); }
 function swp($fdir, $d, $t, $a, $q, $r){

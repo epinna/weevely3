@@ -127,3 +127,21 @@ def shorten_string(body, keep_header = 0, keep_trailer = 0):
             return '%s .. %s' % (body[:keep_header], body[-keep_trailer:])
 
     return body
+
+
+def minify_php(body, keep_whitespaces = False):
+
+    # Remove multiple whitespaces
+    body = re.sub('[ ]+', ' ', body)
+
+    # Removes multi-line comments and does not create
+    # a blank line, also treats white spaces/tabs
+    body = re.sub('^[ \t]*/\*.*?\*/[ \t]*[\r\n]', '', body, re.DOTALL)
+
+    # Remove single line comments
+    body = re.sub('[ \t]*//.*[ \t]*[\r\n]', '', body)
+
+    # Remove eols and tabs
+    body = re.sub('[\r\n\t]*', '', body)
+
+    return body

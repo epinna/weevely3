@@ -204,6 +204,7 @@ class Terminal(CmdModules):
         try:
             args = shlex.split(line)
         except Exception as e:
+            import traceback; log.debug(traceback.format_exc())
             log.warn(messages.generic.error_parsing_command_s % str(e))
             return
 
