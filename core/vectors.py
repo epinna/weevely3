@@ -121,7 +121,7 @@ class PhpCmd(ModuleCmd):
     The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.
 
     The formatted payload is minified removing comments, tabs, and end of line.
-    Avoid using white space characters since could break your payload.
+    Avoid to use white space characters since could break your payload.
 
     Args:
         payload (str): PHP code to execute.
@@ -191,6 +191,8 @@ class ShellCmd(PhpCmd):
     """This vector contains a shell command.
 
     The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.
+
+    The formatted payload is minified removing multiple whitespaces.
 
     Args:
         payload (str): Command line to execute.
