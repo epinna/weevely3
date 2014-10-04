@@ -15,6 +15,7 @@ response in the way we want with `find_first_result()`.
 from core.vectors import Os
 from mako.template import Template
 from core.weexceptions import DevException, ModuleError
+from core.loggers import log, dlog
 from core import modules
 from core import utilities
 from core import messages
@@ -35,6 +36,8 @@ class VectorsList(list):
         the given condition.
 
         With unspecified names, execute all the vectors. Optionally store results.
+
+        Exceptions triggered checking condition function are catched and logged.
 
         Args:
             names (list of str): The list of names of vectors to execute.
@@ -67,8 +70,15 @@ class VectorsList(list):
 
             result = vector.run(format_args)
 
-            if condition(result):
+            try:
+                condition_result = condition(result)
+            except Exception as e:
+                import traceback; dlog.info(traceback.format_exc())
+                log.debug(messages.vectorslist.vector_s_triggers_an_exc)
+                
+                condition_result = False
 
+            if condition_result:
                 if store_result:
                     self.session[self.module_name]['results'][vector.name] = result
                 if store_name:

@@ -32,6 +32,9 @@ class vectors:
     wrong_condition_type = 'Wrong condition argument type, a callable function is required'
     wrong_store_name_type = 'Wrong argument type, a string with an argument name is required'
 
+class vectorslist:
+    vector_s_triggers_an_exc = 'Vector \'%s\' execution triggers an exception'
+
 class module:
     error_setting_arguments_s = 'Error setting arguments: %s'
     argument_s_must_be_a_vector  = 'Argument \'%s\' must be a vector name'
@@ -50,7 +53,8 @@ class module_file_ls:
     failed_list_file_in_directory_s_unknown = "Failed list file in directory '%s': unknown error"
 
 class module_file_download:
-    failed_download_file = "File download failed"
+    failed_download_file = "File download failed, please check remote path and permissions"
+    skipping_md5_check = "Skipping MD5 check, the integrity of the downloaded file is not checked"
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
@@ -61,7 +65,6 @@ class module_shell_php:
 
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
-
 
 class generate:
     error_agent_template_s_s = 'Error with agent template \'%s\': %s'
