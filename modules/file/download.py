@@ -81,13 +81,14 @@ class Download(Module):
         lpath = args.get('lpath')
 
         try:
-            open(lpath, 'wb').write(base64.b64decode(result))
+            result_decoded = base64.b64decode(result)
+            open(lpath, 'wb').write(result_decoded)
         except Exception, e:
             log.warning(
               messages.generic.error_loading_file_s_s % (lpath, str(e)))
             return
 
-        return result
+        return result_decoded
 
     def print_result(self, result):
         """Override print_result to avoid to print the content"""
