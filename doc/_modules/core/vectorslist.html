@@ -64,6 +64,7 @@
 <span class="kn">from</span> <span class="nn">core.vectors</span> <span class="kn">import</span> <span class="n">Os</span>
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span><span class="p">,</span> <span class="n">ModuleError</span>
+<span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">dlog</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">modules</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">utilities</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
@@ -84,6 +85,8 @@
 <span class="sd">        the given condition.</span>
 
 <span class="sd">        With unspecified names, execute all the vectors. Optionally store results.</span>
+
+<span class="sd">        Exceptions triggered checking condition function are catched and logged.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            names (list of str): The list of names of vectors to execute.</span>
@@ -112,12 +115,19 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span> <span class="k">continue</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
 
             <span class="n">result</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">condition</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">condition_result</span> <span class="o">=</span> <span class="n">condition</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span><span class="p">;</span> <span class="n">dlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectorslist</span><span class="o">.</span><span class="n">vector_s_triggers_an_exc</span><span class="p">)</span>
+                
+                <span class="n">condition_result</span> <span class="o">=</span> <span class="bp">False</span>
 
+            <span class="k">if</span> <span class="n">condition_result</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">store_result</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">][</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
                 <span class="k">if</span> <span class="n">store_name</span><span class="p">:</span>

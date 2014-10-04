@@ -287,13 +287,13 @@
 <span class="sd">        Register arguments to be added to the argparse parser.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            arguments (dict of dict): Dictionary in the form of</span>
-<span class="sd">            `&#39;arg1&#39; : { &#39;opts&#39; : &#39;&#39;, .. }, &#39;arg1&#39; : { &#39;opts&#39; : &#39;&#39;, .. }, ..`</span>
+<span class="sd">            arguments (list of dict): List of dictionary in the form of</span>
+<span class="sd">            `[{ &#39;name&#39; : &#39;arg1&#39;, &#39;opt&#39; : &#39;&#39;, .. }, {&#39;name&#39; : &#39;arg2&#39;, &#39;opt&#39; : &#39;&#39;, .. }]`</span>
 <span class="sd">            to be passed to the `ArgumentParser.add_argument()` method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_opts</span> <span class="ow">in</span> <span class="n">arguments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">arg_opts</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">:</span>
 
                 <span class="c"># Handle if the argument registration is done before</span>
                 <span class="c"># The vector registration. This should at least warn</span>
@@ -301,7 +301,10 @@
                     <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_choices_s_s_empty</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                                                                         <span class="n">arg_name</span><span class="p">))</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="o">**</span><span class="n">arg_opts</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+                    <span class="n">arg_opts</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">],</span>
+                    <span class="o">**</span><span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">arg_opts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s">&#39;name&#39;</span><span class="p">)</span>
+                <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_setting_arguments_s</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
