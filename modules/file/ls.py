@@ -20,9 +20,9 @@ class Ls(Module):
             }
         )
 
-        self.register_arguments({
-          'dir' : { 'help' : 'Target folder', 'default' : '.' }
-        })
+        self.register_arguments([
+          { 'name' : 'dir', 'help' : 'Target folder', 'default' : '.' }
+        ])
 
     def run(self, args):
 

@@ -74,15 +74,15 @@ swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ 
             ]
         )
 
-        self.register_arguments({
-          'rpath' : { 'help' : 'Starting path' },
-          '-quit' : { 'action' : 'store_true', 'default' : False, 'help' : 'Quit at first result' },
-          '-writable' : { 'action' : 'store_true' },
-          '-readable' : { 'action' : 'store_true' },
-          '-executable' : { 'action' : 'store_true' },
-          '-no-recursion' : { 'action' : 'store_true', 'default' : False },
-          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
-        })
+        self.register_arguments([
+          { 'name' : 'rpath', 'help' : 'Starting path' },
+          { 'name' : '-quit', 'action' : 'store_true', 'default' : False, 'help' : 'Quit at first result' },
+          { 'name' : '-writable', 'action' : 'store_true' },
+          { 'name' : '-readable', 'action' : 'store_true' },
+          { 'name' : '-executable', 'action' : 'store_true' },
+          { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
+        ])
 
     def run(self, args):
         return self.vectors.get_result(args['vector'], args)

@@ -36,12 +36,12 @@ class Upload(Module):
             ]
         )
 
-        self.register_arguments({
-          'lpath' : { 'help' : 'Local file path' },
-          'rpath' : { 'help' : 'Remote file path' },
-          'content' : {},
-          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
-        })
+        self.register_arguments([
+          { 'name' : 'lpath', 'help' : 'Local file path' },
+          { 'name' : 'rpath', 'help' : 'Remote file path' },
+          { 'name' : '-content', 'default' : ''},
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
+        ])
 
     def run(self, args):
 
@@ -58,7 +58,7 @@ class Upload(Module):
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
                 return
 
-        content = base64.b64encode(content_orig)
+        args['content'] = base64.b64encode(content_orig)
 
         # Check remote file existence
         rpath_exists = ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run()
@@ -67,6 +67,17 @@ class Upload(Module):
             return
 
         vector_name, result = self.vectors.find_first_result(
-         format_args = { 'args' : args, 'content' : content },
+         format_args = args,
          condition = lambda result: True if result == '1' else False
         )
+
+        if not ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run():
+            log.warning(messages.module_file_upload.failed_upload_file)
+            return
+
+        if not (
+          ModuleCmd('file_check', [ args['rpath'], 'md5' ]).run() ==
+          hashlib.md5(content_orig).hexdigest()
+          ):
+            log.warning(messages.module_file_upload.failed_md5_check)
+            return

@@ -238,13 +238,13 @@ class Module:
         Register arguments to be added to the argparse parser.
 
         Args:
-            arguments (dict of dict): Dictionary in the form of
-            `'arg1' : { 'opts' : '', .. }, 'arg1' : { 'opts' : '', .. }, ..`
+            arguments (list of dict): List of dictionary in the form of
+            `[{ 'name' : 'arg1', 'opt' : '', .. }, {'name' : 'arg2', 'opt' : '', .. }]`
             to be passed to the `ArgumentParser.add_argument()` method.
         """
 
         try:
-            for arg_name, arg_opts in arguments.items():
+            for arg_opts in arguments:
 
                 # Handle if the argument registration is done before
                 # The vector registration. This should at least warn
@@ -252,7 +252,10 @@ class Module:
                     log.warn(messages.module.error_choices_s_s_empty % (self.name,
                                                                         arg_name))
 
-                self.argparser.add_argument(arg_name, **arg_opts)
+                self.argparser.add_argument(
+                    arg_opts['name'],
+                    **dict((k, v) for k, v in arg_opts.items() if k != 'name')
+                )
         except Exception as e:
             raise DevException(messages.module.error_setting_arguments_s % (e))
 

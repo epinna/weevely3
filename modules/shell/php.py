@@ -22,12 +22,12 @@ class Php(Module):
             }
         )
 
-        self.register_arguments({
-          'command' : { 'help' : 'PHP code enclosed with brackets and terminated by semi-comma', 'nargs' : '+' },
-          '-prefix-string' : { 'default' : '' },
-          '-post_data' : {},
-          '-postfix-string' : { 'default' : '' },
-        })
+        self.register_arguments([
+          { 'name' : 'command', 'help' : 'PHP code enclosed with brackets and terminated by semi-comma', 'nargs' : '+' },
+          { 'name' : '-prefix-string', 'default' : '' },
+          { 'name' : '-post_data' },
+          { 'name' : '-postfix-string', 'default' : '' },
+        ])
 
         self.channel = None
 

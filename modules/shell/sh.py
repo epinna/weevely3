@@ -63,11 +63,11 @@ class Sh(Module):
                 name="pcntl", target=Os.NIX),
             ])
 
-        self.register_arguments({
-          'command' : { 'help' : 'Shell command', 'nargs' : '+' },
-          '-stderr_redirection' : { 'default' : ' 2>&1' },
-          '-vector' : { 'choices' : self.vectors.get_names() },
-        })
+        self.register_arguments([
+          { 'name' : 'command', 'help' : 'Shell command', 'nargs' : '+' },
+          { 'name' : '-stderr_redirection', 'default' : ' 2>&1' },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names() },
+        ])
 
     def setup(self, args={}):
         """Probe all vectors to find a working system-like function.

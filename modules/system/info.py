@@ -59,9 +59,12 @@ class Info(Module):
             ]
         )
 
-        self.register_arguments({
-          '-info' : { 'help' : 'Check give information', 'choices' : self.vectors.get_names(), 'nargs' : '+' }
-        })
+        self.register_arguments([
+          { 'name' : '-info',
+            'help' : 'Check give information',
+            'choices' : self.vectors.get_names(),
+            'nargs' : '+' }
+        ])
 
     def run(self, args):
 

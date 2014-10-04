@@ -54,7 +54,12 @@ class module_file_ls:
 
 class module_file_download:
     failed_download_file = "File download failed, please check remote path and permissions"
-    skipping_md5_check = "Skipping MD5 check, the integrity of the downloaded file is not checked"
+    skipping_md5_check = "Skipping MD5 check, the file integrity can't be checked"
+
+class module_file_upload:
+    failed_upload_file = "File upload failed, please check remote path and permissions"
+    failed_md5_check = "Failed MD5 check, the integrity check is wrong or not available"
+
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'

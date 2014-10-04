@@ -57,14 +57,14 @@ swp('${rpath}');""",
             ]
         )
 
-        self.register_arguments({
-          'expression' : {  'help' : 'Expression to mach with the file names' },
-          'rpath' : { 'help' : 'Starting path' },
-          '-contains' : { 'action' : 'store_true', 'default' : False },
-          '-case' : { 'action' : 'store_true', 'default' : False },
-          '-no-recursion' : { 'action' : 'store_true', 'default' : False },
-          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
-        })
+        self.register_arguments([
+          { 'name' : 'expression',  'help' : 'Expression to mach with the file names' },
+          { 'name' : 'rpath', 'help' : 'Starting path' },
+          { 'name' : '-contains', 'action' : 'store_true', 'default' : False },
+          { 'name' : '-case', 'action' : 'store_true', 'default' : False },
+          { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
+        ])
 
     def run(self, args):
         return self.vectors.get_result(args['vector'], args)

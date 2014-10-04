@@ -44,11 +44,11 @@ class Download(Module):
             ]
         )
 
-        self.register_arguments({
-          'rpath' : { 'help' : 'Remote file path' },
-          'lpath' : { 'help' : 'Local file path' },
-          '-vector' : { 'choices' : self.vectors.get_names(), 'default' : 'file' }
-        })
+        self.register_arguments([
+          { 'name' : 'rpath', 'help' : 'Remote file path' },
+          { 'name' : 'lpath', 'help' : 'Local file path' },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
+        ])
 
     def run(self, args):
 

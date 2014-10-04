@@ -61,10 +61,10 @@ class Check(Module):
             ]
         )
 
-        self.register_arguments({
-          'rpath' : { 'help' : 'Target path' },
-          'check' : { 'choices' : self.vectors.get_names() },
-        })
+        self.register_arguments([
+          { 'name' : 'rpath', 'help' : 'Target path' },
+          { 'name' : 'check', 'choices' : self.vectors.get_names() },
+        ])
 
     def run(self, args):
 
