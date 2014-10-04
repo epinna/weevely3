@@ -29,12 +29,14 @@ class Read(Module):
         temp_file = tempfile.NamedTemporaryFile()
         args['lpath'] = temp_file.name
 
+        # Run file_download
         result = ModuleCmd(
                     'file_download',
                     [ args.get('rpath'), '${lpath}' ],
                     name = 'file_download'
                 ).run(args)
 
+        # Delete temp file
         temp_file.close()
 
         return result
