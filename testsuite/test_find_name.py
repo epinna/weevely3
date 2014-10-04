@@ -1,5 +1,5 @@
 from testfixtures import log_capture
-from testsuite.base_test import BaseTest
+from testsuite.base_fs import BaseFilesystem
 from testsuite import config
 from core.sessions import SessionURL
 from core import modules
@@ -9,18 +9,7 @@ import core.utilities
 import subprocess
 import os
 
-class FindName(BaseTest):
-
-    def _recursive_folders(self, recursion = 4):
-
-        folders_abs = [ config.script_folder ]
-
-        for folder in [ utilities.randstr() for f in range(0, recursion) ]:
-            folders_abs.append(os.path.join(*[ folders_abs[-1], folder ] ))
-
-        folders_rel = [ f.replace(config.script_folder, '') for f in folders_abs[1:] ]
-
-        return folders_abs[1:], folders_rel
+class FindName(BaseFilesystem):
 
     def setUp(self):
         self.session = SessionURL(
@@ -32,24 +21,11 @@ class FindName(BaseTest):
         modules.load_modules(self.session)
 
         # Create the folder tree
-        self.folders_abs, self.folders_rel =  self._recursive_folders()
-
-        for folder_abs in self.folders_abs:
-            subprocess.check_call(
-                config.cmd_env_mkdir_s % (folder_abs),
-                shell=True)
-
-        files_names = [ 'test1', 'TEST1', 'TEST2', 'TEST3' ]
-
-        # Add a file in every folder and save paths
-        self.files_abs = []
-        self.files_rel = []
-        for folder_abs in self.folders_abs:
-            self.files_abs.append(os.path.join(folder_abs, files_names.pop(0)))
-            self.files_rel.append(self.files_abs[-1].replace(config.script_folder, ''))
-            subprocess.check_call(
-                config.cmd_env_content_s_to_s % ('1', self.files_abs[-1]),
-                shell=True)
+        self.folders_abs, self.folders_rel =  self.populate_folders()
+        self.files_abs, self.files_rel = self.populate_files(
+                                self.folders_abs,
+                                [ 'test1', 'TEST1', 'TEST2', 'TEST3' ]
+                            )
 
         self.run_argv = modules.loaded['find_name'].run_argv
 

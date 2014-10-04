@@ -31,7 +31,7 @@ class BaseFilesystem(BaseTest):
 
         return folders_abs[1:], folders_rel
 
-    def populate_files(self, dir_abs_paths):
+    def populate_files(self, dir_abs_paths, file_name_list = []):
 
         """Populate a folder tree with files with random names.
 
@@ -45,10 +45,12 @@ class BaseFilesystem(BaseTest):
         files_abs = []
         files_rel = []
         for folder_abs in dir_abs_paths:
-            self.files_abs.append(os.path.join(folder_abs, utilities.randstr()))
-            self.files_rel.append(self.files_abs[-1].replace(config.script_folder, ''))
+            file_name = file_name_list.pop(0) if file_name_list else utilities.randstr()
+
+            files_abs.append(os.path.join(folder_abs, file_name))
+            files_rel.append(files_abs[-1].replace(config.script_folder, ''))
             subprocess.check_call(
-                config.cmd_env_content_s_to_s % ('1', self.files_abs[-1]),
+                config.cmd_env_content_s_to_s % ('1', files_abs[-1]),
                 shell=True)
 
         return files_abs, files_rel

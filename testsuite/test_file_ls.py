@@ -1,5 +1,5 @@
 from testfixtures import log_capture
-from testsuite.base_test import BaseTest
+from testsuite.base_fs import BaseFilesystem
 from testsuite import config
 from core.sessions import SessionURL
 from core import modules
@@ -9,16 +9,7 @@ import core.utilities
 import subprocess
 import os
 
-class FileLs(BaseTest):
-
-    def _recursive_folders(self, recursion = 4):
-
-        folders = [ config.script_folder ]
-
-        for folder in [ utilities.randstr() for f in range(0, recursion) ]:
-            folders.append(os.path.join(*[ folders[-1], folder ] ))
-
-        return folders[1:]
+class FileLs(BaseFilesystem):
 
     def setUp(self):
         self.session = SessionURL(
@@ -30,15 +21,11 @@ class FileLs(BaseTest):
         modules.load_modules(self.session)
 
         # Create the folder tree
-        self.folders =  self._recursive_folders()
-        for folder in self.folders:
-            subprocess.check_call(
-                config.cmd_env_mkdir_s % (folder),
-                shell=True)
+        self.folders, folders_rel = self.populate_folders()
 
         # Change mode of the last folder to 0
         subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('0', folder),
+            config.cmd_env_chmod_s_s % ('0', self.folders[-1]),
             shell=True)
 
         self.run_argv = modules.loaded['file_ls'].run_argv
