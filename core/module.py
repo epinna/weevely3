@@ -232,13 +232,13 @@ class Module:
         if not self.argparser.description:
             raise DevException(messages.module.error_module_missing_description)
 
-    def register_arguments(self, arguments = {}):
+    def register_arguments(self, arguments = []):
         """Register the module arguments.
 
         Register arguments to be added to the argparse parser.
 
         Args:
-            arguments (list of dict): List of dictionary in the form of
+            arguments (list of dict): List of dictionaries in the form
             `[{ 'name' : 'arg1', 'opt' : '', .. }, {'name' : 'arg2', 'opt' : '', .. }]`
             to be passed to the `ArgumentParser.add_argument()` method.
         """
