@@ -86,3 +86,9 @@ class Download(Module):
             log.warning(
               messages.generic.error_loading_file_s_s % (lpath, str(e)))
             return
+
+        return result
+
+    def print_result(self, result):
+        """Override print_result to avoid to print the content"""
+        pass
