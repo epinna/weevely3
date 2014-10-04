@@ -281,13 +281,13 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">description</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_module_missing_description</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Module.register_arguments"><a class="viewcode-back" href="../../module.html#core.module.Module.register_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">register_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">{}):</span>
+<div class="viewcode-block" id="Module.register_arguments"><a class="viewcode-back" href="../../module.html#core.module.Module.register_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">register_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot;Register the module arguments.</span>
 
 <span class="sd">        Register arguments to be added to the argparse parser.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            arguments (list of dict): List of dictionary in the form of</span>
+<span class="sd">            arguments (list of dict): List of dictionaries in the form</span>
 <span class="sd">            `[{ &#39;name&#39; : &#39;arg1&#39;, &#39;opt&#39; : &#39;&#39;, .. }, {&#39;name&#39; : &#39;arg2&#39;, &#39;opt&#39; : &#39;&#39;, .. }]`</span>
 <span class="sd">            to be passed to the `ArgumentParser.add_argument()` method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
