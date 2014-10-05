@@ -86,6 +86,10 @@ class FindName(BaseFilesystem):
             ),
         [ '%s' % (self.files_rel[1]) ])
 
+        # test bogus path
+        self.assertEqual(self.run_argv([ 'asd', 'bogus' ]), [''] )
+
+
     def test_find_name_sh(self):
 
         # find file[0] (case insensitive, recursive, not contains) -> file[0], file[1]
@@ -132,3 +136,7 @@ class FindName(BaseFilesystem):
                 ]
             ),
         [ '%s' % (self.files_rel[1]) ])
+
+
+        # test bogus path
+        self.assertEqual(self.run_argv([ 'asd', 'bogus', '-vector', 'sh_find' ]), [''] )

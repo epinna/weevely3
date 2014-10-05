@@ -89,6 +89,9 @@ class FindPerms(BaseFilesystem):
         filep, filen = os.path.split(self.files_rel[0])
         self.assertItemsEqual(self.run_argv([ '-readable', '-no-recursion', self.folders_rel[0] ]), self.folders_rel[:2] )
 
+        # test bogus path
+        self.assertEqual(self.run_argv([ '-readable', 'bogus' ]), [''] )
+
 
     def test_find_perms_sh(self):
 
@@ -108,3 +111,6 @@ class FindPerms(BaseFilesystem):
         # find readable starting from folder[0] with no recursion
         filep, filen = os.path.split(self.files_rel[0])
         self.assertItemsEqual(self.run_argv([ '-readable', '-vector', 'sh_find', '-no-recursion', self.folders_rel[0] ]), self.folders_rel[:2] )
+
+        # test bogus path
+        self.assertEqual(self.run_argv([ '-readable', '-vector', 'sh_find', 'bogus' ]), [''] )

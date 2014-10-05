@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd
+from core.vectors import PhpCmd, ModuleCmd
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -49,8 +49,13 @@ swp('${rpath}');""",
               name = 'php_recursive',
               postprocess = lambda x: x.split('\n')
             ),
-            ShellCmd(
-              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-name' if case else '-iname' } "${ '*%s*' % (expression) if contains else expression }" 2>/dev/null""",
+            ModuleCmd(
+              module = 'shell_sh',
+              arguments = [
+                  "-stderr_redirection",
+                  " 2>/dev/null",
+                  """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-name' if case else '-iname' } "${ '*%s*' % (expression) if contains else expression }" """,
+              ],
               name = "sh_find",
               postprocess = lambda x: x.split('\n')
             )

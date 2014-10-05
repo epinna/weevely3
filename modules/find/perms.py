@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd
+from core.vectors import PhpCmd, ModuleCmd
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -26,7 +26,7 @@ class Perms(Module):
             PhpCmd(
               payload = """
 function ckprint($df,$t,$a) {
-    if(cktp($df,$t)&&@ckattr($df,$a)) {
+    if(@file_exists($df)&&cktp($df,$t)&&@ckattr($df,$a)) {
         print($df.PHP_EOL);
         return True;
     }
@@ -67,8 +67,14 @@ swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ 
              name = 'php_recursive',
              postprocess = lambda x: x.split('\n')
             ),
-            ShellCmd(
-              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' } 2>/dev/null""",
+            # Use ModuleCmd instead of ShellCmd due to the needed -stderr_redirection option
+            ModuleCmd(
+              module = 'shell_sh',
+              arguments = [
+                "-stderr_redirection",
+                " 2>/dev/null",
+                """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' }""",
+              ],
               name = "sh_find",
               postprocess = lambda x: x.split('\n')
             )
