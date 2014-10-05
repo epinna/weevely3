@@ -5,6 +5,7 @@
 script_folder = '/var/www/environment/'
 script_folder_url = 'http://localhost/environment/'
 
+debug = False
 
 test_generated_test_all_agents = True
 

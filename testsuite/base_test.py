@@ -2,14 +2,14 @@ from unittest import TestCase
 from core.utilities import randstr
 from testsuite import config
 from generate import generate, save_generated
+from core.loggers import stream_handler
 import subprocess
+import logging
 import tempfile
 import hashlib
 import os
 
 class BaseTest(TestCase):
-
-    paths_to_delete = []
 
     @classmethod
     def _randomize_bd(cls):
@@ -22,6 +22,11 @@ class BaseTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
+
+        if config.debug:
+            stream_handler.setLevel(logging.DEBUG)
+        else:
+            stream_handler.setLevel(logging.INFO)
 
         cls._randomize_bd()
 
