@@ -39,6 +39,7 @@ class Upload(Module):
         self.register_arguments([
           { 'name' : 'lpath', 'help' : 'Local file path' },
           { 'name' : 'rpath', 'help' : 'Remote file path' },
+          { 'name' : '-force', 'help' : 'Force overwrite', 'action' : 'store_true', 'default' : False },
           { 'name' : '-content', 'default' : ''},
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
         ])
@@ -61,8 +62,7 @@ class Upload(Module):
         args['content'] = base64.b64encode(content_orig)
 
         # Check remote file existence
-        rpath_exists = ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run()
-        if rpath_exists:
+        if not args['force'] and ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run():
             log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
             return
 
@@ -81,3 +81,5 @@ class Upload(Module):
           ):
             log.warning(messages.module_file_upload.failed_md5_check)
             return
+
+        return True
