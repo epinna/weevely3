@@ -60,6 +60,8 @@ class module_file_upload:
     failed_upload_file = "File upload failed, please check remote path and permissions"
     failed_md5_check = "Failed MD5 check, the integrity check is wrong or not available"
 
+class module_file_edit:
+    unmodified_file = "File unmodified, skipping upload"
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
