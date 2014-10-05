@@ -9,6 +9,8 @@ import os
 
 class BaseTest(TestCase):
 
+    paths_to_delete = []
+
     @classmethod
     def _randomize_bd(cls):
         cls.password = randstr(10)
@@ -39,5 +41,8 @@ class BaseTest(TestCase):
     def tearDownClass(cls):
 
         # Check the agent presence, could be already deleted
-        if not os.path.isfile(cls.path): return
-        #subprocess.check_call(cmd_env_remove_s % cls.path, shell=True)
+        if os.path.isfile(cls.path):
+            subprocess.check_call(
+                config.cmd_env_remove_s % cls.path,
+                shell=True
+            )

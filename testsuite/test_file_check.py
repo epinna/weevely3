@@ -48,6 +48,7 @@ class FileCheck(BaseTest):
         # Create a test file
         self.assertTrue(self.run_argv(['/tmp', 'writable']))
         modules.loaded['shell_php'].run_argv(['file_put_contents("ftest","1");'])
+
         # Get the remote timestamp
         rtime = int(modules.loaded['shell_php'].run_argv(['print(time());']))
         rdatetime = datetime.datetime.fromtimestamp(float(rtime)).strftime('%Y-%m-%d')
@@ -61,3 +62,5 @@ class FileCheck(BaseTest):
         self.assertEqual(self.run_argv(['ftest', 'md5']), 'c4ca4238a0b923820dcc509a6f75849b')
         self.assertAlmostEqual(self.run_argv(['ftest', 'time']), rtime, delta = 20)
         self.assertEqual(self.run_argv(['ftest', 'datetime']).split(' ')[0], rdatetime)
+
+        modules.loaded['shell_php'].run_argv(['unlink("ftest");'])
