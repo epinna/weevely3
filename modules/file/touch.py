@@ -87,11 +87,15 @@ class Touch(Module):
 
         # Handle to get an human readable timestamp
         elif args.get('human_ts'):
-            args['epoch_ts'] = int(
-                time.mktime(
-                    dateutil.parser.parse(args['human_ts'], yearfirst=True).timetuple()
+            try:
+                args['epoch_ts'] = int(
+                    time.mktime(
+                        dateutil.parser.parse(args['human_ts'], yearfirst=True).timetuple()
+                    )
                 )
-            )
+            except:
+                log.warn(messages.module_file_touch.error_invalid_timestamp_format)
+                return
 
         if not args.get('epoch_ts'):
             log.warn(messages.module_file_touch.error_source_timestamp_required)
@@ -99,7 +103,6 @@ class Touch(Module):
 
         self.vectors.get_result(args['vector'], args)
 
-        print args['epoch_ts'], ModuleCmd('file_check', [ args.get('rpath'), 'time' ]).run()
         # Verify execution
         if not args['epoch_ts'] == ModuleCmd('file_check', [ args.get('rpath'), 'time' ]).run():
             log.warn(messages.module_file_touch.failed_touch_file)

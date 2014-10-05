@@ -64,6 +64,7 @@ class module_file_edit:
     unmodified_file = "File unmodified, skipping upload"
 
 class module_file_touch:
+    error_invalid_timestamp_format = "Error, invalid timestamp format"
     error_source_timestamp_required = "Error, source timestamp is required."
     failed_touch_file = "File touch failed, please check remote path and permissions"
 
