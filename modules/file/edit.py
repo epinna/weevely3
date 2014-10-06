@@ -38,6 +38,13 @@ class Edit(Module):
         temp_file = tempfile.NamedTemporaryFile(suffix = suffix)
         lpath = temp_file.name
 
+        # Keep track of the old timestamp if requested
+        if args['keep_ts']:
+            timestamp = ModuleCmd(
+                        'file_check',
+                        [ args.get('rpath'), 'time' ]
+                    ).run()
+
         # If remote file already exists and readable
         if ModuleCmd(
                     'file_check',
@@ -74,6 +81,14 @@ class Edit(Module):
                     'file_upload',
                     [ '-force', lpath, args.get('rpath') ]
                 ).run()
+
+
+        # Reset original timestamp if requested
+        if args['keep_ts']:
+            ModuleCmd(
+                'file_touch',
+                [ args.get('rpath'), '-epoch-ts', str(timestamp) ]
+            ).run()
 
         # Delete temp file
         temp_file.close()
