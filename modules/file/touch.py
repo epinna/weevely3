@@ -68,7 +68,7 @@ class Touch(Module):
 
             file_list = [
                 os.path.join(folder, f)
-                for f in ModuleCmd('file_ls', [ folder ]).run()
+                for f in ModuleCmd('file_ls', [ '-dir', folder ]).run()
                 ]
 
             for file in file_list:
