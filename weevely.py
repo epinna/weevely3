@@ -28,7 +28,7 @@ if __name__ == '__main__':
             session = SessionFile(sys.argv[1])
         else:
             log.info(__doc__)
-            raise FatalException(messages.generic.error_missing_arguments_s % '')
+            raise FatalException(messages.generic.error_missing_arguments)
 
         log.debug(
             pprint.pformat(session)
