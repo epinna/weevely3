@@ -19,7 +19,7 @@ Weevely modules extend the terminal providing a layer to interact to the remote 
 
 The modules feature:
 
-* Weaponized Shell/PHP telnet-like network terminal
+* Shell/PHP telnet-like network terminal
 * Common server misconfigurations auditing
 * SQL console pivoting on target network 
 * HTTP traffic proxy through target
