@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd
+from core.vectors import PhpCmd, ShellCmd
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -20,13 +20,9 @@ class Ls(Module):
             }
         )
 
-        self.register_arguments([
-          { 'name' : '-dir', 'help' : 'Target folder', 'default' : '.' }
-        ])
-
-    def run(self, args):
-
-        return PhpCmd("""
+        self.register_vectors([
+            PhpCmd(
+                payload = """
                 $p="${dir}";
                 if(@is_dir($p)){
                     $d=@opendir($p);
@@ -37,8 +33,26 @@ class Ls(Module):
                         print(join(PHP_EOL,$a));
                     }
                 }""",
-                postprocess = lambda x: x.split('\n')
-               ).run(args)
+                name = 'ls_php'
+            ),
+            ShellCmd(
+                payload = "ls -a ${dir}",
+                name = 'ls_sh',
+                arguments = [
+                  "-stderr_redirection",
+                  " 2>/dev/null",
+                ]
+            )
+        ])
+
+        self.register_arguments([
+          { 'name' : 'dir', 'help' : 'Target folder', 'default' : '.', 'nargs' : '?' },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'ls_sh' }
+        ])
+
+    def run(self, args):
+
+        return self.vectors.get_result(args['vector'], args).split('\n')
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))
