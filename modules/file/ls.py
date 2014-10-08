@@ -7,7 +7,9 @@ import random
 
 class Ls(Module):
 
-    """List directory content ('ls' replacement)"""
+    """List directory content."""
+
+    aliases = [ 'ls', 'dir' ]
 
     def init(self):
 
@@ -21,6 +23,14 @@ class Ls(Module):
         )
 
         self.register_vectors([
+            ShellCmd(
+                payload = "ls ${dir}",
+                name = 'ls_sh',
+                arguments = [
+                  "-stderr_redirection",
+                  " 2>/dev/null",
+                ]
+            ),
             PhpCmd(
                 payload = """
                 $p="${dir}";
@@ -34,14 +44,6 @@ class Ls(Module):
                     }
                 }""",
                 name = 'ls_php'
-            ),
-            ShellCmd(
-                payload = "ls -a ${dir}",
-                name = 'ls_sh',
-                arguments = [
-                  "-stderr_redirection",
-                  " 2>/dev/null",
-                ]
             )
         ])
 
@@ -55,8 +57,8 @@ class Ls(Module):
         vname, result = self.vectors.find_first_result(
             names = [ args.get('vector') ],
             format_args = args,
-            # This condition is reduntant but is needed
-            # to just loop all vectors. This helps to skip the
+            # This check is redundant but is needed
+            # to loop all vectors. This helps to skip the
             # disabled vectors.
             condition = lambda r: r
         )

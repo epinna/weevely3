@@ -9,6 +9,8 @@ class Cd(Module):
 
     """Change current working directory."""
 
+    aliases = [ 'cd' ]
+
     def init(self):
 
         self.register_info(
