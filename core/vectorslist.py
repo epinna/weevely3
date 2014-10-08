@@ -64,20 +64,28 @@ class VectorsList(list):
 
         for vector in self:
 
+            # Skip with wrong vectors
             if not self._os_match(vector.target): continue
 
-            if names and not any(x in vector.name for x in names): continue
+            # Clean names filter from empty objects
+            names = [ n for n in names if n ]
 
+            # Skip if names filter is passed but current vector is missing
+            if names and not any(n in vector.name for n in names): continue
+
+            # Run
             result = vector.run(format_args)
 
+            # See if condition is verified
             try:
                 condition_result = condition(result)
             except Exception as e:
                 import traceback; dlog.info(traceback.format_exc())
                 log.debug(messages.vectorslist.vector_s_triggers_an_exc)
-                
+
                 condition_result = False
 
+            # Eventually store result or vector name
             if condition_result:
                 if store_result:
                     self.session[self.module_name]['results'][vector.name] = result
@@ -88,7 +96,7 @@ class VectorsList(list):
 
         return None, None
 
-    def get_result(self, name, format_args = {}, store_result = ''):
+    def get_result(self, name, format_args = {}, store_result = False):
         """Execute one vector and return the result.
 
         Run the vector with specified name. Optionally store results.
@@ -98,7 +106,7 @@ class VectorsList(list):
 
             format_args (dict): The arguments dictionary used to format the vectors with.
 
-            store_result (bool): Store as result.
+            store_result (bool): Store result in session.
 
         Returns:
             Object. Contains the vector execution result.

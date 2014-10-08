@@ -47,12 +47,21 @@ class Ls(Module):
 
         self.register_arguments([
           { 'name' : 'dir', 'help' : 'Target folder', 'default' : '.', 'nargs' : '?' },
-          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'ls_sh' }
+          { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
     def run(self, args):
 
-        return self.vectors.get_result(args['vector'], args).split('\n')
+        vname, result = self.vectors.find_first_result(
+            names = [ args.get('vector') ],
+            format_args = args,
+            # This condition is reduntant but is needed
+            # to just loop all vectors. This helps to skip the
+            # disabled vectors.
+            condition = lambda r: r
+        )
+
+        return result.split('\n') if result else None
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))
