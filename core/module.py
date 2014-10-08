@@ -15,10 +15,10 @@ from core.vectorslist import VectorsList
 from core.vectors import ModuleCmd
 from core.weexceptions import DevException
 from core.loggers import log
+from core import helpparse
 from core import messages
 from mako.template import Template
 import shlex
-import argparse
 import utilities
 import ast
 
@@ -60,7 +60,8 @@ class Module:
                 'status': Status.IDLE
             }
 
-        self.argparser = argparse.ArgumentParser(
+        # HelpParser is a slightly changed `ArgumentParser`
+        self.argparser = helpparse.HelpParser(
             prog = self.name,
             description = self.__doc__
         )
