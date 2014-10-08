@@ -132,9 +132,11 @@ class PhpCmd(ModuleCmd):
 
         postprocess (func): The function which postprocess the execution result.
 
+        arguments (list of str): Additional arguments for `shell_php`
+
     """
 
-    def __init__(self, payload, name = None, target = 0, postprocess = None):
+    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = []):
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -142,7 +144,7 @@ class PhpCmd(ModuleCmd):
         ModuleCmd.__init__(
             self,
             module = 'shell_php',
-            arguments = [ payload ],
+            arguments = [ payload ] + arguments,
             name = name,
             target = target,
             postprocess = postprocess
@@ -203,9 +205,11 @@ class ShellCmd(PhpCmd):
 
         postprocess (func): The function which postprocess the execution result.
 
+        arguments (list of str): Additional arguments for `shell_php`
+
     """
 
-    def __init__(self, payload, name = None, target = 0, postprocess = None):
+    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = []):
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -213,12 +217,11 @@ class ShellCmd(PhpCmd):
         ModuleCmd.__init__(
             self,
             module = 'shell_sh',
-            arguments = [ payload ],
+            arguments = [ payload ] + arguments,
             name = name,
             target = target,
             postprocess = postprocess
         )
-
 
     def _minify(self, body):
 
