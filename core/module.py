@@ -40,6 +40,8 @@ class Status:
 
 class Module:
 
+    aliases = []
+
     def __init__(self, session, name):
         """Module object constructor.
 
@@ -144,6 +146,25 @@ class Module:
         )
 
         return self.run(args)
+
+    def run_alias(self, line):
+        """Execute the module as alias from command line.
+
+        This is invoked if some alias defined in `Module.alias`
+        is called from terminal command line.
+
+        Get command line string as argument. Called from terminal.
+
+        Normally does not need to be overridden.
+
+        Args:
+            line (str): string containing the module arguments.
+
+        Return:
+            Object. The result of the module execution.
+        """
+
+        return self.run_cmdline(line)
 
     def init(self):
         """Module initialization.

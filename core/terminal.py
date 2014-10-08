@@ -185,19 +185,6 @@ class Terminal(CmdModules):
 
         log.info(result)
 
-    def do_cd(self, line):
-        """Command "cd" replacement. Type ":help file_cd"."""
-
-        self.do_file_cd(line)
-
-    def do_ls(self, line):
-        """Command "ls" replacement, called if shell_sh is not enabled. Type ":help file_ls"."""
-
-        if self.session['default_shell'] == 'shell_sh':
-            self.default('ls %s' % line)
-        else:
-            self.do_file_ls(line)
-
     def do_set(self, line):
         """Command "set" to set session variables."""
 
@@ -226,17 +213,25 @@ class Terminal(CmdModules):
 
             # Set module.do_terminal_module() function as terminal
             # self.do_modulegroup_modulename()
-            class_do = getattr(module_class, 'run_cmdline')
             setattr(
                 Terminal, 'do_%s' %
-                (module_name), class_do)
+                (module_name), module_class.run_cmdline)
+
+            # Set module.do_alias() function as terminal
+            # self.do_alias() for every defined `Module.aliases`.
+            for alias in module_class.aliases:
+                setattr(
+                    Terminal, 'do_%s' %
+                    (alias), module_class.run_alias)
+                setattr(
+                    Terminal, 'help_%s' %
+                    (alias), module_class.help)
 
             # Set module.help() function as terminal
             # self.help_modulegroup_modulename()
-            class_help = getattr(module_class, 'help')
             setattr(
                 Terminal, 'help_%s' %
-                (module_name), class_help)
+                (module_name), module_class.help)
 
     def _load_history(self):
         """Load history file and register dump on exit."""
