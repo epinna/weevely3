@@ -124,7 +124,7 @@ module execution.</dd>
 
 <dl class="class">
 <dt id="core.vectors.PhpCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains PHP code.</p>
 <p>The PHP code is executed via the module <cite>shell_php</cite>. Inherit <cite>ModuleCmd</cite>.</p>
 <p>The formatted payload is minified removing comments, tabs, and end of line.
@@ -134,7 +134,8 @@ Avoid to use white space characters since could break your payload.</p>
 <dd><p class="first">payload (str): PHP code to execute.</p>
 <p>name (str): This vector name.</p>
 <p>target (Os): The operating system supported by the vector.</p>
-<p class="last">postprocess (func): The function which postprocess the execution result.</p>
+<p>postprocess (func): The function which postprocess the execution result.</p>
+<p class="last">arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
 </dd>
 </dl>
 <dl class="method">
@@ -155,7 +156,7 @@ Avoid to use white space characters since could break your payload.</p>
 
 <dl class="class">
 <dt id="core.vectors.ShellCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains a shell command.</p>
 <p>The shell command is executed via the module <cite>shell_sh</cite>. Inherit <cite>ModuleCmd</cite>.</p>
 <p>The formatted payload is minified removing multiple whitespaces.</p>
@@ -164,7 +165,8 @@ Avoid to use white space characters since could break your payload.</p>
 <dd><p class="first">payload (str): Command line to execute.</p>
 <p>name (str): This vector name.</p>
 <p>target (Os): The operating system supported by the vector.</p>
-<p class="last">postprocess (func): The function which postprocess the execution result.</p>
+<p>postprocess (func): The function which postprocess the execution result.</p>
+<p class="last">arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
 </dd>
 </dl>
 </dd></dl>

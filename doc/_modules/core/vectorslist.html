@@ -113,20 +113,28 @@
 
         <span class="k">for</span> <span class="n">vector</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
 
+            <span class="c"># Skip with wrong vectors</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span> <span class="k">continue</span>
 
-            <span class="k">if</span> <span class="n">names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
+            <span class="c"># Clean names filter from empty objects</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span> <span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">n</span> <span class="p">]</span>
 
+            <span class="c"># Skip if names filter is passed but current vector is missing</span>
+            <span class="k">if</span> <span class="n">names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">n</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
+
+            <span class="c"># Run</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
 
+            <span class="c"># See if condition is verified</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">condition_result</span> <span class="o">=</span> <span class="n">condition</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="kn">import</span> <span class="nn">traceback</span><span class="p">;</span> <span class="n">dlog</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectorslist</span><span class="o">.</span><span class="n">vector_s_triggers_an_exc</span><span class="p">)</span>
-                
+
                 <span class="n">condition_result</span> <span class="o">=</span> <span class="bp">False</span>
 
+            <span class="c"># Eventually store result or vector name</span>
             <span class="k">if</span> <span class="n">condition_result</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">store_result</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">module_name</span><span class="p">][</span><span class="s">&#39;results&#39;</span><span class="p">][</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
@@ -137,7 +145,7 @@
 
         <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span>
 </div>
-<div class="viewcode-block" id="VectorsList.get_result"><a class="viewcode-back" href="../../vectorslist.html#core.vectorslist.VectorsList.get_result">[docs]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">format_args</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">store_result</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="VectorsList.get_result"><a class="viewcode-back" href="../../vectorslist.html#core.vectorslist.VectorsList.get_result">[docs]</a>    <span class="k">def</span> <span class="nf">get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">format_args</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">store_result</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute one vector and return the result.</span>
 
 <span class="sd">        Run the vector with specified name. Optionally store results.</span>
@@ -147,7 +155,7 @@
 
 <span class="sd">            format_args (dict): The arguments dictionary used to format the vectors with.</span>
 
-<span class="sd">            store_result (bool): Store as result.</span>
+<span class="sd">            store_result (bool): Store result in session.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Object. Contains the vector execution result.</span>

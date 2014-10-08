@@ -64,10 +64,10 @@
 <span class="kn">from</span> <span class="nn">core.vectors</span> <span class="kn">import</span> <span class="n">ModuleCmd</span>
 <span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span>
 <span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">helpparse</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">utilities</span>
 <span class="kn">import</span> <span class="nn">ast</span>
 
@@ -89,6 +89,8 @@
 </div>
 <div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../module.html#core.module.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
 
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">[]</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Module object constructor.</span>
 
@@ -109,7 +111,8 @@
                 <span class="s">&#39;status&#39;</span><span class="p">:</span> <span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span>
             <span class="p">}</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="c"># HelpParser is a slightly changed `ArgumentParser`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span> <span class="o">=</span> <span class="n">helpparse</span><span class="o">.</span><span class="n">HelpParser</span><span class="p">(</span>
             <span class="n">prog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span>
         <span class="p">)</span>
@@ -179,7 +182,7 @@
 
         <span class="c"># If module status is FAIL, return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAIL</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">module_s_inactive</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">module_s_inactive</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="c"># Setup() could has been stored additional args, so all the updated</span>
@@ -192,6 +195,25 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">run_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Execute the module as alias from command line.</span>
+
+<span class="sd">        This is invoked if some alias defined in `Module.alias`</span>
+<span class="sd">        is called from terminal command line.</span>
+
+<span class="sd">        Get command line string as argument. Called from terminal.</span>
+
+<span class="sd">        Normally does not need to be overridden.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            line (str): string containing the module arguments.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Object. The result of the module execution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_cmdline</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Module.init"><a class="viewcode-back" href="../../module.html#core.module.Module.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Module initialization.</span>

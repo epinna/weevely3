@@ -181,9 +181,11 @@
 
 <span class="sd">        postprocess (func): The function which postprocess the execution result.</span>
 
+<span class="sd">        arguments (list of str): Additional arguments for `shell_php`</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">[]):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
@@ -191,7 +193,7 @@
         <span class="n">ModuleCmd</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;shell_php&#39;</span><span class="p">,</span>
-            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">],</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">]</span> <span class="o">+</span> <span class="n">arguments</span><span class="p">,</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
             <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
@@ -252,9 +254,11 @@
 
 <span class="sd">        postprocess (func): The function which postprocess the execution result.</span>
 
+<span class="sd">        arguments (list of str): Additional arguments for `shell_php`</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">postprocess</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">arguments</span> <span class="o">=</span> <span class="p">[]):</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">vectors</span><span class="o">.</span><span class="n">wrong_payload_type</span><span class="p">)</span>
@@ -262,12 +266,11 @@
         <span class="n">ModuleCmd</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;shell_sh&#39;</span><span class="p">,</span>
-            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">],</span>
+            <span class="n">arguments</span> <span class="o">=</span> <span class="p">[</span> <span class="n">payload</span> <span class="p">]</span> <span class="o">+</span> <span class="n">arguments</span><span class="p">,</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
             <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span>
         <span class="p">)</span>
-
 
     <span class="k">def</span> <span class="nf">_minify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
 
