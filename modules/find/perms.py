@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ModuleCmd
+from core.vectors import PhpCmd, ShellCmd
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -64,19 +64,15 @@ function swp($fdir, $d, $t, $a, $q, $r){
 
 swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }','${ '1' if quit else '' }', ${not no_recursion});
 """,
-             name = 'php_recursive',
-             postprocess = lambda x: x.split('\n')
+             name = 'php_recursive'
             ),
-            # Use ModuleCmd instead of ShellCmd due to the needed -stderr_redirection option
-            ModuleCmd(
-              module = 'shell_sh',
+            ShellCmd(
+              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' }""",
+              name = "sh_find",
               arguments = [
                 "-stderr_redirection",
                 " 2>/dev/null",
-                """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' }""",
-              ],
-              name = "sh_find",
-              postprocess = lambda x: x.split('\n')
+              ]
             )
             ]
         )
@@ -92,7 +88,7 @@ swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ 
         ])
 
     def run(self, args):
-        return self.vectors.get_result(args['vector'], args)
+        return self.vectors.get_result(args['vector'], args).split('\n')
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))
