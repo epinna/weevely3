@@ -13,6 +13,16 @@ class Edit(Module):
 
     """Edit remote file."""
 
+    aliases = [
+        'vi',
+        'vim',
+        'emacs',
+        'nano',
+        'pico',
+        'gedit',
+        'kwrite'
+    ]
+
     def init(self):
 
         self.register_info(
@@ -94,3 +104,9 @@ class Edit(Module):
         temp_file.close()
 
         return result_upload
+
+    def run_alias(self, line, cmd):
+
+        # Run this alias independently from the shell_sh status.
+        # Also, set the proper editor to run
+        return self.run_cmdline('%s -editor %s' % (line, cmd))
