@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd
+from core.vectors import PhpCmd
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -7,7 +7,7 @@ import random
 
 class Ls(Module):
 
-    """List directory content."""
+    """List directory content ('ls' replacement)"""
 
     aliases = [ 'ls', 'dir' ]
 
@@ -22,17 +22,13 @@ class Ls(Module):
             }
         )
 
-        self.register_vectors([
-            ShellCmd(
-                payload = "ls ${dir}",
-                name = 'ls_sh',
-                arguments = [
-                  "-stderr_redirection",
-                  " 2>/dev/null",
-                ]
-            ),
-            PhpCmd(
-                payload = """
+        self.register_arguments([
+          { 'name' : 'dir', 'help' : 'Target folder', 'nargs' : '?', 'default' : '.' }
+        ])
+
+    def run(self, args):
+
+        return PhpCmd("""
                 $p="${dir}";
                 if(@is_dir($p)){
                     $d=@opendir($p);
@@ -43,27 +39,8 @@ class Ls(Module):
                         print(join(PHP_EOL,$a));
                     }
                 }""",
-                name = 'ls_php'
-            )
-        ])
-
-        self.register_arguments([
-          { 'name' : 'dir', 'help' : 'Target folder', 'default' : '.', 'nargs' : '?' },
-          { 'name' : '-vector', 'choices' : self.vectors.get_names() }
-        ])
-
-    def run(self, args):
-
-        vname, result = self.vectors.find_first_result(
-            names = [ args.get('vector') ],
-            format_args = args,
-            # This check is redundant but is needed
-            # to loop all vectors. This helps to skip the
-            # disabled vectors.
-            condition = lambda r: r
-        )
-
-        return result.split('\n') if result else None
+                postprocess = lambda x: x.split('\n')
+               ).run(args)
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))
