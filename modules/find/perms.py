@@ -88,7 +88,8 @@ swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ 
         ])
 
     def run(self, args):
-        return self.vectors.get_result(args['vector'], args).split('\n')
+        result = self.vectors.get_result(args['vector'], args)
+        return result.split('\n') if isinstance(result,str) else result
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))
