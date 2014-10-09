@@ -139,8 +139,11 @@ class Filesystem(Module):
         results = {}
 
         for func_name in [
+                            # Execute every function starting with check_*
                             fn for fn in self.check_functions
+                            # if the user does not specify any name
                             if not args.get('check')
+                            # of if specify the current function name
                             or args.get('check') == fn
                         ]:
 
