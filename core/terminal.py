@@ -1,4 +1,4 @@
-from core.weexceptions import FatalException, AliasException
+from core.weexceptions import FatalException
 from core.loggers import log, dlog
 from core import messages
 from core import modules
@@ -75,20 +75,13 @@ class CmdModules(cmd.Cmd):
             raise EOFError()
         if cmd == '':
             return self.default(line)
-        # Support all commands but also command replacement
         if cmd:
             try:
                 func = getattr(self, 'do_' + cmd.lstrip(':'))
             except AttributeError:
                 return self.default(line)
 
-            try:
-                return func(arg)
-            except AliasException:
-                # AliasException is raised when `Module.run_alias`
-                # detect that the alias call is superflous. Then run
-                # default.
-                return self.default(line)
+            return func(arg, cmd)
 
         else:
             return self.default(line)
@@ -193,7 +186,7 @@ class Terminal(CmdModules):
 
         log.info(result)
 
-    def do_set(self, line):
+    def do_set(self, line, cmd):
         """Command "set" to set session variables."""
 
         try:

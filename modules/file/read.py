@@ -7,6 +7,8 @@ class Read(Module):
 
     """Read remote file from the remote filesystem."""
 
+    aliases = [ 'cat' ]
+
     def init(self):
 
         self.register_info(

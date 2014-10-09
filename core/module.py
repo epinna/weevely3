@@ -12,12 +12,13 @@ Normally, the following methods have to be overridden:
 """
 
 from core.vectorslist import VectorsList
-from core.vectors import ShellCmd
-from core.weexceptions import DevException, AliasException
+from core.vectors import ModuleCmd
+from core.weexceptions import DevException
 from core.loggers import log
 from core import helpparse
 from core import messages
 from mako.template import Template
+from core import modules
 import shlex
 import utilities
 import ast
@@ -70,7 +71,7 @@ class Module:
 
         self.init()
 
-    def run_cmdline(self, line):
+    def run_cmdline(self, line, cmd = ''):
         """Execute the module from command line.
 
         Get command line string as argument. Called from terminal.
@@ -78,7 +79,8 @@ class Module:
         Normally does not need to be overridden.
 
         Args:
-            line (str): string containing the module arguments.
+            line (str): the module arguments.
+            cmd (str): the executed command
 
         Return:
             Object. The result of the module execution.
@@ -147,7 +149,7 @@ class Module:
 
         return self.run(args)
 
-    def run_alias(self, line):
+    def run_alias(self, args, cmd):
         """Execute the module to replace a missing terminal command.
 
         This runs the module if the direct shell command can't
@@ -159,23 +161,20 @@ class Module:
         Normally does not need to be overridden.
 
         Args:
-            line (str): string containing the module arguments.
+            args (str): string containing the module arguments.
 
         Return:
             Object. The result of the module execution.
 
-        Raise:
-            AliasException if the alias call is superflous
         """
 
         if self.session['default_shell'] != 'shell_sh':
-            return self.run_cmdline(line)
-
-        # I can't call directly here the default shell command,
-        # cause `line` just contains line arguments. So raise
-        # an exception to be caught in terminal.
-        raise AliasException()
-
+            log.debug(messages.module.running_the_alias_s % self.name)
+            return self.run_cmdline(args)
+        else:
+            return modules.loaded['shell_sh'].run_cmdline(
+                '%s %s' % (cmd, args)
+            )
 
     def init(self):
         """Module initialization.

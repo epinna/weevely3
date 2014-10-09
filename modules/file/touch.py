@@ -15,6 +15,8 @@ class Touch(Module):
 
     """Change file timestamp."""
 
+    aliases = [ 'touch' ]
+
     def init(self):
 
         self.register_info(

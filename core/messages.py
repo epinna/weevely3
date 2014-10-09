@@ -42,6 +42,7 @@ class module:
     error_init_method_required = 'Error, the init() method definition is required in Modules'
     module_s_inactive = 'Module \'%s\' is inactive, skipped'
     error_choices_s_s_empty = 'Choices for \'%s\' argument \'%s\' is empty. Please check if vectors are declared before arguments.'
+    running_the_alias_s = 'Shell interpreter unavailable, running the alias \'%s\''
 
 class module_file_cd:
     failed_directory_change_to_s = "Failed cd '%s': no such directory or permission denied"
