@@ -1,7 +1,6 @@
 from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
 from core.module import Module
 from core import modules
-import tempfile
 
 class Rm(Module):
 
