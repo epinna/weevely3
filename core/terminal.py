@@ -86,6 +86,15 @@ class CmdModules(cmd.Cmd):
         else:
             return self.default(line)
 
+
+    def do_help(self, arg, cmd):
+        """Fixed help.
+
+        Wrap the help cause now the do_* functions
+        get two arguments"""
+
+        return CmdModules.do_help(self, arg)
+
 class Terminal(CmdModules):
 
     """Weevely Terminal"""
