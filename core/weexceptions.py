@@ -6,7 +6,6 @@ class FatalException(Exception):
 class DevException(Exception):
     pass
 
-
 """ Error on module execution """
 class ModuleError(Exception):
     pass
@@ -25,4 +24,8 @@ class ChannelHTTPError500(Exception):
 
 """ Error in the channel HTTP request """
 class ChannelHTTPError(Exception):
+    pass
+
+""" Exception when calling a module alias """
+class AliasException(Exception):
     pass

@@ -12,8 +12,8 @@ Normally, the following methods have to be overridden:
 """
 
 from core.vectorslist import VectorsList
-from core.vectors import ModuleCmd
-from core.weexceptions import DevException
+from core.vectors import ShellCmd
+from core.weexceptions import DevException, AliasException
 from core.loggers import log
 from core import helpparse
 from core import messages
@@ -148,12 +148,13 @@ class Module:
         return self.run(args)
 
     def run_alias(self, line):
-        """Execute the module as alias from command line.
+        """Execute the module to replace a missing terminal command.
 
-        This is invoked if some alias defined in `Module.alias`
-        is called from terminal command line.
+        This runs the module if the direct shell command can't
+        be run due to the shell_sh failing.
 
-        Get command line string as argument. Called from terminal.
+        It is called when some alias defined in `Module.alias` list
+        is executed from the command line.
 
         Normally does not need to be overridden.
 
@@ -162,9 +163,19 @@ class Module:
 
         Return:
             Object. The result of the module execution.
+
+        Raise:
+            AliasException if the alias call is superflous
         """
 
-        return self.run_cmdline(line)
+        if self.session['default_shell'] != 'shell_sh':
+            return self.run_cmdline(line)
+
+        # I can't call directly here the default shell command,
+        # cause `line` just contains line arguments. So raise
+        # an exception to be caught in terminal.
+        raise AliasException()
+
 
     def init(self):
         """Module initialization.

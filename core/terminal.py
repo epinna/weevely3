@@ -1,4 +1,4 @@
-from core.weexceptions import FatalException
+from core.weexceptions import FatalException, AliasException
 from core.loggers import log, dlog
 from core import messages
 from core import modules
@@ -76,12 +76,20 @@ class CmdModules(cmd.Cmd):
         if cmd == '':
             return self.default(line)
         # Support all commands but also command replacement
-        if cmd.startswith(':') or cmd in ('ls', 'cd'):
+        if cmd:
             try:
                 func = getattr(self, 'do_' + cmd.lstrip(':'))
             except AttributeError:
                 return self.default(line)
-            return func(arg)
+
+            try:
+                return func(arg)
+            except AliasException:
+                # AliasException is raised when `Module.run_alias`
+                # detect that the alias call is superflous. Then run
+                # default.
+                return self.default(line)
+
         else:
             return self.default(line)
 

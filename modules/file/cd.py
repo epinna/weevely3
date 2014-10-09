@@ -38,3 +38,8 @@ class Cd(Module):
             log.warning(
                 messages.module_file_cd.failed_directory_change_to_s %
                 (args['dir']))
+
+    def run_alias(self, line):
+
+        # Run this alias independently from the shell_sh status
+        return self.run_cmdline(line)
