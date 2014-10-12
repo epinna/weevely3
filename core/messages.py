@@ -72,12 +72,13 @@ class module_file_touch:
 class module_sql_console:
     check_credentials = "Check credentials and DB availabiity"
     no_data = "No data returned"
+    missing_sql_trailer_s = 'Is the trailing comma missing at the end of the SQL statement \'%s\'?'
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
     error_500_executing = 'The remote script execution triggers an error 500, please verify script integrity and sent payload correctness'
     error_URLError_network = 'Network error, unable to connect to the remote backdoor'
-    missing_php_trailer_s = 'Is the trailing comma missing at the end of the sent payload \'%s\'?'
+    missing_php_trailer_s = 'Is the trailing comma missing at the end of the PHP code \'%s\'?'
     error_i_executing = 'The request triggers the error %i, please verify running code'
 
 class module_shell_sh:

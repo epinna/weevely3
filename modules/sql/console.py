@@ -3,6 +3,7 @@ from core.module import Module
 from core.loggers import log
 from core import modules
 from core import messages
+from core import utilities
 
 class Console(Module):
 
@@ -52,9 +53,16 @@ class Console(Module):
 
         if result:
             return [
-                line.split('\x00') for line
-                in result.strip('\x00').replace('\x00\n', '\n').split('\n')
+              line.split('\x00') for line
+              in result.strip('\x00').replace('\x00\n', '\n').split('\n')
             ]
+
+        # If the result is none, prints error message about missing trailer
+        command_last_chars = utilities.shorten_string(args['query'].rstrip(),
+                                                        keep_trailer = 10)
+
+        if (command_last_chars and command_last_chars[-1] != ';'):
+            log.warn(messages.module_sql_console.missing_sql_trailer_s % command_last_chars)
 
 
     def run(self, args):
@@ -78,7 +86,7 @@ class Console(Module):
                     'SELECT USER;' if vector.startswith('postgres')
                     else 'SELECT USER();'
                 )
-                
+
         user = self._query(vector, args)
         if not user:
             log.warn(messages.module_sql_console.check_credentials)
