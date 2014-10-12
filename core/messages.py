@@ -69,6 +69,10 @@ class module_file_touch:
     error_source_timestamp_required = "Error, source timestamp is required."
     failed_touch_file = "File touch failed, please check remote path and permissions"
 
+class module_sql_console:
+    check_credentials = "Check credentials and DB availabiity"
+    no_data = "No data returned"
+
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
     error_500_executing = 'The remote script execution triggers an error 500, please verify script integrity and sent payload correctness'
