@@ -63,7 +63,10 @@ class Console(Module):
         vector = args.get('db')
 
         # And by the user and password presence
-        vector += '' if args.get('user') and args.get('password') else '_fallback'
+        vector += (
+                    '' if args.get('user') and args.get('password')
+                    else '_fallback'
+                )
 
         # If the query is set, just execute it
         if args.get('query'):
@@ -71,7 +74,11 @@ class Console(Module):
 
         # Else, start the console.
         # Check credentials
-        args['query'] = 'SELECT USER;' if vector.startswith('postgres') else 'SELECT USER();'
+        args['query'] = (
+                    'SELECT USER;' if vector.startswith('postgres')
+                    else 'SELECT USER();'
+                )
+                
         user = self._query(vector, args)
         if not user:
             log.warn(messages.module_sql_console.check_credentials)
