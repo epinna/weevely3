@@ -172,18 +172,8 @@ class PhpCmd(ModuleCmd):
 
     def _minify(self, body):
 
-        # Remove multiple whitespaces
-        body = re.sub('[ ]+', ' ', body)
-
-        # Removes multi-line comments and does not create
-        # a blank line, also treats white spaces/tabs
-        body = re.sub('^[ \t]*/\*.*?\*/[ \t]*[\r\n]', '', body, re.DOTALL)
-
-        # Remove single line comments
-        body = re.sub('^[ \t]*//.*[ \t]*[\r\n]', '', body)
-
-        # Remove eols and tabs
-        body = re.sub('[\r\n\t]*', '', body)
+        # Manually minify PHP is dangerous.
+        # TODO: Use php -w or similar to shrink vector PHP code.
 
         return body
 
