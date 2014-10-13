@@ -74,6 +74,11 @@ class module_sql_console:
     no_data = "No data returned"
     missing_sql_trailer_s = 'Is the trailing comma missing at the end of the SQL statement \'%s\'?'
 
+class module_sql_dump:
+    sql_dump_failed_check_credentials = "SQL dump failed, check credentials and DB availabiity"
+    sql_dump_saved_s = "SQL dump saved to '%s'"
+
+
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
     error_500_executing = 'The remote script execution triggers an error 500, please verify script integrity and sent payload correctness'

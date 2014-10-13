@@ -120,9 +120,6 @@ class PhpCmd(ModuleCmd):
 
     The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.
 
-    The formatted payload is minified removing comments, tabs, and end of line.
-    Avoid to use white space characters since could break your payload.
-
     Args:
         payload (str): PHP code to execute.
 
@@ -176,6 +173,45 @@ class PhpCmd(ModuleCmd):
         # TODO: Use php -w or similar to shrink vector PHP code.
 
         return body
+
+class PhpTemplate(PhpCmd):
+
+    """This vector contains PHP code imported from a template.
+
+    The PHP code in the given template is executed via the module `shell_php`.
+    Inherit `PhpCmd`.
+
+    Args:
+        payload_path (str): Path of the template to execute, usually placed in self.folder.
+
+        name (str): This vector name.
+
+        target (Os): The operating system supported by the vector.
+
+        postprocess (func): The function which postprocess the execution result.
+
+        arguments (list of str): Additional arguments for `shell_php`
+
+    """
+
+    def __init__(self, payload_path, name = None, target = 0, postprocess = None, arguments = []):
+
+        if not isinstance(payload_path, basestring):
+            raise DevException(messages.vectors.wrong_payload_type)
+
+        try:
+            payload = file(payload_path, 'r').read()
+        except Exception as e:
+            raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
+
+        ModuleCmd.__init__(
+            self,
+            module = 'shell_php',
+            arguments = [ payload ] + arguments,
+            name = name,
+            target = target,
+            postprocess = postprocess
+        )
 
 
 class ShellCmd(PhpCmd):
