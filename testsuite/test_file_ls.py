@@ -1,4 +1,3 @@
-from testfixtures import log_capture
 from testsuite.base_fs import BaseFilesystem
 from testsuite import config
 from core.sessions import SessionURL
@@ -42,9 +41,7 @@ class FileLs(BaseFilesystem):
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 
-
-    @log_capture()
-    def test_ls(self, log_captured):
+    def test_ls(self):
 
         # ls [0]
         self.assertEquals(self.run_argv([ self.folders[0] ]), [ '.', '..', os.path.split(self.folders[1])[1]])

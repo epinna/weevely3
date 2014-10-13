@@ -117,9 +117,6 @@ class Console(Module):
 
     def print_result(self, result):
 
-        # TODO: check if this different handling of None and '' has
-        # a real impact
-
         if result == None:
             log.warn('%s %s' % (messages.module_sql_console.no_data,
                                 messages.module_sql_console.check_credentials)
