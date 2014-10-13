@@ -95,24 +95,30 @@ class Console(Module):
         if user[0]:
             user = user[0][0]
 
-        # Console loop
-        while True:
+        # Catch Ctrl-C and Ctrl-D
+        try:
 
-            query = raw_input('%s SQL> ' % user).strip()
+            # Console loop
+            while True:
 
-            if not query: continue
-            if query == 'quit': break
+                query = raw_input('%s SQL> ' % user).strip()
 
-            args['query'] = query
-            result = self._query(vector, args)
+                if not query: continue
+                if query == 'quit': break
 
-            # TODO: check if this different handling of None and '' has
-            # a real impact
-            if result == None:
-                log.warn('%s %s' % (messages.module_sql_console.no_data,
-                                    messages.module_sql_console.check_credentials)
-                        )
-            elif not result:
-                log.warn(messages.module_sql_console.no_data)
-            else:
-                self.print_result(result)
+                args['query'] = query
+                result = self._query(vector, args)
+
+                # TODO: check if this different handling of None and '' has
+                # a real impact
+                if result == None:
+                    log.warn('%s %s' % (messages.module_sql_console.no_data,
+                                        messages.module_sql_console.check_credentials)
+                            )
+                elif not result:
+                    log.warn(messages.module_sql_console.no_data)
+                else:
+                    self.print_result(result)
+
+        except (KeyboardInterrupt, EOFError):
+            log.info('Exiting SQL console.')
