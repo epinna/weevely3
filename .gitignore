@@ -1,6 +1,9 @@
 # Test environment
 testsuite/environment/
 
+# Testsuite configuration file
+testsuite/config.py
+
 # Sessions
 sessions/
 
