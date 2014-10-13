@@ -31,10 +31,10 @@ class Console(Module):
               name = "mysql_fallback"
             ),
             PhpCmd( """if(pg_connect("host=${host} user=${user} password=${pass}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};pg_close();}""",
-              name = "postgres"
+              name = "pgsql"
             ),
             PhpCmd( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";} echo "\n";}};pg_close();""",
-              name = "postgres_fallback"
+              name = "pgsql_fallback"
             ),
             ]
         )
@@ -43,7 +43,7 @@ class Console(Module):
           { 'name' : '-user', 'help' : 'SQL username' },
           { 'name' : '-pass', 'help' : 'SQL password' },
           { 'name' : '-host', 'help' : 'Db host or host:port', 'nargs' : '?', 'default' : '127.0.0.1' },
-          { 'name' : '-dbms', 'help' : 'Db type', 'choices' : ('mysql', 'postgres'), 'default' : 'mysql' },
+          { 'name' : '-dbms', 'help' : 'Db type', 'choices' : ('mysql', 'pgsql'), 'default' : 'mysql' },
           { 'name' : '-query', 'help' : 'Execute a single query' },
         ])
 
