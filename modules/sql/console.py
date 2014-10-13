@@ -83,7 +83,7 @@ class Console(Module):
         # Else, start the console.
         # Check credentials
         args['query'] = (
-                    'SELECT USER;' if vector.startswith('postgres')
+                    'SELECT USER;' if vector.startswith('pgsql')
                     else 'SELECT USER();'
                 )
 
