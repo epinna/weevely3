@@ -1,7 +1,7 @@
 # Weevely testsuite configuration
 
 # To get started with the testsuite, create a dedicated folder
-# in your web enviroinment and set permissions in order to give
+# in your web environments and set permissions in order to give
 # total write, read and execute permissions to the web user.
 #
 # Then set the `script_folder` variable to the dedicated folder path
@@ -28,8 +28,8 @@ script_folder_url = 'http://localhost/environment/'
 
 #
 # The following cmd_env_* commands are used to setup the
-# test enviroinment. Feel free to modify with ssh or other commands
-# to setup remote enviroinments.
+# test environments. Feel free to modify with ssh or other commands
+# to setup remote environments.
 #
 cmd_env_move_s_s = 'mv %s %s'
 cmd_env_chmod_s_s = 'chmod %s %s'
