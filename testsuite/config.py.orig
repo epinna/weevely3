@@ -1,8 +1,9 @@
 # Weevely testsuite configuration
 
-# To get started with the testsuite, create a dedicated folder
-# in your web environments and set permissions in order to give
-# total write, read and execute permissions to the web user.
+# To get started with the testsuite, rename this file to config.py.
+# Then, create a dedicated folder in your web environments and set
+# permissions in order to give total write, read and execute
+# permissions to the web user.
 #
 # Then set the `script_folder` variable to the dedicated folder path
 # and set the `script_folder_url` variable to the corresponding URL
