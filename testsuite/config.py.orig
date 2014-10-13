@@ -43,3 +43,14 @@ debug = False
 
 # This option is used by test_channels to reduce the requests
 test_generated_test_all_agents = False
+
+#
+# SQL testing options
+#
+# Dbms
+sql_dbms = 'mysql'
+# Credentials
+sql_user = ''
+sql_passwd = ''
+# Set if automatically connect if e.g. mysql default login is set
+sql_autologin = True
