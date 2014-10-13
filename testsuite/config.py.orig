@@ -50,6 +50,8 @@ test_generated_test_all_agents = False
 #
 # Dbms
 sql_dbms = 'mysql'
+# Test db
+sql_db = 'test'
 # Credentials
 sql_user = ''
 sql_passwd = ''
