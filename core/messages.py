@@ -71,12 +71,12 @@ class module_file_touch:
     failed_touch_file = "File touch failed, please check remote path and permissions"
 
 class module_sql_console:
-    check_credentials = "Check credentials and DB availabiity"
+    check_credentials = "Check credentials and DB availability"
     no_data = "No data returned"
     missing_sql_trailer_s = 'Is the trailing comma missing at the end of the SQL statement \'%s\'?'
 
 class module_sql_dump:
-    sql_dump_failed_check_credentials = "SQL dump failed, check credentials and DB availabiity"
+    sql_dump_failed_check_credentials = "SQL dump failed, check credentials and DB availability"
     sql_dump_saved_s = "SQL dump saved to '%s'"
 
 
