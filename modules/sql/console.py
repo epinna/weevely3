@@ -24,13 +24,13 @@ class Console(Module):
         self.register_vectors(
             [
             PhpCmd(
-              """if(mysql_connect("${host}","${user}","${pass}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};mysql_close();}""",
+              """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};mysql_close();}""",
               name = 'mysql',
             ),
             PhpCmd("""$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};mysql_close();""",
               name = "mysql_fallback"
             ),
-            PhpCmd( """if(pg_connect("host=${host} user=${user} password=${pass}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};pg_close();}""",
+            PhpCmd( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};pg_close();}""",
               name = "pgsql"
             ),
             PhpCmd( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";} echo "\n";}};pg_close();""",
@@ -41,7 +41,7 @@ class Console(Module):
 
         self.register_arguments([
           { 'name' : '-user', 'help' : 'SQL username' },
-          { 'name' : '-pass', 'help' : 'SQL password' },
+          { 'name' : '-passwd', 'help' : 'SQL password' },
           { 'name' : '-host', 'help' : 'Db host or host:port', 'nargs' : '?', 'default' : '127.0.0.1' },
           { 'name' : '-dbms', 'help' : 'Db type', 'choices' : ('mysql', 'pgsql'), 'default' : 'mysql' },
           { 'name' : '-query', 'help' : 'Execute a single query' },
@@ -72,7 +72,7 @@ class Console(Module):
 
         # And by the user and password presence
         vector += (
-                    '' if args.get('user') and args.get('password')
+                    '' if args.get('user') and args.get('passwd')
                     else '_fallback'
                 )
 
@@ -108,17 +108,23 @@ class Console(Module):
 
                 args['query'] = query
                 result = self._query(vector, args)
+                self.print_result(result)
 
-                # TODO: check if this different handling of None and '' has
-                # a real impact
-                if result == None:
-                    log.warn('%s %s' % (messages.module_sql_console.no_data,
-                                        messages.module_sql_console.check_credentials)
-                            )
-                elif not result:
-                    log.warn(messages.module_sql_console.no_data)
-                else:
-                    self.print_result(result)
 
         except (KeyboardInterrupt, EOFError):
             log.info('Exiting SQL console.')
+
+
+    def print_result(self, result):
+
+        # TODO: check if this different handling of None and '' has
+        # a real impact
+
+        if result == None:
+            log.warn('%s %s' % (messages.module_sql_console.no_data,
+                                messages.module_sql_console.check_credentials)
+                    )
+        elif not result:
+            log.warn(messages.module_sql_console.no_data)
+        else:
+            Module.print_result(self, result)
