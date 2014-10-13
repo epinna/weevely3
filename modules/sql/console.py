@@ -40,10 +40,10 @@ class Console(Module):
         )
 
         self.register_arguments([
-          { 'name' : 'user', 'help' : 'SQL username', 'nargs' : '?' },
-          { 'name' : 'pass', 'help' : 'SQL password', 'nargs' : '?' },
+          { 'name' : '-user', 'help' : 'SQL username' },
+          { 'name' : '-pass', 'help' : 'SQL password' },
           { 'name' : '-host', 'help' : 'Db host or host:port', 'nargs' : '?', 'default' : '127.0.0.1' },
-          { 'name' : '-db', 'help' : 'Db type', 'choices' : ('mysql', 'postgres'), 'default' : 'mysql' },
+          { 'name' : '-dbms', 'help' : 'Db type', 'choices' : ('mysql', 'postgres'), 'default' : 'mysql' },
           { 'name' : '-query', 'help' : 'Execute a single query' },
         ])
 
@@ -68,7 +68,7 @@ class Console(Module):
     def run(self, args):
 
         # The vector name is given by the db type
-        vector = args.get('db')
+        vector = args.get('dbms')
 
         # And by the user and password presence
         vector += (
