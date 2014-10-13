@@ -80,8 +80,8 @@ class VectorsList(list):
             try:
                 condition_result = condition(result)
             except Exception as e:
-                import traceback; dlog.info(traceback.format_exc())
-                log.debug(messages.vectorslist.vector_s_triggers_an_exc)
+                import traceback; log.info(traceback.format_exc())
+                log.debug(messages.vectorslist.vector_s_triggers_an_exc % vector.name)
 
                 condition_result = False
 
