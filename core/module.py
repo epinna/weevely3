@@ -22,6 +22,7 @@ from core import modules
 import shlex
 import utilities
 import ast
+import os
 
 class Status:
     """Represent the module statuses.
@@ -43,7 +44,7 @@ class Module:
 
     aliases = []
 
-    def __init__(self, session, name):
+    def __init__(self, session, name, folder):
         """Module object constructor.
 
         This call the overridable `init()` method.
@@ -51,8 +52,9 @@ class Module:
         Normally does not need to be overridden.
         """
 
-        self.name = name
         self.session = session
+        self.name = name
+        self.folder = folder
         self.vectors = VectorsList(session, name)
 
         # init session db for current session
