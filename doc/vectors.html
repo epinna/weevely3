@@ -24,6 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="weevely 3.0beta documentation" href="index.html" />
+    <link rel="next" title="VectorList class definition" href="vectorlist.html" />
     <link rel="prev" title="Module class definition" href="module.html" /> 
   </head>
   <body>
@@ -36,6 +37,9 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="vectorlist.html" title="VectorList class definition"
+             accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="module.html" title="Module class definition"
              accesskey="P">previous</a> |</li>
@@ -149,6 +153,23 @@ module execution.</dd>
 </dd></dl>
 
 <dl class="class">
+<dt id="core.vectors.PhpFile">
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpFile</tt><big>(</big><em>payload_path</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>This vector contains PHP code imported from a template.</p>
+<p>The PHP code in the given template is executed via the module <cite>shell_php</cite>.
+Inherit <cite>PhpCode</cite>.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first">payload_path (str): Path of the template to execute, usually placed in self.folder.</p>
+<p>name (str): This vector name.</p>
+<p>target (Os): The operating system supported by the vector.</p>
+<p>postprocess (func): The function which postprocess the execution result.</p>
+<p class="last">arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
 <dt id="core.vectors.ShellCmd">
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains a shell command.</p>
@@ -176,6 +197,9 @@ module execution.</dd>
   <h4>Previous topic</h4>
   <p class="topless"><a href="module.html"
                         title="previous chapter">Module class definition</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vectorlist.html"
+                        title="next chapter">VectorList class definition</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/vectors.txt"
@@ -207,6 +231,9 @@ module execution.</dd>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
+        <li class="right" >
+          <a href="vectorlist.html" title="VectorList class definition"
+             >next</a> |</li>
         <li class="right" >
           <a href="module.html" title="Module class definition"
              >previous</a> |</li>

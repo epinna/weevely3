@@ -19,6 +19,9 @@ ModuleExec, PhpCode, and ShellCmd vectors classes definition
 .. autoclass:: PhpCode
     :members:
 
+.. autoclass:: PhpFile
+    :members:
+
 .. autoclass:: ShellCmd
     :members:
 
