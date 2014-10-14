@@ -1,0 +1,16 @@
+.. weevely-ng vector documentation file, created by
+   sphinx-quickstart on Fri Sep 26 19:05:26 2014.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+VectorList class definition
+======================================
+
+.. toctree::
+
+.. automodule:: core.vectorlist
+    :members:
+
+.. autoclass:: VectorList
+    :members:
+

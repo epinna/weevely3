@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ModuleExec, PhpCode, and ShellCmd vectors classes definition &mdash; weevely 3.0beta documentation</title>
+    <title>ModuleExec, PhpCode, PhpFile, and ShellCmd vectors classes definition &mdash; weevely 3.0beta documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -52,8 +52,8 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="moduleexec-phpcode-and-shellcmd-vectors-classes-definition">
-<h1>ModuleExec, PhpCode, and ShellCmd vectors classes definition<a class="headerlink" href="#moduleexec-phpcode-and-shellcmd-vectors-classes-definition" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="moduleexec-phpcode-phpfile-and-shellcmd-vectors-classes-definition">
+<h1>ModuleExec, PhpCode, PhpFile, and ShellCmd vectors classes definition<a class="headerlink" href="#moduleexec-phpcode-phpfile-and-shellcmd-vectors-classes-definition" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
@@ -62,9 +62,9 @@
 <ul class="simple">
 <li><cite>ModuleExec</cite> vector executes a given module with given arguments.</li>
 <li><cite>PhpCode</cite> vector contains PHP code, executed via <cite>shell_php</cite> module.</li>
+<li><cite>PhpFile</cite> vector loads PHP code from an external file, and execute it via <cite>shell_php</cite> module.</li>
 <li><cite>ShellCmd</cite> vector contains a shell command, executed via <cite>shell_sh</cite> module.</li>
 </ul>
-<p>ShellCmd and PhpCode inherit from ModuleExec class.</p>
 <dl class="class">
 <dt id="core.vectors.Os">
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">Os</tt><a class="reference internal" href="_modules/core/vectors.html#Os"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.Os" title="Permalink to this definition">¶</a></dt>

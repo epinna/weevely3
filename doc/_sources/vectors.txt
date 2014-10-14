@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-ModuleExec, PhpCode, and ShellCmd vectors classes definition
+ModuleExec, PhpCode, PhpFile, and ShellCmd vectors classes definition
 ==========================================================
 
 .. toctree::
