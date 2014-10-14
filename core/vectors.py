@@ -3,9 +3,8 @@ The module `core.vectors` defines the following vectors classes.
 
 * `ModuleExec` vector executes a given module with given arguments.
 * `PhpCode` vector contains PHP code, executed via `shell_php` module.
+* `PhpFile` vector loads PHP code from an external file, and execute it via `shell_php` module.
 * `ShellCmd` vector contains a shell command, executed via `shell_sh` module.
-
-ShellCmd and PhpCode inherit from ModuleExec class.
 
 """
 
