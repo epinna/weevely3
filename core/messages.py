@@ -20,6 +20,13 @@ class terminal:
 The system shell interpreter `shell_sh` is not available in this session,
 use the following commands to simulate a complete shell.
 """
+    welcome_to_s = """
+Welcome to weevely.
+
+Type any command to connect to %s.
+
+Type :help for more information.
+"""
 
 class stegareferrer:
     error_generating_id = 'Error generating id, payload too long?'

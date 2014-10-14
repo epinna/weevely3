@@ -131,6 +131,11 @@ class Terminal(CmdModules):
         # Load history file
         self._load_history()
 
+        log.info(
+            messages.terminal.welcome_to_s %
+                self.session.get_connection_info()
+        )
+
     def emptyline(self):
         """Disable repetition of last command."""
 
@@ -191,13 +196,8 @@ class Terminal(CmdModules):
                 prompt = '?'
 
             # Build next prompt, last command could have changed the cwd
-            self.prompt = '{user}@{host}:{path} {prompt} '.format(
-             user=self.session['system_info']['results'].get('whoami', ''),
-             host = self.session['system_info']['results'].get('hostname', ''),
-             path = self.session['file_cd']['results'].get('cwd', '.'),
-             prompt = prompt)
+            self.prompt = '%s %s ' % (self.session.get_connection_info(), prompt)
 
-        #return stop
 
     def default(self, line):
         """Default command line send."""

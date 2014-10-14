@@ -1,5 +1,6 @@
 from core import messages
 from core.weexceptions import FatalException
+from mako import template
 from core.config import sessions_path, sessions_ext
 from core.loggers import log, stream_handler
 from core.module import Status
@@ -46,6 +47,15 @@ class Session(dict):
                 # If is not a module, just print if matches with print_filters
                 if any(f for f in print_filters if f == mod_name):
                     log.info("%s = '%s'" % (mod_name, mod_value))
+
+    def get_connection_info(self):
+     return template.Template(
+         """${'%s@' % user if user else ''}${'%s:' % host if host else ''}${path if path != '.' else ''}""").render(
+         user = self['system_info']['results'].get('whoami', ''),
+         host = self['system_info']['results'].get('hostname', ''),
+         path = self['file_cd']['results'].get('cwd', '.')
+     )
+
 
     def action_debug(self, module_argument, value):
 
