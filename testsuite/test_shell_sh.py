@@ -1,5 +1,5 @@
 from testsuite.base_test import BaseTest
-from core.vectors import PhpCmd
+from core.vectors import PhpCode
 from core.vectors import Os
 from core import modules
 from core.sessions import SessionURL
@@ -22,7 +22,7 @@ class SystemInfo(BaseTest):
             payload = modules.loaded['shell_sh'].vectors[i].arguments[0]
 
             if name != vector_safe_name:
-                modules.loaded['shell_sh'].vectors[i] = PhpCmd('\'"%s' % payload, name)
+                modules.loaded['shell_sh'].vectors[i] = PhpCode('\'"%s' % payload, name)
 
     def test_run_unless(self):
 
@@ -51,7 +51,7 @@ class SystemInfo(BaseTest):
         bogus_vector = 'bogus_win'
 
         # Add a bogus Os.WIN vector
-        modules.loaded['shell_sh'].vectors.append(PhpCmd("echo(1);", name=bogus_vector, target=Os.WIN))
+        modules.loaded['shell_sh'].vectors.append(PhpCode("echo(1);", name=bogus_vector, target=Os.WIN))
 
         # Check if called forced the bogusv vector name, returns Null
         self.assertIsNone(self.run_argv(["-vector", bogus_vector, "echo 1"]));
@@ -61,7 +61,7 @@ class SystemInfo(BaseTest):
         bogus_vector = 'bogus_win'
 
         # Add a bogus Os.WIN vector
-        modules.loaded['shell_sh'].vectors.append(PhpCmd("echo(1);", name=bogus_vector, target=Os.WIN))
+        modules.loaded['shell_sh'].vectors.append(PhpCode("echo(1);", name=bogus_vector, target=Os.WIN))
 
         # Spoil all vectors but bogus_win
         self._spoil_vectors_but(bogus_vector)

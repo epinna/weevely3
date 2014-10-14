@@ -12,7 +12,7 @@ Normally, the following methods have to be overridden:
 """
 
 from core.vectorslist import VectorsList
-from core.vectors import ModuleCmd
+from core.vectors import ModuleExec
 from core.weexceptions import DevException
 from core.loggers import log
 from core import helpparse
@@ -300,8 +300,8 @@ class Module:
         The passed vectors are stored in `self.vectors`, a VectorsList object.
 
         Args:
-            vectors (list of vectors objects): List of ShellCmd, PhpCmd, and
-            ModuleCmd to use as module vectors.
+            vectors (list of vectors objects): List of ShellCmd, PhpCode, and
+            ModuleExec to use as module vectors.
         """
 
         self.vectors.extend(vectors)

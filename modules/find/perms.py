@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd
+from core.vectors import PhpCode, ShellCmd
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -23,7 +23,7 @@ class Perms(Module):
         self.register_vectors(
             [
             # Don't be scared of the side, the PHP payloads are automatically minified
-            PhpCmd(
+            PhpCode(
               payload = """
 function ckprint($df,$t,$a) {
     if(@file_exists($df)&&cktp($df,$t)&&@ckattr($df,$a)) {

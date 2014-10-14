@@ -1,11 +1,11 @@
 """
 The module `core.vectors` defines the following vectors classes.
 
-* `ModuleCmd` vector executes a given module with given arguments.
-* `PhpCmd` vector contains PHP code, executed via `shell_php` module.
+* `ModuleExec` vector executes a given module with given arguments.
+* `PhpCode` vector contains PHP code, executed via `shell_php` module.
 * `ShellCmd` vector contains a shell command, executed via `shell_sh` module.
 
-ShellCmd and PhpCmd inherit from ModuleCmd class.
+ShellCmd and PhpCode inherit from ModuleExec class.
 
 """
 
@@ -33,7 +33,7 @@ class Os:
     NIX = 1
     WIN = 2
 
-class ModuleCmd:
+class ModuleExec:
 
     """This vector contains commands to execute other modules.
 
@@ -114,11 +114,11 @@ class ModuleCmd:
 
         return result
 
-class PhpCmd(ModuleCmd):
+class PhpCode(ModuleExec):
 
     """This vector contains PHP code.
 
-    The PHP code is executed via the module `shell_php`. Inherit `ModuleCmd`.
+    The PHP code is executed via the module `shell_php`. Inherit `ModuleExec`.
 
     Args:
         payload (str): PHP code to execute.
@@ -138,7 +138,7 @@ class PhpCmd(ModuleCmd):
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
 
-        ModuleCmd.__init__(
+        ModuleExec.__init__(
             self,
             module = 'shell_php',
             arguments = [ payload ] + arguments,
@@ -174,12 +174,12 @@ class PhpCmd(ModuleCmd):
 
         return body
 
-class PhpTemplate(PhpCmd):
+class PhpFile(PhpCode):
 
     """This vector contains PHP code imported from a template.
 
     The PHP code in the given template is executed via the module `shell_php`.
-    Inherit `PhpCmd`.
+    Inherit `PhpCode`.
 
     Args:
         payload_path (str): Path of the template to execute, usually placed in self.folder.
@@ -204,7 +204,7 @@ class PhpTemplate(PhpCmd):
         except Exception as e:
             raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
 
-        ModuleCmd.__init__(
+        ModuleExec.__init__(
             self,
             module = 'shell_php',
             arguments = [ payload ] + arguments,
@@ -214,11 +214,11 @@ class PhpTemplate(PhpCmd):
         )
 
 
-class ShellCmd(PhpCmd):
+class ShellCmd(PhpCode):
 
     """This vector contains a shell command.
 
-    The shell command is executed via the module `shell_sh`. Inherit `ModuleCmd`.
+    The shell command is executed via the module `shell_sh`. Inherit `ModuleExec`.
 
     The formatted payload is minified removing multiple whitespaces.
 
@@ -240,7 +240,7 @@ class ShellCmd(PhpCmd):
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
 
-        ModuleCmd.__init__(
+        ModuleExec.__init__(
             self,
             module = 'shell_sh',
             arguments = [ payload ] + arguments,

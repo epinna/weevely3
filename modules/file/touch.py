@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -30,7 +30,7 @@ class Touch(Module):
 
         self.register_vectors(
             [
-            PhpCmd(
+            PhpCode(
               "touch('${rpath}', ${epoch_ts});",
               name = 'php_touch'
               ),
@@ -70,11 +70,11 @@ class Touch(Module):
 
             file_list = [
                 os.path.join(folder, f)
-                for f in ModuleCmd('file_ls', [ folder ]).run()
+                for f in ModuleExec('file_ls', [ folder ]).run()
                 ]
 
             for file in file_list:
-                file_time = ModuleCmd('file_check', [ file, 'time' ]).run()
+                file_time = ModuleExec('file_check', [ file, 'time' ]).run()
                 args['epoch_ts'] = (
                     file_time if (
                         not args.get('epoch_ts') or
@@ -85,7 +85,7 @@ class Touch(Module):
 
         # Handle to get timestamp from another file
         elif args.get('file_ts'):
-            args['epoch_ts'] = ModuleCmd('file_check', [ args['file_ts'], 'time' ]).run()
+            args['epoch_ts'] = ModuleExec('file_check', [ args['file_ts'], 'time' ]).run()
 
         # Handle to get an human readable timestamp
         elif args.get('human_ts'):
@@ -106,7 +106,7 @@ class Touch(Module):
         self.vectors.get_result(args['vector'], args)
 
         # Verify execution
-        if not args['epoch_ts'] == ModuleCmd('file_check', [ args.get('rpath'), 'time' ]).run():
+        if not args['epoch_ts'] == ModuleExec('file_check', [ args.get('rpath'), 'time' ]).run():
             log.warn(messages.module_file_touch.failed_touch_file)
             return
 

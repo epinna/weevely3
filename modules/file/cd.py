@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd
+from core.vectors import PhpCode
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -29,7 +29,7 @@ class Cd(Module):
     def run(self, args):
 
         chdir = '' if args['dir'] == '.' else "@chdir('%s')&&" % args['dir']
-        folder = PhpCmd("""${chdir}print(@getcwd());""", "chdir").run({ 'chdir' : chdir })
+        folder = PhpCode("""${chdir}print(@getcwd());""", "chdir").run({ 'chdir' : chdir })
 
         if folder:
             # Store cwd used by other modules

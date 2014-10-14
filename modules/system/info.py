@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd
+from core.vectors import PhpCode
 from core.module import Module
 from core import messages
 import random
@@ -21,8 +21,8 @@ class Info(Module):
 
         self.register_vectors(
             [
-            PhpCmd("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
-            PhpCmd("""
+            PhpCode("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
+            PhpCode("""
                 $u=@posix_getpwuid(@posix_geteuid());
                 if($u){
                     $u=$u['name'];
@@ -31,22 +31,22 @@ class Info(Module):
                 }
                 print($u);
             """, 'whoami'),
-            PhpCmd("print(@gethostname());", 'hostname'),
-            PhpCmd("@print(getcwd());", 'cwd'),
-            PhpCmd("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
-            PhpCmd("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
+            PhpCode("print(@gethostname());", 'hostname'),
+            PhpCode("@print(getcwd());", 'cwd'),
+            PhpCode("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
+            PhpCode("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
              postprocess = lambda x: True if x=='1' else False
             ),
-            PhpCmd("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
-            PhpCmd("print(@php_uname());", 'uname'),
-            PhpCmd("print(@php_uname('s'));", 'os'),
-            PhpCmd("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
-            PhpCmd('print(@ini_get("max_execution_time"));', 'max_execution_time',
+            PhpCode("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
+            PhpCode("print(@php_uname());", 'uname'),
+            PhpCode("print(@php_uname('s'));", 'os'),
+            PhpCode("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
+            PhpCode('print(@ini_get("max_execution_time"));', 'max_execution_time',
              postprocess = lambda x: int(x)
             ),
-            PhpCmd('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
-            PhpCmd('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
-            PhpCmd("""
+            PhpCode('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
+            PhpCode('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
+            PhpCode("""
                 $v='';
                 if(function_exists('phpversion')) {
                     $v=phpversion();

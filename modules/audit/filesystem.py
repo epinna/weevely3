@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core.loggers import log
 from core import modules
@@ -36,7 +36,7 @@ class Filesystem(Module):
                       '/lib/', '/usr/lib/',
                       '/usr/local/lib' ]:
 
-            result = ModuleCmd("find_perms",
+            result = ModuleExec("find_perms",
                                 [ '-writable', path ]).run()
 
             if result and any(r for r in result if r):
@@ -48,7 +48,7 @@ class Filesystem(Module):
     def check_writable_etc(self):
         """Search writable files in etc folder"""
 
-        result = ModuleCmd("find_perms",
+        result = ModuleExec("find_perms",
                             [ '-writable', '/etc/' ]
                 ).run()
 
@@ -58,7 +58,7 @@ class Filesystem(Module):
     def check_writable_root(self):
         """Search writable files in / folder"""
 
-        result = ModuleCmd("find_perms",
+        result = ModuleExec("find_perms",
                             [   '-no-recursion',
                                 '-writable',
                                 '/' ]
@@ -70,7 +70,7 @@ class Filesystem(Module):
     def check_home_writable(self):
         """Search writable files in /home/ folder"""
 
-        result = ModuleCmd("find_perms",
+        result = ModuleExec("find_perms",
                             [   '-no-recursion',
                                 '-writable',
                                 '/home/' ]
@@ -82,7 +82,7 @@ class Filesystem(Module):
     def check_spool_crons(self):
         """Search writable files in /var/spool/cron/ folder"""
 
-        result = ModuleCmd("find_perms",
+        result = ModuleExec("find_perms",
                             [ '-writable',
                             '/var/spool/cron/' ]
                 ).run()
@@ -93,7 +93,7 @@ class Filesystem(Module):
     def check_home_executable(self):
         """Search executable files in /home/ folder"""
 
-        result = ModuleCmd("find_perms",
+        result = ModuleExec("find_perms",
                             [   '-no-recursion',
                                 '-executable',
                                 '/home/' ]
@@ -105,7 +105,7 @@ class Filesystem(Module):
     def check_readable_etc(self):
         """Search certain readable files in etc folder"""
 
-        readable_files = ModuleCmd("find_perms",
+        readable_files = ModuleExec("find_perms",
                             [ '-readable', '/etc/' ]
                 ).run()
 
@@ -120,7 +120,7 @@ class Filesystem(Module):
     def check_readable_logs(self):
         """Search certain readable log files"""
 
-        readable_files = ModuleCmd("find_perms",
+        readable_files = ModuleExec("find_perms",
                             [ '-readable', '/var/log/' ]
                 ).run()
 

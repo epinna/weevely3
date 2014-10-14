@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ModuleCmd
+from core.vectors import PhpCode, ModuleExec
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -24,12 +24,12 @@ class Upload(Module):
 
         self.register_vectors(
             [
-            PhpCmd(
+            PhpCode(
               "(file_put_contents('${rpath}',base64_decode('${content}'))&&print(1))||print(0);",
               name = 'file_put_contents'
               ),
 
-            PhpCmd(
+            PhpCode(
               """($h=fopen("${rpath}","a+")&&fwrite($h,base64_decode('${content}'))&&fclose($h)&&print(1))||print(0);""",
               name = "fwrite"
               )
@@ -65,7 +65,7 @@ class Upload(Module):
         args['content'] = base64.b64encode(content_orig)
 
         # Check remote file existence
-        if not args['force'] and ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run():
+        if not args['force'] and ModuleExec('file_check', [ args['rpath'], 'exists' ]).run():
             log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
             return
 
@@ -74,12 +74,12 @@ class Upload(Module):
          condition = lambda result: True if result == '1' else False
         )
 
-        if not ModuleCmd('file_check', [ args['rpath'], 'exists' ]).run():
+        if not ModuleExec('file_check', [ args['rpath'], 'exists' ]).run():
             log.warning(messages.module_file_upload.failed_upload_file)
             return
 
         if not (
-          ModuleCmd('file_check', [ args['rpath'], 'md5' ]).run() ==
+          ModuleExec('file_check', [ args['rpath'], 'md5' ]).run() ==
           hashlib.md5(content_orig).hexdigest()
           ):
             log.warning(messages.module_file_upload.failed_md5_check)

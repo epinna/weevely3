@@ -1,4 +1,4 @@
-from core.vectors import PhpTemplate, ShellCmd
+from core.vectors import PhpFile, ShellCmd
 from core.module import Module
 from core.loggers import log
 from core import modules
@@ -27,7 +27,7 @@ class Dump(Module):
               payload = "mysqldump -h ${host} -u${user} -p${passwd} ${db} ${table} --single-transaction",
               name = 'mysqldump_sh'
             ),
-            PhpTemplate(
+            PhpFile(
               payload_path = os.path.join(self.folder, 'mysqldump.tpl'),
               name = 'mysqldump_php',
             )

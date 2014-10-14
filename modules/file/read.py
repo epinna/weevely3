@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core import modules
 import tempfile
@@ -32,7 +32,7 @@ class Read(Module):
         args['lpath'] = temp_file.name
 
         # Run file_download
-        result = ModuleCmd(
+        result = ModuleExec(
                     'file_download',
                     [ args.get('rpath'), '${lpath}' ],
                     name = 'file_download'

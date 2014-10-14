@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core.loggers import log
 from core import modules
@@ -23,17 +23,17 @@ class Console(Module):
 
         self.register_vectors(
             [
-            PhpCmd(
+            PhpCode(
               """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};mysql_close();}""",
               name = 'mysql',
             ),
-            PhpCmd("""$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};mysql_close();""",
+            PhpCode("""$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};mysql_close();""",
               name = "mysql_fallback"
             ),
-            PhpCmd( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};pg_close();}""",
+            PhpCode( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\n";}};pg_close();}""",
               name = "pgsql"
             ),
-            PhpCmd( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";} echo "\n";}};pg_close();""",
+            PhpCode( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";} echo "\n";}};pg_close();""",
               name = "pgsql_fallback"
             ),
             ]

@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd
+from core.vectors import PhpCode
 from core.module import Module
 from core import messages
 import random
@@ -22,39 +22,39 @@ class Check(Module):
 
         self.register_vectors(
             [
-            PhpCmd(
+            PhpCode(
               "$f='${rpath}';((file_exists($f)||is_readable($f)||is_writable($f)||is_file($f)||is_dir($f))&&print(1))||print(0);",
               name = 'exists',
               postprocess = lambda x: True if x == '1' else False
             ),
-            PhpCmd("print(md5_file('${rpath}'));",
+            PhpCode("print(md5_file('${rpath}'));",
               name = "md5"
             ),
-            PhpCmd("(is_readable('${rpath}') && print(1)) || print(0);",
+            PhpCode("(is_readable('${rpath}') && print(1)) || print(0);",
               name = "readable",
               postprocess = lambda x: True if x == '1' else False
             ),
-            PhpCmd("(is_writable('${rpath}') && print(1))|| print(0);",
+            PhpCode("(is_writable('${rpath}') && print(1))|| print(0);",
               name = "writable",
               postprocess = lambda x: True if x == '1' else False
             ),
-            PhpCmd("(is_executable('${rpath}') && print(1)) || print(0);",
+            PhpCode("(is_executable('${rpath}') && print(1)) || print(0);",
               name = "executable",
               postprocess = lambda x: True if x == '1' else False
             ),
-            PhpCmd("(is_file('${rpath}') && print(1)) || print(0);",
+            PhpCode("(is_file('${rpath}') && print(1)) || print(0);",
               name = "file",
               postprocess = lambda x: True if x == '1' else False
             ),
-            PhpCmd("print(filesize('${rpath}'));",
+            PhpCode("print(filesize('${rpath}'));",
               name = "size",
               postprocess = lambda x: int(x)
             ),
-            PhpCmd("print(filemtime('${rpath}'));",
+            PhpCode("print(filemtime('${rpath}'));",
               name = "time",
               postprocess = lambda x: int(x)
             ),
-            PhpCmd("print(filemtime('${rpath}'));",
+            PhpCode("print(filemtime('${rpath}'));",
               name = "datetime",
               postprocess = lambda x: datetime.datetime.fromtimestamp(float(x)).strftime('%Y-%m-%d %H:%M:%S')
             )

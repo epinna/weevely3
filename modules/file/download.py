@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -24,15 +24,15 @@ class Download(Module):
 
         self.register_vectors(
             [
-            PhpCmd(
+            PhpCode(
               "print(@base64_encode(implode('',@file('${rpath}'))));",
               name = 'file'
               ),
-            PhpCmd(
+            PhpCode(
               "$f='${rpath}';print(@base64_encode(fread(fopen($f,'rb'),filesize($f))));",
               name = 'fread'
               ),
-            PhpCmd(
+            PhpCode(
               "print(@base64_encode(file_get_contents('${rpath}')));",
               name = 'file_get_contents'
               ),
@@ -53,13 +53,13 @@ class Download(Module):
     def run(self, args):
 
         # Check remote file existance
-        if not ModuleCmd('file_check', [ args.get('rpath'), 'readable' ]).run():
+        if not ModuleExec('file_check', [ args.get('rpath'), 'readable' ]).run():
             log.warn(messages.module_file_download.failed_download_file)
             return
 
         # Get the remote file MD5. If this is not available, still do a basic check
         # to see if the output is decodable as base64 string.
-        expected_md5 = ModuleCmd('file_check', [ args.get('rpath'), 'md5' ]).run()
+        expected_md5 = ModuleExec('file_check', [ args.get('rpath'), 'md5' ]).run()
         if expected_md5:
             check_md5 = lambda r: hashlib.md5(base64.b64decode(r)).hexdigest() == expected_md5
         else:

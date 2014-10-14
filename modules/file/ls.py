@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd
+from core.vectors import PhpCode
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -28,7 +28,7 @@ class Ls(Module):
 
     def run(self, args):
 
-        return PhpCmd("""
+        return PhpCode("""
                 $p="${dir}";
                 if(@is_dir($p)){
                     $d=@opendir($p);

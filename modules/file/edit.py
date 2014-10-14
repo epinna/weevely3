@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core.loggers import log
 from core import modules
@@ -50,19 +50,19 @@ class Edit(Module):
 
         # Keep track of the old timestamp if requested
         if args['keep_ts']:
-            timestamp = ModuleCmd(
+            timestamp = ModuleExec(
                         'file_check',
                         [ args.get('rpath'), 'time' ]
                     ).run()
 
         # If remote file already exists and readable
-        if ModuleCmd(
+        if ModuleExec(
                     'file_check',
                     [ args.get('rpath'), 'readable' ]
                 ).run():
 
             # Download file
-            result_download = ModuleCmd(
+            result_download = ModuleExec(
                         'file_download',
                         [ args.get('rpath'), lpath ]
                     ).run()
@@ -87,7 +87,7 @@ class Edit(Module):
             subprocess.check_call( [ args['editor'], lpath ])
 
         # Upload file
-        result_upload = ModuleCmd(
+        result_upload = ModuleExec(
                     'file_upload',
                     [ '-force', lpath, args.get('rpath') ]
                 ).run()
@@ -95,7 +95,7 @@ class Edit(Module):
 
         # Reset original timestamp if requested
         if args['keep_ts']:
-            ModuleCmd(
+            ModuleExec(
                 'file_touch',
                 [ args.get('rpath'), '-epoch-ts', str(timestamp) ]
             ).run()

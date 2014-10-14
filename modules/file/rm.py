@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd, ModuleCmd, Os
+from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core import modules
 
@@ -26,6 +26,6 @@ class Rm(Module):
     def run(self, args):
 
         # Run unlink
-        return PhpCmd("""(unlink('${rpath}') && print(1)) || print(0);""",
+        return PhpCode("""(unlink('${rpath}') && print(1)) || print(0);""",
                         postprocess = lambda x: True if x == '1' else False
                         ).run(args)

@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ModuleCmd
+from core.vectors import PhpCode, ModuleExec
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -23,7 +23,7 @@ class Name(Module):
 
         self.register_vectors(
             [
-            PhpCmd(
+            PhpCode(
               payload = """
 function ckdir($df, $f) {
     return ($f!='.')&&($f!='..')&&@is_dir($df);
@@ -49,7 +49,7 @@ swp('${rpath}');""",
               name = 'php_recursive',
               postprocess = lambda x: x.split('\n')
             ),
-            ModuleCmd(
+            ModuleExec(
               module = 'shell_sh',
               arguments = [
                   "-stderr_redirection",

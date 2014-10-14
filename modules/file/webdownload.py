@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd, ShellCmd
+from core.vectors import PhpCode, ShellCmd
 from core.module import Module
 from core import messages
 import random
@@ -25,7 +25,7 @@ class Webdownload(Module):
 
         self.register_vectors(
             [
-            PhpCmd("""@file_put_contents("${rpath}",file_get_contents("${url}"));""",
+            PhpCode("""@file_put_contents("${rpath}",file_get_contents("${url}"));""",
               name = "file_put_contents"
             ),
             ShellCmd("""wget ${url} -O ${rpath}""",

