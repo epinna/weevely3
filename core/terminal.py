@@ -4,6 +4,7 @@ from core import messages
 from core import modules
 from core import config
 from core.module import Status
+from core import utilities
 import readline
 import cmd
 import glob
@@ -93,7 +94,13 @@ class CmdModules(cmd.Cmd):
         Wrap the help cause now the do_* functions
         get two arguments"""
 
-        return cmd.Cmd.do_help(self, arg)
+        data = []
+        for module_name in modules.loaded:
+            data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
+
+        log.info(utilities.stringify(data))
+
+        #return cmd.Cmd.do_help(self, arg)
 
 class Terminal(CmdModules):
 

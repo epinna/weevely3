@@ -257,11 +257,13 @@ class Module:
 
         self.info = info
 
-        self.argparser.description =  (
-            self.info.get('description')
-            if self.info.get('description')
+        self.info['description'] = (
+            info.get('description')
+            if info.get('description')
             else self.__doc__.strip()
         )
+
+        self.argparser.description = self.info.get('description')
 
         if not self.argparser.description:
             raise DevException(messages.module.error_module_missing_description)
