@@ -98,7 +98,7 @@ class CmdModules(cmd.Cmd):
             for module_name in names:
                 data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
 
-        if data: log.info(utilities.stringify(data))
+        if data: log.info(utilities.stringify(data, table_border = False))
 
         if self.session['shell_sh']['status'] == Status.RUN: print; return
 
@@ -109,9 +109,10 @@ class CmdModules(cmd.Cmd):
             if module.aliases:
                 data.append([ ', '.join(module.aliases), module_name ])
 
-        if data: log.info(utilities.stringify(data))
+        if data: log.info(utilities.stringify(data, table_border = False))
 
         print
+
 
 class Terminal(CmdModules):
 

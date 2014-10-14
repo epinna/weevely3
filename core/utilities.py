@@ -35,7 +35,7 @@ def divide(str, min_size, max_size, split_size):
     yield ''.join(it)
 
 
-def stringify(data):
+def stringify(data, table_border = True):
 
     # TODO: Check that is prettytable-0.7.2 that supports the
     # dynamic table columns number setting. Version 0.5 does not.
@@ -83,7 +83,7 @@ def stringify(data):
         if not output:
             table.header = False
             table.align = 'l'
-            table.border = False
+            table.border = table_border
             output = table.get_string()
 
     return output
