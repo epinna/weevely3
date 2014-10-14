@@ -64,8 +64,6 @@ def stringify(data):
                     else:
                         table.add_row([row])
 
-                output = table.get_string()
-
         # Dict outputs are display as tables
         elif isinstance(data, types.DictType) and data:
 
