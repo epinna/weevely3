@@ -95,8 +95,9 @@ class CmdModules(cmd.Cmd):
         get two arguments"""
 
         data = []
-        for module_name in modules.loaded:
-            data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
+        for module_group, names in modules.loaded_tree.items():
+            for module_name in names:
+                data.append([ module_name, modules.loaded[module_name].info.get('description', '') ])
 
         log.info(utilities.stringify(data))
 
