@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>VectorsList class definition &mdash; weevely 3.0beta documentation</title>
+    <title>VectorList class definition &mdash; weevely 3.0beta documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -23,8 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="weevely 3.0beta documentation" href="index.html" />
-    <link rel="prev" title="ModuleCmd, PhpCmd, and ShellCmd vectors classes definition" href="vectors.html" /> 
+    <link rel="top" title="weevely 3.0beta documentation" href="index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,9 +35,6 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="vectors.html" title="ModuleCmd, PhpCmd, and ShellCmd vectors classes definition"
-             accesskey="P">previous</a> |</li>
         <li><a href="index.html">weevely 3.0beta documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -48,26 +44,26 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="vectorslist-class-definition">
-<h1>VectorsList class definition<a class="headerlink" href="#vectorslist-class-definition" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="vectorlist-class-definition">
+<h1>VectorList class definition<a class="headerlink" href="#vectorlist-class-definition" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
-<span class="target" id="module-core.vectorslist"></span><p>The module <cite>core.vectorslist</cite> defines a <cite>VectorsList</cite> object, normally used
+<span class="target" id="module-core.vectorlist"></span><p>The module <cite>core.vectorlist</cite> defines a <cite>VectorList</cite> object, normally used
 to store the module vectors.</p>
-<p>Module class executes <cite>_register_vectors()</cite> at init to initialize the <cite>VectorsList</cite>
+<p>Module class executes <cite>_register_vectors()</cite> at init to initialize the <cite>VectorList</cite>
 object as <cite>self.vectors</cite> module attribute.</p>
-<p>The methods exposed by VectorsList can be used to get the result of a
+<p>The methods exposed by VectorList can be used to get the result of a
 given vector execution with <cite>get_result()</cite>, get all the results of a bunch of
 vectors with <cite>get_results()</cite>, or get the result of the first vector that
 response in the way we want with <cite>find_first_result()</cite>.</p>
 <dl class="class">
-<dt id="core.vectorslist.VectorsList">
-<em class="property">class </em><tt class="descclassname">core.vectorslist.</tt><tt class="descname">VectorsList</tt><big>(</big><em>session</em>, <em>module_name</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectorlist.VectorList">
+<em class="property">class </em><tt class="descclassname">core.vectorlist.</tt><tt class="descname">VectorList</tt><big>(</big><em>session</em>, <em>module_name</em><big>)</big><a class="reference internal" href="_modules/core/vectorlist.html#VectorList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorlist.VectorList" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="method">
-<dt id="core.vectorslist.VectorsList.find_first_result">
-<tt class="descname">find_first_result</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>condition=None</em>, <em>store_result=False</em>, <em>store_name=''</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.find_first_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.find_first_result" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectorlist.VectorList.find_first_result">
+<tt class="descname">find_first_result</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>condition=None</em>, <em>store_result=False</em>, <em>store_name=''</em><big>)</big><a class="reference internal" href="_modules/core/vectorlist.html#VectorList.find_first_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorlist.VectorList.find_first_result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute all the vectors and return the first result matching the given condition.</p>
 <p>Return the name and the result of the first vector execution response that satisfy
 the given condition.</p>
@@ -89,8 +85,8 @@ Must returns boolean.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="core.vectorslist.VectorsList.get_result">
-<tt class="descname">get_result</tt><big>(</big><em>name</em>, <em>format_args={}</em>, <em>store_result=False</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_result" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectorlist.VectorList.get_result">
+<tt class="descname">get_result</tt><big>(</big><em>name</em>, <em>format_args={}</em>, <em>store_result=False</em><big>)</big><a class="reference internal" href="_modules/core/vectorlist.html#VectorList.get_result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorlist.VectorList.get_result" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute one vector and return the result.</p>
 <p>Run the vector with specified name. Optionally store results.</p>
 <dl class="docutils">
@@ -105,8 +101,8 @@ Must returns boolean.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="core.vectorslist.VectorsList.get_results">
-<tt class="descname">get_results</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>results_to_store=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_results" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectorlist.VectorList.get_results">
+<tt class="descname">get_results</tt><big>(</big><em>names=[]</em>, <em>format_args={}</em>, <em>results_to_store=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectorlist.html#VectorList.get_results"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorlist.VectorList.get_results" title="Permalink to this definition">¶</a></dt>
 <dd><p>Execute all the vectors and return the results.</p>
 <p>With unspecified names, execute all the vectors. Optionally store results.
 Returns a dictionary with results.</p>
@@ -124,8 +120,8 @@ store the execution result.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="core.vectorslist.VectorsList.get_by_name">
-<tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_by_name" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectorlist.VectorList.get_by_name">
+<tt class="descname">get_by_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="_modules/core/vectorlist.html#VectorList.get_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorlist.VectorList.get_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vector object by name.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -136,8 +132,8 @@ store the execution result.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="core.vectorslist.VectorsList.get_names">
-<tt class="descname">get_names</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/vectorslist.html#VectorsList.get_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorslist.VectorsList.get_names" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectorlist.VectorList.get_names">
+<tt class="descname">get_names</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/vectorlist.html#VectorList.get_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectorlist.VectorList.get_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the vectors names.</p>
 <dl class="docutils">
 <dt>Returns:</dt>
@@ -155,9 +151,6 @@ store the execution result.</p>
       </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="vectors.html"
-                        title="previous chapter">ModuleCmd, PhpCmd, and ShellCmd vectors classes definition</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/vectorslist.txt"
@@ -189,9 +182,6 @@ store the execution result.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="vectors.html" title="ModuleCmd, PhpCmd, and ShellCmd vectors classes definition"
-             >previous</a> |</li>
         <li><a href="index.html">weevely 3.0beta documentation</a> &raquo;</li> 
       </ul>
     </div>

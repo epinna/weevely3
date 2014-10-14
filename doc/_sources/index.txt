@@ -16,13 +16,13 @@ You can easily develop your own module to implement internal audit, login enumer
 
 For a quick start about the module structure of a basic module read the `Developing a new module <https://github.com/epinna/weevely-ng/wiki/developing-a-new-module>`_ wiki page.
 
-Given below the API documentation about the Module class and the Vectors and VectorsList data structure classes.
+Given below the API documentation about the Module class and the Vectors and VectorList data structure classes.
 
 .. toctree::
 
    module
    vectors
-   vectorslist
+   vectorlist
 
 
 Indices and tables

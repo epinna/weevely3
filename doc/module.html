@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="weevely 3.0beta documentation" href="index.html" />
-    <link rel="next" title="ModuleCmd, PhpCmd, and ShellCmd vectors classes definition" href="vectors.html" />
+    <link rel="next" title="ModuleExec, PhpCode, and ShellCmd vectors classes definition" href="vectors.html" />
     <link rel="prev" title="Module Development API Documentation" href="index.html" /> 
   </head>
   <body>
@@ -38,7 +38,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="vectors.html" title="ModuleCmd, PhpCmd, and ShellCmd vectors classes definition"
+          <a href="vectors.html" title="ModuleExec, PhpCode, and ShellCmd vectors classes definition"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Module Development API Documentation"
@@ -80,7 +80,7 @@
 
 <dl class="class">
 <dt id="core.module.Module">
-<em class="property">class </em><tt class="descclassname">core.module.</tt><tt class="descname">Module</tt><big>(</big><em>session</em>, <em>name</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.module.</tt><tt class="descname">Module</tt><big>(</big><em>session</em>, <em>name</em>, <em>folder</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -111,11 +111,11 @@ docstring. With no description set, raise an exception.</p>
 <dt id="core.module.Module.register_vectors">
 <tt class="descclassname">Module.</tt><tt class="descname">register_vectors</tt><big>(</big><em>vectors</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.register_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.register_vectors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register the module vectors.</p>
-<p>The passed vectors are stored in <cite>self.vectors</cite>, a VectorsList object.</p>
+<p>The passed vectors are stored in <cite>self.vectors</cite>, a VectorList object.</p>
 <dl class="docutils">
 <dt>Args:</dt>
-<dd>vectors (list of vectors objects): List of ShellCmd, PhpCmd, and
-ModuleCmd to use as module vectors.</dd>
+<dd>vectors (list of vectors objects): List of ShellCmd, PhpCode, and
+ModuleExec to use as module vectors.</dd>
 </dl>
 </dd></dl>
 
@@ -176,7 +176,7 @@ with the remote enviroinment, and return the module Status value.</p>
                         title="previous chapter">Module Development API Documentation</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="vectors.html"
-                        title="next chapter">ModuleCmd, PhpCmd, and ShellCmd vectors classes definition</a></p>
+                        title="next chapter">ModuleExec, PhpCode, and ShellCmd vectors classes definition</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/module.txt"
@@ -209,7 +209,7 @@ with the remote enviroinment, and return the module Status value.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="vectors.html" title="ModuleCmd, PhpCmd, and ShellCmd vectors classes definition"
+          <a href="vectors.html" title="ModuleExec, PhpCode, and ShellCmd vectors classes definition"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Module Development API Documentation"

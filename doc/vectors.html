@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>ModuleCmd, PhpCmd, and ShellCmd vectors classes definition &mdash; weevely 3.0beta documentation</title>
+    <title>ModuleExec, PhpCode, and ShellCmd vectors classes definition &mdash; weevely 3.0beta documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -24,7 +24,6 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="weevely 3.0beta documentation" href="index.html" />
-    <link rel="next" title="VectorsList class definition" href="vectorslist.html" />
     <link rel="prev" title="Module class definition" href="module.html" /> 
   </head>
   <body>
@@ -38,9 +37,6 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="vectorslist.html" title="VectorsList class definition"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
           <a href="module.html" title="Module class definition"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">weevely 3.0beta documentation</a> &raquo;</li> 
@@ -52,19 +48,19 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="modulecmd-phpcmd-and-shellcmd-vectors-classes-definition">
-<h1>ModuleCmd, PhpCmd, and ShellCmd vectors classes definition<a class="headerlink" href="#modulecmd-phpcmd-and-shellcmd-vectors-classes-definition" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="moduleexec-phpcode-and-shellcmd-vectors-classes-definition">
+<h1>ModuleExec, PhpCode, and ShellCmd vectors classes definition<a class="headerlink" href="#moduleexec-phpcode-and-shellcmd-vectors-classes-definition" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul class="simple">
 </ul>
 </div>
 <span class="target" id="module-core.vectors"></span><p>The module <cite>core.vectors</cite> defines the following vectors classes.</p>
 <ul class="simple">
-<li><cite>ModuleCmd</cite> vector executes a given module with given arguments.</li>
-<li><cite>PhpCmd</cite> vector contains PHP code, executed via <cite>shell_php</cite> module.</li>
+<li><cite>ModuleExec</cite> vector executes a given module with given arguments.</li>
+<li><cite>PhpCode</cite> vector contains PHP code, executed via <cite>shell_php</cite> module.</li>
 <li><cite>ShellCmd</cite> vector contains a shell command, executed via <cite>shell_sh</cite> module.</li>
 </ul>
-<p>ShellCmd and PhpCmd inherit from ModuleCmd class.</p>
+<p>ShellCmd and PhpCode inherit from ModuleExec class.</p>
 <dl class="class">
 <dt id="core.vectors.Os">
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">Os</tt><a class="reference internal" href="_modules/core/vectors.html#Os"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.Os" title="Permalink to this definition">¶</a></dt>
@@ -78,8 +74,8 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="core.vectors.ModuleCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ModuleCmd</tt><big>(</big><em>module</em>, <em>arguments</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectors.ModuleExec">
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ModuleExec</tt><big>(</big><em>module</em>, <em>arguments</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleExec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleExec" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains commands to execute other modules.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -91,8 +87,8 @@
 </dd>
 </dl>
 <dl class="method">
-<dt id="core.vectors.ModuleCmd.format">
-<tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleCmd.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleCmd.format" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectors.ModuleExec.format">
+<tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleExec.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleExec.format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format the arguments.</p>
 <p>This format the vector payloads using Mako template.</p>
 <dl class="docutils">
@@ -105,8 +101,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="core.vectors.ModuleCmd.run">
-<tt class="descname">run</tt><big>(</big><em>format_args={}</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleCmd.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleCmd.run" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectors.ModuleExec.run">
+<tt class="descname">run</tt><big>(</big><em>format_args={}</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleExec.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleExec.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run the module with the formatted payload.</p>
 <p>Render the contained payload with mako and pass the result
 as argument to the given module. The result is processed by the
@@ -123,12 +119,10 @@ module execution.</dd>
 </dd></dl>
 
 <dl class="class">
-<dt id="core.vectors.PhpCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectors.PhpCode">
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCode</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCode" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains PHP code.</p>
-<p>The PHP code is executed via the module <cite>shell_php</cite>. Inherit <cite>ModuleCmd</cite>.</p>
-<p>The formatted payload is minified removing comments, tabs, and end of line.
-Avoid to use white space characters since could break your payload.</p>
+<p>The PHP code is executed via the module <cite>shell_php</cite>. Inherit <cite>ModuleExec</cite>.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">payload (str): PHP code to execute.</p>
@@ -139,8 +133,8 @@ Avoid to use white space characters since could break your payload.</p>
 </dd>
 </dl>
 <dl class="method">
-<dt id="core.vectors.PhpCmd.format">
-<tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCmd.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCmd.format" title="Permalink to this definition">¶</a></dt>
+<dt id="core.vectors.PhpCode.format">
+<tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCode.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCode.format" title="Permalink to this definition">¶</a></dt>
 <dd><p>Format and minify the payload.</p>
 <p>This format the vector payloads using Mako template. Then minify it.</p>
 <dl class="docutils">
@@ -158,7 +152,7 @@ Avoid to use white space characters since could break your payload.</p>
 <dt id="core.vectors.ShellCmd">
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains a shell command.</p>
-<p>The shell command is executed via the module <cite>shell_sh</cite>. Inherit <cite>ModuleCmd</cite>.</p>
+<p>The shell command is executed via the module <cite>shell_sh</cite>. Inherit <cite>ModuleExec</cite>.</p>
 <p>The formatted payload is minified removing multiple whitespaces.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -182,9 +176,6 @@ Avoid to use white space characters since could break your payload.</p>
   <h4>Previous topic</h4>
   <p class="topless"><a href="module.html"
                         title="previous chapter">Module class definition</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="vectorslist.html"
-                        title="next chapter">VectorsList class definition</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/vectors.txt"
@@ -216,9 +207,6 @@ Avoid to use white space characters since could break your payload.</p>
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="vectorslist.html" title="VectorsList class definition"
-             >next</a> |</li>
         <li class="right" >
           <a href="module.html" title="Module class definition"
              >previous</a> |</li>
