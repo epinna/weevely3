@@ -11,7 +11,7 @@ Normally, the following methods have to be overridden:
 
 """
 
-from core.vectorslist import VectorsList
+from core.vectorlist import VectorList
 from core.vectors import ModuleExec
 from core.weexceptions import DevException
 from core.loggers import log
@@ -55,7 +55,7 @@ class Module:
         self.session = session
         self.name = name
         self.folder = folder
-        self.vectors = VectorsList(session, name)
+        self.vectors = VectorList(session, name)
 
         # init session db for current session
         if name not in self.session:
@@ -297,7 +297,7 @@ class Module:
     def register_vectors(self, vectors):
         """Register the module vectors.
 
-        The passed vectors are stored in `self.vectors`, a VectorsList object.
+        The passed vectors are stored in `self.vectors`, a VectorList object.
 
         Args:
             vectors (list of vectors objects): List of ShellCmd, PhpCode, and

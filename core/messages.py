@@ -32,7 +32,7 @@ class vectors:
     wrong_condition_type = 'Wrong condition argument type, a callable function is required'
     wrong_store_name_type = 'Wrong argument type, a string with an argument name is required'
 
-class vectorslist:
+class vectorlist:
     vector_s_triggers_an_exc = 'Vector \'%s\' execution triggers an exception'
 
 class module:

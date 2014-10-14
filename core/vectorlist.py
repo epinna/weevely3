@@ -1,11 +1,11 @@
 """
-The module `core.vectorslist` defines a `VectorsList` object, normally used
+The module `core.vectorlist` defines a `VectorList` object, normally used
 to store the module vectors.
 
-Module class executes `_register_vectors()` at init to initialize the `VectorsList`
+Module class executes `_register_vectors()` at init to initialize the `VectorList`
 object as `self.vectors` module attribute.
 
-The methods exposed by VectorsList can be used to get the result of a
+The methods exposed by VectorList can be used to get the result of a
 given vector execution with `get_result()`, get all the results of a bunch of
 vectors with `get_results()`, or get the result of the first vector that
 response in the way we want with `find_first_result()`.
@@ -20,7 +20,7 @@ from core import modules
 from core import utilities
 from core import messages
 
-class VectorsList(list):
+class VectorList(list):
 
     def __init__(self, session, module_name):
 
@@ -81,7 +81,7 @@ class VectorsList(list):
                 condition_result = condition(result)
             except Exception as e:
                 import traceback; log.info(traceback.format_exc())
-                log.debug(messages.vectorslist.vector_s_triggers_an_exc % vector.name)
+                log.debug(messages.vectorlist.vector_s_triggers_an_exc % vector.name)
 
                 condition_result = False
 
