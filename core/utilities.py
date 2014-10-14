@@ -83,6 +83,7 @@ def stringify(data):
         if not output:
             table.header = False
             table.align = 'l'
+            table.border = False
             output = table.get_string()
 
     return output

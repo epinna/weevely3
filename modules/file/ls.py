@@ -7,7 +7,7 @@ import random
 
 class Ls(Module):
 
-    """List directory content ('ls' replacement)"""
+    """List directory content."""
 
     aliases = [ 'ls', 'dir' ]
 

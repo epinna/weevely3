@@ -16,6 +16,10 @@ class channels:
 
 class terminal:
     backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
+    help_no_shell = """
+The system shell interpreter `shell_sh` is not available in this session,
+use the following commands to simulate a complete shell.
+"""
 
 class stegareferrer:
     error_generating_id = 'Error generating id, payload too long?'

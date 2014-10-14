@@ -89,19 +89,29 @@ class CmdModules(cmd.Cmd):
 
 
     def do_help(self, arg, command):
-        """Fixed help.
+        """Fixed help."""
 
-        Wrap the help cause now the do_* functions
-        get two arguments"""
+        print
 
         data = []
         for module_group, names in modules.loaded_tree.items():
             for module_name in names:
-                data.append([ module_name, modules.loaded[module_name].info.get('description', '') ])
+                data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
 
-        log.info(utilities.stringify(data))
+        if data: log.info(utilities.stringify(data))
 
-        #return cmd.Cmd.do_help(self, arg)
+        if self.session['shell_sh']['status'] == Status.RUN: print; return
+
+        log.info(messages.terminal.help_no_shell)
+
+        data = []
+        for module_name, module in modules.loaded.items():
+            if module.aliases:
+                data.append([ ', '.join(module.aliases), module_name ])
+
+        if data: log.info(utilities.stringify(data))
+
+        print
 
 class Terminal(CmdModules):
 
