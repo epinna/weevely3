@@ -11,7 +11,7 @@ import re
 
 class Edit(Module):
 
-    """Edit remote file."""
+    """Edit remote file on a local editor."""
 
     aliases = [
         'vi',

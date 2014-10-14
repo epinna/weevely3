@@ -7,7 +7,7 @@ import random
 
 class Name(Module):
 
-    """Find files with matching name."""
+    """Find files with the given name."""
 
     def init(self):
 

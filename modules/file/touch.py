@@ -46,7 +46,7 @@ class Touch(Module):
           { 'name' : 'rpath', 'help' : 'Remote file path' },
           { 'name' : '-epoch-ts', 'help' : 'Epoch timestamp', 'type' : int },
           { 'name' : '-human-ts',
-            'help' : 'Human readable timestamp e.g \'2004-02-29 16:21:42\' or \'16:21\''
+            'help' : 'Human readable timestamp e.g. \'2004-02-29 16:21:42\' or \'16:21\''
           },
           { 'name' : '-file-ts', 'help' : 'Clone timestamp from another file' },
           { 'name' : '-oldest-file-ts',

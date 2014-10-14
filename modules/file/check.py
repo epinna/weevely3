@@ -7,7 +7,7 @@ import datetime
 
 class Check(Module):
 
-    """Check remote files type, md5, or permissions"""
+    """Check remote file type, md5, or permission."""
 
     def init(self):
 

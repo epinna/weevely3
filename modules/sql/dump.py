@@ -8,7 +8,7 @@ import os
 
 class Dump(Module):
 
-    """Mysqldump replacement."""
+    """Multi dbms mysqldump replacement."""
 
     def init(self):
 
