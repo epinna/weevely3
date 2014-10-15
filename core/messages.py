@@ -39,8 +39,8 @@ use the following commands to simulate a complete shell.
 [+] Target:\t${conn_info}
 [+] Session:\t${path}
 
-[+] Browse the filesystem or execute commands will connect to the target.
-[+] Type :help for more information.
+[+] Browse the filesystem or execute commands starts the connection
+[+] to the target. Type :help for more information.
 """
 
 class stegareferrer:
