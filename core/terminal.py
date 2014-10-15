@@ -152,7 +152,9 @@ class Terminal(CmdModules):
         dlog.info('>>>> %s' % line)
 
         # Skip slack check is not a remote command
-        if not line or line.startswith(':set'):
+        if not line or any(
+                        line.startswith(cmnd) for cmnd in (':set', ':help')
+                    ):
             return line
 
         # If no default shell is available
