@@ -135,7 +135,11 @@ class Terminal(CmdModules):
         # Set a nice intro
         self.intro = template.Template(
             messages.terminal.welcome_to_s
-        ).render(session = self.session)
+        ).render(
+            path = self.session.get('path'),
+            conn_info = session.get_connection_info(),
+            version = messages.version
+        )
 
     def emptyline(self):
         """Disable repetition of last command."""

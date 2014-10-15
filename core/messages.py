@@ -1,3 +1,4 @@
+version = '3.0beta'
 
 class generic:
     file_s_not_found = "File '%s' not found"
@@ -32,20 +33,13 @@ class terminal:
 The system shell interpreter `shell_sh` is not available in this session,
 use the following commands to simulate a complete shell.
 """
-    welcome_to_s = """<%!
-import os
-%><%
-if session['path'].count(os.path.sep) > 2:
-    path_minified = os.path.join(*session['path'].split(os.path.sep)[-2:])
-else:
-    path_minified = session['path']
-%>
-[+] Welcome to weevely.
+    welcome_to_s = """
+[+] weevely ${version}
 
-[+] Target:\t${session.get_connection_info()}
-[+] Session:\t${session['path']}
+[+] Target:\t${conn_info}
+[+] Session:\t${path}
 
-[+] Start browsing the filesystem or execute any other command to initiate the connection.
+[+] Browse the filesystem or execute commands will connect to the target.
 [+] Type :help for more information.
 """
 
