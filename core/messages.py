@@ -10,6 +10,18 @@ class generic:
 class sessions:
     error_loading_sessions = 'Session can not be loaded'
     error_storing_s_not_found = 'Error storing argument in session, \'%s\' argument not found or can\'t be set.'
+    connection_info = """<%!
+import urlparse
+%><%
+if not host:
+    urlparsed = urlparse.urlparse(url)
+    if urlparsed and urlparsed.netloc:
+        hostname = urlparsed.netloc
+    else:
+        hostname = 'undefined host'
+else:
+    hostname = host
+%>${'%s@' % user if user else ''}${hostname}${':%s' % path if path and path != '.' else ''}"""
 
 class channels:
     error_loading_channel_s = 'Error loading channel \'%s\''
@@ -20,12 +32,21 @@ class terminal:
 The system shell interpreter `shell_sh` is not available in this session,
 use the following commands to simulate a complete shell.
 """
-    welcome_to_s = """
-Welcome to weevely.
+    welcome_to_s = """<%!
+import os
+%><%
+if session['path'].count(os.path.sep) > 2:
+    path_minified = os.path.join(*session['path'].split(os.path.sep)[-2:])
+else:
+    path_minified = session['path']
+%>
+[+] Welcome to weevely.
 
-Type any command to connect to %s.
+[+] Target:\t${session.get_connection_info()}
+[+] Session:\t${session['path']}
 
-Type :help for more information.
+[+] Start browsing the filesystem or execute any other command to initiate the connection.
+[+] Type :help for more information.
 """
 
 class stegareferrer:

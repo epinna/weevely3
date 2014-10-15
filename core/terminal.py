@@ -5,6 +5,7 @@ from core import modules
 from core import config
 from core.module import Status
 from core import utilities
+from mako import template
 import readline
 import cmd
 import glob
@@ -131,10 +132,10 @@ class Terminal(CmdModules):
         # Load history file
         self._load_history()
 
-        log.info(
-            messages.terminal.welcome_to_s %
-                self.session.get_connection_info()
-        )
+        # Set a nice intro
+        self.intro = template.Template(
+            messages.terminal.welcome_to_s
+        ).render(session = self.session)
 
     def emptyline(self):
         """Disable repetition of last command."""

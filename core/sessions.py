@@ -49,8 +49,8 @@ class Session(dict):
                     log.info("%s = '%s'" % (mod_name, mod_value))
 
     def get_connection_info(self):
-     return template.Template(
-         """${'%s@' % user if user else ''}${'%s:' % host if host else ''}${path if path != '.' else ''}""").render(
+     return template.Template(messages.sessions.connection_info).render(
+         url = self['url'],
          user = self['system_info']['results'].get('whoami', ''),
          host = self['system_info']['results'].get('hostname', ''),
          path = self['file_cd']['results'].get('cwd', '.')
