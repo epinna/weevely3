@@ -25,6 +25,10 @@ class Grep(Module):
         # the vectors to grep a single remote file `rfile`, letting
         # the module `file_perms` to harvest all the readable files.
 
+        # This allows to reuse code in find_perm module and reduce
+        # the time of the operation with grep on a lot of data
+        # to (request for search readable + one request per file).
+
         self.register_vectors(
             [
             ShellCmd(
