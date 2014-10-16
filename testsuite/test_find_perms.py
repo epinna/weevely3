@@ -56,8 +56,6 @@ class FindPerms(BaseFilesystem):
 
     def tearDown(self):
 
-        return
-
         # Reset recursively all the permissions to 0777
         subprocess.check_call(
             config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
