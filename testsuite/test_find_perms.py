@@ -56,7 +56,9 @@ class FindPerms(BaseFilesystem):
 
     def tearDown(self):
 
-        # Reset recursively all the permissions yo 0777
+        return
+
+        # Reset recursively all the permissions to 0777
         subprocess.check_call(
             config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
             shell=True)
@@ -81,9 +83,17 @@ class FindPerms(BaseFilesystem):
         filep, filen = os.path.split(self.files_rel[0])
         self.assertItemsEqual(self.run_argv([ '-executable', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] )
 
+        # find all executable starting from folder[0] that matches the regexp '-' -> folder[2]
+        filep, filen = os.path.split(self.files_rel[0])
+        self.assertItemsEqual(self.run_argv([ '-regex', 'te-ex', '-executable', self.folders_rel[0] ]), [ self.files_rel[2] ])
+
         # find all readable starting from folder[0]
         filep, filen = os.path.split(self.files_rel[0])
         self.assertItemsEqual(self.run_argv([ '-readable', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[3] ] )
+
+        # find all readable starting from folder[0] with a wrong regex -> none
+        filep, filen = os.path.split(self.files_rel[0])
+        self.assertItemsEqual(self.run_argv([ '-regex', 'bogus', '-readable', self.folders_rel[0] ]), [ '' ] )
 
         # find readable starting from folder[0] with no recursion
         filep, filen = os.path.split(self.files_rel[0])
@@ -104,9 +114,17 @@ class FindPerms(BaseFilesystem):
         filep, filen = os.path.split(self.files_rel[0])
         self.assertItemsEqual(self.run_argv([ '-executable', '-vector', 'sh_find', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] )
 
+        # find all executable starting from folder[0] that matches the regexp '-' -> folder[2]
+        filep, filen = os.path.split(self.files_rel[0])
+        self.assertItemsEqual(self.run_argv([ '-regex', 'te-ex', '-executable', '-vector', 'sh_find', self.folders_rel[0] ]), [ self.files_rel[2] ])
+
         # find all readable starting from folder[0]
         filep, filen = os.path.split(self.files_rel[0])
         self.assertItemsEqual(self.run_argv([ '-readable', '-vector', 'sh_find', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[3] ] )
+
+        # find all readable starting from folder[0] with a wrong regex -> none
+        filep, filen = os.path.split(self.files_rel[0])
+        self.assertItemsEqual(self.run_argv([ '-regex', 'bogus', '-readable', self.folders_rel[0] ]), [ '' ] )
 
         # find readable starting from folder[0] with no recursion
         filep, filen = os.path.split(self.files_rel[0])

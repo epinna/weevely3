@@ -63,7 +63,7 @@ swp('${rpath}');""",
         )
 
         self.register_arguments([
-          { 'name' : 'expression',  'help' : 'Expression to mach with the file names' },
+          { 'name' : 'expression',  'help' : 'Expression to match file name' },
           { 'name' : 'rpath', 'help' : 'Starting path' },
           { 'name' : '-contains', 'action' : 'store_true', 'default' : False },
           { 'name' : '-case', 'action' : 'store_true', 'default' : False },
