@@ -66,12 +66,12 @@ function swp($fdir, $d, $t, $a, $q, $r, $e){
     if($h) closedir($h);
 }
 
-swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }','${ '1' if quit else '' }', ${not no_recursion}, '${ regex if regex else '' }');
+swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }','${ '1' if quit else '' }', ${not no_recursion}, '${ name_regex if name_regex else '' }');
 """,
              name = 'php_recursive'
             ),
             ShellCmd(
-              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' } ${ "-regex '.*%s.*'" % (regex) if regex else '' }""",
+              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (type) if type == 'd' or type == 'f' else '' } ${ "-regex '.*%s.*'" % (name_regex) if name_regex else '' }""",
               name = "sh_find",
               arguments = [
                 "-stderr_redirection",
@@ -87,7 +87,7 @@ swp('${rpath}','${rpath}','${ type if type == 'd' or type == 'f' else '' }','${ 
           { 'name' : '-writable', 'action' : 'store_true' },
           { 'name' : '-readable', 'action' : 'store_true' },
           { 'name' : '-executable', 'action' : 'store_true' },
-          { 'name' : '-regex', 'help' : 'Regular expression to match file name' },
+          { 'name' : '-name-regex', 'help' : 'Regular expression to match file name' },
           { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
         ])
