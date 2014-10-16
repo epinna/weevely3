@@ -43,7 +43,7 @@ class FileRead(BaseTest):
             config.cmd_env_remove_s % ('%s %s' % (self.file_ok, self.file_ko)),
             shell=True)
 
-    def test_download_php(self):
+    def test_read_php(self):
 
         # Simple download
         self.assertEqual(self.run_argv(['ok.test']), 'OK')
@@ -59,7 +59,12 @@ class FileRead(BaseTest):
         self.assertEqual(self.run_argv(['bogus']), None)
 
 
-    def test_download_sh(self):
+    def test_read_allvectors(self):
+
+        for vect in modules.loaded['file_download'].vectors.get_names():
+            self.assertEqual(self.run_argv(['-vector', vect, 'ok.test']), 'OK')
+
+    def test_read_sh(self):
 
         # Simple download
         self.assertEqual(self.run_argv(['-vector', 'base64', 'ok.test']), 'OK')
