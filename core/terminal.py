@@ -12,6 +12,7 @@ import glob
 import os
 import shlex
 import atexit
+import sys
 
 class CmdModules(cmd.Cmd):
 
@@ -140,6 +141,10 @@ class Terminal(CmdModules):
             conn_info = session.get_connection_info(),
             version = messages.version
         )
+
+        # Set default encoding utf8
+        reload(sys)
+        sys.setdefaultencoding('utf8')
 
     def emptyline(self):
         """Disable repetition of last command."""

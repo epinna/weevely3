@@ -105,6 +105,8 @@ class module_sql_dump:
     sql_dump_failed_check_credentials = "SQL dump failed, check credentials and DB availability"
     sql_dump_saved_s = "SQL dump saved to '%s'"
 
+class module_file_grep:
+    failed_retrieve_info = "Failed retrieve file information, please check if the remote readable files exist"
 
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
