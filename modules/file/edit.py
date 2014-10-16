@@ -36,7 +36,7 @@ class Edit(Module):
 
         self.register_arguments([
           { 'name' : 'rpath', 'help' : 'Remote file path' },
-          { 'name' : '-vector', 'choices' : modules.loaded['file_download'].vectors.get_names() },
+          { 'name' : '-vector', 'choices' : ( 'file', 'fread', 'file_get_contents', 'base64' ) },
           { 'name' : '-keep-ts', 'action' : 'store_true', 'default' : False },
           { 'name' : '-editor', 'help' : 'Choose editor', 'default' : 'vim' }
         ])

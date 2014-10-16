@@ -22,7 +22,7 @@ class Read(Module):
 
         self.register_arguments([
           { 'name' : 'rpath', 'help' : 'Remote file path' },
-          { 'name' : '-vector', 'choices' : modules.loaded['file_download'].vectors.get_names() }
+          { 'name' : '-vector', 'choices' : ( 'file', 'fread', 'file_get_contents', 'base64' ) }
         ])
 
     def run(self, args):
