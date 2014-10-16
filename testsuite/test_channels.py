@@ -1,12 +1,34 @@
-from testsuite.base_channel import BaseDefaultChannel
+from testsuite.base_test import BaseTest
+from core.channels.channel import Channel
 from core.utilities import randstr
-from testsuite.config import script_folder, script_folder_url, test_channel_stress
+from testsuite.config import script_folder, script_folder_url, test_stress_channels
 from generate import generate, save_generated
 import os
+import random
 import unittest
 
+class BaseDefaultChannel(BaseTest):
+
+    def setUp(self):
+        self.channel = Channel(self.url, self.password)
+
+    def _incremental_requests(
+            self,
+            size_start,
+            size_to,
+            step_rand_start,
+            step_rand_to):
+
+        for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
+            payload = randstr(i)
+            self.assertEqual(
+                self.channel.send(
+                    'echo("%s");' %
+                    payload)[0],
+                payload)
+
 @unittest.skipIf(
-    not test_channel_stress,
+    not test_stress_channels,
     "Test only default generator agent")
 class AgentDEFAULTObfuscatorDefault(BaseDefaultChannel):
 
@@ -24,7 +46,7 @@ class AgentDEFAULTObfuscatorDefault(BaseDefaultChannel):
 
 
 @unittest.skipIf(
-    not test_channel_stress,
+    not test_stress_channels,
     "Test only default generator agent")
 class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
 

@@ -51,7 +51,7 @@ debug = False
 
 # This option stress the communication protocol with a big number of
 # request.
-test_channel_stress = False
+test_stress_channels = False
 
 #
 # SQL testing options
