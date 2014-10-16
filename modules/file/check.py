@@ -46,6 +46,10 @@ class Check(Module):
               name = "file",
               postprocess = lambda x: True if x == '1' else False
             ),
+            PhpCode("(is_dir('${rpath}') && print(1)) || print(0);",
+              name = "dir",
+              postprocess = lambda x: True if x == '1' else False
+            ),
             PhpCode("print(filesize('${rpath}'));",
               name = "size",
               postprocess = lambda x: int(x)
