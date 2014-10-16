@@ -20,27 +20,33 @@ class Check(Module):
             }
         )
 
+        # Declared here since is used by multiple vectors
+        payload_perms = """$f='${rpath}';if(@file_exists($f)){print('e');if(@is_readable($f))print('r');if(@is_writable($f))print('w');if(@is_executable($f))print('x');}"""
+
         self.register_vectors(
             [
             PhpCode(
-              "$f='${rpath}';((file_exists($f)||is_readable($f)||is_writable($f)||is_file($f)||is_dir($f))&&print(1))||print(0);",
+              payload_perms,
               name = 'exists',
-              postprocess = lambda x: True if x == '1' else False
+              postprocess = lambda x: True if 'e' in x else False
             ),
             PhpCode("print(md5_file('${rpath}'));",
               name = "md5"
             ),
-            PhpCode("(is_readable('${rpath}') && print(1)) || print(0);",
+            PhpCode( payload_perms,
+              name = "perms",
+            ),
+            PhpCode( payload_perms,
               name = "readable",
-              postprocess = lambda x: True if x == '1' else False
+              postprocess = lambda x: True if 'r' in x else False
             ),
-            PhpCode("(is_writable('${rpath}') && print(1))|| print(0);",
+            PhpCode( payload_perms,
               name = "writable",
-              postprocess = lambda x: True if x == '1' else False
+              postprocess = lambda x: True if 'w' in x else False
             ),
-            PhpCode("(is_executable('${rpath}') && print(1)) || print(0);",
+            PhpCode( payload_perms,
               name = "executable",
-              postprocess = lambda x: True if x == '1' else False
+              postprocess = lambda x: True if 'x' in x else False
             ),
             PhpCode("(is_file('${rpath}') && print(1)) || print(0);",
               name = "file",
