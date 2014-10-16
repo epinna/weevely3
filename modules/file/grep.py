@@ -21,13 +21,10 @@ class Grep(Module):
             }
         )
 
-        # Due to dispose the grep of recursive files, I declare just
-        # the vectors to grep a single remote file `rfile`, letting
-        # the module `file_perms` to harvest all the readable files.
-
-        # This allows to reuse code in find_perm module and reduce
-        # the time of the operation with grep on a lot of data
-        # to (request for search readable + one request per file).
+        # The grep action is done using multiple request.
+        # First search for writable file, and then execute the grep
+        # code for every found file. This allows to reuse code in
+        # find_perm module and reduce the chances of timeout.
 
         self.register_vectors(
             [
@@ -55,10 +52,6 @@ class Grep(Module):
             { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
         ])
 
-        # Keep track if the grep is on multiple files
-        # to emulate `grep -r`.
-        self.print_multiple = False
-
     def run(self, args):
 
 
@@ -77,14 +70,12 @@ class Grep(Module):
 
             files = ModuleExec("find_perms", find_perms_args).run()
 
-            self.print_multiple = True
 
         elif (ModuleExec("file_check", [ args['rpath'], 'file' ]).run() and
               ModuleExec("file_check", [ args['rpath'], 'readable' ]).run()):
             # If the remote path is a readable file, just store the path
             files = [ args['rpath'] ]
 
-            self.print_multiple = False
 
         # Validate files presence
         if not isinstance(files, list) or not files:
@@ -103,21 +94,20 @@ class Grep(Module):
 
             result_list = result.split('\n') if isinstance(result, str) and result else []
 
-            results[rfile] = result_list
+            if result_list:
+
+                if len(files) > 1:
+                    # Print filepath:line if there are multiple files
+
+                    for line in result_list:
+                        log.info('%s:%s' % ( rfile, line ))
+                else:
+                    # Else, just print the lines
+                    log.info('\n'.join(result_list))
+
+                results[rfile] = result_list
 
         return results
 
     def print_result(self, result):
-
-        if not result: return
-
-        # If the module was launched on a folder,
-        # simulate a `grep -r` output
-        if self.print_multiple:
-            for fname, match_list in result.items():
-                for match in match_list:
-                    log.info('%s:%s' % (fname, match))
-
-        # Else, just print result
-        else:
-            log.info('\n'.join(result[result.keys()[0]]))
+        pass
