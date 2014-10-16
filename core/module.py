@@ -175,7 +175,7 @@ class Module:
             return self.run_cmdline(args)
         else:
             return modules.loaded['shell_sh'].run_cmdline(
-                '%s %s' % (cmd, args)
+                '%s -- %s' % (cmd, args)
             )
 
     def init(self):
