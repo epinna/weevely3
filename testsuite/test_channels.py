@@ -1,11 +1,13 @@
 from testsuite.base_channel import BaseDefaultChannel
 from core.utilities import randstr
-from testsuite.config import script_folder, script_folder_url, test_generated_test_all_agents
+from testsuite.config import script_folder, script_folder_url, test_channel_stress
 from generate import generate, save_generated
 import os
 import unittest
 
-
+@unittest.skipIf(
+    not test_channel_stress,
+    "Test only default generator agent")
 class AgentDEFAULTObfuscatorDefault(BaseDefaultChannel):
 
     def test_1_100_requests(self):
@@ -22,7 +24,7 @@ class AgentDEFAULTObfuscatorDefault(BaseDefaultChannel):
 
 
 @unittest.skipIf(
-    not test_generated_test_all_agents,
+    not test_channel_stress,
     "Test only default generator agent")
 class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
 

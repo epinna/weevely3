@@ -49,8 +49,9 @@ script_folder_expected_perms = '777'
 # Set to True to enable debug prints
 debug = False
 
-# This option is used by test_channels to reduce the requests
-test_generated_test_all_agents = False
+# This option stress the communication protocol with a big number of
+# request.
+test_channel_stress = False
 
 #
 # SQL testing options
