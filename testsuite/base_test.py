@@ -27,7 +27,7 @@ class BaseTest(TestCase):
         if config.debug:
             stream_handler.setLevel(logging.DEBUG)
         else:
-            stream_handler.setLevel(logging.ERROR)
+            stream_handler.setLevel(logging.INFO)
 
         cls._randomize_bd()
 
