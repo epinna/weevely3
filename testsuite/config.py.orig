@@ -38,6 +38,13 @@ cmd_env_mkdir_s = 'mkdir %s'
 cmd_env_rmdir_s = 'rmdir %s'
 cmd_env_remove_s = 'rm -f %s'
 cmd_env_content_s_to_s = 'echo -n "%s" > %s'
+cmd_env_stat_permissions_s = 'stat -c %%a "%s"'
+cmd_env_stat_time_modif_epoch_s = 'stat -c %%Y "%s"'
+
+# These are the permissions required in `script_folder`, validated by
+# the testsuite. If change please keep in mind that the user running
+# the web server require complete rwx access to the folder.
+script_folder_expected_perms = '777'
 
 # Set to True to enable debug prints
 debug = False

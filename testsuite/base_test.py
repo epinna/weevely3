@@ -3,6 +3,7 @@ from core.utilities import randstr
 from testsuite import config
 from generate import generate, save_generated
 from core.loggers import stream_handler
+from core.weexceptions import DevException
 import subprocess
 import logging
 import tempfile
@@ -26,9 +27,21 @@ class BaseTest(TestCase):
         if config.debug:
             stream_handler.setLevel(logging.DEBUG)
         else:
-            stream_handler.setLevel(logging.INFO)
+            stream_handler.setLevel(logging.DEBUG)
 
         cls._randomize_bd()
+
+        # Check `config.script_folder` permissions
+        if (
+            subprocess.check_output(
+                config.cmd_env_stat_permissions_s % (config.script_folder),
+                shell=True).strip()
+            != config.script_folder_expected_perms
+            ):
+            raise DevException(
+                "Error: give to the http user full permissions to the folder \'%s\'"
+                % config.script_folder
+            )
 
         obfuscated = generate(cls.password)
 
