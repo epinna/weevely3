@@ -110,6 +110,11 @@ class module_sql_dump:
 class module_file_grep:
     failed_retrieve_info = "Failed retrieve file information, please check if the remote readable files exist"
 
+class module_file_upload2web:
+    failed_retrieve_info = "Failed retrieve web root information"
+    failed_resolve_path = "Failed resolve path, please check remote path and permissions"
+    error_s_not_under_webroot_s = "Error, \'%s\' is not under the web root folder \'%s\'"
+
 class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
     error_500_executing = 'The remote script execution triggers an error 500, please verify script integrity and sent payload correctness'
