@@ -65,6 +65,17 @@ class Session(dict):
             stream_handler.setLevel(logging.INFO)
 
     def set(self, module_argument, value):
+        """Called by user to set or show the session variables"""
+
+        # I safely evaluate the value type to avoid to save only
+        # strings type. Dirty but effective.
+        # TODO: the actual type of the argument could be acquired
+        # from modules[module].argparser.
+        try:
+            value = ast.literal_eval(value)
+        except Exception as e:
+            # If is not evalued, just keep it as string
+            pass
 
         # If action_<module_argument> function exists, trigger the action
         action_name = 'action_%s' % (module_argument.replace('.','_'))
