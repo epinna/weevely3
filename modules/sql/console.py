@@ -94,26 +94,18 @@ class Console(Module):
 
         if user[0]:
             user = user[0][0]
+        
+        # Console loop
+        while True:
 
-        # Catch Ctrl-C and Ctrl-D
-        try:
+            query = raw_input('%s SQL> ' % user).strip()
 
-            # Console loop
-            while True:
+            if not query: continue
+            if query == 'quit': break
 
-                query = raw_input('%s SQL> ' % user).strip()
-
-                if not query: continue
-                if query == 'quit': break
-
-                args['query'] = query
-                result = self._query(vector, args)
-                self.print_result(result)
-
-
-        except (KeyboardInterrupt, EOFError):
-            log.info('Exiting SQL console.')
-
+            args['query'] = query
+            result = self._query(vector, args)
+            self.print_result(result)
 
     def print_result(self, result):
 
