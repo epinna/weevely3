@@ -7,7 +7,7 @@ import datetime
 
 class Check(Module):
 
-    """Check remote file type, md5, or permission."""
+    """Get remote file information."""
 
     def init(self):
 
@@ -67,6 +67,9 @@ class Check(Module):
             PhpCode("print(filemtime('${rpath}'));",
               name = "datetime",
               postprocess = lambda x: datetime.datetime.fromtimestamp(float(x)).strftime('%Y-%m-%d %H:%M:%S')
+            ),
+            PhpCode("print(realpath('${rpath}'));",
+              name = "abspath"
             )
             ]
         )
