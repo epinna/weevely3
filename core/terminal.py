@@ -165,8 +165,15 @@ class Terminal(CmdModules):
         # If no default shell is available
         if not self.session.get('default_shell'):
 
-            # Setup shell_sh if is never tried
-            if self.session['shell_sh']['status'] == Status.IDLE:
+            # Trigger the shell_sh/shell_php probe if
+            # 1. We never tied to raise shells (shell_sh = IDLE)
+            # 2. The basic intepreter shell_php failed. It's OK to retry.
+            if (
+                self.session['shell_sh']['status'] == Status.IDLE or
+                self.session['shell_php']['status'] == Status.FAIL
+                ):
+                # force shell_php to idle to avoid to be skipped by shell_sh
+                self.session['shell_php']['status'] = Status.IDLE
                 self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
 
             for shell in ('shell_sh', 'shell_php'):
