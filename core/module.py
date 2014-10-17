@@ -88,11 +88,25 @@ class Module:
             Object. The result of the module execution.
         """
 
+        # Split the command line
         try:
-            result = self.run_argv(shlex.split(line))
+            command = shlex.split(line)
         except Exception as e:
             import traceback; log.debug(traceback.format_exc())
             log.warn(messages.generic.error_parsing_command_s % str(e))
+            return
+
+        # Execute the command, catching Ctrl-c, Ctrl-d, and other exceptions
+        try:
+            result = self.run_argv(command)
+
+        except (KeyboardInterrupt, EOFError):
+            log.info(messages.module.module_s_exec_terminated % self.name)
+            return
+
+        except Exception as e:
+            import traceback; log.debug(traceback.format_exc())
+            log.warn(messages.module.error_module_exec_error_s % str(e))
             return
 
         self.print_result(result)
