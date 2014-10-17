@@ -1,10 +1,12 @@
 from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core import modules
+from core import messages
+from core.loggers import log
 
 class Enum(Module):
 
-    """Check existance and permissions of a list of paths."""
+    """Check existence and permissions of a list of paths."""
 
     def init(self):
 
@@ -18,7 +20,7 @@ class Enum(Module):
         )
 
         self.register_arguments([
-          { 'name' : 'paths', 'help' : 'One or more paths', 'nargs' : '+' },
+          { 'name' : 'paths', 'help' : 'One or more paths', 'nargs' : '*' },
           { 'name' : '-lpath-list', 'help' : 'The local file containing the list of paths' },
           { 'name' : '-print', 'help' : 'Print the paths not found too', 'action' : 'store_true', 'default' : False }
         ])
@@ -27,10 +29,11 @@ class Enum(Module):
 
         paths = []
 
-        if args.get('lpath_list'):
+        lpath = args.get('lpath_list')
+        if lpath:
 
             try:
-                paths = open(args.get('lpath_list'), 'r').read().split('\n')
+                paths = open(lpath, 'r').read().split('\n')
             except Exception, e:
                 log.warning(
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
