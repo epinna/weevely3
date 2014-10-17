@@ -38,6 +38,7 @@ class Info(Module):
              postprocess = lambda x: True if x=='1' else False
             ),
             PhpCode("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
+            PhpCode("print(dirname(__FILE__));", 'script_folder'),
             PhpCode("print(@php_uname());", 'uname'),
             PhpCode("print(@php_uname('s'));", 'os'),
             PhpCode("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
