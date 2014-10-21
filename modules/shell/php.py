@@ -97,7 +97,7 @@ class Php(Module):
 #        )
 
         log.debug('PAYLOAD %s' % command)
-        dlog.info('== RESPONSE ==\n%s==== END ====' % response)
+        log.info('== RESPONSE ==\n%s==== END ====' % response)
 
         if response: return
 
