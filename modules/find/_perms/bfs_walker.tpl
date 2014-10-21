@@ -1,11 +1,28 @@
+function chk($filename, $search, $ftype, $perms) {
+	return (
+		(!$search||preg_match("/$search/",$filename))&&
+		(strstr($perms,"w")===FALSE||is_writable($filename))&&
+		(strstr($perms,"x")===FALSE||is_executable($filename))&&
+		(strstr($perms,"r")===FALSE||is_readable($filename))&&
+		(strstr($ftype,"f")===FALSE||is_file($filename))&&
+		(strstr($ftype,"d")===FALSE||is_dir($filename))
+	);
+}
+
 function src($path, $search, $stop, $ftype, $perms, $no_recurs) {
-	
+
+	/* Print starting path if matches, like posix find */
+	if (chk($path, $search, $ftype, $perms)) {
+		echo "$path" . PHP_EOL;
+	}
+
 	if (substr($path, -1) !== DIRECTORY_SEPARATOR)
 		$path .= DIRECTORY_SEPARATOR;
 
 	$queue = array($path => 1);
 	$done  = array();
 	$index = 0;
+
 	while(!empty($queue)) {
 		/* get one element from the queue */
 		foreach($queue as $path => $unused) {
@@ -22,26 +39,19 @@ function src($path, $search, $stop, $ftype, $perms, $no_recurs) {
 			if ($filename == '.' || $filename == '..')
 				continue;
 
-			/* check if the filename matches the search term */
-			if (
-				(!$search||preg_match("/$search/",$filename))&&
-				(!strstr($perms,"w")||is_writable($filename))&&
-                                (!strstr($perms,"x")||is_executable($filename))&&
-                                (!strstr($perms,"r")||is_readable($filename))&&
-                                (!strstr($ftype,"f")||is_file($filename))&&
-                                (!strstr($ftype,"d")||is_dir($filename))
-			) {
-				echo "$path$filename" . PHP_EOL;
-				if ($stop)
-					break 2;
-			}
-
 			/* get the full path */
 			$filename = $path . $filename;
 
 			/* resolve symlinks to their real path */
 			if (is_link($filename))
 				$filename = realpath($filename);
+
+			/* check if the filename matches the search term */
+            if (chk($filename, $search, $ftype, $perms)) {
+				echo "$filename" . PHP_EOL;
+				if ($stop)
+					break 2;
+			}
 
 			/* queue directories for later search */
 			if (is_dir($filename)) {

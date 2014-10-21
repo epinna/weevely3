@@ -56,6 +56,7 @@ class FindPerms(BaseFilesystem):
 
     def tearDown(self):
 
+        return
         # Reset recursively all the permissions to 0777
         subprocess.check_call(
             config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
@@ -101,8 +102,7 @@ class FindPerms(BaseFilesystem):
     def test_find_perms_sh(self):
 
         # find first writable starting from folder[0]
-        # Apparently, find shell command returns [0] as first element
-        self.assertItemsEqual(self.run_argv([ '-writable', '-vector', 'sh_find', '-quit', self.folders_rel[0] ]), [ self.folders_rel[0] ])
+        self.assertItemsEqual(self.run_argv([ '-writable', '-vector', 'sh_find', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
 
         # find all executable starting from folder[0]
         self.assertItemsEqual(self.run_argv([ '-executable', '-vector', 'sh_find', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] )

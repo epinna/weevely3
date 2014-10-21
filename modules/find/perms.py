@@ -28,7 +28,8 @@ class Perms(Module):
               name = 'php_recursive',
             ),
             ShellCmd(
-              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-print -quit' if quit else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (ftype) if (ftype == 'd' or ftype == 'f') else '' } ${ "-regex '.*%s.*'" % (name_regex) if name_regex else '' }""",
+              # -print -quit must be at the end of the command
+              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (ftype) if (ftype == 'd' or ftype == 'f') else '' } ${ "-regex '.*%s.*'" % (name_regex) if name_regex else '' } ${ '-print -quit' if quit else '' }""",
               name = "sh_find",
               arguments = [
                 "-stderr_redirection",
