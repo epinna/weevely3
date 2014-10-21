@@ -1,6 +1,8 @@
-function chk($filename, $search, $ftype, $perms) {
+function chk($filename, $search, $case, $ftype, $perms) {
+
 	return (
-		(!$search||preg_match("/$search/",$filename))&&
+		file_exists($filename)&&
+		(!$search||preg_match("/$search/$case",$filename))&&
 		(strstr($perms,"w")===FALSE||is_writable($filename))&&
 		(strstr($perms,"x")===FALSE||is_executable($filename))&&
 		(strstr($perms,"r")===FALSE||is_readable($filename))&&
@@ -9,11 +11,12 @@ function chk($filename, $search, $ftype, $perms) {
 	);
 }
 
-function src($path, $search, $stop, $ftype, $perms, $no_recurs) {
+function src($path, $search, $case, $stop, $ftype, $perms, $no_recurs) {
 
 	/* Print starting path if matches, like posix find */
-	if (chk($path, $search, $ftype, $perms)) {
+	if (chk($path, $search, $case, $ftype, $perms)) {
 		echo "$path" . PHP_EOL;
+		if ($stop) return;
 	}
 
 	if (substr($path, -1) !== DIRECTORY_SEPARATOR)
@@ -21,7 +24,6 @@ function src($path, $search, $stop, $ftype, $perms, $no_recurs) {
 
 	$queue = array($path => 1);
 	$done  = array();
-	$index = 0;
 
 	while(!empty($queue)) {
 		/* get one element from the queue */
@@ -42,15 +44,10 @@ function src($path, $search, $stop, $ftype, $perms, $no_recurs) {
 			/* get the full path */
 			$filename = $path . $filename;
 
-			/* resolve symlinks to their real path */
-			if (is_link($filename))
-				$filename = realpath($filename);
-
 			/* check if the filename matches the search term */
-            if (chk($filename, $search, $ftype, $perms)) {
+            if (chk($filename, $search, $case, $ftype, $perms)) {
 				echo "$filename" . PHP_EOL;
-				if ($stop)
-					break 2;
+				if ($stop) return;
 			}
 
 			/* queue directories for later search */
@@ -71,4 +68,4 @@ function src($path, $search, $stop, $ftype, $perms, $no_recurs) {
 	}
 }
 
-src('${rpath}', '${ name_regex if name_regex else '' }', ${quit}, '${ ftype if ftype == 'd' or ftype == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }', ${no_recursion});
+src('${rpath}', '${ name_regex if name_regex else '' }', '${'i' if not case else ''}', ${quit}, '${ ftype if ftype == 'd' or ftype == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }', ${no_recursion});
