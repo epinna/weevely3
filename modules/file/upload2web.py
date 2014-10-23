@@ -55,7 +55,7 @@ class Upload2web(Module):
 
     def _map_folder2web(self, relative_path_folder='.'):
 
-        absolute_path = ModuleExec('file_check', [ '.', 'abspath' ]).run()
+        absolute_path = ModuleExec('file_check', [ relative_path_folder, 'abspath' ]).run()
 
         if not absolute_path:
             log.warn(messages.module_file_upload2web.failed_resolve_path)
@@ -104,7 +104,8 @@ class Upload2web(Module):
         # If remote path is a folder, get first writable folder
         if ModuleExec("file_check", [ args['rpath'], 'dir' ]).run():
             folders = ModuleExec("file_find", [ '-writable', '-quit', args['rpath'] ]).run()
-            if not folders:
+
+            if not folders or not folders[0]:
                 log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % args['rpath'])
                 return
 
