@@ -68,4 +68,4 @@ function src($path, $search, $case, $stop, $ftype, $perms, $no_recurs) {
 	}
 }
 
-src('${rpath}', '${ name_regex if name_regex else '' }', '${'i' if not case else ''}', ${quit}, '${ ftype if ftype == 'd' or ftype == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }', ${no_recursion});
+src('${rpath}', '${ expression if expression else '' }', '${'i' if not case else ''}', ${quit}, '${ ftype if ftype == 'd' or ftype == 'f' else '' }','${ '%s%s%s' % (('w' if writable else ''), ('r' if readable else ''), ('x' if executable else '') ) }', ${no_recursion});
