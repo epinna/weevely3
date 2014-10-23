@@ -102,4 +102,4 @@ class Upload2web(Module):
             log.warn(messages.module_file_upload2web.failed_retrieve_info)
 
         # If remote path is a folder, get first readable folder
-        # TODO: add type check in find_perms
+        # TODO: add type check in file_find

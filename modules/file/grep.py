@@ -61,14 +61,14 @@ class Grep(Module):
             # If remote path is a folder, harvest all the readable
             # files wih given name-regex
 
-            # Prepare the arguments for find_perms
-            find_perms_args = [ '-readable', args['rpath'] ]
+            # Prepare the arguments for file_find
+            file_find_args = [ '-readable', args['rpath'] ]
             if args.get('name_regex'):
-                find_perms_args += [ '-name-regex', args.get('name_regex') ]
+                file_find_args += [ '-name-regex', args.get('name_regex') ]
             if args.get('no_recursion'):
-                find_perms_args += [ '-no-recursion' ]
+                file_find_args += [ '-no-recursion' ]
 
-            files = ModuleExec("find_perms", find_perms_args).run()
+            files = ModuleExec("file_find", file_find_args).run()
 
 
         elif (ModuleExec("file_check", [ args['rpath'], 'file' ]).run() and

@@ -6,9 +6,9 @@ import random
 import os
 
 
-class Perms(Module):
+class Find(Module):
 
-    """Find files with given write, read, or execute permission."""
+    """Find files with given names and attributes."""
 
     def init(self):
 

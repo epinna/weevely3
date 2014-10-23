@@ -52,7 +52,7 @@ class FindPerms(BaseFilesystem):
             config.cmd_env_chmod_s_s % ('0777', self.folders_abs[1]),
             shell=True)
 
-        self.run_argv = modules.loaded['find_perms'].run_argv
+        self.run_argv = modules.loaded['file_find'].run_argv
 
     def tearDown(self):
 
@@ -71,7 +71,7 @@ class FindPerms(BaseFilesystem):
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 
-    def test_find_perms_php(self):
+    def test_file_find_php(self):
 
         # find first writable starting from folder[0]
         self.assertItemsEqual(self.run_argv([ '-writable', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
@@ -104,7 +104,7 @@ class FindPerms(BaseFilesystem):
         self.assertEqual(self.run_argv([ '-readable', 'bogus' ]), [''] )
 
 
-    def test_find_perms_sh(self):
+    def test_file_find_sh(self):
 
         # find first writable starting from folder[0]
         self.assertItemsEqual(self.run_argv([ '-writable', '-vector', 'sh_find', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
