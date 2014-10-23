@@ -50,16 +50,16 @@ def stringify(data, table_border = True):
         table = prettytable.PrettyTable()
 
         # List outputs.
-        if isinstance(data, types.ListType):
+        if isinstance(data, (types.ListType, types.TupleType)):
 
             if len(data) > 0:
 
                 columns_num = 1
-                if isinstance(data[0], types.ListType):
+                if isinstance(data[0], (types.ListType, types.TupleType)):
                     columns_num = len(data[0])
 
                 for row in data:
-                    if isinstance(row, types.ListType):
+                    if isinstance(row, (types.ListType, types.TupleType)):
                         table.add_row(row)
                     else:
                         table.add_row([row])
@@ -69,7 +69,7 @@ def stringify(data, table_border = True):
 
             # Populate the rows
             randomitem = next(data.itervalues())
-            if isinstance(randomitem, types.ListType):
+            if isinstance(randomitem, (types.ListType, types.TupleType)):
                 for field in data:
                     table.add_row([field] + data[field])
             else:
