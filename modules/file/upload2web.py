@@ -24,7 +24,7 @@ class Upload2web(Module):
         )
 
         self.register_arguments([
-            { 'name' : 'lpath', 'help' : 'Local file path', 'nargs' : '?' },
+            { 'name' : 'lpath', 'help' : 'Local file path' },
             { 'name' : 'rpath', 'help' : 'Path. If is a folder find the first writable folder in it.', 'default' : '.', 'nargs' : '?' },
         ])
 
@@ -101,5 +101,19 @@ class Upload2web(Module):
         if not self.base_folder_url or not self.base_folder_path:
             log.warn(messages.module_file_upload2web.failed_retrieve_info)
 
-        # If remote path is a folder, get first readable folder
-        # TODO: add type check in file_find
+        # If remote path is a folder, get first writable folder
+        if ModuleExec("file_check", [ args['rpath'], 'dir' ]).run():
+            folders = ModuleExec("file_find", [ '-writable', '-quit', args['rpath'] ]).run()
+            if not folders:
+                log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % args['rpath'])
+                return
+
+            # Get file name from lpath
+            lfolder, lname = os.path.split(args['lpath'])
+
+            # TODO: all the paths should be joined with remote OS_SEP from system_info.
+            args['rpath'] = os.path.join(folders[0], lname)
+
+        if ModuleExec("file_upload", [ args['lpath'], args['rpath'] ]).run():
+            # Guess URL from rpath
+            return self._map_file2web(args['rpath'])
