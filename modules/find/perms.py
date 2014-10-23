@@ -29,7 +29,7 @@ class Perms(Module):
             ),
             ShellCmd(
               # -print -quit must be at the end of the command
-              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (ftype) if (ftype == 'd' or ftype == 'f') else '' } ${ "-%sregex '.*%s.*'" % ( 'i' if case else '', name_regex) if name_regex else '' } ${ '-print -quit' if quit else '' }""",
+              payload = """find ${rpath} ${ '-maxdepth 1' if no_recursion else '' } ${ '-writable' if writable else '' } ${ '-readable' if readable else '' } ${ '-executable' if executable else '' } ${ '-type %s' % (ftype) if (ftype == 'd' or ftype == 'f') else '' } ${ "-%sregex '.*%s.*'" % ( '' if case else 'i', name_regex) if name_regex else '' } ${ '-print -quit' if quit else '' }""",
               name = "sh_find",
               arguments = [
                 "-stderr_redirection",
