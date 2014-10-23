@@ -8,7 +8,6 @@ from core import messages
 import core.utilities
 import subprocess
 import tempfile
-import urlparse
 import os
 
 class UploadWeb(BaseFilesystem):
@@ -25,56 +24,85 @@ class UploadWeb(BaseFilesystem):
         # Create the folder tree
         self.folders_abs, self.folders_rel =  self.populate_folders()
 
+        subprocess.check_call(
+            config.cmd_env_chmod_s_s % ('0777', self.folders_abs[0]),
+            shell=True)
+
         # Change mode of the folders [1:3] to -r-xr-xr-x 0555 read & execute
-        for fold in self.folders_abs:
+        for fold in self.folders_abs[1:2]:
             subprocess.check_call(
-                config.cmd_env_chmod_s_s % ('0111', self.folders_abs[0]),
+                config.cmd_env_chmod_s_s % ('0555', fold),
                 shell=True)
 
+        subprocess.check_call(
+            config.cmd_env_chmod_s_s % ('0777', self.folders_abs[3]),
+            shell=True)
+
         self.filenames = []
-
-
 
         self.run_argv = modules.loaded['file_upload2web'].run_argv
 
     def tearDown(self):
-
-        # Reset recursively all the permissions to 0777
-        subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
-            shell=True)
-
-        for folder in reversed(self.folders_abs):
-
-            subprocess.check_call(
-                config.cmd_env_rmdir_s % (folder),
-                shell=True)
 
         for f in self.filenames:
             subprocess.check_call(
                 config.cmd_env_remove_s % (os.path.join(config.script_folder, f)),
                 shell=True)
 
+        subprocess.check_call(
+            config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
+            shell=True)
+
+        for folder in reversed(self.folders_abs):
+            subprocess.check_call(
+                config.cmd_env_rmdir_s % (folder),
+                shell=True)
+
+    def _get_path_url(self, folder_deepness, filename):
+        rurl = os.path.sep.join([
+                            config.script_folder_url.rstrip('/'),
+                            self.folders_rel[folder_deepness].strip('/'),
+                            filename.lstrip('/')]
+                            )
+        rpath = os.path.sep.join([
+                            config.script_folder.rstrip('/'),
+                            self.folders_rel[folder_deepness].strip('/'),
+                            filename.lstrip('/')]
+                            )
+        return rpath, rurl
+
     def test_file_uploadweb(self):
 
         # Upload lfile with a specific path
         temp_file = tempfile.NamedTemporaryFile()
-        self.filenames.append('f1')
-        rurl = os.path.join(config.script_folder_url, 'f1')
-        rpath = urlparse.urljoin(config.script_folder, 'f1')
-        self.assertTrue(
+        rpath, rurl = self._get_path_url(0, 'f1')
+        self.filenames.append(rpath)
+        self.assertEqual(
             self.run_argv([ temp_file.name, rpath ]),
-            [ [ rpath, rurl ] ]
+            [ ( rpath, rurl ) ]
             )
         temp_file.close()
 
-        # Upload lfile guessing first writable path
+        # Upload lfile guessing first writable path starting from [0]
         temp_file = tempfile.NamedTemporaryFile()
-        self.filenames.append('f2')
-        rurl = os.path.join(config.script_folder_url, 'f2')
-        rpath = urlparse.urljoin(config.script_folder, 'f2')
-        self.assertTrue(
-            self.run_argv([ temp_file.name ]),
-            [ [ rpath, rurl ] ]
+        temp_folder, temp_filename = os.path.split(temp_file.name)
+        rpath, rurl = self._get_path_url(0, temp_filename)
+        self.filenames.append(rpath)
+        self.assertEqual(
+            self.run_argv([ temp_file.name, self.folders_rel[0] ]),
+            [ ( rpath, rurl ) ]
+            )
+        temp_file.close()
+
+
+        # Upload lfile guessing first writable path from [1],
+        # that is [3]
+        temp_file = tempfile.NamedTemporaryFile()
+        temp_folder, temp_filename = os.path.split(temp_file.name)
+        rpath, rurl = self._get_path_url(3, temp_filename)
+        self.filenames.append(rpath)
+        self.assertEqual(
+            self.run_argv([ temp_file.name, self.folders_rel[1] ]),
+            [ ( rpath, rurl ) ]
             )
         temp_file.close()
