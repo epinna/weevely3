@@ -10,6 +10,8 @@ class Find(Module):
 
     """Find files with given names and attributes."""
 
+    aliases = [ 'find' ]
+
     def init(self):
 
         self.register_info(
@@ -25,7 +27,7 @@ class Find(Module):
             [
             PhpFile(
               payload_path = os.path.join(self.folder, 'bfs_walker.tpl'),
-              name = 'php_recursive',
+              name = 'php_find',
             ),
             ShellCmd(
               # -print -quit must be at the end of the command
@@ -48,7 +50,7 @@ class Find(Module):
           { 'name' : '-executable', 'action' : 'store_true' },
           { 'name' : '-ftype', 'help' : 'File type', 'choices' : ( 'f', 'd' ) },
           { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
-          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_recursive' },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_find' },
           { 'name' : '-case', 'help' : 'Case sensitive', 'action' : 'store_true', 'default' : False },
         ])
 
