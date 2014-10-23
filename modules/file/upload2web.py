@@ -116,4 +116,4 @@ class Upload2web(Module):
 
         if ModuleExec("file_upload", [ args['lpath'], args['rpath'] ]).run():
             # Guess URL from rpath
-            return self._map_file2web(args['rpath'])
+            return [ self._map_file2web(args['rpath']) ]
