@@ -123,6 +123,12 @@ class module_shell_php:
     missing_php_trailer_s = 'Is the trailing comma missing at the end of the PHP code \'%s\'?'
     error_i_executing = 'The request triggers the error %i, please verify running code'
 
+class module_net_ifconfig:
+    error_no_s_execution_result = 'Error, no \'%s\' execution result'
+    error_parsing_s_execution_result = 'Error parsing \'%s\' execution result'
+    error_interpeting_s_execution_result_s = 'Error interpeting \'%s\' execution result: \'%s\''
+    failed_retrieve_info = "Failed retrieve ifconfig information"
+
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
 
