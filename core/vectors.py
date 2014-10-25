@@ -15,6 +15,7 @@ from core import modules
 from core import utilities
 from core import messages
 import re
+import thread
 
 class Os:
     """Represent the operating system vector compatibility.
@@ -47,9 +48,11 @@ class ModuleExec:
 
         postprocess (func): The function which postprocess the execution result.
 
+        background (bool): Execute in a separate thread on `run()`
+
     """
 
-    def __init__(self, module, arguments, name = '', target = 0, postprocess = None):
+    def __init__(self, module, arguments, name = '', target = 0, postprocess = None, background = False):
 
         self.name = name if name else utilities.randstr()
 
@@ -67,6 +70,7 @@ class ModuleExec:
         self.module = module
         self.target = target
         self.postprocess = postprocess
+        self.background = background
 
     def format(self, values):
         """Format the arguments.
@@ -106,7 +110,13 @@ class ModuleExec:
             import traceback; log.debug(traceback.format_exc())
             raise DevException(messages.vectors.wrong_arguments_type)
 
-        result = modules.loaded[self.module].run_argv(formatted)
+        # The background argument is set at vector init in order
+        # to threadify vectors also if called by VectorList methods.
+        if self.background:
+            thread.start_new_thread(modules.loaded[self.module].run_argv, (formatted, ))
+            result = None
+        else:
+            result = modules.loaded[self.module].run_argv(formatted)
 
         if self.postprocess:
             result = self.postprocess(result)
@@ -130,9 +140,10 @@ class PhpCode(ModuleExec):
 
         arguments (list of str): Additional arguments for `shell_php`
 
+        background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = []):
+    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = [], background = False):
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -143,7 +154,8 @@ class PhpCode(ModuleExec):
             arguments = [ payload ] + arguments,
             name = name,
             target = target,
-            postprocess = postprocess
+            postprocess = postprocess,
+            background = background
         )
 
     def format(self, values):
@@ -191,9 +203,10 @@ class PhpFile(PhpCode):
 
         arguments (list of str): Additional arguments for `shell_php`
 
+        background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload_path, name = None, target = 0, postprocess = None, arguments = []):
+    def __init__(self, payload_path, name = None, target = 0, postprocess = None, arguments = [], background = False):
 
         if not isinstance(payload_path, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -209,7 +222,8 @@ class PhpFile(PhpCode):
             arguments = [ payload ] + arguments,
             name = name,
             target = target,
-            postprocess = postprocess
+            postprocess = postprocess,
+            background = background
         )
 
 
@@ -232,9 +246,10 @@ class ShellCmd(PhpCode):
 
         arguments (list of str): Additional arguments for `shell_php`
 
+        background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = []):
+    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = [], background = False):
 
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -245,7 +260,8 @@ class ShellCmd(PhpCode):
             arguments = [ payload ] + arguments,
             name = name,
             target = target,
-            postprocess = postprocess
+            postprocess = postprocess,
+            background = background
         )
 
     def _minify(self, body):
