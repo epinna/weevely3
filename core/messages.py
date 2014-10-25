@@ -133,6 +133,11 @@ class module_backdoor_tcp:
     error_parsing_connect_s = 'Error parsing hostname, connect manually to the shell on port %s'
     error_connecting_to_s_s_s = 'Error connecting to %s:%s: %s'
 
+class module_backdoor_reversetcp:
+    error_binding_socket_s = 'Error binding socket: \'%s\''
+    error_timeout = 'Timeout error'
+    reverse_shell_connected = 'Reverse shell connected, insert commands. Append semi-colon help to get the commands accepted.'
+
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
 
