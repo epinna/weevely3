@@ -82,7 +82,7 @@ class Reversetcp(Module):
         ])
 
     def run(self, args):
-        
+
         # Run all the vectors
         for vector in self.vectors:
 
@@ -93,12 +93,12 @@ class Reversetcp(Module):
             # Background run does not return results
             vector.run(args)
 
+            # If set, skip autoconnect
+            if args.get('no_autoconnect'): continue
+
             # Run tcp server for the vector
             try:
                 tcpserver = TcpServer(args['port'])
             except socket.timeout as e:
                 log.debug(messages.module_backdoor_reversetcp.error_timeout)
                 continue
-
-            # If set, skip autoconnect
-            if args.get('no_autoconnect'): continue
