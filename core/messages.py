@@ -126,8 +126,12 @@ class module_shell_php:
 class module_net_ifconfig:
     error_no_s_execution_result = 'Error, no \'%s\' execution result'
     error_parsing_s_execution_result = 'Error parsing \'%s\' execution result'
-    error_interpeting_s_execution_result_s = 'Error interpeting \'%s\' execution result: \'%s\''
+    error_interpeting_s_execution_result_s = 'Error interpreting \'%s\' execution result: \'%s\''
     failed_retrieve_info = "Failed retrieve ifconfig information"
+
+class module_backdoor_tcp:
+    error_parsing_connect_s = 'Error parsing hostname, connect manually to the shell on port %s'
+    error_connecting_to_s_s_s = 'Error connecting to %s:%s: %s'
 
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
