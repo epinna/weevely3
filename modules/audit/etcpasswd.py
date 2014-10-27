@@ -24,9 +24,10 @@ class Etcpasswd(Module):
 
     def run(self, args):
 
-        if args.get('vector') == 'posix_getpwuid':
+        if args.get('vector', 'posix_getpwuid') == 'posix_getpwuid':
             pwdresult = PhpCode("""for($n=0; $n<2000;$n++) { $uid = @posix_getpwuid($n); if ($uid) echo join(':',$uid).PHP_EOL;  }""").run(args)
-        else:
+
+        if not pwdresult:
             arg_vector = [ '-vector', args.get('vector') ] if args.get('vector') else []
             pwdresult = ModuleExec('file_read', [ '/etc/passwd' ] + arg_vector).run()
 
