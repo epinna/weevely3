@@ -138,6 +138,31 @@ class module_backdoor_reversetcp:
     error_timeout = 'Timeout error'
     reverse_shell_connected = 'Reverse shell connected, insert commands. Append semi-colon help to get the commands accepted.'
 
+class module_audit_phpconf:
+    not_enabled = 'Not enabled'
+    enabled = 'Enabled'
+    error = 'Error getting information'
+    basedir_unrestricted = 'Unrestricted'
+    basedir_dot = 'Set to \'.\', bypassable'
+    basedir_no_slash = 'No trailing \'/\', bypassable'
+    user_win_admin = 'Check this is not an administrative user'
+    user_nix_root = 'User \'root\' can be abused'
+    feat_expose_php = 'PHP configuration information exposed'
+    feat_file_uploads = 'File upload enabled'
+    feat_register_globals = 'Insecure variable manipulation enabled'
+    feat_display_errors = 'Information display on error enabled'
+    feat_enable_dl = 'Insecure dl() function can be exploited\nto bypass restrictions'
+    feat_safe_mode = 'Safe mode restrictions enabled'
+    feat_magic_quotes_gpc = 'Insecure SQL injection protection enabled'
+    feat_allow_url_include = 'Insecure inclusion of remote resources enabled'
+    feat_session_use_trans_sid = 'Session IDs insecurely passed via URL'
+    class_splFileObject = 'Insecure splFileObject class can be\nexploited to bypass restrictions'
+    func_info = 'Configuration exposed'
+    func_files = 'Filesystem manipulation'
+    func_log = 'Log tampering'
+    func_proc = 'Process execution and manipulation'
+
+
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
 
