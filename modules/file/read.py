@@ -31,10 +31,12 @@ class Read(Module):
         temp_file = tempfile.NamedTemporaryFile()
         args['lpath'] = temp_file.name
 
+        arg_vector = [ '-vector', args.get('vector') ] if args.get('vector') else []
+
         # Run file_download
         result = ModuleExec(
                     'file_download',
-                    [ args.get('rpath'), '${lpath}' ],
+                    [ args.get('rpath'), '${lpath}' ] + arg_vector,
                     name = 'file_download'
                 ).run(args)
 
