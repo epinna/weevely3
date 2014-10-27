@@ -81,7 +81,9 @@ class Phpconf(Module):
     def _check_classes(self):
 
         classes = [
-            'splFileObject'
+            'splFileObject',
+            'COM',
+            'Java'
             ]
 
         class_found = PhpCode("""foreach ( Array("${ '", "'.join(classes) }") as $f) if((bool)class_exists($f)) print($f. "\n");""").run(
@@ -126,29 +128,36 @@ class Phpconf(Module):
             'log' : [
                 'openlog',
                 'syslog',
+                'debugger_off',
+                'debugger_on',
+                'closelog'
             ],
-            'proc' : [
-                'apache_child_terminate',
-                'apache_note',
-                'apache_setenv',
-                'dl',
+            'proc_execution' : [
                 'exec',
                 'passthru',
                 'pcntl_exec',
                 'popen',
-                'proc_close',
                 'proc_open',
+                'shell_exec',
+                'system',
+                'dotnet_load'
+            ],
+            'proc_manipulation' : [
+                'apache_child_terminate',
+                'apache_note',
+                'apache_setenv',
+                'dl',
+                'proc_close',
                 'proc_get_status',
                 'proc_terminate',
                 'proc_nice',
                 'putenv',
-                'shell_exec',
-                'system',
                 'virtual'
                 'posix_kill',
                 'posix_setpgid',
                 'posix_setsid',
-                'posix_setuid'
+                'posix_setuid',
+                'runkit_function_rename'
             ]
         }
 

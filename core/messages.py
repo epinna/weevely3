@@ -151,16 +151,19 @@ class module_audit_phpconf:
     feat_file_uploads = 'File upload enabled'
     feat_register_globals = 'Insecure variable manipulation enabled'
     feat_display_errors = 'Information display on error enabled'
-    feat_enable_dl = 'Insecure dl() function can be exploited\nto bypass restrictions'
+    feat_enable_dl = 'Function dl() can be used to bypass restrictions'
     feat_safe_mode = 'Safe mode restrictions enabled'
     feat_magic_quotes_gpc = 'Insecure SQL injection protection enabled'
     feat_allow_url_include = 'Insecure inclusion of remote resources enabled'
     feat_session_use_trans_sid = 'Session IDs insecurely passed via URL'
-    class_splFileObject = 'Insecure splFileObject class can be\nexploited to bypass restrictions'
+    class_splFileObject = 'Class splFileObject can be used to bypass restrictions'
+    class_COM = 'Class COM can be used to bypass restrictions'
+    class_Java = 'Class Java can be used to bypass restrictions'
     func_info = 'Configuration exposed'
     func_files = 'Filesystem manipulation'
     func_log = 'Log tampering'
-    func_proc = 'Process execution and manipulation'
+    func_proc_execution = 'Process execution'
+    func_proc_manipulation = 'Process manipulation'
 
 
 class module_shell_sh:
