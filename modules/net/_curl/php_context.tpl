@@ -1,7 +1,7 @@
 $opts = array(
   'http'=>array(
     'method'=>'${ request if not data else 'POST' }',
-    'timeout'=>5,
+    'timeout'=>${ connect_timeout },
 % if header or cookie or user_agent or data:
     'header' => array(
 % endif

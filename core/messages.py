@@ -165,6 +165,8 @@ class module_audit_phpconf:
     func_proc_execution = 'Process execution'
     func_proc_manipulation = 'Process manipulation'
 
+class module_net_curl:
+    empty_response = 'The response is empty, check URL availability'
 
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'

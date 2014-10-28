@@ -3,7 +3,7 @@ $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, '${url}');
 
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "${ request if not data else 'POST' }");
-curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ${ connect_timeout });
 
 % if header or cookie or user_agent or data:
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(

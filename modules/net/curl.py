@@ -1,6 +1,7 @@
 from core.vectors import PhpCode, ShellCmd, ModuleExec, PhpFile, Os
 from core.module import Module
 from core import modules
+from core import messages
 from core.loggers import log
 import os
 
@@ -40,7 +41,7 @@ class Curl(Module):
               name = 'php_curl',
             ),
             ShellCmd(
-              payload = """curl -s ${ '-A %s' % user_agent if user_agent else '' } ${ '-X %s' % request if request else '' } ${ '-H '.join(header) } ${ '-b '.join(cookie) } ${ '-d '.join(data) } ${ url }""",
+              payload = """curl -s ${ '-A %s' % user_agent if user_agent else '' } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if request else '' } ${ '-H '.join(header) } ${ '-b '.join(cookie) } ${ '-d '.join(data) } ${ url }""",
               name = 'sh_curl',
             )
             ]
@@ -56,6 +57,7 @@ class Curl(Module):
           { 'name' : '-d', 'dest' : 'data', 'action' : 'append', 'default' : [] },
           { 'name' : '--user-agent', 'dest' : 'user_agent' },
           { 'name' : '-A', 'dest' : 'user_agent' },
+          { 'name' : '--connect-timeout', 'type' : int, 'default' : 2, 'help' : 'Default: 2' },
           { 'name' : '--request', 'dest' : 'request', 'choices' : ( 'GET', 'HEAD', 'POST', 'PUT' ), 'default' : 'GET' },
           { 'name' : '-X', 'dest' : 'request', 'choices' : ( 'GET', 'HEAD', 'POST', 'PUT' ), 'default' : 'GET' },
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
@@ -71,5 +73,4 @@ class Curl(Module):
         if vector_name:
             return result[-1:] if result[-1] == '\n' else result
 
-    def print_result(self, result):
-        log.info(result)
+        log.warn(messages.module_net_curl.empty_response)
