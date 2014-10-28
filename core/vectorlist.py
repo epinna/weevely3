@@ -73,6 +73,9 @@ class VectorList(list):
             # Skip if names filter is passed but current vector is missing
             if names and not any(n in vector.name for n in names): continue
 
+            # Add current vector name
+            format_args['current_vector'] = vector.name
+
             # Run
             result = vector.run(format_args)
 
@@ -116,6 +119,10 @@ class VectorList(list):
         vector = self.get_by_name(name)
 
         if vector and self._os_match(vector.target):
+
+            # Add current vector name
+            format_args['current_vector'] = vector.name
+
             result = vector.run(format_args)
 
             if store_result:
@@ -150,6 +157,9 @@ class VectorList(list):
             if not self._os_match(vector.target): continue
 
             if names and not any(x in vector.name for x in names): continue
+
+            # Add current vector name
+            format_args['current_vector'] = vector.name
 
             response[vector.name] = vector.run(format_args)
 
