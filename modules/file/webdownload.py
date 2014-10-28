@@ -9,7 +9,7 @@ class Webdownload(Module):
 
     """Download URL to the filesystem"""
 
-    aliases = [ 'wget', 'curl' ]
+    aliases = [ 'wget' ]
 
     def init(self):
 
