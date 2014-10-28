@@ -65,7 +65,7 @@ class Curl(Module):
 
         vector_name, result = self.vectors.find_first_result(
                 format_args = args,
-                condition = lambda r: bool(r)
+                condition = lambda r: r if r else None
             )
 
         if vector_name:

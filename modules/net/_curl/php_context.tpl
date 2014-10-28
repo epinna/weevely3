@@ -1,7 +1,7 @@
 $opts = array(
   'http'=>array(
     'method'=>'${ request if not data else 'POST' }',
-    'timeout'=>5, 
+    'timeout'=>5,
 % if header or cookie or user_agent or data:
     'header' => array(
 % endif
@@ -32,13 +32,17 @@ $ctx=stream_context_create($opts);
 print(file_get_contents('${url}', false, $ctx));
 % elif current_vector == 'fopen_stream_get_contents':
 $s = fopen('${url}', 'r', false, $ctx);
-print(stream_get_contents($s));
-fclose($s);
+if($s) {
+    print(stream_get_contents($s));
+    fclose($s);
+}
 % elif current_vector == 'fopen_fread':
 $h = fopen('${url}', 'r', false, $ctx);
-$c = '';
-while (!feof($h)) {
-  $c .= fread($h, 8192);
+if($h) {
+    $c = '';
+    while (!feof($h)) {
+      $c .= fread($h, 8192);
+    }
+    fclose($h);
 }
-fclose($h);
 % endif
