@@ -99,3 +99,4 @@ class Curl(Module):
                 log.warning(
                   messages.generic.error_loading_file_s_s % (output_path, str(e)))
                 return
+            return True
