@@ -40,6 +40,10 @@ class Curl(Module):
               payload_path = os.path.join(self.folder, 'php_curl.tpl'),
               name = 'php_curl',
             ),
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'php_httprequest1.tpl'),
+              name = 'php_httprequest1',
+            ),
             ShellCmd(
               payload = """curl -s ${ '-A %s' % user_agent if user_agent else '' } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if request else '' } ${ '-H '.join(header) } ${ '-b '.join(cookie) } ${ '-d '.join(data) } ${ url }""",
               name = 'sh_curl',
@@ -66,6 +70,7 @@ class Curl(Module):
     def run(self, args):
 
         vector_name, result = self.vectors.find_first_result(
+                names = [ args.get('vector') ],
                 format_args = args,
                 condition = lambda r: r if r else None
             )
