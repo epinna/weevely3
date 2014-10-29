@@ -64,6 +64,9 @@ class Curl(Module):
           { 'name' : '--connect-timeout', 'type' : int, 'default' : 2, 'help' : 'Default: 2' },
           { 'name' : '--request', 'dest' : 'request', 'choices' : ( 'GET', 'HEAD', 'POST', 'PUT' ), 'default' : 'GET' },
           { 'name' : '-X', 'dest' : 'request', 'choices' : ( 'GET', 'HEAD', 'POST', 'PUT' ), 'default' : 'GET' },
+          { 'name' : '--output', 'dest' : 'output' },
+          { 'name' : '-o', 'dest' : 'output' },
+          { 'name' : '-local', 'action' : 'store_true', 'default' : False, 'help' : 'Save file locally with -o|--output' },
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
         ])
 
@@ -75,7 +78,24 @@ class Curl(Module):
                 condition = lambda r: r if r else None
             )
 
-        if vector_name:
+        # Print error and exit with no response
+        if not vector_name:
+            log.warn(messages.module_net_curl.empty_response)
+            return
+
+        # If response must not be saved, just print it
+        output_path = args.get('output')
+        if not output_path:
             return result[-1:] if result[-1] == '\n' else result
 
-        log.warn(messages.module_net_curl.empty_response)
+        # If response must be saved, it's anyway safer to save it
+        # within additional requests
+        if not args.get('local'):
+            return ModuleExec('file_upload', [ '-content', result, output_path ]).run()
+        else:
+            try:
+                open(output_path, 'wb').write(result)
+            except Exception as e:
+                log.warning(
+                  messages.generic.error_loading_file_s_s % (output_path, str(e)))
+                return
