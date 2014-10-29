@@ -22,19 +22,39 @@ class Archive(Module):
             }
         )
 
+        self.register_vectors(
+            [
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'EasyBzip2.class.php.tpl'),
+              name = 'php_bzip2',
+            ),
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'EasyTar.class.php.tpl'),
+              name = 'php_tar',
+            ),
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'EasyGzip.class.php.tpl'),
+              name = 'php_gzip',
+            ),
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'EasyZip.class.php.tpl'),
+              name = 'php_zip',
+            )
+            ]
+        )
+
         self.supported_types = {
             'tar' : [ '.tar' ],
             'gzip' : [ '.gz', '.tgz' ],
             'zip' : [ '.zip' ],
-            'bzip' : [ '.bz2' ],
+            'bzip2' : [ '.bz2' ],
         }
 
         self.register_arguments([
           { 'name' : 'action', 'choices' : ( 'extract', 'create' ), 'default' : 'extract', 'help' : 'Action extract|create. Default: extract.' },
           { 'name' : 'rpath_archive', 'help' : 'Remote archive file path' },
-          { 'name' : 'rpath_files', 'help' : 'Files to add on creation', 'nargs' : '*' },
+          { 'name' : 'rpath_files', 'help' : 'Files to add on creation', 'nargs' : '*', 'default' : [ '.' ] },
           { 'name' : '-archive-type', 'choices' : self.supported_types.keys() },
-          { 'name' : '-overwrite', 'action' : 'store_true', 'default' : False, 'help' : 'Overwrite on extraction' },
         ])
 
     def run(self, args):
@@ -49,4 +69,7 @@ class Archive(Module):
             log.warn(messages.module_file_archive.archive_type_not_set)
             return
 
-        return PhpFile(os.path.join(self.folder, 'archive.tpl')).run(args)
+        return self.vectors.get_result(
+            name = 'php_%s' % args['archive_type'],
+            format_args = args,
+        )
