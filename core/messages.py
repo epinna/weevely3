@@ -168,6 +168,9 @@ class module_audit_phpconf:
 class module_net_curl:
     empty_response = 'The response is empty, check URL availability'
 
+class module_file_archive:
+    archive_type_not_set = 'Archive type not set and file extension not supported'
+
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
 
