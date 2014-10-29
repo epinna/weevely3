@@ -44,5 +44,6 @@ if($h) {
       $c .= fread($h, 8192);
     }
     fclose($h);
+    print($c);
 }
 % endif
