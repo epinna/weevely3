@@ -12,7 +12,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
       '${h}',
 % endfor
 % if cookie:
-          'Cookie: ${ ' '.join(cookie) }',
+          'Cookie: ${ cookie }',
 % endif
 % if user_agent:
           "User-Agent: ${ user_agent }",

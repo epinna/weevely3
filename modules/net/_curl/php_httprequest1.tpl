@@ -13,14 +13,14 @@ if(class_exists('HttpRequest')) {
             'User-Agent'=>'${ user_agent }',
     % endif
     % if cookie:
-              'Cookie'=>'${ ' '.join(cookie) }',
+              'Cookie'=>'${ cookie }',
     % endif
         )
     );
     % endif
 
     % if data:
-    $r->addRawPostData('${ data }');
+    $r->addRawPostData('${ ''.join(data) }');
     % endif
 
     try {

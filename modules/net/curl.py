@@ -45,7 +45,7 @@ class Curl(Module):
               name = 'php_httprequest1',
             ),
             ShellCmd(
-              payload = """curl -s ${ '-A %s' % user_agent if user_agent else '' } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if request else '' } ${ '-H '.join(header) } ${ '-b '.join(cookie) } ${ '-d '.join(data) } ${ url }""",
+              payload = """curl -s ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } ${ ' '.join([ "-d '%s'" % d for d in data ]) } '${ url }'""",
               name = 'sh_curl',
             )
             ]
@@ -55,8 +55,8 @@ class Curl(Module):
           { 'name' : 'url' },
           { 'name' : '--header', 'dest' : 'header', 'action' : 'append', 'default' : [] },
           { 'name' : '-H', 'dest' : 'header', 'action' : 'append', 'default' : [] },
-          { 'name' : '--cookie', 'dest' : 'cookie', 'action' : 'append', 'default' : [] },
-          { 'name' : '-b', 'dest' : 'cookie', 'action' : 'append', 'default' : [] },
+          { 'name' : '--cookie', 'dest' : 'cookie' },
+          { 'name' : '-b', 'dest' : 'cookie' },
           { 'name' : '--data', 'dest' : 'data', 'action' : 'append', 'default' : [] },
           { 'name' : '-d', 'dest' : 'data', 'action' : 'append', 'default' : [] },
           { 'name' : '--user-agent', 'dest' : 'user_agent' },
