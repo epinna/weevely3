@@ -18,11 +18,12 @@ foreach($fs as $f) {
 
 ## Here decompress
 % if decompress:
-    if(strlen($f) < 3 || substr($f, -3, 3) !== '.gz') {
+    $ext = pathinfo($f, PATHINFO_EXTENSION);
+    if(!preg_match('/t?gz$/', $ext)) {
         print("Unknown suffix, skipping decompressing");
     }
     else {
-        $nf = substr($f, 0, -3);
+        $nf = substr($f, 0, -strlen($ext)-1);
         if(file_exists($nf)) {
             print("File $nf already exists, skipping decompressing");
         }
