@@ -67,7 +67,10 @@ class Archive(Module):
         # If method is not set, find it from the rpath extension
         if not args.get('method'):
             for atype, aexts in self.supported_types:
-                if any(args['rpath'].endswith(e) for e in aexts):
+                if args['action'] == 'extract' and any(args['rpath'].endswith(e) for e in aexts):
+                    args['method'] = atype
+                    break
+                if args['action'] == 'create' and any(args['rfiles'][0].endswith(e) for e in aexts):
                     args['method'] = atype
                     break
 
@@ -77,7 +80,7 @@ class Archive(Module):
             return
 
         # Check if rpath is readable
-        if not ModuleExec("file_check", [ args['rpath'][0], 'readable' ]).run():
+        if not ModuleExec("file_check", [ args['rpath'], 'readable' ]).run():
             log.warn(messages.module_file_archive.remote_path_check_failed)
             return
 
