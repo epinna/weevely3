@@ -1,7 +1,7 @@
 <%include file="EasyBzip2.class.php"/>
 
-set_time_limit(0);
-ini_set('max_execution_time', 0);
+$f='set_time_limit'&&is_callable($f)&&$f(0);
+$f='ini_set'&&is_callable($f)&&$f('max_execution_time', 0);
 $a = new bzip2;
 % if action == 'create':
 $a->makeBzip2('${ rfiles[0] }','${ rpath }');

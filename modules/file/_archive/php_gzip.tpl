@@ -1,7 +1,7 @@
 <%include file="EasyGzip.class.php"/>
 
-set_time_limit(0);
-ini_set('max_execution_time', 0);
+$f='set_time_limit'&&is_callable($f)&&$f(0);
+$f='ini_set'&&is_callable($f)&&$f('max_execution_time', 0);
 $a = new gzip;
 % if action == 'create':
 $a->makeGzip('${ rfiles[0] }','${ rpath }');
