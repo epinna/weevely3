@@ -71,6 +71,8 @@ class Php(Module):
         args.update({ 'chdir' : chdir })
         command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""").render(**args)
 
+        log.debug('PAYLOAD %s' % command)
+
         # Send command
         response, code = self.channel.send(command)
 
@@ -96,7 +98,6 @@ class Php(Module):
 #           )
 #        )
 
-        log.debug('PAYLOAD %s' % command)
         dlog.info('== RESPONSE ==\n%s==== END ====' % response)
 
         if response: return
