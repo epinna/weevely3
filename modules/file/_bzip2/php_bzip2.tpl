@@ -18,11 +18,12 @@ foreach($fs as $f) {
 
 ## Here decompress
 % if decompress:
-    if(strlen($f) < 4 || substr($f, -4, 4) !== '.bz2') {
+    $ext = pathinfo($f, PATHINFO_EXTENSION);
+    if(!preg_match('/t?bz2?$/', $ext)) {
         print("Unknown suffix, skipping decompressing");
     }
     else {
-        $nf = substr($f, 0, -4);
+        $nf = substr($f, 0, -strlen($ext)-1);
         if(file_exists($nf)) {
             print("File $nf already exists, skipping decompressing");
         }
