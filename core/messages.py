@@ -170,6 +170,9 @@ class module_net_curl:
 
 class module_file_archive:
     archive_type_not_set = 'Archive type not set and file extension not supported'
+    error_extracting_s_file_needed = 'Error extracting %s, first remote file argument must contain the output file path'
+    error_extracting_s_folder_needed = 'Error extracting %s, first remote file argument must contain the output folder path'
+    remote_path_check_failed = "Remote path check failed, please check if exists and is readable"
 
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'

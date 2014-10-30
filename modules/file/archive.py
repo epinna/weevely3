@@ -1,4 +1,4 @@
-from core.vectors import PhpFile
+from core.vectors import PhpFile, ModuleExec
 from core.module import Module
 from core import messages
 from core import modules
@@ -58,23 +58,42 @@ class Archive(Module):
         self.register_arguments([
           { 'name' : 'action', 'choices' : ( 'extract', 'create' ), 'default' : 'extract', 'help' : 'Action extract|create. Default: extract.' },
           { 'name' : 'rpath', 'help' : 'Remote archive file path' },
-          { 'name' : 'rfiles', 'help' : 'Files to add on creation', 'nargs' : '*', 'default' : [ '.' ] },
+          { 'name' : 'rfiles', 'help' : 'Files to add on creation', 'nargs' : '+' },
           { 'name' : '-method', 'choices' : [ t[0] for t in self.supported_types ] },
         ])
 
     def run(self, args):
 
-        args['templates'] = self.folder
-
+        # If method is not set, find it from the rpath extension
         if not args.get('method'):
             for atype, aexts in self.supported_types:
                 if any(args['rpath'].endswith(e) for e in aexts):
                     args['method'] = atype
                     break
 
+        # With no available method, exits
         if not args.get('method'):
             log.warn(messages.module_file_archive.archive_type_not_set)
             return
+
+        # Check if rpath is readable
+        if not ModuleExec("file_check", [ args['rpath'][0], 'readable' ]).run():
+            log.warn(messages.module_file_archive.remote_path_check_failed)
+            return
+
+        if args['action'] == 'extract':
+
+            rfile_0_folder = ModuleExec("file_check", [ args['rfiles'][0], 'dir' ]).run()
+
+            # Extracting gzip, bzip, and bzip2, rfiles[0] hasn't to be a folder
+            if (args['method'] in ('gzip', 'bzip', 'bzip2') and rfile_0_folder):
+                log.warn(messages.module_file_archive.error_extracting_s_file_needed % args['method'])
+                return
+
+            # Extracting tar and tgz, rfiles[0] has to be a folder
+            if (args['method'] in ('tar', 'tgz') and not rfile_0_folder):
+                log.warn(messages.module_file_archive.error_extracting_s_folder_needed % args['method'])
+                return
 
         return self.vectors.get_result(
             name = 'php_%s' % args['method'],
