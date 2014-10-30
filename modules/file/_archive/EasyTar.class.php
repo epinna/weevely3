@@ -200,10 +200,3 @@ $test->extractTar('./toto.Tar', './new/');
 		else return false;
 	}
 }
-
-$a = new tar;
-% if action == 'create':
-$a->makeTar('${ rpath_files[0] }','${ rpath_archive }');
-% elif action == 'extract':
-$a->extractTar('${ rpath_archive }', '${ rpath_files[0] }');
-% endif

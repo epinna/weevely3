@@ -52,10 +52,3 @@ $test->extractGzip('./toto.gzip', './new/');
 		return false;
 	}
 }
-
-$a = new gzip;
-% if action == 'create':
-$a->makeGzip('${ rpath_files[0] }','${ rpath_archive }');
-% elif action == 'extract':
-$a->extractGzip('${ rpath_archive }', '${ rpath_files[0] }');
-% endif

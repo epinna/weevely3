@@ -25,51 +25,58 @@ class Archive(Module):
         self.register_vectors(
             [
             PhpFile(
-              payload_path = os.path.join(self.folder, 'EasyBzip2.class.php.tpl'),
+              payload_path = os.path.join(self.folder, 'php_bzip2.tpl'),
               name = 'php_bzip2',
             ),
             PhpFile(
-              payload_path = os.path.join(self.folder, 'EasyTar.class.php.tpl'),
+              payload_path = os.path.join(self.folder, 'php_tar.tpl'),
               name = 'php_tar',
             ),
             PhpFile(
-              payload_path = os.path.join(self.folder, 'EasyGzip.class.php.tpl'),
+              payload_path = os.path.join(self.folder, 'php_gzip.tpl'),
               name = 'php_gzip',
             ),
             PhpFile(
-              payload_path = os.path.join(self.folder, 'EasyZip.class.php.tpl'),
+              payload_path = os.path.join(self.folder, 'php_zip.tpl'),
               name = 'php_zip',
+            ),
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'php_tgz.tpl'),
+              name = 'php_tgz',
             )
             ]
         )
 
-        self.supported_types = {
-            'tar' : [ '.tar' ],
-            'gzip' : [ '.gz', '.tgz' ],
-            'zip' : [ '.zip' ],
-            'bzip2' : [ '.bz2' ],
-        }
+        self.supported_types = (
+            ('tgz', ( '.tgz', '.tar.gz' )),
+            ('tar', ( '.tar' )),
+            ('gzip', ( '.gz' )),
+            ('zip', ( '.zip' )),
+            ('bzip2', ( '.bz2' )),
+        )
 
         self.register_arguments([
           { 'name' : 'action', 'choices' : ( 'extract', 'create' ), 'default' : 'extract', 'help' : 'Action extract|create. Default: extract.' },
-          { 'name' : 'rpath_archive', 'help' : 'Remote archive file path' },
-          { 'name' : 'rpath_files', 'help' : 'Files to add on creation', 'nargs' : '*', 'default' : [ '.' ] },
-          { 'name' : '-archive-type', 'choices' : self.supported_types.keys() },
+          { 'name' : 'rpath', 'help' : 'Remote archive file path' },
+          { 'name' : 'rfiles', 'help' : 'Files to add on creation', 'nargs' : '*', 'default' : [ '.' ] },
+          { 'name' : '-method', 'choices' : [ t[0] for t in self.supported_types ] },
         ])
 
     def run(self, args):
 
-        if not args.get('archive_type'):
-            for atype, aexts in self.supported_types.items():
-                if any(args['rpath_archive'].endswith(e) for e in aexts):
-                    args['archive_type'] = atype
+        args['templates'] = self.folder
+
+        if not args.get('method'):
+            for atype, aexts in self.supported_types:
+                if any(args['rpath'].endswith(e) for e in aexts):
+                    args['method'] = atype
                     break
 
-        if not args.get('archive_type'):
+        if not args.get('method'):
             log.warn(messages.module_file_archive.archive_type_not_set)
             return
 
         return self.vectors.get_result(
-            name = 'php_%s' % args['archive_type'],
+            name = 'php_%s' % args['method'],
             format_args = args,
         )

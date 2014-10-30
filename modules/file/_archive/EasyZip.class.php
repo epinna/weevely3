@@ -92,10 +92,3 @@ $test->extractZip('./toto.zip', './new/');
 			$zip->addFile($dir, str_replace($racine, '', $dir));
 	}
 }
-
-$a = new zip;
-% if action == 'create':
-$a->makeZip('${ rpath_files[0] }','${ rpath_archive }');
-% elif action == 'extract':
-$a->extractZip('${ rpath_archive }', '${ rpath_files[0] }');
-% endif

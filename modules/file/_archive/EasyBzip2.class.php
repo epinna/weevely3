@@ -52,10 +52,3 @@ $test->extractBzip2('./toto.bzip2', './new/');
 		return false;
 	}
 }
-
-$a = new bzip2;
-% if action == 'create':
-$a->makeBzip2('${ rpath_files[0] }','${ rpath_archive }');
-% elif action == 'extract':
-$a->extractBzip2('${ rpath_archive }', '${ rpath_files[0] }');
-% endif
