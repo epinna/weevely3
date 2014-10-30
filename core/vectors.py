@@ -9,12 +9,14 @@ The module `core.vectors` defines the following vectors classes.
 """
 
 from mako.template import Template
+from mako.lookup import TemplateLookup
 from core.weexceptions import DevException, ModuleError
 from core.loggers import log
 from core import modules
 from core import utilities
 from core import messages
 import re
+import os
 import thread
 
 class Os:
@@ -216,6 +218,8 @@ class PhpFile(PhpCode):
         except Exception as e:
             raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
 
+        self.folder, self.name = os.path.split(payload_path)
+
         ModuleExec.__init__(
             self,
             module = 'shell_php',
@@ -226,6 +230,29 @@ class PhpFile(PhpCode):
             background = background
         )
 
+    def format(self, values):
+        """Format and minify the payload.
+
+        This format the vector payloads using Mako template. Then minify it.
+        Also set a TemplateLookup to the template folder, to allow an easy
+        `<% include>` tag usage.
+
+        Args:
+            values (dict): The values passed as arguments of Mako
+            `template.Template(arg[n]).render(**values)`
+
+        Returns:
+            A list of string containing the formatted payloads.
+
+        """
+
+        return [ self._minify(
+                    Template(
+                        text = arg,
+                        lookup = TemplateLookup(directories = [ self.folder ])
+                        ).render(**values)
+                 ) for arg in self.arguments
+                ]
 
 class ShellCmd(PhpCode):
 
