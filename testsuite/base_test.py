@@ -71,3 +71,10 @@ class BaseTest(TestCase):
             shell=shell,
             executable=executable
         )
+
+    def check_output(self, command, shell=True, executable='/bin/bash'):
+        return subprocess.check_output(
+            command,
+            shell=shell,
+            executable=executable
+        )
