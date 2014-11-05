@@ -23,7 +23,7 @@ class FileCheck(BaseFilesystem):
                             )
 
         # Change mode of the first file to 777
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', self.files_abs[0]),
             shell=True)
 
@@ -35,12 +35,12 @@ class FileCheck(BaseFilesystem):
         ]
 
         # Change mode of the forth file to -r--r--r-- 0444 read
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0444', self.files_abs[3]),
             shell=True)
 
         # Change mode of the forth folder to --wx-wx-wx 0333 write & execute
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0333', self.folders_abs[3]),
             shell=True)
 
@@ -49,17 +49,17 @@ class FileCheck(BaseFilesystem):
     def tearDown(self):
 
         # Reset recursively all the permissions to 0777
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
             shell=True)
 
         for folder in reversed(self.folders_abs):
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_remove_s % (self.files_abs.pop()),
                 shell=True)
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 

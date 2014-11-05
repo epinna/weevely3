@@ -17,16 +17,16 @@ class FileDOwnload(BaseTest):
         modules.load_modules(session)
 
         self.file_ok = os.path.join(config.script_folder, 'ok.test')
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_content_s_to_s % ('OK', self.file_ok),
             shell=True)
 
         self.file_ko = os.path.join(config.script_folder, 'ko.test')
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_content_s_to_s % ('KO', self.file_ko),
             shell=True)
         # Set ko.test to ---x--x--x 0111 execute, should be no readable
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0111', self.file_ko),
             shell=True)
 
@@ -35,11 +35,11 @@ class FileDOwnload(BaseTest):
 
     def tearDown(self):
 
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', '%s %s' % (self.file_ok, self.file_ko)),
             shell=True)
 
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_remove_s % ('%s %s' % (self.file_ok, self.file_ko)),
             shell=True)
 

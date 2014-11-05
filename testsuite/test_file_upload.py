@@ -17,7 +17,7 @@ class FileUpload(BaseTest):
         modules.load_modules(session)
 
         self.filenames = [ 'ok.test' ]
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_content_s_to_s % ('OK', os.path.join(config.script_folder, self.filenames[0])),
             shell=True)
 
@@ -27,7 +27,7 @@ class FileUpload(BaseTest):
     def tearDown(self):
 
         for f in self.filenames:
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_remove_s % (os.path.join(config.script_folder, f)),
                 shell=True)
 
@@ -95,10 +95,10 @@ class FileUpload(BaseTest):
 
         # Create an overwritable remote file
         self.filenames.append('f5')
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_content_s_to_s % ('OK', os.path.join(config.script_folder, self.filenames[-1])),
             shell=True)
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', os.path.join(config.script_folder, self.filenames[-1])),
             shell=True)
 
@@ -115,10 +115,10 @@ class FileUpload(BaseTest):
 
         # Create an overwritable remote file
         self.filenames.append('f5')
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_content_s_to_s % ('OK', os.path.join(config.script_folder, self.filenames[-1])),
             shell=True)
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', os.path.join(config.script_folder, self.filenames[-1])),
             shell=True)
 

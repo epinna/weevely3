@@ -24,7 +24,7 @@ class BaseFilesystem(BaseTest):
         for folder in [ utilities.randstr() for f in range(0, deepness) ]:
 
             folders_abs.append(os.path.join(*[ folders_abs[-1], folder ] ))
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_mkdir_s % (folders_abs[-1]),
                 shell=True)
 
@@ -54,7 +54,7 @@ class BaseFilesystem(BaseTest):
 
             files_abs.append(os.path.join(folder_abs, file_name))
             files_rel.append(files_abs[-1].replace(config.script_folder, ''))
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_content_s_to_s % ('1' if not file_content_list else file_content_list.pop(0), files_abs[-1]),
                 shell=True)
 

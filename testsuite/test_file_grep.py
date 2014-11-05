@@ -29,7 +29,7 @@ class FileGrep(BaseFilesystem):
                             )
 
         # Change mode of the third file to ---x--x--x 0111 execute
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0111', self.files_abs[3]),
             shell=True)
 
@@ -37,17 +37,17 @@ class FileGrep(BaseFilesystem):
 
     def tearDown(self):
         # Reset recursively all the permissions to 0777
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
             shell=True)
 
         for folder in reversed(self.folders_abs):
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_remove_s % (self.files_abs.pop()),
                 shell=True)
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 

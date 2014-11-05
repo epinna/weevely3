@@ -21,7 +21,7 @@ class Curl(BaseTest):
             os.path.join(config.script_folder, fname)
             ]
 
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_content_s_to_s % ('<?php print_r(\$_SERVER);print_r(\$_REQUEST); ?>', self.files[0]),
             shell=True)
 
@@ -42,7 +42,7 @@ class Curl(BaseTest):
     def tearDown(self):
 
         for f in self.files:
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_remove_s % (f),
                 shell=True)
 

@@ -24,17 +24,17 @@ class UploadWeb(BaseFilesystem):
         # Create the folder tree
         self.folders_abs, self.folders_rel =  self.populate_folders()
 
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', self.folders_abs[0]),
             shell=True)
 
         # Change mode of the folders [1] and [3] to -r-xr-xr-x 0555 read & execute
         for fold in (self.folders_abs[1], self.folders_abs[3]):
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_chmod_s_s % ('0555', fold),
                 shell=True)
 
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', self.folders_abs[2]),
             shell=True)
 
@@ -45,20 +45,20 @@ class UploadWeb(BaseFilesystem):
     def tearDown(self):
 
         for f in self.filenames:
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_remove_s % (os.path.join(config.script_folder, f)),
                 shell=True)
 
         # This has to be done before and in order, since in case of
         # nonwritable/writable folders the writable one can't be deleted.
         for folder in self.folders_abs:
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_chmod_s_s % ('0777', folder),
                 shell=True)
 
         for folder in reversed(self.folders_abs):
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 

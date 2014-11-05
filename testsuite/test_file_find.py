@@ -28,27 +28,27 @@ class FindPerms(BaseFilesystem):
                             )
 
         # Change mode of the first file to ---x--x--x 0111 execute
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0111', self.files_abs[0]),
             shell=True)
 
         # Change mode of the second file to --w--w--w- 0222 write
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0222', self.files_abs[1]),
             shell=True)
 
         # Change mode of the third file to --wx-wx-wx 0333 write & execute
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0333', self.files_abs[2]),
             shell=True)
 
         # Change mode of the forth file to -r--r--r-- 0444 read
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0444', self.files_abs[3]),
             shell=True)
 
         # Change mode of the first folder to -rwxrwxrwx 0777 read, write, & execute
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0777', self.folders_abs[1]),
             shell=True)
 
@@ -57,17 +57,17 @@ class FindPerms(BaseFilesystem):
     def tearDown(self):
 
         # Reset recursively all the permissions to 0777
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
             shell=True)
 
         for folder in reversed(self.folders_abs):
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_remove_s % (self.files_abs.pop()),
                 shell=True)
 
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 

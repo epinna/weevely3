@@ -23,7 +23,7 @@ class FileCd(BaseFilesystem):
         self.folders, folders_rel = self.populate_folders()
         
         # Change mode of the last folder to 0
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('0', self.folders[-1]),
             shell=True)
 
@@ -32,12 +32,12 @@ class FileCd(BaseFilesystem):
     def tearDown(self):
 
         # Reset mode of the last folder to 777
-        subprocess.check_call(
+        self.check_call(
             config.cmd_env_chmod_s_s % ('777', self.folders[-1]),
             shell=True)
 
         for folder in reversed(self.folders):
-            subprocess.check_call(
+            self.check_call(
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 

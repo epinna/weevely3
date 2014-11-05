@@ -64,3 +64,10 @@ class BaseTest(TestCase):
                 config.cmd_env_remove_s % cls.path,
                 shell=True
             )
+
+    def check_call(self, command, shell=True, executable='/bin/bash'):
+        subprocess.check_call(
+            command,
+            shell=shell,
+            executable=executable
+        )
