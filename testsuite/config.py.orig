@@ -65,3 +65,12 @@ sql_user = ''
 sql_passwd = ''
 # Set if automatically connect if e.g. mysql default login is set
 sql_autologin = True
+
+
+#
+# Module net_curl options
+#
+# List of vectors to skip. Default contains 'php_httprequest1' because
+# class HttpRequest provided by the version 1 of the pecl_http PECL
+# extension is hardly remotely installed.
+curl_skip_vectors = [ 'php_httprequest1' ]

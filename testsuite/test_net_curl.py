@@ -31,6 +31,11 @@ class Curl(BaseTest):
                             )
                     ]
 
+        self.vector_list = [
+            m for m in modules.loaded['net_curl'].vectors.get_names()
+            if m not in config.curl_skip_vectors
+        ]
+
         self.run_argv = modules.loaded['net_curl'].run_argv
 
 
@@ -46,7 +51,7 @@ class Curl(BaseTest):
 
     def test_curl(self):
 
-        for vect in modules.loaded['net_curl'].vectors.get_names():
+        for vect in self.vector_list:
 
             # Simple GET
             self.assertIn(
@@ -97,7 +102,7 @@ class Curl(BaseTest):
     @log_capture()
     def test_unreachable(self, log_captured):
 
-        for vect in modules.loaded['net_curl'].vectors.get_names():
+        for vect in self.vector_list:
 
             self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus', '-vector', vect ]))
             self.assertEqual(messages.module_net_curl.empty_response,
@@ -110,7 +115,7 @@ class Curl(BaseTest):
     @log_capture()
     def test_filtered(self, log_captured):
 
-        for vect in modules.loaded['net_curl'].vectors.get_names():
+        for vect in self.vector_list:
 
             self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '-vector', vect, '--connect-timeout', '1' ]))
             self.assertEqual(messages.module_net_curl.empty_response,
@@ -123,7 +128,7 @@ class Curl(BaseTest):
     @log_capture()
     def test_closed(self, log_captured):
 
-        for vect in modules.loaded['net_curl'].vectors.get_names():
+        for vect in self.vector_list:
 
             self.assertIsNone(self.run_argv([ 'http://localhost:9999', '-vector', vect, '--connect-timeout', '1' ]))
             self.assertEqual(messages.module_net_curl.empty_response,
@@ -135,7 +140,7 @@ class Curl(BaseTest):
 
     def test_output_remote(self):
 
-        for vect in modules.loaded['net_curl'].vectors.get_names():
+        for vect in self.vector_list:
 
             self.files.append(os.path.join(config.script_folder, 'test_%s' % vect))
             self.assertTrue(self.run_argv([ self.urls[0], '-vector', vect, '-o', self.files[-1] ]))
@@ -146,7 +151,7 @@ class Curl(BaseTest):
     def test_output_local(self):
 
         temp_file = tempfile.NamedTemporaryFile()
-        for vect in modules.loaded['net_curl'].vectors.get_names():
+        for vect in self.vector_list:
 
             self.files.append(temp_file.name)
             self.assertTrue(self.run_argv([ self.urls[0], '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ]))
