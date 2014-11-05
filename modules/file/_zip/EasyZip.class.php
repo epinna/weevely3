@@ -14,6 +14,8 @@
  | See the GNU General Public License for more details on http://www.gnu.org/licenses/
  +--------------------------------------------------
  http://www.phpclasses.org/browse/package/4239.html **/
+// I remove every reference to realpath(), due I prefer to store files
+// into the zip with the given relative path.
 class zip
 {
 /**
@@ -25,7 +27,7 @@ $test->extractZip('./toto.zip', './new/');
 **/
 	function infosZip ($src, $data=true)
 	{
-		if (($zip = zip_open(realpath($src))))
+		if (($zip = zip_open($src)))
 		{
 			while (($zip_entry = zip_read($zip)))
 			{
@@ -68,9 +70,9 @@ $test->extractZip('./toto.zip', './new/');
 			foreach ($src as $item)
 			{
 				if (is_dir($item))
-					$this->addZipItem($zip, realpath(dirname($item)).'/', realpath($item).'/');
+					$this->addZipItem($zip, dirname($item).'/', $item.'/');
 				elseif(is_file($item))
-					$zip->addFile(realpath($item), basename(realpath($item)));
+					$zip->addFile($item, basename($item));
 			}
 			$zip->close();
 			return true;
