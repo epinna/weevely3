@@ -25,7 +25,8 @@ $test->extractBzip2('./toto.bzip2', './new/');
 **/
 	function makeBzip2($src, $dest=false)
 	{
-		$Bzip2 = bzcompress((strpos(chr(0),$src) ? file_get_contents ($src) : $src), 6);
+        // Adjusted to use $src just as file path instead of data source
+		$Bzip2 = bzcompress(file_get_contents ($src), 6);
 		if (empty($dest)) return $Bzip2;
 		elseif (file_put_contents($dest, $Bzip2)) return $dest;
 		return false;
