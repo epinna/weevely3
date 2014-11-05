@@ -22,7 +22,7 @@ class SystemInfo(BaseTest):
             payload = modules.loaded['shell_sh'].vectors[i].arguments[0]
 
             if name != vector_safe_name:
-                modules.loaded['shell_sh'].vectors[i] = PhpCode('#%s' % payload, name)
+                modules.loaded['shell_sh'].vectors[i] = PhpCode('\'"%s' % payload, name)
 
     def test_run_unless(self):
 
