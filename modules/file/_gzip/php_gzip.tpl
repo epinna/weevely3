@@ -25,7 +25,7 @@ foreach($fs as $f) {
     else {
         $nf = substr($f, 0, -strlen($ext)-1);
         if(file_exists($nf)) {
-            print("File $nf already exists, skipping decompressing");
+            print("File '$nf' already exists, skipping decompressing");
         }
         else {
             $a->extractGzip($f, $nf);
@@ -38,7 +38,7 @@ foreach($fs as $f) {
 % else:
 
         if(file_exists($f.'.gz')) {
-            print("File $f.'.gz' already exists, skipping compressing");
+            print("File '$f.gz' already exists, skipping compressing");
         }
         else {
                 $a->makeGzip($f, $f.'.gz');
