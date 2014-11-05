@@ -43,6 +43,8 @@ cmd_env_stat_time_modif_epoch_s = 'stat -c %%Y "%s"'
 cmd_env_gzip_s = 'gzip "%s"'
 cmd_env_gunzip_s = 'gunzip "%s"'
 cmd_env_print_repr_s = """python -c 'import sys;sys.stdout.write(repr(open("%s","rb").read()).strip()[1:-1])'"""
+cmd_env_bzip2_s = 'bzip2 "%s"'
+cmd_env_bunzip2_s = 'bunzip2 "%s"'
 
 # These are the permissions required in `script_folder`, validated by
 # the testsuite. If change please keep in mind that the user running
