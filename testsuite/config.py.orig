@@ -37,7 +37,7 @@ cmd_env_chmod_s_s = 'chmod %s %s'
 cmd_env_mkdir_s = 'mkdir %s'
 cmd_env_rmdir_s = 'rmdir %s'
 cmd_env_remove_s = 'rm -f %s'
-cmd_env_content_s_to_s = 'echo -n "%s" > %s'
+cmd_env_content_s_to_s = 'echo -ne "%s" > %s'
 cmd_env_stat_permissions_s = 'stat -c %%a "%s"'
 cmd_env_stat_time_modif_epoch_s = 'stat -c %%Y "%s"'
 
