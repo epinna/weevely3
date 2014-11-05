@@ -25,7 +25,9 @@ $test->extractGzip('./toto.gzip', './new/');
 **/
 	function makeGzip($src, $dest=false)
 	{
-		$Gzip = gzencode((strpos(chr(0),$src) ? file_get_contents ($src) : $src), 6);
+        // Adjusted to use $src just as file path instead of data source
+
+		$Gzip = gzencode(file_get_contents ($src), 6);
 		if (empty($dest)) return $Gzip;
 		elseif (file_put_contents($dest, $Gzip)) return $dest;
 		return false;
