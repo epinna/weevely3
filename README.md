@@ -15,7 +15,7 @@ It is a swiss army knife to administrate a web account, even in restricted remot
 
 ### The modular framework
 
-Weevely modules extend the terminal providing a layer to interact to the remote target. 
+Weevely modules extend the terminal providing a layer to interact with the target. 
 
 The modules feature:
 
@@ -27,7 +27,6 @@ The modules feature:
 * Run scans or pivoted exploiting through target network
 * File transfer from and to target
 * Spawn reverse and direct TCP shells
-* Bruteforce SQL accounts through target system users
 
 ### The backdoor agent
 
