@@ -27,38 +27,36 @@ class FileZip(BaseFilesystem):
         self.zips_abs = []
         self.zips_rel = []
 
-        for index in range(0,1):
+        # Create the folder tree
+        self.folders_abs, self.folders_rel =  self.populate_folders()
+        self.files_abs, self.files_rel = self.populate_files(
+                                    self.folders_abs,
+                                    [ 'f1', 'f2', 'f3', 'f4' ]
+                                )
 
-            # Create the folder tree
-            folders_abs, folders_rel =  self.populate_folders()
-            files_abs, files_rel = self.populate_files(
-                                folders_abs,
-                                [
-                                    'f1_%i' % index,
-                                    'f2_%i' % index,
-                                    'f3_%i' % index,
-                                    'f4_%i' % index ]
-                            )
+        self.zips_rel.append('test_0.zip')
+        self.zips_abs.append(os.path.join(config.script_folder, self.zips_rel[0]))
 
-            self.folders_abs += folders_abs
-            self.folders_rel += folders_rel
-            self.files_abs += files_abs
-            self.files_rel += files_rel
-
-            self.zips_rel.append('test_%i.zip' % index)
-            self.zips_abs.append(os.path.join(config.script_folder, self.zips_rel[index]))
-
-            self.check_call(config.cmd_env_cd_s_zip_s_s % (
-                config.script_folder,
-                self.zips_rel[index],
-                self.folders_rel[index]
-                )
+        self.check_call(config.cmd_env_cd_s_zip_s_s % (
+            config.script_folder,
+            self.zips_abs[0],
+            self.folders_rel[0]
             )
+        )
 
-            # Now remove the folder tree leaving the zip
-            self._delete_tree()
+        # Other file for testing multiple file zipping
+        self.other_file_rel = 'f5'
+        self.other_file_abs = os.path.join(config.script_folder, self.other_file_rel)
+        self.check_call(
+            config.cmd_env_content_s_to_s % ('1', self.other_file_abs)
+        )
+
+        # Now remove the folder tree leaving the zip
+        self._delete_tree()
 
         self.run_argv = modules.loaded['file_zip'].run_argv
+
+        self.skip_deletion_teardown = False
 
     def _delete_tree(self):
 
@@ -75,13 +73,16 @@ class FileZip(BaseFilesystem):
             self.check_call(config.cmd_env_rmdir_s % (folder))
 
     def _delete_zips(self):
-        for folder in self.zips_abs:
-            self.check_call(config.cmd_env_remove_s % (folder))
+        for zipfile in self.zips_abs:
+            self.check_call(config.cmd_env_remove_s % (zipfile))
 
     def tearDown(self):
-        self._delete_tree()
-        self._delete_zips()
 
+        if self.skip_deletion_teardown: return
+
+        self._delete_tree()
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_zips()
 
     def test_compress_decompress(self):
 
@@ -93,13 +94,62 @@ class FileZip(BaseFilesystem):
             self.check_call(config.cmd_env_stat_permissions_s % folder)
 
         # Compress it again giving starting folder
-        self.assertTrue(self.run_argv(['test_0_1.zip', self.folders_abs[0]]));
-        self.zips_rel.append('test_0_1.zip')
+        self.assertTrue(self.run_argv(['test_1.zip', self.folders_rel[0]]));
+        self.zips_rel.append('test_1.zip')
         self.zips_abs.append(os.path.join(config.script_folder, self.zips_rel[-1]))
 
         # Uncompress the new archive and recheck
-        self.assertTrue(self.run_argv(["--decompress", 'test_0_1.zip', '.']));
+        self.assertTrue(self.run_argv(["--decompress", 'test_1.zip', '.']));
         for file in self.files_abs:
             self.assertEqual(self.check_output(config.cmd_env_print_repr_s % file),'1')
         for folder in self.folders_abs:
             self.check_call(config.cmd_env_stat_permissions_s % folder)
+
+    def test_compress_multiple(self):
+
+        # Uncompress test.zip
+        self.assertTrue(self.run_argv(["--decompress", 'test_0.zip', '.']));
+        for file in self.files_abs:
+            self.assertEqual(self.check_output(config.cmd_env_print_repr_s % file),'1')
+        for folder in self.folders_abs:
+            self.check_call(config.cmd_env_stat_permissions_s % folder)
+
+        # Create a new zip adding also other_file
+        self.assertTrue(self.run_argv(['test_2.zip', self.folders_rel[0], self.other_file_rel]));
+        self.zips_rel.append('test_2.zip')
+        self.zips_abs.append(os.path.join(config.script_folder, self.zips_rel[-1]))
+
+        # Uncompress the new archive and recheck
+        self.assertTrue(self.run_argv(["--decompress", 'test_2.zip', '.']));
+        for file in self.files_abs:
+            self.assertEqual(self.check_output(config.cmd_env_print_repr_s % file),'1')
+        for folder in self.folders_abs:
+            self.check_call(config.cmd_env_stat_permissions_s % folder)
+
+        self.check_call(config.cmd_env_stat_permissions_s % self.other_file_abs)
+
+    @log_capture()
+    def test_already_exists(self, log_captured):
+
+        self.skip_deletion_teardown = True
+
+        # Create a new zip with other_file, with the name test_0.zip
+        self.assertIsNone(self.run_argv(['test_0.zip', self.other_file_rel]));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "File 'test_0.zip' already exists, skipping compressing")
+
+    @log_capture()
+    def test_unexistant_decompress(self, log_captured):
+        self.skip_deletion_teardown = True
+
+        self.assertIsNone(self.run_argv(["--decompress", 'bogus', '.']));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "Skipping file 'bogus', check existance and permission")
+
+    @log_capture()
+    def test_unexistant_compress(self, log_captured):
+        self.skip_deletion_teardown = True
+
+        self.assertIsNone(self.run_argv(['bogus.zip', 'bogus']));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "File 'bogus.zip' not created, check existance and permission")
