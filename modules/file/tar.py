@@ -43,10 +43,10 @@ class Tar(Module):
 
         if args.get('z'):
             ModuleExec('file_gzip', [ '--keep', '--decompress', args['rtar'] ]).run()
-            args['rtar'] = ''.join(args['rtar'].split('.')[:-1])
+            args['rtar'] = '.'.join(args['rtar'].split('.')[:-1])
         elif args.get('j'):
             ModuleExec('file_bzip2', [ '--keep', '--decompress', args['rtar'] ]).run()
-            args['rtar'] = ''.join(args['rtar'].split('.')[:-1])
+            args['rtar'] = '.'.join(args['rtar'].split('.')[:-1])
 
         # The correct execution returns something only on errors
         result_err = self.vectors.get_result(
