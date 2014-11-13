@@ -58,19 +58,15 @@ $test->extractTar('./toto.Tar', './new/');
 	}
 	function extractTar ($src, $dest)
 	{
-		if ($this->is_tar($src))
-		{
-		  file_put_contents ($tmp=TMP_CACHE_LOCATION.'/~tmp('.microtime().').tar', $src);
-		  $src = $tmp;
-		}
 		$ptr = fopen($src, 'r');
 		while (!feof($ptr))
 		{
             $infos = $this->readTarHeader ($ptr);
 
             // @weevely3
-            // Sanitize name field
-            $dest.$infos['name'] = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $dest.$infos['name']);
+            // Sanitize name field from unprintable char, and join name and dest folder properly
+            $infos['name'] = ltrim(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $infos['name']), DIRECTORY_SEPARATOR);
+            $dest = trim($dest, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
 			if ($infos['type']=='5' && @mkdir($dest.$infos['name'], 0775, true))
 			  $result[]=$dest.$infos['name'];
@@ -78,11 +74,7 @@ $test->extractTar('./toto.Tar', './new/');
 			  $result[]=$dest.$infos['name'];
 			if ($infos)
 			  chmod($dest.$infos['name'], 0775);
-// 				chmod(, $infos['mode']);
-// 				chgrp(, $infos['uname']);
-// 				chown(, $infos['gname']);
 		}
-		if (is_file($tmp)) unlink($tmp);
 		return $result;
 	}
 	function is_tar($str)
