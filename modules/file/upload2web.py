@@ -30,10 +30,9 @@ class Upload2web(Module):
 
     def _get_env_info(self, script_url):
 
-        script_folder_data = ModuleExec('system_info', [ '-info', 'script_folder' ]).run()
-        if not script_folder_data or not script_folder_data.get('script_folder'): return
+        script_folder = ModuleExec('system_info', [ '-info', 'script_folder' ]).load_result_or_run('script_folder')
+        if not script_folder: return
 
-        script_folder = script_folder_data.get('script_folder')
         script_url_splitted = urlparse.urlsplit(script_url)
         script_url_path_folder, script_url_path_filename = os.path.split(
             script_url_splitted.path)

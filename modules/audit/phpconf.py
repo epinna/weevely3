@@ -20,7 +20,7 @@ class Phpconf(Module):
         )
 
     def _check_user(self):
-        user = ModuleExec('system_info', [ '-info', 'whoami' ]).run().get('whoami')
+        user = ModuleExec('system_info', [ '-info', 'whoami' ]).load_result_or_run('whoami')
         if not user: return messages.module_audit_phpconf.error
 
         result = user
@@ -31,10 +31,10 @@ class Phpconf(Module):
 
     def _check_openbasedir(self):
 
-        open_basedir = ModuleExec('system_info', [ '-info', 'open_basedir' ]).run().get('open_basedir')
+        open_basedir = ModuleExec('system_info', [ '-info', 'open_basedir' ]).load_result_or_run('open_basedir')
         if not open_basedir: return messages.module_audit_phpconf.basedir_unrestricted
 
-        dir_sep = ModuleExec('system_info', [ '-info', 'dir_sep' ]).run().get('dir_sep')
+        dir_sep = ModuleExec('system_info', [ '-info', 'dir_sep' ]).load_result_or_run('dir_sep')
         if not self.os_type or not dir_sep: return messages.module_audit_phpconf.error
 
         path_sep = ':' if 'win' in self.os_type else ';'
@@ -179,13 +179,14 @@ class Phpconf(Module):
 
     def run(self, args):
 
-        self.os_type = ModuleExec('system_info', [ '-info', 'os' ]).run().get('os')
+        self.os_type = ModuleExec('system_info', [ '-info', 'os' ]).load_result_or_run('os')
+        self.php_version = ModuleExec('system_info', [ '-info', 'php_version' ]).load_result_or_run('php_version')
 
         results = [
             ( 'Operating System',
                 self.os_type if self.os_type else 'Undetected' ),
             ( 'PHP version',
-                ModuleExec('system_info', [ '-info', 'php_version' ]).run().get('php_version', 'Undetected') ),
+                self.php_version if self.php_version else 'Undetected' ),
             ( 'User',
                 self._check_user() ),
             ( 'open_basedir',
