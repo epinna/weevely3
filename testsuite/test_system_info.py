@@ -17,13 +17,13 @@ class SystemInfo(BaseTest):
     @log_capture()
     def test_commands(self, log_captured):
 
-        # Get all infos
+        # Get all infos, returns a dict
         vectors_names = [v.name for v in modules.loaded['system_info'].vectors ]
         self.assertEqual(set(self.run_argv([]).keys()), set(vectors_names));
 
-        # Get just one info
+        # Get just one info, returns a string
         self.assertEqual(
-                      os.path.split(self.run_argv(["-info", "script"])['script'])[1],
+                      os.path.split(self.run_argv(["-info", "script"]))[1],
                       os.path.split(self.path)[1]
         );
 
