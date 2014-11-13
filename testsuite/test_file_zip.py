@@ -138,6 +138,9 @@ class FileZip(BaseFilesystem):
         self.assertEqual(log_captured.records[-1].msg,
                          "File 'test_0.zip' already exists, skipping compressing")
 
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_zips()
+
     @log_capture()
     def test_unexistant_decompress(self, log_captured):
         self.skip_deletion_teardown = True
@@ -146,6 +149,9 @@ class FileZip(BaseFilesystem):
         self.assertEqual(log_captured.records[-1].msg,
                          "Skipping file 'bogus', check existance and permission")
 
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_zips()
+
     @log_capture()
     def test_unexistant_compress(self, log_captured):
         self.skip_deletion_teardown = True
@@ -153,3 +159,6 @@ class FileZip(BaseFilesystem):
         self.assertIsNone(self.run_argv(['bogus.zip', 'bogus']));
         self.assertEqual(log_captured.records[-1].msg,
                          "File 'bogus.zip' not created, check existance and permission")
+
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_zips()

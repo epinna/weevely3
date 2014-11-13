@@ -138,6 +138,9 @@ class FileTar(BaseFilesystem):
         self.assertEqual(log_captured.records[-1].msg,
                          "File 'test_0.tar' already exists, skipping compressing")
 
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_tars()
+
     @log_capture()
     def test_unexistant_decompress(self, log_captured):
         self.skip_deletion_teardown = True
@@ -146,6 +149,9 @@ class FileTar(BaseFilesystem):
         self.assertEqual(log_captured.records[-1].msg,
                          "Skipping file 'bogus', check existance and permission")
 
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_tars()
+
     @log_capture()
     def test_unexistant_compress(self, log_captured):
         self.skip_deletion_teardown = True
@@ -153,3 +159,6 @@ class FileTar(BaseFilesystem):
         self.assertIsNone(self.run_argv(['bogus.tar', 'bogus']));
         self.assertEqual(log_captured.records[-1].msg,
                          "File 'bogus.tar' not created, check existance and permission")
+
+        self.check_call(config.cmd_env_remove_s % (self.other_file_abs))
+        self._delete_tars()
