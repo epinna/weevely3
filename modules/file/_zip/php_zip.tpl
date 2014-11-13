@@ -32,7 +32,7 @@ else {
     $a->makeZip($fs, $z);
 }
 
-## Due to the makeZip does not complain for missing $z, just double
+## Since makeZip does not complain for missing $z, just double
 ## check the existance of the zipped file and print generic error message
 if(!file_exists($z)) {
     print("File '$z' not created, check existance and permission");

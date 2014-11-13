@@ -48,9 +48,16 @@ $test->extractTar('./toto.Tar', './new/');
 	{
 		$src = is_array($src) ? $src : array($src);
 		$src = array_map('realpath', $src);
-		foreach ($src as $item)
-			$Tar .= $this->addTarItem($item.((is_dir($item) && substr($item, -1)!='/')?'/':''), dirname($item).'/');
+		foreach ($src as $item) {
+          // @weevely3
+          // Skip empty file to avoid creating empty archvies
+          if($item)
+			  $Tar .= $this->addTarItem($item.((is_dir($item) && substr($item, -1)!='/')?'/':''), dirname($item).'/');
+        }
 
+        // @weevely3
+        // When empty, returns
+        if (empty($Tar)) return $Tar;
 		$Tar = str_pad($Tar, floor((strlen($Tar) + 10240 - 1) / 10240) * 10240, "\0");
 		if (empty($dest)) return $Tar;
 		elseif (file_put_contents($dest, $Tar)) return $dest;
