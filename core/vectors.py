@@ -125,6 +125,28 @@ class ModuleExec:
 
         return result
 
+    def load_result_or_run(self, result_name, format_args = {}):
+        """Load a result stored in module session or run the module.
+
+        Return the variable stored or run the `self.run` method.
+
+        Args:
+            field (string): The variable name.
+            format_arg (dict): The dictionary to format the payload with.
+
+        Return:
+            Object. Contains the postprocessed result of the `run_argv`
+            module execution.
+
+        """
+
+        result = modules.loaded[self.module].session[self.module]['results'].get(result_name)
+
+        if result: return result
+        else: return self.run(format_args)
+
+
+
 class PhpCode(ModuleExec):
 
     """This vector contains PHP code.
