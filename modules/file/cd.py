@@ -1,4 +1,4 @@
-from core.vectors import PhpCode
+from core.vectors import PhpCode, ModuleExec
 from core.module import Module
 from core import messages
 from core.loggers import log
@@ -23,16 +23,32 @@ class Cd(Module):
         )
 
         self.register_arguments([
-          { 'name' : 'dir', 'help' : 'Target folder', 'default' : '.', 'nargs' : '?' }
+          { 'name' : 'dir', 'help' : 'Target folder', 'nargs' : '?' }
         ])
 
     def run(self, args):
 
-        chdir = '' if args['dir'] == '.' else "@chdir('%s')&&" % args['dir']
-        folder = PhpCode("""${chdir}print(@getcwd());""", "chdir").run({ 'chdir' : chdir })
+        # When no folder is specified, change folder to SCRIPT_NAME to
+        # simulate the bash behaviour. If not available, use current dir.
+
+        if not args.get('dir'):
+            script_folder = ModuleExec(
+                        'system_info',
+                        [ '-info', 'script_folder' ]
+                    ).load_result_or_run(
+                        result_name = 'script_folder'
+                    )
+
+            args['dir'] = script_folder if script_folder else '.'
+
+        # The execution and result storage is done manually cause
+        # no result has to be stored if the execution fails. This
+        # is not simple to implement using
+        # self.vectors.get_result(.., store_result).
+
+        folder = PhpCode("""@chdir('${dir}')&&print(@getcwd());""", "chdir").run(args)
 
         if folder:
-            # Store cwd used by other modules
             self._store_result('cwd', folder)
         else:
             log.warning(
