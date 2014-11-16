@@ -14,11 +14,10 @@ import string
 import cookielib
 import urllib2
 import itertools
+import tool
 
 referrer_templates_path = 'core/channels/stegaref/referrers.tpl'
 languages_list_path = 'core/channels/stegaref/languages.txt'
-agents_list_path = 'core/channels/stegaref/user-agents.txt'
-
 
 class StegaRef:
 
@@ -50,7 +49,7 @@ class StegaRef:
         self.languages = self._load_languages()
 
         # Load agents
-        self.agents = self._load_agents()
+        self.agents = tool.http.load_all_agents()
 
     def send(self, original_payload):
 
@@ -263,17 +262,6 @@ class StegaRef:
                 raise ChannelException(error_language_start_letter_s % letter)
 
         return languages
-
-    def _load_agents(self):
-
-        try:
-            agents_file = open(agents_list_path)
-        except Exception as e:
-            raise FatalException(
-                messages.generic.error_loading_file_s_s %
-                (languages_list_path, str(e)))
-
-        return agents_file.read().split('\n')
 
     def _generate_header_accept_language(self, positions, session_id):
 
