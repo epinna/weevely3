@@ -3,9 +3,8 @@ from testsuite.base_fs import BaseFilesystem
 from testsuite import config
 from core.sessions import SessionURL
 from core import modules
-from core import utilities
+import tool
 from core import messages
-import core.utilities
 import subprocess
 import os
 

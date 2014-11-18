@@ -4,7 +4,7 @@ from core import messages
 from core import modules
 from core import config
 from core.module import Status
-from core import utilities
+import tool
 from mako import template
 import readline
 import cmd
@@ -100,7 +100,7 @@ class CmdModules(cmd.Cmd):
             for module_name in names:
                 data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
 
-        if data: log.info(utilities.stringify(data, table_border = False))
+        if data: log.info(tool.prettify.tablify(data, table_border = False))
 
         if self.session['shell_sh']['status'] == Status.RUN: print; return
 
@@ -111,7 +111,7 @@ class CmdModules(cmd.Cmd):
             if module.aliases:
                 data.append([ ', '.join(module.aliases), module_name ])
 
-        if data: log.info(utilities.stringify(data, table_border = False))
+        if data: log.info(tool.prettify.tablify(data, table_border = False))
 
         print
 

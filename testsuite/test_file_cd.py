@@ -3,9 +3,8 @@ from testsuite.base_fs import BaseFilesystem
 from testsuite import config
 from core.sessions import SessionURL
 from core import modules
-from core import utilities
+import tool
 from core import messages
-import core.utilities
 import subprocess
 import os
 
@@ -21,7 +20,7 @@ class FileCd(BaseFilesystem):
         modules.load_modules(self.session)
 
         self.folders, folders_rel = self.populate_folders()
-        
+
         # Change mode of the last folder to 0
         self.check_call(
             config.cmd_env_chmod_s_s % ('0', self.folders[-1]),

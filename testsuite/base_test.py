@@ -1,5 +1,5 @@
 from unittest import TestCase
-from core.utilities import randstr
+import tool
 from testsuite import config
 from generate import generate, save_generated
 from core.loggers import stream_handler
@@ -14,7 +14,7 @@ class BaseTest(TestCase):
 
     @classmethod
     def _randomize_bd(cls):
-        cls.password = randstr(10)
+        cls.password = tool.strings.randstr(10)
         password_hash = hashlib.md5(cls.password).hexdigest().lower()
         filename = '%s_%s.php' % (
             __name__, cls.password)

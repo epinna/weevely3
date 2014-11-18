@@ -2,7 +2,7 @@ import random
 import urlparse
 import string
 import urllib
-from core import utilities
+import tool
 from core import messages
 
 
@@ -37,11 +37,11 @@ class FirstRefererFormat:
 
     def rand_number(self, max_size, min_size=1):
 
-        return utilities.randstr(max_size, min_size, string.digits)
+        return tool.strings.randstr(max_size, min_size, string.digits)
 
     def rand_chars(self, max_size, min_size=1):
 
-        return utilities.randstr(max_size, min_size, string.ascii_letters)
+        return tool.strings.randstr(max_size, min_size, string.ascii_letters)
 
     def payload_chunk(self, max_size, min_size=None):
 

