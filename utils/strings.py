@@ -15,9 +15,9 @@ def randstr(n=4, fixed=True, charset=None):
 
     return ''.join(random.choice(charset) for x in range(n))
 
-def divide(str, min_size, max_size, split_size):
-    it = iter(str)
-    size = len(str)
+def divide(data, min_size, max_size, split_size):
+    it = iter(data)
+    size = len(data)
     for i in range(split_size - 1, 0, -1):
         s = random.randint(min_size, size - max_size * i)
         yield ''.join(itertools.islice(it, 0, s))
@@ -29,3 +29,14 @@ def sxor(s1, s2):
         chr(ord(a) ^ ord(b))
         for a, b in zip(s1, itertools.cycle(s2))
     )
+
+def pollute(data, charset, frequency=0.3):
+
+    str_encoded = ''
+    for char in data:
+        if random() < frequency:
+            str_encoded += randstr(1, True, charset) + char
+        else:
+            str_encoded += char
+
+    return str_encoded
