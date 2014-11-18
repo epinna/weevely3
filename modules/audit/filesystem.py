@@ -2,7 +2,7 @@ from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core.loggers import log
 from core import modules
-import tool
+import utils
 
 class Filesystem(Module):
 

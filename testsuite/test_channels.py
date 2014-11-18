@@ -1,6 +1,6 @@
 from testsuite.base_test import BaseTest
 from core.channels.channel import Channel
-import tool
+import utils
 from testsuite.config import script_folder, script_folder_url, test_stress_channels
 from generate import generate, save_generated
 import os
@@ -20,7 +20,7 @@ class BaseDefaultChannel(BaseTest):
             step_rand_to):
 
         for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
-            payload = tool.strings.randstr(i)
+            payload = utils.strings.randstr(i)
             self.assertEqual(
                 self.channel.send(
                     'echo("%s");' %

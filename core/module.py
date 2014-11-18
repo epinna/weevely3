@@ -20,7 +20,7 @@ from core import messages
 from mako.template import Template
 from core import modules
 import shlex
-import tool
+import utils
 import ast
 import os
 
@@ -335,7 +335,7 @@ class Module:
         """
 
         if result not in (None, ''):
-            log.info(tool.prettify.tablify(result))
+            log.info(utils.prettify.tablify(result))
 
 
     def _store_result(self, field, value):

@@ -2,7 +2,7 @@ from testsuite.config import script_folder, script_folder_url
 from generate import generate, save_generated
 from core.channels.channel import Channel
 from unittest import TestCase
-import tool
+import utils
 import random
 import hashlib
 import os
@@ -26,7 +26,7 @@ class TestGenerators(TestCase):
             step_rand_to):
 
         for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
-            payload = tool.strings.randstr(i)
+            payload = utils.strings.randstr(i)
             self.assertEqual(
                 self.channel.send(
                     'echo("%s");' %
@@ -35,7 +35,7 @@ class TestGenerators(TestCase):
 
     @classmethod
     def _randomize_bd(cls):
-        cls.password = tool.strings.randstr(10)
+        cls.password = utils.strings.randstr(10)
         password_hash = hashlib.md5(cls.password).hexdigest().lower()
         filename = '%s_%s.php' % (
             __name__, cls.password)

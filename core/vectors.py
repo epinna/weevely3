@@ -13,7 +13,7 @@ from mako.lookup import TemplateLookup
 from core.weexceptions import DevException, ModuleError
 from core.loggers import log
 from core import modules
-import tool
+import utils
 from core import messages
 import re
 import os
@@ -56,7 +56,7 @@ class ModuleExec:
 
     def __init__(self, module, arguments, name = '', target = 0, postprocess = None, background = False):
 
-        self.name = name if name else tool.strings.randstr()
+        self.name = name if name else utils.strings.randstr()
 
         if isinstance(arguments, list):
             self.arguments = arguments

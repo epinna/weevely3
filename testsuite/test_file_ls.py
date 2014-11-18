@@ -2,7 +2,7 @@ from testsuite.base_fs import BaseFilesystem
 from testsuite import config
 from core.sessions import SessionURL
 from core import modules
-import tool
+import utils
 from core import messages
 import subprocess
 import os

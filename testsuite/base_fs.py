@@ -1,9 +1,9 @@
 from core.channels.channel import Channel
 from testsuite.base_test import BaseTest
-import tool
+import utils
 from testsuite import config
 from core.weexceptions import DevException
-import tool
+import utils
 import subprocess
 import random
 import os
@@ -22,7 +22,7 @@ class BaseFilesystem(BaseTest):
 
         folders_abs = [ config.script_folder ]
 
-        for folder in [ tool.strings.randstr() for f in range(0, deepness) ]:
+        for folder in [ utils.strings.randstr() for f in range(0, deepness) ]:
 
             folders_abs.append(os.path.join(*[ folders_abs[-1], folder ] ))
             self.check_call(
@@ -51,7 +51,7 @@ class BaseFilesystem(BaseTest):
             raise DevException("Error, file names and contents lists have different lengths.")
 
         for folder_abs in dir_abs_paths:
-            file_name = file_name_list.pop(0) if file_name_list else tool.strings.randstr()
+            file_name = file_name_list.pop(0) if file_name_list else utils.strings.randstr()
 
             files_abs.append(os.path.join(folder_abs, file_name))
             files_rel.append(files_abs[-1].replace(config.script_folder, ''))

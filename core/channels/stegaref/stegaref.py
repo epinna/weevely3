@@ -1,7 +1,7 @@
 from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
 from core.loggers import dlog
-import tool
+import utils
 from mako.template import Template
 import core.messages
 import zlib
@@ -14,7 +14,7 @@ import string
 import cookielib
 import urllib2
 import itertools
-import tool
+import utils
 
 referrer_templates_path = 'core/channels/stegaref/referrers.tpl'
 languages_list_path = 'core/channels/stegaref/languages.txt'
@@ -49,7 +49,7 @@ class StegaRef:
         self.languages = self._load_languages()
 
         # Load agents
-        self.agents = tool.http.load_all_agents()
+        self.agents = utils.http.load_all_agents()
 
     def send(self, original_payload):
 
@@ -93,7 +93,7 @@ class StegaRef:
             matched = self.re_response.search(response)
             if matched and matched.group(1):
                 return zlib.decompress(
-                    tool.strings.sxor(
+                    utils.strings.sxor(
                         base64.b64decode(
                             matched.group(1)),
                         self.shared_key))
@@ -101,7 +101,7 @@ class StegaRef:
     def _prepare(self, payload):
 
         obfuscated_payload = base64.urlsafe_b64encode(
-            tool.strings.sxor(
+            utils.strings.sxor(
                 zlib.compress(payload),
                 self.shared_key)).rstrip('=')
 
@@ -203,7 +203,7 @@ class StegaRef:
                     referrer += '%s=%s%s' % (param,
                                              remaining_payload[
                                                  :payload_size],
-                                             tool.strings.randstr(
+                                             utils.strings.randstr(
                                                  padding_size
                                               ))
 

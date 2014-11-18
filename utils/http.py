@@ -1,7 +1,7 @@
 from core.weexceptions import FatalException
 from core import messages
 
-agents_list_path = 'tool/_http/user-agents.txt'
+agents_list_path = 'utils/_http/user-agents.txt'
 
 def load_all_agents():
 

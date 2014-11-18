@@ -3,7 +3,7 @@ from core.module import Module
 from core.loggers import log
 from core import modules
 from core import messages
-import tool
+import utils
 
 class Console(Module):
 
@@ -58,7 +58,7 @@ class Console(Module):
             ]
 
         # If the result is none, prints error message about missing trailer
-        command_last_chars = tool.prettify.shorten(args['query'].rstrip(),
+        command_last_chars = utils.prettify.shorten(args['query'].rstrip(),
                                                         keep_trailer = 10)
 
         if (command_last_chars and command_last_chars[-1] != ';'):

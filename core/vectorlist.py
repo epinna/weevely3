@@ -17,7 +17,7 @@ from mako.template import Template
 from core.weexceptions import DevException, ModuleError
 from core.loggers import log, dlog
 from core import modules
-import tool
+import utils
 from core import messages
 
 class VectorList(list):
