@@ -34,7 +34,7 @@ def pollute(data, charset, frequency=0.3):
 
     str_encoded = ''
     for char in data:
-        if random() < frequency:
+        if random.random() < frequency:
             str_encoded += randstr(1, True, charset) + char
         else:
             str_encoded += char
