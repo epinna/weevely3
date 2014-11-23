@@ -1,21 +1,17 @@
 from core.channels.stegaref.stegaref import StegaRef
 from core.weexceptions import FatalException
 from urllib2 import HTTPError, URLError
-from core import config
 from core import messages
 
 class Channel:
 
-    def __init__(self, url, password, channel_name = None):
+    def __init__(self, url, password, channel_name):
         """
         Import and instanciate dynamically the channel.
 
         Given the channel object Mychannel, this should be placed
         in module core.channels.mychannel.mychannel.
         """
-
-        if not channel_name:
-            channel_name = config.channel_default
 
         module_name = channel_name.lower()
 

