@@ -43,7 +43,7 @@ class Info(Module):
             PhpCode("print(@php_uname('s'));", 'os'),
             PhpCode("print(@$_SERVER['REMOTE_ADDR']);", 'client_ip'),
             PhpCode('print(@ini_get("max_execution_time"));', 'max_execution_time',
-             postprocess = lambda x: int(x)
+             postprocess = lambda x: int(x) if x.isdigit() else False
             ),
             PhpCode('print(@$_SERVER["PHP_SELF"]);', 'php_self'),
             PhpCode('@print(DIRECTORY_SEPARATOR);', 'dir_sep'),
