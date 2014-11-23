@@ -8,10 +8,17 @@ history_path = '_weevely/history'
 sessions_path = '_weevely/sessions/'
 sessions_ext = '.session'
 
-# Supported channels
+# Supported Channels
 channels = [
+    # Steganographed cover channel inside Referrer
+    # introduced in Weevely 3.0beta.
     'StegaRef',
-    'LegacyCookie'
+    # Legacy payload obfuscation in cookies, introduced
+    # in Weevely 0.5.1 the December, 2011.
+    'LegacyCookie',
+    # Legacy payload obfuscation in referrers, introduced
+    # with the first Weevely versions.
+    'LegacyReferrer'
 ]
 
 # Agents and obfuscators used by generator.py
