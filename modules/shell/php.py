@@ -52,7 +52,7 @@ class Php(Module):
         self._print_response_status(command, code, response)
 
         log.debug(
-            'PHP shell is %s' % (
+            'PHP setup and now %s' % (
                 'running' if status == Status.RUN else 'failed'
             )
         )
