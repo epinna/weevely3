@@ -62,7 +62,7 @@ class Info(Module):
 
         self.register_arguments([
           { 'name' : '-info',
-            'help' : 'Check give information',
+            'help' : 'Select information',
             'choices' : self.vectors.get_names(),
             'nargs' : '+' }
         ])
