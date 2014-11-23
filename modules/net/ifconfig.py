@@ -3,7 +3,7 @@ from core.module import Module
 from core import modules
 from core import messages
 from core.loggers import log
-from extra.ipaddr import IPNetwork
+from utils.ipaddr import IPNetwork
 import re
 
 class Ifconfig(Module):
