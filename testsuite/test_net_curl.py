@@ -16,20 +16,31 @@ class Curl(BaseTest):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
-        fname = 'check.php'
+        fnames = [ 'check1.php', 'check2.html' ]
+
         self.files = [
-            os.path.join(config.script_folder, fname)
+            os.path.join(config.script_folder, fnames[0]),
+            os.path.join(config.script_folder, fnames[1])
             ]
 
         self.check_call(
             config.cmd_env_content_s_to_s % ('<?php print_r(\$_SERVER);print_r(\$_REQUEST); ?>', self.files[0]),
             shell=True)
 
-        self.urls = [ os.path.sep.join([
-                            config.script_folder_url.rstrip('/'),
-                            fname]
-                            )
-                    ]
+        self.check_call(
+            config.cmd_env_content_s_to_s % ('1', self.files[1]),
+            shell=True)
+
+        self.urls = [
+            os.path.sep.join([
+                config.script_folder_url.rstrip('/'),
+                fnames[0]]
+            ),
+            os.path.sep.join([
+                config.script_folder_url.rstrip('/'),
+                fnames[1]]
+            )
+        ]
 
         self.vector_list = [
             m for m in modules.loaded['net_curl'].vectors.get_names()
@@ -161,3 +172,7 @@ class Curl(BaseTest):
         self.assertTrue(self.run_argv([ self.urls[0], '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ]))
         self.assertIn('[FIND] => THIS', open(temp_file.name,'r').read())
         temp_file.close()
+
+    def test_all_body(self):
+        for vect in self.vector_list:
+            self.assertEqual(self.run_argv([ self.urls[1], '-vector', vect ]), '1')

@@ -30,4 +30,4 @@ curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, '${ ''.join(data) }');
 % endif
 
-print(curl_exec($ch));
+curl_exec($ch);

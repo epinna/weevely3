@@ -24,7 +24,9 @@ if(class_exists('HttpRequest')) {
     % endif
 
     try {
-        echo $r->send()->getBody();
+        $response = $r->send();
     } catch (HttpException $ex) { }
 
+    //print($response->getHeaders());
+    print($response->getBody());
 }
