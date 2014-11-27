@@ -167,7 +167,7 @@ class module_audit_phpconf:
 
 class module_net_curl:
     empty_response = 'The response is empty, check URL availability'
-    vector_s_not_support_headers_inclusion = 'Vector %s does not support response header inclusion, skipped'
+    missing_headers_error = 'Missing headers, some errors occurred'
 
 
 class module_file_archive:

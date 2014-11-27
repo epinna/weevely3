@@ -91,12 +91,7 @@ class Curl(Module):
         # is needed.
         # TODO: 'args' too should be passed to the postprocess lambdas
         if args.get('include_headers'):
-            if vector_name  in (
-                    'sh_curl',
-                    'php_httprequest1',
-                    'php_curl'
-                ) and '\r\n'*2 in result:
-
+            if '\r\n'*2 in result:
                 headers, result = result.split('\r\n'*2, 1)
                 headers = (
                     [
@@ -105,12 +100,8 @@ class Curl(Module):
                     ] if '\r\n' in headers
                     else headers
                 )
-
             else:
-                log.debug(messages.module_net_curl.vector_s_not_support_headers_inclusion % vector_name)
-
-
-
+                log.warn(messages.module_net_curl.missing_headers_error)
 
         output_path = args.get('output')
         if not output_path:

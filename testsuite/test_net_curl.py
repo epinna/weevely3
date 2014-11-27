@@ -141,7 +141,7 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.assertIsNone(self.run_argv([ 'http://localhost:9999', '-vector', vect, '--connect-timeout', '1' ])[0])
+            self.assertIsNone(self.run_argv([ 'http://localhost:43907', '-vector', vect, '--connect-timeout', '1' ])[0])
             self.assertEqual(messages.module_net_curl.empty_response,
                              log_captured.records[-1].msg)
 
@@ -192,10 +192,6 @@ class Curl(BaseTest):
     def test_all(self):
         for vect in self.vector_list:
             result, headers, saved = self.run_argv([ self.urls[1], '-vector', vect, '-i' ])
-
-            if vect in ( 'sh_curl', 'php_httprequest1', 'php_curl' ):
-                self.assertIn('Content-Length: 1', headers)
-            else:
-                self.assertEqual([], headers)
-
+            self.assertIn('Content-Length: 1', headers)
             self.assertEqual(result, '1')
+            self.assertIsNone(saved)
