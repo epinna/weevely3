@@ -25,6 +25,9 @@ def tablify(data, table_border = True):
                     columns_num = len(data[0])
 
                 for row in data:
+                    if not row:
+                        continue
+                        
                     if isinstance(row, (types.ListType, types.TupleType)):
                         table.add_row(row)
                     else:
