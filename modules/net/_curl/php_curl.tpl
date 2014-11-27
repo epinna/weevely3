@@ -25,9 +25,17 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
   ));
 % endif
 
+
 % if data:
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, '${ ''.join(data) }');
 % endif
 
+% if include_headers:
+curl_setopt($ch, CURLOPT_HEADER, 1);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+$response = curl_exec($ch);
+print($response);
+% else:
 curl_exec($ch);
+% endif

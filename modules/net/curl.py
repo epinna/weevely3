@@ -91,7 +91,12 @@ class Curl(Module):
         # is needed.
         # TODO: 'args' too should be passed to the postprocess lambdas
         if args.get('include_headers'):
-            if vector_name  == 'sh_curl' and '\r\n'*2 in result:
+            if vector_name  in (
+                    'sh_curl',
+                    'php_httprequest1',
+                    'php_curl'
+                ) and '\r\n'*2 in result:
+
                 headers, result = result.split('\r\n'*2, 1)
                 headers = (
                     [

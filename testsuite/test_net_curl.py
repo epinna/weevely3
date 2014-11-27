@@ -193,7 +193,7 @@ class Curl(BaseTest):
         for vect in self.vector_list:
             result, headers, saved = self.run_argv([ self.urls[1], '-vector', vect, '-i' ])
 
-            if vect in ( 'sh_curl' ):
+            if vect in ( 'sh_curl', 'php_httprequest1', 'php_curl' ):
                 self.assertIn('Content-Length: 1', headers)
             else:
                 self.assertEqual([], headers)
