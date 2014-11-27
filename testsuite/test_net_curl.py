@@ -60,36 +60,36 @@ class Curl(BaseTest):
     def _clean_result(self, result):
         return result if not result else re.sub('[\n]|[ ]{2,}',' ', result)
 
-    def test_curl(self):
+    def test_sent_data(self):
 
         for vect in self.vector_list:
 
             # Simple GET
             self.assertIn(
                 '[REQUEST_METHOD] => GET',
-                self._clean_result(self.run_argv([ self.urls[0], '-vector', vect ]))
+                self._clean_result(self.run_argv([ self.urls[0], '-vector', vect ])[0])
             )
 
             # PUT request
             self.assertIn(
                 '[REQUEST_METHOD] => PUT',
-                self._clean_result(self.run_argv([ self.urls[0], '-X', 'PUT', '-vector', vect ]))
+                self._clean_result(self.run_argv([ self.urls[0], '-X', 'PUT', '-vector', vect ])[0])
             )
 
             # Add header
             self.assertIn(
                 '[HTTP_X_ARBITRARY_HEADER] => bogus',
-                self._clean_result(self.run_argv([ self.urls[0], '-H', 'X-Arbitrary-Header: bogus', '-vector', vect ]))
+                self._clean_result(self.run_argv([ self.urls[0], '-H', 'X-Arbitrary-Header: bogus', '-vector', vect ])[0])
             )
 
             # Add cookie
             self.assertIn(
                 '[HTTP_COOKIE] => C1=bogus;C2=bogus2',
-                self._clean_result(self.run_argv([ self.urls[0], '-b', 'C1=bogus;C2=bogus2', '-vector', vect ]))
+                self._clean_result(self.run_argv([ self.urls[0], '-b', 'C1=bogus;C2=bogus2', '-vector', vect ])[0])
             )
 
             # POST request with data
-            result = self._clean_result(self.run_argv([ self.urls[0], '--data', 'f1=data1&f2=data2', '-vector', vect ]))
+            result = self._clean_result(self.run_argv([ self.urls[0], '--data', 'f1=data1&f2=data2', '-vector', vect ])[0])
             self.assertIn(
                 '[REQUEST_METHOD] => POST',
                 result
@@ -100,7 +100,7 @@ class Curl(BaseTest):
             )
 
             # GET request with URL
-            result = self._clean_result(self.run_argv([ self.urls[0] + '/?f1=data1&f2=data2', '-vector', vect ]))
+            result = self._clean_result(self.run_argv([ self.urls[0] + '/?f1=data1&f2=data2', '-vector', vect ])[0])
             self.assertIn(
                 '[REQUEST_METHOD] => GET',
                 result
@@ -115,11 +115,11 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus', '-vector', vect ]))
+            self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus', '-vector', vect ])[0])
             self.assertEqual(messages.module_net_curl.empty_response,
                              log_captured.records[-1].msg)
 
-        self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus' ]))
+        self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus' ])[0])
         self.assertEqual(messages.module_net_curl.empty_response,
                          log_captured.records[-1].msg)
 
@@ -128,11 +128,11 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '-vector', vect, '--connect-timeout', '1' ]))
+            self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '-vector', vect, '--connect-timeout', '1' ])[0])
             self.assertEqual(messages.module_net_curl.empty_response,
                              log_captured.records[-1].msg)
 
-        self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '--connect-timeout', '1' ]))
+        self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '--connect-timeout', '1' ])[0])
         self.assertEqual(messages.module_net_curl.empty_response,
                          log_captured.records[-1].msg)
 
@@ -141,11 +141,11 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.assertIsNone(self.run_argv([ 'http://localhost:9999', '-vector', vect, '--connect-timeout', '1' ]))
+            self.assertIsNone(self.run_argv([ 'http://localhost:9999', '-vector', vect, '--connect-timeout', '1' ])[0])
             self.assertEqual(messages.module_net_curl.empty_response,
                              log_captured.records[-1].msg)
 
-        self.assertIsNone(self.run_argv([ 'http://localhost:9999', '--connect-timeout', '1' ]))
+        self.assertIsNone(self.run_argv([ 'http://localhost:9999', '--connect-timeout', '1' ])[0])
         self.assertEqual(messages.module_net_curl.empty_response,
                          log_captured.records[-1].msg)
 
@@ -154,10 +154,20 @@ class Curl(BaseTest):
         for vect in self.vector_list:
 
             self.files.append(os.path.join(config.script_folder, 'test_%s' % vect))
-            self.assertTrue(self.run_argv([ self.urls[0], '-vector', vect, '-o', self.files[-1] ]))
+            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-o', self.files[-1] ])
+            self.assertTrue(saved)
 
         self.files.append(os.path.join(config.script_folder, 'test_all'))
-        self.assertTrue(self.run_argv([ self.urls[0], '-o', 'test_all' ]))
+        result, headers, saved = self.run_argv([ self.urls[0], '-o', 'test_all' ])
+        self.assertTrue(saved)
+
+        # Check saved = None without -o
+        result, headers, saved = self.run_argv([ self.urls[1] ])
+        self.assertIsNone(saved)
+
+        # Check saved = False with a wrong path
+        result, headers, saved = self.run_argv([ self.urls[1], '-o', 'bogus/bogusbogus' ])
+        self.assertFalse(saved)
 
     def test_output_local(self):
 
@@ -165,14 +175,27 @@ class Curl(BaseTest):
         for vect in self.vector_list:
 
             self.files.append(temp_file.name)
-            self.assertTrue(self.run_argv([ self.urls[0], '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ]))
+            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
+            self.assertTrue(saved)
             self.assertIn('[FIND] => THIS', open(temp_file.name,'r').read())
 
         temp_file.truncate()
-        self.assertTrue(self.run_argv([ self.urls[0], '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ]))
+        result, headers, saved = self.run_argv([ self.urls[0], '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
+        self.assertTrue(saved)
         self.assertIn('[FIND] => THIS', open(temp_file.name,'r').read())
         temp_file.close()
 
-    def test_all_body(self):
+        # Check saved = False with a wrong path
+        result, headers, saved = self.run_argv([ self.urls[1], '-o', 'bogus/bogusbogus', '-local' ])
+        self.assertFalse(saved)
+
+    def test_all(self):
         for vect in self.vector_list:
-            self.assertEqual(self.run_argv([ self.urls[1], '-vector', vect ]), '1')
+            result, headers, saved = self.run_argv([ self.urls[1], '-vector', vect, '-i' ])
+
+            if vect in ( 'sh_curl' ):
+                self.assertIn('Content-Length: 1', headers)
+            else:
+                self.assertEqual([], headers)
+
+            self.assertEqual(result, '1')
