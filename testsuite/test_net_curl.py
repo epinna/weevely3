@@ -116,11 +116,11 @@ class Curl(BaseTest):
         for vect in self.vector_list:
 
             self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus', '-vector', vect ])[0])
-            self.assertEqual(messages.module_net_curl.empty_response,
+            self.assertEqual(messages.module_net_curl.unexpected_response,
                              log_captured.records[-1].msg)
 
         self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus' ])[0])
-        self.assertEqual(messages.module_net_curl.empty_response,
+        self.assertEqual(messages.module_net_curl.unexpected_response,
                          log_captured.records[-1].msg)
 
     @log_capture()
@@ -129,11 +129,11 @@ class Curl(BaseTest):
         for vect in self.vector_list:
 
             self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '-vector', vect, '--connect-timeout', '1' ])[0])
-            self.assertEqual(messages.module_net_curl.empty_response,
+            self.assertEqual(messages.module_net_curl.unexpected_response,
                              log_captured.records[-1].msg)
 
         self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '--connect-timeout', '1' ])[0])
-        self.assertEqual(messages.module_net_curl.empty_response,
+        self.assertEqual(messages.module_net_curl.unexpected_response,
                          log_captured.records[-1].msg)
 
     @log_capture()
@@ -142,11 +142,11 @@ class Curl(BaseTest):
         for vect in self.vector_list:
 
             self.assertIsNone(self.run_argv([ 'http://localhost:43907', '-vector', vect, '--connect-timeout', '1' ])[0])
-            self.assertEqual(messages.module_net_curl.empty_response,
+            self.assertEqual(messages.module_net_curl.unexpected_response,
                              log_captured.records[-1].msg)
 
         self.assertIsNone(self.run_argv([ 'http://localhost:9999', '--connect-timeout', '1' ])[0])
-        self.assertEqual(messages.module_net_curl.empty_response,
+        self.assertEqual(messages.module_net_curl.unexpected_response,
                          log_captured.records[-1].msg)
 
     def test_output_remote(self):

@@ -48,10 +48,7 @@ if($h) {
 }
 % endif
 
-% if include_headers:
 foreach($http_response_header as $v) {
     print("$v\r\n");
 }
-print("\r\n");
-% endif
-print($r);
+print("\r\n". $r);

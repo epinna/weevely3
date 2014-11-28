@@ -45,7 +45,7 @@ class Curl(Module):
               name = 'php_httprequest1',
             ),
             ShellCmd(
-              payload = """curl -s ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } ${ ' '.join([ "-d '%s'" % d for d in data ]) } ${ "-i" if include_headers else "" } '${ url }'""",
+              payload = """curl -s -i ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } ${ ' '.join([ "-d '%s'" % d for d in data ]) } '${ url }'""",
               name = 'sh_curl'
             )
             ]
@@ -82,26 +82,24 @@ class Curl(Module):
                 condition = lambda r: r if r else None
             )
 
-        # Print error and exit with no response
-        if not vector_name:
-            log.warn(messages.module_net_curl.empty_response)
-            return result, headers, saved
+        # Print error and exit with no response or no headers
+        if not (vector_name and result and '\r\n'*2 in result):
+            log.warn(messages.module_net_curl.unexpected_response)
+            return None, headers, saved
 
-        # Postprocess can't be done in vectors because args.get('include_headers')
-        # is needed.
-        # TODO: 'args' too should be passed to the postprocess lambdas
+        headers, result = result.split('\r\n'*2, 1)
         if args.get('include_headers'):
-            if '\r\n'*2 in result:
-                headers, result = result.split('\r\n'*2, 1)
-                headers = (
-                    [
-                        h.rstrip() for h
-                        in headers.split('\r\n')
-                    ] if '\r\n' in headers
-                    else headers
-                )
-            else:
-                log.warn(messages.module_net_curl.missing_headers_error)
+            # With -i, parse headers
+            headers = (
+                [
+                    h.rstrip() for h
+                    in headers.split('\r\n')
+                ] if '\r\n' in headers
+                else headers
+            )
+        else:
+            # Else, reset header list
+            headers = []
 
         output_path = args.get('output')
         if not output_path:
@@ -127,6 +125,10 @@ class Curl(Module):
         return result, headers, saved
 
     def print_result(self, result):
+
+        # TODO: 'args' should be passed to print_result
+        # to customize the printing e.g. args should be
+        # always filled but prints just with include_headers
 
         result, headers, saved = result
 

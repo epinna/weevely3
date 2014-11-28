@@ -27,11 +27,8 @@ if(class_exists('HttpRequest')) {
         $response = $r->send();
     } catch (HttpException $ex) { }
 
-    % if include_headers:
     foreach($response->getHeaders() as $h => $v) {
         print("$h: $v\r\n");
     }
-    print("\r\n");
-    % endif
-    print($response->getBody());
+    print("\r\n" . $response->getBody());
 }

@@ -166,8 +166,7 @@ class module_audit_phpconf:
     func_proc_manipulation = 'Process manipulation'
 
 class module_net_curl:
-    empty_response = 'The response is empty, check URL availability'
-    missing_headers_error = 'Missing headers, some errors occurred'
+    unexpected_response = 'Unexpected response, please check URL reachability'
 
 
 class module_file_archive:
