@@ -61,7 +61,7 @@ class Curl(Module):
           { 'name' : '-d', 'dest' : 'data', 'action' : 'append', 'default' : [] },
           { 'name' : '--user-agent', 'dest' : 'user_agent' },
           { 'name' : '-A', 'dest' : 'user_agent' },
-          { 'name' : '--connect-timeout', 'type' : int, 'default' : 2, 'help' : 'Default: 2' },
+          { 'name' : '--connect-timeout', 'type' : int, 'default' : 5, 'help' : 'Default: 2' },
           { 'name' : '--request', 'dest' : 'request', 'choices' : ( 'GET', 'HEAD', 'POST', 'PUT' ), 'default' : 'GET' },
           { 'name' : '-X', 'dest' : 'request', 'choices' : ( 'GET', 'HEAD', 'POST', 'PUT' ), 'default' : 'GET' },
           { 'name' : '--output', 'dest' : 'output' },

@@ -24,11 +24,13 @@ if(class_exists('HttpRequest')) {
     % endif
 
     try {
-        $response = $r->send();
+        $r = $r->send();
     } catch (HttpException $ex) { }
 
-    foreach($response->getHeaders() as $h => $v) {
+    print("HTTP/" . $r->getHttpVersion() . " " . $r->getResponseCode() . " " . $r->getResponseStatus() . "\r\n");
+
+    foreach($r->getHeaders() as $h => $v) {
         print("$h: $v\r\n");
     }
-    print("\r\n" . $response->getBody());
+    print("\r\n" . $r->getBody());
 }
