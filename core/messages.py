@@ -168,6 +168,9 @@ class module_audit_phpconf:
 class module_net_curl:
     unexpected_response = 'Unexpected response, please check URL reachability'
 
+class module_net_proxy:
+    https_not_implemented = 'HTTPS connection is not implemented'
+    request_timed_out_s = 'Request timed out: %s'
 
 class module_file_archive:
     archive_type_not_set = 'Archive type not set and file extension not supported'
