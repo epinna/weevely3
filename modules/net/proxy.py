@@ -7,7 +7,10 @@ import SocketServer
 import socket
 import threading
 
-class HTTPProxyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class MultiThreadedHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.BaseHTTPRequestHandler):
+    pass
+
+class HTTPProxyRequestHandler(MultiThreadedHTTPServer):
 
     def do_request(self):
 
@@ -29,19 +32,12 @@ class HTTPProxyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             '-i'
         ]
 
-        self.headers = dict(
-            (k, v) for (k, v) in self.headers.items() if k.lower() not in
-            (
-                'keep-alive',
-                'proxy-connection',
-                'connection'
-            )
-        )
-
-        self.headers['Proxy-Connection'] = 'close'
-
         for h in self.headers:
+            if h.title() in ('Keep-Alive', 'Proxy-Connection', 'Connection'):
+                continue
             net_curl_args += [ '-H', '%s: %s' % ( h.title(), self.headers[h] ) ]
+
+        net_curl_args += [ '-H', 'Proxy-Connection: close' ]
 
         if self.command == 'POST':
             content_len = int(self.headers.getheader('content-length', 0))
@@ -52,11 +48,11 @@ class HTTPProxyRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             net_curl_args
         ).run()
 
-        print '> ' + '\r\n> '.join([ '%s: %s' % (h.title(), self.headers[h]) for h in self.headers ])
-        print '< ' + '\r\n< '.join(headers)
+        dlog.debug('> ' + '\r\n> '.join([ '%s: %s' % (h.title(), self.headers[h]) for h in self.headers ]))
+        dlog.debug('< ' + '\r\n< '.join(headers))
 
         self.wfile.write('\r\n'.join(headers))
-        self.end_headers()
+        self.wfile.write('\r\n\r\n')
         self.wfile.write(result)
 
     def handle_one_request(self):
