@@ -79,7 +79,7 @@ class Curl(Module):
         vector_name, result = self.vectors.find_first_result(
                 names = [ args.get('vector') ],
                 format_args = args,
-                condition = lambda r: r if r else None
+                condition = lambda r: r if r and r.strip() else None
             )
 
         # Print error and exit with no response or no headers
