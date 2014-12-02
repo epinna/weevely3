@@ -83,29 +83,33 @@ class Curl(Module):
             )
 
         # Print error and exit with no response or no headers
-        if not (vector_name and result and '\r\n'*2 in result):
+        if not (vector_name and result):
             log.warn(messages.module_net_curl.unexpected_response)
             return None, headers, saved
-
-        headers, result = result.split('\r\n'*2, 1)
-        if args.get('include_headers'):
-            # With -i, parse headers
-            headers = (
-                [
-                    h.rstrip() for h
-                    in headers.split('\r\n')
-                ] if '\r\n' in headers
-                else headers
-            )
+        elif not '\r\n'*2 in result:
+            # If something is returned but there is \r\n*2, we consider
+            # everything as header. It happen with responses 204 No contents
+            # that end with \r\n\r (wtf).
+            headers = result
+            result = ''
         else:
-            # Else, reset header list
-            headers = []
+            headers, result = result.split('\r\n'*2, 1)
+
+        self.print_headers = args.get('include_headers')
+
+        headers = (
+            [
+                h.rstrip() for h
+                in headers.split('\r\n')
+            ] if '\r\n' in headers
+            else headers
+        )
 
         output_path = args.get('output')
         if not output_path:
 
             # If response must not be saved, just print it
-            result = result[-1:] if result[-1] == '\n' else result
+            result = result[-1:] if result and result[-1] == '\n' else result
         else:
 
             # If response must be saved, it's anyway safer to save it
@@ -137,8 +141,7 @@ class Curl(Module):
             log.info(saved)
             return
 
-        if headers:
-            # Print headers if collected
+        if self.print_headers:
             log.info( '\r\n'.join(headers) + '\r\n')
 
         if result:
