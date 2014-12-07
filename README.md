@@ -19,12 +19,13 @@ The modules feature:
 
 * Shell/PHP telnet-like network terminal
 * Common server misconfigurations auditing
-* SQL console pivoting on target network
+* SQL console pivoting on target
 * HTTP traffic proxy through target
 * Mount target file system to local mount point
 * Run scans or pivoted exploiting through target network
-* File transfer from and to target
+* File upload and download
 * Spawn reverse and direct TCP shells
+* Zip, gz, bz2 and tar handling even without system command execution
 
 ### The backdoor agent
 
