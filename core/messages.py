@@ -175,6 +175,12 @@ class module_net_proxy:
     proxy_started_background = 'Background proxy started, will shutdown at weevely exit'
     proxy_started_foreground = 'Foreground proxy started, press Ctrl-C to force shutdown'
 
+class module_net_phpproxy:
+    phpproxy_installed_to_s_browser_to_s = 'PHP proxy installed to \'%s\', browse \'%s\' with your browser'
+    proxy_script_removed = 'PHP proxy script will be removed at weevely exit'
+    proxy_script_manually_remove_s = 'Remove manually PHP proxy script \'%s\''
+
+
 class module_file_archive:
     archive_type_not_set = 'Archive type not set and file extension not supported'
     error_extracting_s_file_needed = 'Error extracting %s, first remote file argument must contain the output file path'
