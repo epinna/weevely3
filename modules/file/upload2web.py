@@ -8,7 +8,7 @@ import os
 
 class Upload2web(Module):
 
-    """Upload file automatically to a web folder and get corresponding URL"""
+    """Upload file automatically to a web folder and get corresponding URL."""
 
     aliases = [ 'rm' ]
 
@@ -25,7 +25,8 @@ class Upload2web(Module):
 
         self.register_arguments([
             { 'name' : 'lpath', 'help' : 'Local file path' },
-            { 'name' : 'rpath', 'help' : 'Path. If is a folder find the first writable folder in it.', 'default' : '.', 'nargs' : '?' },
+            { 'name' : 'rpath', 'help' : 'Remote path. If it is a folder find the first writable folder in it', 'default' : '.', 'nargs' : '?' },
+            { 'name' : '-rname', 'help' : 'Set a different file name' },
         ])
 
     def _get_env_info(self, script_url):
@@ -108,11 +109,14 @@ class Upload2web(Module):
                 log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % args['rpath'])
                 return
 
-            # Get file name from lpath
-            lfolder, lname = os.path.split(args['lpath'])
+            # If the remote file name is not set, get it from lpath
+            if args.get('rname'):
+                rname = args.get('rname')
+            else:
+                lfolder, rname = os.path.split(args['lpath'])
 
             # TODO: all the paths should be joined with remote OS_SEP from system_info.
-            args['rpath'] = os.path.join(folders[0], lname)
+            args['rpath'] = os.path.join(folders[0], rname)
 
         if ModuleExec("file_upload", [ args['lpath'], args['rpath'] ]).run():
             # Guess URL from rpath
