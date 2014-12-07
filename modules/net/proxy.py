@@ -76,7 +76,7 @@ class HTTPProxyRequestHandler(MultiThreadedHTTPServer):
 
             self.wfile.flush() #actually send the response if not already done.
         except socket.timeout, e:
-            dlog.warn(request_timed_out_s % str(e))
+            dlog.warn(messages.module_net_proxy.request_timed_out_s % str(e))
             self.close_connection = 1
             return
 
@@ -90,7 +90,7 @@ class HTTPProxyRequestHandler(MultiThreadedHTTPServer):
 
 class Proxy(Module):
 
-    """Proxy local HTTP traffic through the target."""
+    """Proxify local HTTP traffic passing through the target."""
 
     def init(self):
 
@@ -105,7 +105,8 @@ class Proxy(Module):
 
         self.register_arguments([
             { 'name' : '-lhost', 'default' : '127.0.0.1' },
-            { 'name' : '-lport', 'default' : 8080, 'type' : int }
+            { 'name' : '-lport', 'default' : 8080, 'type' : int },
+            { 'name' : '-no-background', 'action' : 'store_true', 'default' : False, 'help' : 'Run foreground' }
         ])
 
     def run(self, args):
@@ -114,4 +115,14 @@ class Proxy(Module):
             ( args['lhost'], args['lport'] ),
             HTTPProxyRequestHandler
         )
-        server.serve_forever()
+
+        log.warn(messages.module_net_proxy.proxy_set_address_s_i % ( args['lhost'], args['lport'] ))
+
+        if args['no_background']:
+            log.warn(messages.module_net_proxy.proxy_started_foreground)
+            server.serve_forever()
+        else:
+            log.warn(messages.module_net_proxy.proxy_started_background)
+            server_thread = threading.Thread(target=server.serve_forever)
+            server_thread.daemon = True
+            server_thread.start()

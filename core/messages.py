@@ -171,6 +171,9 @@ class module_net_curl:
 class module_net_proxy:
     https_not_implemented = 'HTTPS connection is not implemented'
     request_timed_out_s = 'Request timed out: %s'
+    proxy_set_address_s_i = 'Set proxy address to your browser as \'http://%s:%i\' and start browsing'
+    proxy_started_background = 'Background proxy started, will shutdown at weevely exit'
+    proxy_started_foreground = 'Foreground proxy started, press Ctrl-C to force shutdown'
 
 class module_file_archive:
     archive_type_not_set = 'Archive type not set and file extension not supported'
