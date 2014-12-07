@@ -1,27 +1,25 @@
-Weevely3 
+Weevely3
 =======
 
 > Weevely3 is a complete rewrite of [Weevely](https://github.com/epinna/Weevely), the web shell for penetration testing included in [Kali](http://www.kali.org/) and [BackBox](http://www.kali.org/) Linux
 
-
-> This project is still at version 3.0beta and a lot of features are currently missing.
-
+> The project is at version 3.0beta, is back-compatible with the older versions of weevely and a most of the old features have been ported.
 
 > If you are a developer or a curious user and desire to contribute, you can to start reading the tutorial [Developing a new module ](https://github.com/epinna/weevely3/wiki/developing-a-new-module) and the [TODO list](https://github.com/epinna/weevely3/issues/1).
 
 Weevely is a PHP web shell that provides a weaponized telnet-like interface to administrate a remote web access.
 
-It is a swiss army knife to administrate a web account, even in restricted remote environments. Weevely is an essential tool for web application post exploitation, access maintaining, target security audit, pivot deeper in the target network, and much more. 
+It is a swiss army knife to administrate a web account, even in restricted remote environments. Weevely is an essential tool for web application post exploitation, access maintaining, target security audit, pivot deeper in the target network, and much more.
 
 ### The modular framework
 
-Weevely modules extend the terminal providing a layer to interact with the target. 
+Weevely modules extend the terminal providing a layer to interact with the target.
 
 The modules feature:
 
 * Shell/PHP telnet-like network terminal
 * Common server misconfigurations auditing
-* SQL console pivoting on target network 
+* SQL console pivoting on target network
 * HTTP traffic proxy through target
 * Mount target file system to local mount point
 * Run scans or pivoted exploiting through target network
