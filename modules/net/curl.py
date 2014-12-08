@@ -106,11 +106,7 @@ class Curl(Module):
         )
 
         output_path = args.get('output')
-        if not output_path:
-
-            # If response must not be saved, just print it
-            result = result[-1:] if result and result[-1] == '\n' else result
-        else:
+        if output_path:
 
             # If response must be saved, it's anyway safer to save it
             # within additional requests
