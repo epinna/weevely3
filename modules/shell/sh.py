@@ -98,11 +98,11 @@ class Sh(Module):
                 # Stop if shell_php is in FAIL state
                 self.session['shell_php']['status'] == Status.FAIL or
                 # Or if the result is correct
-                self.session['shell_php']['status'] == Status.RUN and result == check_digits
+                self.session['shell_php']['status'] == Status.RUN and result and result.rstrip() == check_digits
                 )
             )
 
-        if self.session['shell_php']['status'] == Status.RUN and result == check_digits:
+        if self.session['shell_php']['status'] == Status.RUN and result and result.rstrip() == check_digits:
             self.session['shell_sh']['stored_args']['vector'] = vector_name
             return Status.RUN
         else:
@@ -117,7 +117,11 @@ class Sh(Module):
 
         args['command'] = ' '.join(args['command']).replace("'", "\\'")
 
-        return self.vectors.get_result(
+        response = self.vectors.get_result(
          name = args['vector'],
          format_args = args
         )
+
+        return response[:-1] if (
+            response and response.endswith('\n')
+            ) else response

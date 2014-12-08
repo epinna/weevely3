@@ -111,9 +111,7 @@ class Php(Module):
         self._print_response_status(command, code, response)
 
         # Strip last newline if present
-        return response[:-1] if (
-            response and response.endswith('\n')
-            ) else response
+        return response
 
     def _print_response_status(self, command, code, response):
 
@@ -129,7 +127,7 @@ class Php(Module):
 #           )
 #        )
 
-        dlog.info('== RESPONSE ==\n%s==== END ====' % response)
+        dlog.info('RESPONSE: %s' % repr(response))
 
         if response: return
 
