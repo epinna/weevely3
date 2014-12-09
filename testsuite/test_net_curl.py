@@ -190,6 +190,7 @@ class Curl(BaseTest):
         self.assertFalse(saved)
 
     def test_all(self):
+        
         for vect in self.vector_list:
             result, headers, saved = self.run_argv([ self.urls[1], '-vector', vect, '-i' ])
             self.assertIn('HTTP/1.1 200 OK', headers)
@@ -197,9 +198,7 @@ class Curl(BaseTest):
             self.assertEqual(result, '1')
             self.assertIsNone(saved)
 
-    def test_all_content_length(self):
-        for vect in self.vector_list:
-            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-i' ])
+            # Check if content-length is real
             cont_len = 0
             for h in headers:
                 if h.startswith('Content-Length: '):

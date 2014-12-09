@@ -9,7 +9,9 @@ curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ${ connect_timeout });
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 % endif
 % for h in header:
-      '${h}',
+%   if not (data and (h.title().startswith('Content-Type: ') or h.title().startswith('Content-Length: '))) and not (user_agent and h.title().startswith('User-Agent: ')):
+        '${h}',
+%   endif
 % endfor
 % if cookie:
           'Cookie: ${ cookie }',
