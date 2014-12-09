@@ -117,11 +117,7 @@ class Sh(Module):
 
         args['command'] = ' '.join(args['command']).replace("'", "\\'")
 
-        response = self.vectors.get_result(
+        return self.vectors.get_result(
          name = args['vector'],
          format_args = args
         )
-
-        return response[:-1] if (
-            response and response.endswith('\n')
-            ) else response

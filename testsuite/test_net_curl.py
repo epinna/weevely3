@@ -196,3 +196,14 @@ class Curl(BaseTest):
             self.assertIn('Content-Length: 1', headers)
             self.assertEqual(result, '1')
             self.assertIsNone(saved)
+
+    def test_all_content_length(self):
+        for vect in self.vector_list:
+            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-i' ])
+            cont_len = 0
+            for h in headers:
+                if h.startswith('Content-Length: '):
+                    cont_len = int(h[16:])
+                    break
+
+            self.assertEqual(cont_len, len(result))

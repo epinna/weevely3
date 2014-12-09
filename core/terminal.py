@@ -231,6 +231,11 @@ class Terminal(CmdModules):
 
         if not result: return
 
+        # Clean trailing newline if existent to prettify output
+        result = result[:-1] if (
+                result.endswith('\n')
+            ) else result
+
         log.info(result)
 
     def do_set(self, line, cmd):

@@ -31,7 +31,7 @@ class SystemInfo(BaseTest):
         self._spoil_vectors_but(vector_safe_name)
 
         # Check correctness of execution
-        self.assertEqual(self.run_argv(["echo 1"]), "1");
+        self.assertEqual(self.run_argv(["echo -n 1"]), "1");
 
         # Check stored vector
         self.assertEqual(self.session['shell_sh']['stored_args']['vector'], vector_safe_name)
@@ -41,7 +41,7 @@ class SystemInfo(BaseTest):
         vector_safe_name = 'proc_open'
 
         # Check correctness of execution
-        self.assertEqual(self.run_argv(["-vector", vector_safe_name, "echo 1"]), "1");
+        self.assertEqual(self.run_argv(["-vector", vector_safe_name, "echo -n 1"]), "1");
 
         # Check stored vector
         self.assertEqual(self.session['shell_sh']['stored_args']['vector'], vector_safe_name)

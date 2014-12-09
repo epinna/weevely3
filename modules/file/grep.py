@@ -34,7 +34,9 @@ class Grep(Module):
                 arguments = [
                   "-stderr_redirection",
                   " 2>/dev/null",
-                ]
+                ],
+                # Remove the trailing newline
+                postprocess = lambda r: r[:-1] if r and r.endswith('\n') else r
             ),
             PhpCode(
                 payload = """$m=Array();preg_match_all("/.*${regex}.*/${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));""",
