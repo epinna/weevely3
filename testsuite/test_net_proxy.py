@@ -18,31 +18,18 @@ class Proxy(BaseTest):
 
         modules.loaded['net_proxy'].run_argv([ ])
 
-        fnames = [ 'check1.php', 'check2.html' ]
+        fname = 'check1.php'
 
-        self.files = [
-            os.path.join(config.script_folder, fnames[0]),
-            os.path.join(config.script_folder, fnames[1])
-            ]
+        self.file = os.path.join(config.script_folder, fname)
 
         self.check_call(
-            config.cmd_env_content_s_to_s % ('<?php print_r(\$_SERVER);print_r(\$_REQUEST); ?>', self.files[0]),
+            config.cmd_env_content_s_to_s % ('<?php print_r(\$_SERVER);print_r(\$_REQUEST); ?>', self.file),
             shell=True)
 
-        self.check_call(
-            config.cmd_env_content_s_to_s % ('1', self.files[1]),
-            shell=True)
-
-        self.urls = [
-            os.path.sep.join([
+        self.url = os.path.sep.join([
                 config.script_folder_url.rstrip('/'),
-                fnames[0]]
-            ),
-            os.path.sep.join([
-                config.script_folder_url.rstrip('/'),
-                fnames[1]]
-            )
-        ]
+                fname ]
+        )
 
     def run_argv(self, arguments):
 
@@ -56,10 +43,9 @@ class Proxy(BaseTest):
 
     def tearDown(self):
 
-        for f in self.files:
-            self.check_call(
-                config.cmd_env_remove_s % (f),
-                shell=True)
+        self.check_call(
+            config.cmd_env_remove_s % (self.file),
+            shell=True)
 
     def _clean_result(self, result):
         return result if not result else re.sub('[\n]|[ ]{2,}',' ', result)
@@ -70,30 +56,30 @@ class Proxy(BaseTest):
         # Simple GET
         self.assertIn(
             '[REQUEST_METHOD] => GET',
-            self._clean_result(self.run_argv([ self.urls[0] ]))
+            self._clean_result(self.run_argv([ self.url ]))
         )
 
         # PUT request
         self.assertIn(
             '[REQUEST_METHOD] => PUT',
-            self._clean_result(self.run_argv([ self.urls[0], '-X', 'PUT' ]))
+            self._clean_result(self.run_argv([ self.url, '-X', 'PUT' ]))
         )
 
         # Add header
         self.assertIn(
             '[HTTP_X_ARBITRARY_HEADER] => bogus',
-            self._clean_result(self.run_argv([ '-H', 'X-Arbitrary-Header: bogus', self.urls[0] ]))
+            self._clean_result(self.run_argv([ '-H', 'X-Arbitrary-Header: bogus', self.url ]))
         )
 
 
         # Add cookie
         self.assertIn(
             '[HTTP_COOKIE] => C1=bogus;C2=bogus2',
-            self._clean_result(self.run_argv([ self.urls[0], '-b', 'C1=bogus;C2=bogus2']))
+            self._clean_result(self.run_argv([ self.url, '-b', 'C1=bogus;C2=bogus2']))
         )
 
         # POST request with data
-        result = self._clean_result(self.run_argv([ self.urls[0], '--data', 'f1=data1&f2=data2' ]))
+        result = self._clean_result(self.run_argv([ self.url, '--data', 'f1=data1&f2=data2' ]))
         self.assertIn(
             '[REQUEST_METHOD] => POST',
             result
@@ -104,7 +90,7 @@ class Proxy(BaseTest):
         )
 
         # GET request with URL
-        result = self._clean_result(self.run_argv([ self.urls[0] + '/?f1=data1&f2=data2' ]))
+        result = self._clean_result(self.run_argv([ self.url + '/?f1=data1&f2=data2' ]))
         self.assertIn(
             '[REQUEST_METHOD] => GET',
             result
