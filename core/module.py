@@ -109,7 +109,12 @@ class Module:
             log.warn(messages.module.error_module_exec_error_s % str(e))
             return
 
-        self.print_result(result)
+        self.print_result(
+            result[:-1] if (
+                result and
+                result.endswith('\n')
+            ) else result
+        )
 
         # Data is returned for the testing of _cmdline calls
         return result
@@ -188,7 +193,7 @@ class Module:
             log.debug(messages.module.running_the_alias_s % self.name)
             return self.run_cmdline(args)
         else:
-            return modules.loaded['shell_sh'].run_cmdline(
+            modules.loaded['shell_sh'].run_cmdline(
                 '%s -- %s' % (cmd, args)
             )
 
