@@ -222,10 +222,9 @@ class Module:
         This should perform the basic check of the module compatibility
         with the remote enviroinment, and return the module Status value.
 
-        If not overridden, always returns Status.RUN.
+        Current execution arguments are in self.args.
 
-        Args:
-            args (dictionary): Argument passed to the module
+        If not overridden, always returns Status.RUN.
 
         Returns:
             Status value. Must be Status.RUN, Status.FAIL, or Status.IDLE.
@@ -234,15 +233,14 @@ class Module:
 
         return Status.RUN
 
-    def run(self, args):
+    def run(self):
         """Module execution.
 
         Called at every module executions.
 
         Override this to implement the module behaviour.
 
-        Args:
-            args (dictionary): Argument passed to the module
+        Current execution arguments are in self.args.        
 
         Returns:
             Object containing the execution result.
