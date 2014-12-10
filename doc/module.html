@@ -134,16 +134,15 @@ to be passed to the <cite>ArgumentParser.add_argument()</cite> method.</dd>
 
 <dl class="method">
 <dt id="core.module.Module.setup">
-<tt class="descclassname">Module.</tt><tt class="descname">setup</tt><big>(</big><em>args={}</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.setup" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Module.</tt><tt class="descname">setup</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Module first setup.</p>
 <p>Called at the first module run per session.</p>
 <p>Override this to implement the module setup.</p>
 <p>This should perform the basic check of the module compatibility
 with the remote enviroinment, and return the module Status value.</p>
+<p>Current execution arguments are in self.args.</p>
 <p>If not overridden, always returns Status.RUN.</p>
 <dl class="docutils">
-<dt>Args:</dt>
-<dd>args (dictionary): Argument passed to the module</dd>
 <dt>Returns:</dt>
 <dd>Status value. Must be Status.RUN, Status.FAIL, or Status.IDLE.</dd>
 </dl>
@@ -151,13 +150,12 @@ with the remote enviroinment, and return the module Status value.</p>
 
 <dl class="method">
 <dt id="core.module.Module.run">
-<tt class="descclassname">Module.</tt><tt class="descname">run</tt><big>(</big><em>args</em><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.run" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">Module.</tt><tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/core/module.html#Module.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.module.Module.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Module execution.</p>
 <p>Called at every module executions.</p>
 <p>Override this to implement the module behaviour.</p>
+<p>Current execution arguments are in self.args.</p>
 <dl class="docutils">
-<dt>Args:</dt>
-<dd>args (dictionary): Argument passed to the module</dd>
 <dt>Returns:</dt>
 <dd>Object containing the execution result.</dd>
 </dl>

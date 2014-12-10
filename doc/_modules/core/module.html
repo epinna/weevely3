@@ -120,6 +120,9 @@
             <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span>
         <span class="p">)</span>
 
+        <span class="c"># Arguments dictionary is initially empty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">{}</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">run_cmdline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">cmd</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
@@ -160,7 +163,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">print_result</span><span class="p">(</span>
             <span class="n">result</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span>
-                <span class="n">result</span> <span class="ow">and</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)</span> <span class="ow">and</span>
                 <span class="n">result</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
             <span class="p">)</span> <span class="k">else</span> <span class="n">result</span>
         <span class="p">)</span>
@@ -186,14 +189,14 @@
 
         <span class="c"># Merge stored arguments with line arguments</span>
         <span class="n">stored_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="n">stored_args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">stored_args</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">user_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">SystemExit</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="nb">dict</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">user_args</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span>
             <span class="p">)</span>
@@ -201,7 +204,7 @@
 
         <span class="c"># If module status is IDLE, launch setup()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">IDLE</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
 
         <span class="c"># If module status is FAIL, return</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;status&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Status</span><span class="o">.</span><span class="n">FAIL</span><span class="p">:</span>
@@ -210,14 +213,14 @@
 
         <span class="c"># Setup() could has been stored additional args, so all the updated</span>
         <span class="c"># stored arguments are applied to args</span>
-        <span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="nb">dict</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="s">&#39;stored_args&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">stored_args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">run_alias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">cmd</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Execute the module to replace a missing terminal command.</span>
@@ -258,7 +261,7 @@
 
         <span class="k">raise</span> <span class="n">DevException</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">error_init_method_required</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Module.setup"><a class="viewcode-back" href="../../module.html#core.module.Module.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="Module.setup"><a class="viewcode-back" href="../../module.html#core.module.Module.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Module first setup.</span>
 
 <span class="sd">        Called at the first module run per session.</span>
@@ -268,10 +271,9 @@
 <span class="sd">        This should perform the basic check of the module compatibility</span>
 <span class="sd">        with the remote enviroinment, and return the module Status value.</span>
 
-<span class="sd">        If not overridden, always returns Status.RUN.</span>
+<span class="sd">        Current execution arguments are in self.args.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            args (dictionary): Argument passed to the module</span>
+<span class="sd">        If not overridden, always returns Status.RUN.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Status value. Must be Status.RUN, Status.FAIL, or Status.IDLE.</span>
@@ -280,15 +282,14 @@
 
         <span class="k">return</span> <span class="n">Status</span><span class="o">.</span><span class="n">RUN</span>
 </div>
-<div class="viewcode-block" id="Module.run"><a class="viewcode-back" href="../../module.html#core.module.Module.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="Module.run"><a class="viewcode-back" href="../../module.html#core.module.Module.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Module execution.</span>
 
 <span class="sd">        Called at every module executions.</span>
 
 <span class="sd">        Override this to implement the module behaviour.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            args (dictionary): Argument passed to the module</span>
+<span class="sd">        Current execution arguments are in self.args.        </span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Object containing the execution result.</span>
