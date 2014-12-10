@@ -66,7 +66,7 @@
 <span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span><span class="p">,</span> <span class="n">ModuleError</span>
 <span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span><span class="p">,</span> <span class="n">dlog</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">modules</span>
-<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">utilities</span>
+<span class="kn">import</span> <span class="nn">utils</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
 
 <div class="viewcode-block" id="VectorList"><a class="viewcode-back" href="../../vectorlist.html#core.vectorlist.VectorList">[docs]</a><span class="k">class</span> <span class="nc">VectorList</span><span class="p">(</span><span class="nb">list</span><span class="p">):</span>
@@ -122,6 +122,9 @@
             <span class="c"># Skip if names filter is passed but current vector is missing</span>
             <span class="k">if</span> <span class="n">names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">n</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
 
+            <span class="c"># Add current vector name</span>
+            <span class="n">format_args</span><span class="p">[</span><span class="s">&#39;current_vector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span>
+
             <span class="c"># Run</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
 
@@ -165,6 +168,10 @@
         <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">vector</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span>
+
+            <span class="c"># Add current vector name</span>
+            <span class="n">format_args</span><span class="p">[</span><span class="s">&#39;current_vector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span>
+
             <span class="n">result</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">store_result</span><span class="p">:</span>
@@ -199,6 +206,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_os_match</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">target</span><span class="p">):</span> <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">names</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">):</span> <span class="k">continue</span>
+
+            <span class="c"># Add current vector name</span>
+            <span class="n">format_args</span><span class="p">[</span><span class="s">&#39;current_vector&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">name</span>
 
             <span class="n">response</span><span class="p">[</span><span class="n">vector</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">vector</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">format_args</span><span class="p">)</span>
 

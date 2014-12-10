@@ -79,7 +79,7 @@
 
 <dl class="class">
 <dt id="core.vectors.ModuleExec">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ModuleExec</tt><big>(</big><em>module</em>, <em>arguments</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=None</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleExec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleExec" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ModuleExec</tt><big>(</big><em>module</em>, <em>arguments</em>, <em>name=''</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>background=False</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleExec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleExec" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains commands to execute other modules.</p>
 <dl class="docutils">
 <dt>Args:</dt>
@@ -87,7 +87,8 @@
 <p>arguments (list of str): arguments passed as command line splitted string, e.g. <cite>[ &#8216;&#8211;optional=o&#8217;, &#8216;mandatory1, .. ]</cite>.</p>
 <p>name (str): This vector name.</p>
 <p>target (Os): The operating system supported by the vector.</p>
-<p class="last">postprocess (func): The function which postprocess the execution result.</p>
+<p>postprocess (func): The function which postprocess the execution result.</p>
+<p class="last">background (bool): Execute in a separate thread on <cite>run()</cite></p>
 </dd>
 </dl>
 <dl class="method">
@@ -120,11 +121,26 @@ module execution.</dd>
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="core.vectors.ModuleExec.load_result_or_run">
+<tt class="descname">load_result_or_run</tt><big>(</big><em>result_name</em>, <em>format_args={}</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ModuleExec.load_result_or_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ModuleExec.load_result_or_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a result stored in module session or run the module.</p>
+<p>Return the variable stored or run the <cite>self.run</cite> method.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>field (string): The variable name.
+format_arg (dict): The dictionary to format the payload with.</dd>
+<dt>Return:</dt>
+<dd>Object. Contains the postprocessed result of the <cite>run_argv</cite>
+module execution.</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="core.vectors.PhpCode">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCode</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCode" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpCode</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em>, <em>background=False</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCode" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains PHP code.</p>
 <p>The PHP code is executed via the module <cite>shell_php</cite>. Inherit <cite>ModuleExec</cite>.</p>
 <dl class="docutils">
@@ -133,7 +149,8 @@ module execution.</dd>
 <p>name (str): This vector name.</p>
 <p>target (Os): The operating system supported by the vector.</p>
 <p>postprocess (func): The function which postprocess the execution result.</p>
-<p class="last">arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+<p>arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+<p class="last">background (bool): Execute in a separate thread on <cite>run()</cite></p>
 </dd>
 </dl>
 <dl class="method">
@@ -154,7 +171,7 @@ module execution.</dd>
 
 <dl class="class">
 <dt id="core.vectors.PhpFile">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpFile</tt><big>(</big><em>payload_path</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpFile" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">PhpFile</tt><big>(</big><em>payload_path</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em>, <em>background=False</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpFile" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains PHP code imported from a template.</p>
 <p>The PHP code in the given template is executed via the module <cite>shell_php</cite>.
 Inherit <cite>PhpCode</cite>.</p>
@@ -164,14 +181,31 @@ Inherit <cite>PhpCode</cite>.</p>
 <p>name (str): This vector name.</p>
 <p>target (Os): The operating system supported by the vector.</p>
 <p>postprocess (func): The function which postprocess the execution result.</p>
-<p class="last">arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+<p>arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+<p class="last">background (bool): Execute in a separate thread on <cite>run()</cite></p>
 </dd>
 </dl>
+<dl class="method">
+<dt id="core.vectors.PhpFile.format">
+<tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpFile.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpFile.format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format and minify the payload.</p>
+<p>This format the vector payloads using Mako template. Then minify it.
+Also set a TemplateLookup to the template folder, to allow an easy
+<cite>&lt;% include&gt;</cite> tag usage.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>values (dict): The values passed as arguments of Mako
+<cite>template.Template(arg[n]).render(**values)</cite></dd>
+<dt>Returns:</dt>
+<dd>A list of string containing the formatted payloads.</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="core.vectors.ShellCmd">
-<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em>, <em>background=False</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains a shell command.</p>
 <p>The shell command is executed via the module <cite>shell_sh</cite>. Inherit <cite>ModuleExec</cite>.</p>
 <p>The formatted payload is minified removing multiple whitespaces.</p>
@@ -181,7 +215,8 @@ Inherit <cite>PhpCode</cite>.</p>
 <p>name (str): This vector name.</p>
 <p>target (Os): The operating system supported by the vector.</p>
 <p>postprocess (func): The function which postprocess the execution result.</p>
-<p class="last">arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+<p>arguments (list of str): Additional arguments for <cite>shell_php</cite></p>
+<p class="last">background (bool): Execute in a separate thread on <cite>run()</cite></p>
 </dd>
 </dl>
 </dd></dl>
