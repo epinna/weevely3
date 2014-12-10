@@ -180,6 +180,8 @@ class module_net_phpproxy:
     proxy_script_removed = 'PHP proxy script will be removed at weevely exit'
     proxy_script_manually_remove_s = 'Remove manually PHP proxy script \'%s\''
 
+class module_net_scan:
+    unexpected_response = 'Unexpected response'
 
 class module_file_archive:
     archive_type_not_set = 'Archive type not set and file extension not supported'

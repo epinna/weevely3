@@ -5,7 +5,7 @@ foreach($addrs as $a) {
     foreach($ports as $p) {
         $n="";$e="";
         if($fp = fsockopen($a, $p, $n, $e, $timeout=${ timeout })) {
-            print("OPEN $a:$p" . PHP_EOL);
+            print("OPN $a:$p" . PHP_EOL);
             fclose($fp);
         }
         else {
