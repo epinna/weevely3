@@ -69,14 +69,14 @@ class Sh(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() },
         ])
 
-    def setup(self, args={}):
+    def setup(self):
         """Probe all vectors to find a working system-like function.
 
         The method run_until is not used due to the check of shell_sh
         enabling for every tested vector.
 
         Args:
-            args: The dictionary of arguments
+            self.args: The dictionary of arguments
 
         Returns:
             Status value, must be Status.RUN, Status.FAIL, or Status.IDLE.
@@ -92,7 +92,7 @@ class Sh(Module):
 
         (vector_name,
          result) = self.vectors.find_first_result(
-          names = [ args.get('vector', '') ],
+          names = [ self.args.get('vector', '') ],
             format_args = args_check,
             condition = lambda result: (
                 # Stop if shell_php is in FAIL state
@@ -108,16 +108,16 @@ class Sh(Module):
         else:
             return Status.FAIL
 
-    def run(self, args):
+    def run(self):
 
         # Join the command list and
 
         # Escape the single quotes. This does not protect from \' but
         # avoid to break the query for an unscaped quote.
 
-        args['command'] = ' '.join(args['command']).replace("'", "\\'")
+        self.args['command'] = ' '.join(self.args['command']).replace("'", "\\'")
 
         return self.vectors.get_result(
-         name = args['vector'],
-         format_args = args
+         name = self.args['vector'],
+         format_args = self.args
         )

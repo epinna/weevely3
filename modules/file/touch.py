@@ -57,14 +57,14 @@ class Touch(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_touch' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Handle the cloning of the oldest timestamp in folder
-        if args.get('oldest_file_ts'):
+        if self.args.get('oldest_file_ts'):
             # TODO: This works only in remote unix environment, fix it.
             folder = (
-                os.path.split(args['rpath'])[0]
-                if os.path.sep in args['rpath']
+                os.path.split(self.args['rpath'])[0]
+                if os.path.sep in self.args['rpath']
                 else '.'
                 )
 
@@ -75,42 +75,42 @@ class Touch(Module):
 
             for file in file_list:
                 file_time = ModuleExec('file_check', [ file, 'time' ]).run()
-                args['epoch_ts'] = (
+                self.args['epoch_ts'] = (
                     file_time if (
-                        not args.get('epoch_ts') or
-                        file_time < args.get('epoch_ts')
+                        not self.args.get('epoch_ts') or
+                        file_time < self.args.get('epoch_ts')
                     )
                     else None
                 )
 
         # Handle to get timestamp from another file
-        elif args.get('file_ts'):
-            args['epoch_ts'] = ModuleExec('file_check', [ args['file_ts'], 'time' ]).run()
+        elif self.args.get('file_ts'):
+            self.args['epoch_ts'] = ModuleExec('file_check', [ self.args['file_ts'], 'time' ]).run()
 
         # Handle to get an human readable timestamp
-        elif args.get('human_ts'):
+        elif self.args.get('human_ts'):
             try:
-                args['epoch_ts'] = int(
+                self.args['epoch_ts'] = int(
                     time.mktime(
-                        dateutil.parser.parse(args['human_ts'], yearfirst=True).timetuple()
+                        dateutil.parser.parse(self.args['human_ts'], yearfirst=True).timetuple()
                     )
                 )
             except:
                 log.warn(messages.module_file_touch.error_invalid_timestamp_format)
                 return
 
-        if not args.get('epoch_ts'):
+        if not self.args.get('epoch_ts'):
             log.warn(messages.module_file_touch.error_source_timestamp_required)
             return
 
-        self.vectors.get_result(args['vector'], args)
+        self.vectors.get_result(self.args['vector'], self.args)
 
         # Verify execution
-        if not args['epoch_ts'] == ModuleExec('file_check', [ args.get('rpath'), 'time' ]).run():
+        if not self.args['epoch_ts'] == ModuleExec('file_check', [ self.args.get('rpath'), 'time' ]).run():
             log.warn(messages.module_file_touch.failed_touch_file)
             return
 
-        return args['epoch_ts']
+        return self.args['epoch_ts']
 
     def print_result(self, result):
         """Override print_result to print timestamp in an human readable form"""

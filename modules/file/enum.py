@@ -25,11 +25,11 @@ class Enum(Module):
           { 'name' : '-print', 'help' : 'Print the paths not found too', 'action' : 'store_true', 'default' : False }
         ])
 
-    def run(self, args):
+    def run(self):
 
         paths = []
 
-        lpath = args.get('lpath_list')
+        lpath = self.args.get('lpath_list')
         if lpath:
 
             try:
@@ -39,14 +39,14 @@ class Enum(Module):
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
                 return
 
-        paths += args.get('paths') if args.get('paths') else []
+        paths += self.args.get('paths') if self.args.get('paths') else []
 
         results = {}
 
         for path in paths:
 
             result = ModuleExec( "file_check", [ path, "perms" ]).run()
-            if result or args.get('print'):
+            if result or self.args.get('print'):
                 results[path] = result
 
         return results

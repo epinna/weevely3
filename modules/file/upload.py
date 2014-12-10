@@ -44,13 +44,13 @@ class Upload(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Load local file
-        content_orig = args.get('content')
+        content_orig = self.args.get('content')
         if content_orig == None:
 
-            lpath = args.get('lpath')
+            lpath = self.args.get('lpath')
             if not lpath:
                 log.warning(messages.module_file_upload.error_content_lpath_required)
                 return
@@ -62,24 +62,24 @@ class Upload(Module):
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
                 return
 
-        args['content'] = base64.b64encode(content_orig)
+        self.args['content'] = base64.b64encode(content_orig)
 
         # Check remote file existence
-        if not args['force'] and ModuleExec('file_check', [ args['rpath'], 'exists' ]).run():
-            log.warning(messages.generic.error_file_s_already_exists % args['rpath'])
+        if not self.args['force'] and ModuleExec('file_check', [ self.args['rpath'], 'exists' ]).run():
+            log.warning(messages.generic.error_file_s_already_exists % self.args['rpath'])
             return
 
         vector_name, result = self.vectors.find_first_result(
-         format_args = args,
+         format_args = self.args,
          condition = lambda result: True if result == '1' else False
         )
 
-        if not ModuleExec('file_check', [ args['rpath'], 'exists' ]).run():
+        if not ModuleExec('file_check', [ self.args['rpath'], 'exists' ]).run():
             log.warning(messages.module_file_upload.failed_upload_file)
             return
 
         if not (
-          ModuleExec('file_check', [ args['rpath'], 'md5' ]).run() ==
+          ModuleExec('file_check', [ self.args['rpath'], 'md5' ]).run() ==
           hashlib.md5(content_orig).hexdigest()
           ):
             log.warning(messages.module_file_upload.failed_md5_check)

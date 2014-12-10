@@ -45,22 +45,22 @@ class Dump(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'mysqldump_php' }
         ])
 
-    def run(self, args):
+    def run(self):
 
-        args['table'] = args.get('table', '')
+        self.args['table'] = self.args.get('table', '')
 
-        if args['vector'] == 'mysqldump_sh' and args['dbms'] != 'mysql':
+        if self.args['vector'] == 'mysqldump_sh' and self.args['dbms'] != 'mysql':
             log.warn(messages.module.vector_s_not_support_arg_s_s % (
-                            args['vector'],
+                            self.args['vector'],
                             'dbms',
-                            args['dbms']
+                            self.args['dbms']
                         )
                     )
             return
 
         vector_name, result = self.vectors.find_first_result(
-            names = [ args.get('vector') ],
-            format_args = args,
+            names = [ self.args.get('vector') ],
+            format_args = self.args,
             condition = lambda r: r and '-- Dumping data for table' in r
         )
 
@@ -69,11 +69,11 @@ class Dump(Module):
             return
 
         # Get a temporary file name if not specified
-        lpath = args.get('lpath')
+        lpath = self.args.get('lpath')
         if not lpath:
             temp_file = tempfile.NamedTemporaryFile(
                 suffix = '_%s_%s_%s_%s.sqldump' % (
-                    args['user'], args['passwd'], args['host'], args['db']
+                    self.args['user'], self.args['passwd'], self.args['host'], self.args['db']
                 ),
             delete = False
             )

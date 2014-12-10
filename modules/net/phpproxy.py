@@ -28,16 +28,16 @@ class Phpproxy(Module):
             { 'name' : '-no-autoremove', 'action' : 'store_true', 'default' : False, 'help' : 'Do not autoremove on exit' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         result = ModuleExec(
                 'file_upload2web',
                 [
                     os.path.join(self.folder, 'poxy.php'),
-                    args['rpath'],
-                    '-rname', args['rname']
+                    self.args['rpath'],
+                    '-rname', self.args['rname']
                 ]
-            ).run(args)
+            ).run(self.args)
 
         if not (
             result and
@@ -53,7 +53,7 @@ class Phpproxy(Module):
             )
         )
 
-        if args['no_autoremove']:
+        if self.args['no_autoremove']:
             log.warn(messages.module_net_phpproxy.proxy_script_manually_remove_s % (result[0][0]))
         else:
             log.warn(messages.module_net_phpproxy.proxy_script_removed)

@@ -50,16 +50,16 @@ class Download(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Check remote file existance
-        if not ModuleExec('file_check', [ args.get('rpath'), 'readable' ]).run():
+        if not ModuleExec('file_check', [ self.args.get('rpath'), 'readable' ]).run():
             log.warn(messages.module_file_download.failed_download_file)
             return
 
         # Get the remote file MD5. If this is not available, still do a basic check
         # to see if the output is decodable as base64 string.
-        expected_md5 = ModuleExec('file_check', [ args.get('rpath'), 'md5' ]).run()
+        expected_md5 = ModuleExec('file_check', [ self.args.get('rpath'), 'md5' ]).run()
         if expected_md5:
             check_md5 = lambda r: hashlib.md5(base64.b64decode(r)).hexdigest() == expected_md5
         else:
@@ -68,7 +68,7 @@ class Download(Module):
 
         # Find the first vector that satisfy the md5 check
         vector_name, result = self.vectors.find_first_result(
-         format_args = args,
+         format_args = self.args,
          condition = check_md5
         )
 
@@ -78,7 +78,7 @@ class Download(Module):
             return
 
         # Dump to local file
-        lpath = args.get('lpath')
+        lpath = self.args.get('lpath')
 
         try:
             result_decoded = base64.b64decode(result)

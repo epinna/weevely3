@@ -67,10 +67,10 @@ class Info(Module):
             'nargs' : '+' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         result = self.vectors.get_results(
-            names = args.get('info', []),
+            names = self.args.get('info', []),
             results_to_store = (
                             'whoami',
                             'hostname',
@@ -82,7 +82,7 @@ class Info(Module):
 
         # Returns a string when a single information is requested,
         # else returns a dictionary containing all the results.
-        info = args.get('info')
+        info = self.args.get('info')
         if info and len(info) == 1:
             return result[info[0]]
         else:

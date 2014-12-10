@@ -71,6 +71,9 @@ class Module:
             description = self.__doc__
         )
 
+        # Arguments dictionary is initially empty
+        self.args = {}
+
         self.init()
 
     def run_cmdline(self, line, cmd = ''):
@@ -137,14 +140,14 @@ class Module:
 
         # Merge stored arguments with line arguments
         stored_args = self.session[self.name]['stored_args'].copy()
-        args = stored_args.copy()
+        self.args = stored_args.copy()
 
         try:
             user_args = self.argparser.parse_args(argv)
         except SystemExit:
             return
 
-        args.update(
+        self.args.update(
             dict(
                 (key, value) for key, value in user_args.__dict__.items() if value != None
             )
@@ -152,7 +155,7 @@ class Module:
 
         # If module status is IDLE, launch setup()
         if self.session[self.name]['status'] == Status.IDLE:
-            self.session[self.name]['status'] = self.setup(args)
+            self.session[self.name]['status'] = self.setup()
 
         # If module status is FAIL, return
         if self.session[self.name]['status'] == Status.FAIL:
@@ -161,14 +164,14 @@ class Module:
 
         # Setup() could has been stored additional args, so all the updated
         # stored arguments are applied to args
-        args.update(
+        self.args.update(
             dict(
                 (key, value) for key, value in self.session[self.name]['stored_args'].items()
                 if value != stored_args.get(key)
                 )
         )
 
-        return self.run(args)
+        return self.run()
 
     def run_alias(self, args, cmd):
         """Execute the module to replace a missing terminal command.
@@ -209,7 +212,7 @@ class Module:
 
         raise DevException(messages.module.error_init_method_required)
 
-    def setup(self, args={}):
+    def setup(self):
         """Module first setup.
 
         Called at the first module run per session.

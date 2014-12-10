@@ -40,14 +40,14 @@ class Scan(Module):
           { 'name' : '-ports-per-request', 'help' : SUPPRESS, 'type' : int, 'default' : 5 },
         ])
 
-    def run(self, args):
+    def run(self):
 
         ## Address handling
 
         # Explode every single IP or network starting from
         # format IP1,IP2-IP3,IP/MASK,..
         IPs = []
-        for ip_or_network in args['addresses'].split(','):
+        for ip_or_network in self.args['addresses'].split(','):
 
             if ip_or_network.count('-') == 1:
                 # If there is a dash, explode
@@ -64,19 +64,19 @@ class Scan(Module):
                 IPs.append(ip_or_network)
 
         ## Port handling
-        prts = utils.iputil.port_range(args['ports'])
+        prts = utils.iputil.port_range(self.args['ports'])
 
         result = ''
 
-        for ips_chunk in list(utils.strings.chunks(IPs, args['addresses_per_request'])):
-            for prts_chunk in list(utils.strings.chunks(prts, args['ports_per_request'])):
+        for ips_chunk in list(utils.strings.chunks(IPs, self.args['addresses_per_request'])):
+            for prts_chunk in list(utils.strings.chunks(prts, self.args['ports_per_request'])):
 
                 result += self.vectors.get_result(
                     name = 'fsockopen',
                     format_args = {
                                     'ips' : ips_chunk,
                                     'prts' : prts_chunk,
-                                    'timeout' : args['timeout'] }
+                                    'timeout' : self.args['timeout'] }
                 )
 
                 #log.warn('Scanning addresses %s-%s:%i-%i' % (

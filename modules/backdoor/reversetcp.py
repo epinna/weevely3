@@ -81,24 +81,24 @@ class Reversetcp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Run all the vectors
         for vector in self.vectors:
 
             # Skip vector if -vector is specified but does not match
-            if args.get('vector') and args.get('vector') != vector.name:
+            if self.args.get('vector') and self.args.get('vector') != vector.name:
                 continue
 
             # Background run does not return results
-            vector.run(args)
+            vector.run(self.args)
 
             # If set, skip autoconnect
-            if args.get('no_autoconnect'): continue
+            if self.args.get('no_autoconnect'): continue
 
             # Run tcp server for the vector
             try:
-                tcpserver = TcpServer(args['port'])
+                tcpserver = TcpServer(self.args['port'])
             except socket.timeout as e:
                 log.debug(messages.module_backdoor_reversetcp.error_timeout)
                 continue

@@ -43,9 +43,9 @@ class Webdownload(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : "file_put_contents" },
         ])
 
-    def run(self, args):
+    def run(self):
 
         return self.vectors.get_result(
-         name = args['vector'],
-         format_args = args
+         name = self.args['vector'],
+         format_args = self.args
         )

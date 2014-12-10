@@ -51,20 +51,20 @@ class Tcp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Run all the vectors
         for vector in self.vectors:
 
             # Skip vector if -vector is specified but does not match
-            if args.get('vector') and args.get('vector') != vector.name:
+            if self.args.get('vector') and self.args.get('vector') != vector.name:
                 continue
 
             # Background run does not return results
-            vector.run(args)
+            vector.run(self.args)
 
             # If set, skip autoconnect
-            if args.get('no_autoconnect'): continue
+            if self.args.get('no_autoconnect'): continue
 
             # Give some time to spawn the shell
             time.sleep(1)
@@ -73,12 +73,12 @@ class Tcp(Module):
 
             if not urlparsed.hostname:
                 log.debug(
-                    messages.module_backdoor_tcp.error_parsing_connect_s % args['port']
+                    messages.module_backdoor_tcp.error_parsing_connect_s % self.args['port']
                 )
                 continue
 
             try:
-                telnetlib.Telnet(urlparsed.hostname, args['port'], timeout = 5).interact()
+                telnetlib.Telnet(urlparsed.hostname, self.args['port'], timeout = 5).interact()
 
                 # If telnetlib does not rise an exception, we can assume that
                 # ended correctly and return from `run()`
@@ -87,18 +87,18 @@ class Tcp(Module):
                 log.debug(
                     messages.module_backdoor_tcp.error_connecting_to_s_s_s % (
                         urlparsed.hostname,
-                        args['port'],
+                        self.args['port'],
                         e
                     )
                 )
 
         # If autoconnect was expected but Telnet() calls worked,
         # prints error message
-        if not args.get('no_autoconnect'):
+        if not self.args.get('no_autoconnect'):
             log.warn(
                 messages.module_backdoor_tcp.error_connecting_to_s_s_s % (
                     urlparsed.hostname,
-                    args['port'],
+                    self.args['port'],
                     'remote port not open or unreachable'
                 )
             )

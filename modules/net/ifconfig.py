@@ -52,7 +52,7 @@ class Ifconfig(Module):
         return networks
 
 
-    def run(self, args):
+    def run(self):
 
         # Call raw ifconfig from $PATH and return it
         result = self._get_ifconfig_result("ifconfig")

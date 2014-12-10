@@ -54,8 +54,11 @@ class Find(Module):
           { 'name' : '-case', 'help' : 'Case sensitive', 'action' : 'store_true', 'default' : False },
         ])
 
-    def run(self, args):
-        result = self.vectors.get_result(args['vector'], args)
+    def run(self):
+        result = self.vectors.get_result(
+                    self.args['vector'],
+                    self.args
+                )
 
         return result.rstrip().split('\n') if isinstance(result,str) else result
 

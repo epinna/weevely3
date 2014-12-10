@@ -95,29 +95,29 @@ class Upload2web(Module):
 
         return absolute_path_file, url_file
 
-    def run(self, args):
+    def run(self):
 
         self._get_env_info(self.session['url'])
         if not self.base_folder_url or not self.base_folder_path:
             log.warn(messages.module_file_upload2web.failed_retrieve_info)
 
         # If remote path is a folder, get first writable folder
-        if ModuleExec("file_check", [ args['rpath'], 'dir' ]).run():
-            folders = ModuleExec("file_find", [ '-writable', '-quit', args['rpath'] ]).run()
+        if ModuleExec("file_check", [ self.args['rpath'], 'dir' ]).run():
+            folders = ModuleExec("file_find", [ '-writable', '-quit', self.args['rpath'] ]).run()
 
             if not folders or not folders[0]:
-                log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % args['rpath'])
+                log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % self.args['rpath'])
                 return
 
             # If the remote file name is not set, get it from lpath
-            if args.get('rname'):
-                rname = args.get('rname')
+            if self.args.get('rname'):
+                rname = self.args.get('rname')
             else:
-                lfolder, rname = os.path.split(args['lpath'])
+                lfolder, rname = os.path.split(self.args['lpath'])
 
             # TODO: all the paths should be joined with remote OS_SEP from system_info.
-            args['rpath'] = os.path.join(folders[0], rname)
+            self.args['rpath'] = os.path.join(folders[0], rname)
 
-        if ModuleExec("file_upload", [ args['lpath'], args['rpath'] ]).run():
+        if ModuleExec("file_upload", [ self.args['lpath'], self.args['rpath'] ]).run():
             # Guess URL from rpath
-            return [ self._map_file2web(args['rpath']) ]
+            return [ self._map_file2web(self.args['rpath']) ]

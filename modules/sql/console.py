@@ -58,36 +58,36 @@ class Console(Module):
             ]
 
         # If the result is none, prints error message about missing trailer
-        command_last_chars = utils.prettify.shorten(args['query'].rstrip(),
+        command_last_chars = utils.prettify.shorten(self.args['query'].rstrip(),
                                                         keep_trailer = 10)
 
         if (command_last_chars and command_last_chars[-1] != ';'):
             log.warn(messages.module_sql_console.missing_sql_trailer_s % command_last_chars)
 
 
-    def run(self, args):
+    def run(self):
 
         # The vector name is given by the db type
-        vector = args.get('dbms')
+        vector = self.args.get('dbms')
 
         # And by the user and password presence
         vector += (
-                    '' if args.get('user') and args.get('passwd')
+                    '' if self.args.get('user') and self.args.get('passwd')
                     else '_fallback'
                 )
 
         # If the query is set, just execute it
-        if args.get('query'):
-            return self._query(vector, args)
+        if self.args.get('query'):
+            return self._query(vector, self.args)
 
         # Else, start the console.
         # Check credentials
-        args['query'] = (
+        self.args['query'] = (
                     'SELECT USER;' if vector.startswith('pgsql')
                     else 'SELECT USER();'
                 )
 
-        user = self._query(vector, args)
+        user = self._query(vector, self.args)
         if not user:
             log.warn(messages.module_sql_console.check_credentials)
             return
@@ -103,8 +103,8 @@ class Console(Module):
             if not query: continue
             if query == 'quit': break
 
-            args['query'] = query
-            result = self._query(vector, args)
+            self.args['query'] = query
+            result = self._query(vector, self.args)
             self.print_result(result)
 
     def print_result(self, result):

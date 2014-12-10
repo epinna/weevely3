@@ -25,20 +25,20 @@ class Read(Module):
           { 'name' : '-vector', 'choices' : ( 'file', 'fread', 'file_get_contents', 'base64' ) }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Get a temporary file name
         temp_file = tempfile.NamedTemporaryFile()
-        args['lpath'] = temp_file.name
+        self.args['lpath'] = temp_file.name
 
-        arg_vector = [ '-vector', args.get('vector') ] if args.get('vector') else []
+        arg_vector = [ '-vector', self.args.get('vector') ] if self.args.get('vector') else []
 
         # Run file_download
         result = ModuleExec(
                     'file_download',
-                    [ args.get('rpath'), '${lpath}' ] + arg_vector,
+                    [ self.args.get('rpath'), '${lpath}' ] + arg_vector,
                     name = 'file_download'
-                ).run(args)
+                ).run(self.args)
 
         # Delete temp file
         temp_file.close()

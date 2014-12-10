@@ -50,7 +50,7 @@ class Php(Module):
         return status
 
 
-    def setup(self, args={}):
+    def setup(self):
         """Instauration of the PHP channel. Returns the module status."""
 
         # Return if already set. This check has to be done due to
@@ -88,7 +88,7 @@ class Php(Module):
 
         return status
 
-    def run(self, args):
+    def run(self):
         """ Run module """
 
         # This is an unusual slack setup at every execution
@@ -99,8 +99,8 @@ class Php(Module):
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
 
         # Compose command with cwd, pre_command, and post_command option.
-        args.update({ 'chdir' : chdir })
-        command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""").render(**args)
+        self.args.update({ 'chdir' : chdir })
+        command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""").render(**self.args)
 
         log.debug('PAYLOAD %s' % command)
 

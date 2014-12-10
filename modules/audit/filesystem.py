@@ -134,7 +134,7 @@ class Filesystem(Module):
                 and not f.endswith('old')
                 and any(p for p in files_paths if p and p in f)]
 
-    def run(self, args):
+    def run(self):
 
         results = {}
 
@@ -142,9 +142,9 @@ class Filesystem(Module):
                             # Execute every function starting with check_*
                             fn for fn in self.check_functions
                             # if the user does not specify any name
-                            if not args.get('check')
+                            if not self.args.get('check')
                             # of if specify the current function name
-                            or args.get('check') == fn
+                            or self.args.get('check') == fn
                         ]:
 
             function = getattr(self, func_name)

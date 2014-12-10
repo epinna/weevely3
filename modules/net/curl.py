@@ -71,14 +71,14 @@ class Curl(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         headers = []
         saved = None
 
         vector_name, result = self.vectors.find_first_result(
-                names = [ args.get('vector') ],
-                format_args = args,
+                names = [ self.args.get('vector') ],
+                format_args = self.args,
                 condition = lambda r: r if r and r.strip() else None
             )
 
@@ -95,7 +95,7 @@ class Curl(Module):
         else:
             headers, result = result.split('\r\n'*2, 1)
 
-        self.print_headers = args.get('include_headers')
+        self.print_headers = self.args.get('include_headers')
 
         headers = (
             [
@@ -105,12 +105,12 @@ class Curl(Module):
             else headers
         )
 
-        output_path = args.get('output')
+        output_path = self.args.get('output')
         if output_path:
 
             # If response must be saved, it's anyway safer to save it
             # within additional requests
-            if not args.get('local'):
+            if not self.args.get('local'):
                 saved = ModuleExec('file_upload', [ '-content', result, output_path ]).run()
             else:
                 try:
@@ -127,7 +127,7 @@ class Curl(Module):
     def print_result(self, result):
 
         # TODO: 'args' should be passed to print_result
-        # to customize the printing e.g. args should be
+        # to customize the printing e.g. self.args should be
         # always filled but prints just with include_headers
 
         result, headers, saved = result

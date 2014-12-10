@@ -37,12 +37,12 @@ class Bzip2(Module):
           { 'name' : '--keep', 'action' : 'store_true', 'default' : False, 'help' : 'Keep (don\'t delete) input files' },
         ])
 
-    def run(self, args):
+    def run(self):
 
         # The correct execution returns something only on errors
         result_err = self.vectors.get_result(
             name = 'php_bzip2',
-            format_args = args,
+            format_args = self.args,
         )
 
         if result_err:

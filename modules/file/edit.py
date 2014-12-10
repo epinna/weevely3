@@ -41,30 +41,30 @@ class Edit(Module):
           { 'name' : '-editor', 'help' : 'Choose editor', 'default' : 'vim' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Get a temporary file name
-        suffix = re.sub('[\W]+', '_', args['rpath'])
+        suffix = re.sub('[\W]+', '_', self.args['rpath'])
         temp_file = tempfile.NamedTemporaryFile(suffix = suffix)
         lpath = temp_file.name
 
         # Keep track of the old timestamp if requested
-        if args['keep_ts']:
+        if self.args['keep_ts']:
             timestamp = ModuleExec(
                         'file_check',
-                        [ args.get('rpath'), 'time' ]
+                        [ self.args.get('rpath'), 'time' ]
                     ).run()
 
         # If remote file already exists and readable
         if ModuleExec(
                     'file_check',
-                    [ args.get('rpath'), 'readable' ]
+                    [ self.args.get('rpath'), 'readable' ]
                 ).run():
 
             # Download file
             result_download = ModuleExec(
                         'file_download',
-                        [ args.get('rpath'), lpath ]
+                        [ self.args.get('rpath'), lpath ]
                     ).run()
 
             # Exit with no result
@@ -75,7 +75,7 @@ class Edit(Module):
             md5_orig = hashlib.md5(open(lpath, 'rb').read()).hexdigest()
 
             # Run editor
-            subprocess.check_call( [ args['editor'], lpath ])
+            subprocess.check_call( [ self.args['editor'], lpath ])
 
             # With no changes, just return
             if md5_orig == hashlib.md5(open(lpath, 'rb').read()).hexdigest():
@@ -84,20 +84,20 @@ class Edit(Module):
                 return
 
         else:
-            subprocess.check_call( [ args['editor'], lpath ])
+            subprocess.check_call( [ self.args['editor'], lpath ])
 
         # Upload file
         result_upload = ModuleExec(
                     'file_upload',
-                    [ '-force', lpath, args.get('rpath') ]
+                    [ '-force', lpath, self.args.get('rpath') ]
                 ).run()
 
 
         # Reset original timestamp if requested
-        if args['keep_ts']:
+        if self.args['keep_ts']:
             ModuleExec(
                 'file_touch',
-                [ args.get('rpath'), '-epoch-ts', str(timestamp) ]
+                [ self.args.get('rpath'), '-epoch-ts', str(timestamp) ]
             ).run()
 
         # Delete temp file

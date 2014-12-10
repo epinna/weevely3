@@ -54,29 +54,29 @@ class Grep(Module):
             { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
         ])
 
-    def run(self, args):
+    def run(self):
 
 
         files = []
 
-        if ModuleExec("file_check", [ args['rpath'], 'dir' ]).run():
+        if ModuleExec("file_check", [ self.args['rpath'], 'dir' ]).run():
             # If remote path is a folder, harvest all the readable
             # files wih given name-regex
 
             # Prepare the arguments for file_find
-            file_find_args = [ '-readable', args['rpath'] ]
-            if args.get('name_regex'):
-                file_find_args += [ '-name-regex', args.get('name_regex') ]
-            if args.get('no_recursion'):
+            file_find_args = [ '-readable', self.args['rpath'] ]
+            if self.args.get('name_regex'):
+                file_find_args += [ '-name-regex', self.args.get('name_regex') ]
+            if self.args.get('no_recursion'):
                 file_find_args += [ '-no-recursion' ]
 
             files = ModuleExec("file_find", file_find_args).run()
 
 
-        elif (ModuleExec("file_check", [ args['rpath'], 'file' ]).run() and
-              ModuleExec("file_check", [ args['rpath'], 'readable' ]).run()):
+        elif (ModuleExec("file_check", [ self.args['rpath'], 'file' ]).run() and
+              ModuleExec("file_check", [ self.args['rpath'], 'readable' ]).run()):
             # If the remote path is a readable file, just store the path
-            files = [ args['rpath'] ]
+            files = [ self.args['rpath'] ]
 
 
         # Validate files presence
@@ -90,8 +90,8 @@ class Grep(Module):
 
         for rfile in files:
             result = self.vectors.get_result(
-                args['vector'],
-                { 'regex' : args['regex'], 'rfile' : rfile, 'case' : args['case'] }
+                self.args['vector'],
+                { 'regex' : self.args['regex'], 'rfile' : rfile, 'case' : self.args['case'] }
             )
 
             result_list = result.split('\n') if isinstance(result, str) and result else []

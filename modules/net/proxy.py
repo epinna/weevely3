@@ -85,7 +85,7 @@ class HTTPProxyRequestHandler(MultiThreadedHTTPServer):
                 "%s - - [%s] %s\n" %
                     (self.client_address[0],
                     self.log_date_time_string(),
-                    format % args)
+                    format % self.args)
                 )
 
 class Proxy(Module):
@@ -109,16 +109,16 @@ class Proxy(Module):
             { 'name' : '-no-background', 'action' : 'store_true', 'default' : False, 'help' : 'Run foreground' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         server = BaseHTTPServer.HTTPServer(
-            ( args['lhost'], args['lport'] ),
+            ( self.args['lhost'], self.args['lport'] ),
             HTTPProxyRequestHandler
         )
 
-        log.warn(messages.module_net_proxy.proxy_set_address_s_i % ( args['lhost'], args['lport'] ))
+        log.warn(messages.module_net_proxy.proxy_set_address_s_i % ( self.args['lhost'], self.args['lport'] ))
 
-        if args['no_background']:
+        if self.args['no_background']:
             log.warn(messages.module_net_proxy.proxy_started_foreground)
             server.serve_forever()
         else:

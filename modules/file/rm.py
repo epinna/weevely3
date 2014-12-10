@@ -23,9 +23,9 @@ class Rm(Module):
           { 'name' : 'rpath', 'help' : 'Remote file path' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         # Run unlink
         return PhpCode("""(unlink('${rpath}') && print(1)) || print(0);""",
                         postprocess = lambda x: True if x == '1' else False
-                        ).run(args)
+                        ).run(self.args)

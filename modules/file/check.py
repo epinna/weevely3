@@ -79,9 +79,9 @@ class Check(Module):
           { 'name' : 'check', 'choices' : self.vectors.get_names() },
         ])
 
-    def run(self, args):
+    def run(self):
 
         return self.vectors.get_result(
-         name = args['check'],
-         format_args = args
+         name = self.args['check'],
+         format_args = self.args
         )

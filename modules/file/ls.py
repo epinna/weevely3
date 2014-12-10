@@ -26,7 +26,7 @@ class Ls(Module):
           { 'name' : 'dir', 'help' : 'Target folder', 'nargs' : '?', 'default' : '.' }
         ])
 
-    def run(self, args):
+    def run(self):
 
         return PhpCode("""
                 $p="${dir}";
@@ -40,7 +40,7 @@ class Ls(Module):
                     }
                 }""",
                 postprocess = lambda x: x.split('\n')
-               ).run(args)
+               ).run(self.args)
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))
