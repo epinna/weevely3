@@ -95,8 +95,6 @@ class Curl(Module):
         else:
             headers, result = result.split('\r\n'*2, 1)
 
-        self.print_headers = self.args.get('include_headers')
-
         headers = (
             [
                 h.rstrip() for h
@@ -126,18 +124,15 @@ class Curl(Module):
 
     def print_result(self, result):
 
-        # TODO: 'args' should be passed to print_result
-        # to customize the printing e.g. self.args should be
-        # always filled but prints just with include_headers
-
         result, headers, saved = result
 
         # If is saved, we do not want output
-        if saved != None:
+        if self.args.get('output'):
             log.info(saved)
             return
 
-        if self.print_headers:
+        # Print headers if requested
+        if self.args.get('include_headers'):
             log.info( '\r\n'.join(headers) + '\r\n')
 
         if result:
