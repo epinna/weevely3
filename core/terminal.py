@@ -233,6 +233,7 @@ class Terminal(CmdModules):
 
         # Clean trailing newline if existent to prettify output
         result = result[:-1] if (
+                isinstance(result, basestring) and
                 result.endswith('\n')
             ) else result
 
