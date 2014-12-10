@@ -9,7 +9,7 @@ foreach($addrs as $a) {
             fclose($fp);
         }
         else {
-            print("ERR $a:$p" . PHP_EOL);
+            print("ERR $a:$p $e $n" . PHP_EOL);
         }
     }
 }
