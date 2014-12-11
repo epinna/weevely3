@@ -105,7 +105,7 @@ class Upload2web(Module):
 
             if not folders or not folders[0]:
                 log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % self.args['rpath'])
-                return
+                return None, None
 
             # If the remote file name is not set, get it from lpath
             if self.args.get('rname'):
