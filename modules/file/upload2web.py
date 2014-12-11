@@ -10,8 +10,6 @@ class Upload2web(Module):
 
     """Upload file automatically to a web folder and get corresponding URL."""
 
-    aliases = [ 'rm' ]
-
     def init(self):
 
         self.register_info(
