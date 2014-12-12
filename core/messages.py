@@ -177,8 +177,8 @@ class module_net_proxy:
 
 class module_net_phpproxy:
     phpproxy_installed_to_s_browser_to_s = 'PHP proxy installed to \'%s\', browse \'%s\' with your browser'
-    proxy_script_removed = 'PHP proxy script will be removed at weevely exit'
-    proxy_script_manually_remove_s = 'Remove manually PHP proxy script \'%s\''
+    proxy_script_removed = 'The PHP proxy script will be removed at weevely exit'
+    proxy_script_manually_remove_s = 'Remove manually the PHP proxy script \'%s\''
 
 class module_net_scan:
     unexpected_response = 'Unexpected response'
@@ -188,6 +188,24 @@ class module_file_archive:
     error_extracting_s_file_needed = 'Error extracting %s, first remote file argument must contain the output file path'
     error_extracting_s_folder_needed = 'Error extracting %s, first remote file argument must contain the output folder path'
     remote_path_check_failed = "Remote path check failed, please check if exists and is readable"
+
+class module_file_mount:
+    httpfs_s_not_found = "HTTPfs binary '%s' not found, specify binary path or install it from 'https://github.com/cyrus-and/httpfs'"
+    error_generating_agent = "Error generating HTTPfs PHP agent"
+    failed_agent_upload = "Failed PHP agent upload"
+    agent_installed_tutorial = """HTTPfs PHP agent installed remotely as ${agent_abs_path}.
+
+Run the following commands in another console outside weevely to mount
+and unmount the remote filesystem.
+
+Mount locally a remote folder:
+    ${httpfs_binary} mount '${agent_url}' <local folder> <remote folder>
+
+Unmount it:
+    fusermount -u <local folder>
+"""
+    httpfs_agent_removed = 'The PHP agent will be removed at weevely exit'
+    httpfs_agent_manually_remove_s = 'Remove manually the PHP agent \'%s\''
 
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'

@@ -24,7 +24,7 @@ class Phpproxy(Module):
 
         self.register_arguments([
             { 'name' : 'rpath', 'help' : 'Remote path where to install the PHP proxy script. If it is a folder find the first writable folder in it', 'default' : '.', 'nargs' : '?' },
-            { 'name' : '-rname', 'help' : 'Set a specific file name ending with \'.php\'. Default is random', 'default' : '%s.php' % utils.strings.randstr(4) },
+            { 'name' : '-rname', 'help' : 'Set a specific file name ending with \'.php\'. Default is random', 'default' : '%s.php' % utils.strings.randstr(6) },
             { 'name' : '-no-autoremove', 'action' : 'store_true', 'default' : False, 'help' : 'Do not autoremove on exit' }
         ])
 
