@@ -156,8 +156,8 @@ module execution.</dd>
 <dl class="method">
 <dt id="core.vectors.PhpCode.format">
 <tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpCode.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpCode.format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Format and minify the payload.</p>
-<p>This format the vector payloads using Mako template. Then minify it.</p>
+<dd><p>Format the payload.</p>
+<p>This format the vector payloads using Mako template.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd>values (dict): The values passed as arguments of Mako
@@ -188,8 +188,8 @@ Inherit <cite>PhpCode</cite>.</p>
 <dl class="method">
 <dt id="core.vectors.PhpFile.format">
 <tt class="descname">format</tt><big>(</big><em>values</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#PhpFile.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.PhpFile.format" title="Permalink to this definition">¶</a></dt>
-<dd><p>Format and minify the payload.</p>
-<p>This format the vector payloads using Mako template. Then minify it.
+<dd><p>Format the payload.</p>
+<p>This format the vector payloads using Mako template.
 Also set a TemplateLookup to the template folder, to allow an easy
 <cite>&lt;% include&gt;</cite> tag usage.</p>
 <dl class="docutils">
@@ -208,7 +208,6 @@ Also set a TemplateLookup to the template folder, to allow an easy
 <em class="property">class </em><tt class="descclassname">core.vectors.</tt><tt class="descname">ShellCmd</tt><big>(</big><em>payload</em>, <em>name=None</em>, <em>target=0</em>, <em>postprocess=None</em>, <em>arguments=[]</em>, <em>background=False</em><big>)</big><a class="reference internal" href="_modules/core/vectors.html#ShellCmd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#core.vectors.ShellCmd" title="Permalink to this definition">¶</a></dt>
 <dd><p>This vector contains a shell command.</p>
 <p>The shell command is executed via the module <cite>shell_sh</cite>. Inherit <cite>ModuleExec</cite>.</p>
-<p>The formatted payload is minified removing multiple whitespaces.</p>
 <dl class="docutils">
 <dt>Args:</dt>
 <dd><p class="first">payload (str): Command line to execute.</p>

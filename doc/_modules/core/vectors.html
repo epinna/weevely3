@@ -232,9 +232,9 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="PhpCode.format"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpCode.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Format and minify the payload.</span>
+        <span class="sd">&quot;&quot;&quot;Format the payload.</span>
 
-<span class="sd">        This format the vector payloads using Mako template. Then minify it.</span>
+<span class="sd">        This format the vector payloads using Mako template.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            values (dict): The values passed as arguments of Mako</span>
@@ -245,19 +245,11 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minify</span><span class="p">(</span>
+        <span class="k">return</span> <span class="p">[</span>
                     <span class="n">Template</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
-                 <span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span>
+                    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span>
                 <span class="p">]</span>
-
-</div>
-    <span class="k">def</span> <span class="nf">_minify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-
-        <span class="c"># Manually minify PHP is dangerous.</span>
-        <span class="c"># TODO: Use php -w or similar to shrink vector PHP code.</span>
-
-        <span class="k">return</span> <span class="n">body</span>
-</div>
+</div></div>
 <div class="viewcode-block" id="PhpFile"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpFile">[docs]</a><span class="k">class</span> <span class="nc">PhpFile</span><span class="p">(</span><span class="n">PhpCode</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;This vector contains PHP code imported from a template.</span>
@@ -302,9 +294,9 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="PhpFile.format"><a class="viewcode-back" href="../../vectors.html#core.vectors.PhpFile.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Format and minify the payload.</span>
+        <span class="sd">&quot;&quot;&quot;Format the payload.</span>
 
-<span class="sd">        This format the vector payloads using Mako template. Then minify it.</span>
+<span class="sd">        This format the vector payloads using Mako template.</span>
 <span class="sd">        Also set a TemplateLookup to the template folder, to allow an easy</span>
 <span class="sd">        `&lt;% include&gt;` tag usage.</span>
 
@@ -317,12 +309,12 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minify</span><span class="p">(</span>
-                    <span class="n">Template</span><span class="p">(</span>
+        <span class="k">return</span> <span class="p">[</span>
+                 <span class="n">Template</span><span class="p">(</span>
                         <span class="n">text</span> <span class="o">=</span> <span class="n">arg</span><span class="p">,</span>
                         <span class="n">lookup</span> <span class="o">=</span> <span class="n">TemplateLookup</span><span class="p">(</span><span class="n">directories</span> <span class="o">=</span> <span class="p">[</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder</span> <span class="p">])</span>
                         <span class="p">)</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
-                 <span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span>
+                 <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span>
                 <span class="p">]</span>
 </div></div>
 <div class="viewcode-block" id="ShellCmd"><a class="viewcode-back" href="../../vectors.html#core.vectors.ShellCmd">[docs]</a><span class="k">class</span> <span class="nc">ShellCmd</span><span class="p">(</span><span class="n">PhpCode</span><span class="p">):</span>
@@ -330,8 +322,6 @@
     <span class="sd">&quot;&quot;&quot;This vector contains a shell command.</span>
 
 <span class="sd">    The shell command is executed via the module `shell_sh`. Inherit `ModuleExec`.</span>
-
-<span class="sd">    The formatted payload is minified removing multiple whitespaces.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        payload (str): Command line to execute.</span>
@@ -360,12 +350,7 @@
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span>
             <span class="n">postprocess</span> <span class="o">=</span> <span class="n">postprocess</span><span class="p">,</span>
             <span class="n">background</span> <span class="o">=</span> <span class="n">background</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_minify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">body</span><span class="p">):</span>
-
-        <span class="c"># Remove multiple whitespaces</span>
-        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;[ ]+&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span></div>
+        <span class="p">)</span></div>
 </pre></div>
 
           </div>
