@@ -172,8 +172,6 @@ class PhpCode(ModuleExec):
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
 
-        self.minifiable = True
-
         ModuleExec.__init__(
             self,
             module = 'shell_php',
@@ -185,9 +183,9 @@ class PhpCode(ModuleExec):
         )
 
     def format(self, values):
-        """Format and minify the payload.
+        """Format the payload.
 
-        This format the vector payloads using Mako template. Then minify it.
+        This format the vector payloads using Mako template.
 
         Args:
             values (dict): The values passed as arguments of Mako
@@ -198,26 +196,10 @@ class PhpCode(ModuleExec):
 
         """
 
-        return [ self._minify(
+        return [
                     Template(arg).render(**values)
-                 ) for arg in self.arguments
+                    for arg in self.arguments
                 ]
-
-
-    def _minify(self, body):
-
-        # Minify PHP code removing newlines and comments.
-        # With just one fail stop minification for the session.
-
-        if self.minifiable:
-            try:
-                return utils.code.minify_php(body)
-            except Exception as e:
-                self.minifiable = False
-                import traceback; log.debug(traceback.format_exc())
-                log.debug(messages.vectors.skipping_minification_s % str(e))
-
-        return body
 
 class PhpFile(PhpCode):
 
@@ -250,8 +232,6 @@ class PhpFile(PhpCode):
         except Exception as e:
             raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
 
-        self.minifiable = True
-
         self.folder, self.name = os.path.split(payload_path)
 
         ModuleExec.__init__(
@@ -265,9 +245,9 @@ class PhpFile(PhpCode):
         )
 
     def format(self, values):
-        """Format and minify the payload.
+        """Format the payload.
 
-        This format the vector payloads using Mako template. Then minify it.
+        This format the vector payloads using Mako template.
         Also set a TemplateLookup to the template folder, to allow an easy
         `<% include>` tag usage.
 
@@ -280,12 +260,12 @@ class PhpFile(PhpCode):
 
         """
 
-        return [ self._minify(
-                    Template(
+        return [
+                 Template(
                         text = arg,
                         lookup = TemplateLookup(directories = [ self.folder ])
                         ).render(**values)
-                 ) for arg in self.arguments
+                 for arg in self.arguments
                 ]
 
 class ShellCmd(PhpCode):
@@ -293,8 +273,6 @@ class ShellCmd(PhpCode):
     """This vector contains a shell command.
 
     The shell command is executed via the module `shell_sh`. Inherit `ModuleExec`.
-
-    The formatted payload is minified removing multiple whitespaces.
 
     Args:
         payload (str): Command line to execute.
@@ -324,8 +302,3 @@ class ShellCmd(PhpCode):
             postprocess = postprocess,
             background = background
         )
-
-    def _minify(self, body):
-
-        # Remove multiple whitespaces
-        return re.sub('[ ]+', ' ', body)
