@@ -3,15 +3,20 @@ from distutils import spawn
 from core import messages
 import subprocess
 
+# Minify PHP code removing white spaces and comments.
+# Returns None in case of errors.
+
 def minify_php(original_code):
 
     php_binary = spawn.find_executable('php')
     if not php_binary:
-        raise Exception(messages.utils_code.minify_php_missing_binary)
+        log.debug(messages.utils_code.minify_php_missing_binary)
+        return None
 
-    output = subprocess.check_output(
-        [
-        php_binary, '-r', """function is_label($str) {
+    try:
+        output = subprocess.check_output(
+            [
+            php_binary, '-r', """function is_label($str) {
 return preg_match('~[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+~',$str);
 }
 
@@ -53,6 +58,14 @@ EOD;
 
 print(get_tiny($d));
 """ % ('<?php %s ?>' % str(original_code)),
-    ])
+        ])
+
+    except Exception as e:
+        import traceback; log.debug(traceback.format_exc())
+        log.debug(messages.vectors.skipping_minification_s % str(e))
+        return None
+
+    if len(output) < 8:
+        return None
 
     return output[6:-2]

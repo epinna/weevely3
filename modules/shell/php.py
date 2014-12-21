@@ -102,6 +102,17 @@ class Php(Module):
         self.args.update({ 'chdir' : chdir })
         command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""").render(**self.args)
 
+        # Minify PHP payload.
+        #
+        # In case of error, modify session minify variable and
+        # return original code.
+        if self.session['shell_php']['stored_args'].get('minify', True):
+            minified = utils.code.minify_php(command)
+            self.session['shell_php'][
+                        'stored_args'][
+                        'minify'] = bool(minified)
+            command = minified if minified else command
+
         log.debug('PAYLOAD %s' % command)
 
         # Send command
