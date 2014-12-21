@@ -62,7 +62,7 @@ class Console(Module):
         if result:
             return [
               line.split(linsep) for line
-              in result.strip(linsep).replace(linsep + colsep, colsep).split(colsep) if line
+              in result.replace(linsep + colsep, colsep).split(colsep) if line
             ]
 
         # If the result is none, prints error message about missing trailer
