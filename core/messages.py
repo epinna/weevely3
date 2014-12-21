@@ -29,15 +29,23 @@ class channels:
 
 class terminal:
     backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
+    welcome_no_shell = """
+The system shell interpreter is not available in this session.
+The terminal now allows PHP code code, modules, and the following
+command replacements to simulate a complete shell.
+"""
     help_no_shell = """
-The system shell interpreter `shell_sh` is not available in this session,
-use the following commands to simulate a complete shell.
+The system shell interpreter is not available in this session,
+use the following command replacements to simulate a complete shell.
 """
     welcome_to_s = """
 [+] weevely ${version}
 
 [+] Target:\t${conn_info}
 [+] Session:\t${path}
+% if default_shell:
+[+] Shell:\t${ 'System shell' if default_shell == 'shell_sh' else 'PHP interpreter'}
+% endif
 
 [+] Browse the filesystem or execute commands starts the connection
 [+] to the target. Type :help for more information.

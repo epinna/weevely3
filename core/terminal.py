@@ -89,11 +89,7 @@ class CmdModules(cmd.Cmd):
         else:
             return self.default(line)
 
-
-    def do_help(self, arg, command):
-        """Fixed help."""
-
-        print
+    def _print_modules(self):
 
         data = []
         for module_group, names in modules.loaded_tree.items():
@@ -102,9 +98,7 @@ class CmdModules(cmd.Cmd):
 
         if data: log.info(utils.prettify.tablify(data, table_border = False))
 
-        if self.session['shell_sh']['status'] == Status.RUN: print; return
-
-        log.info(messages.terminal.help_no_shell)
+    def _print_command_replacements(self):
 
         data = []
         for module_name, module in modules.loaded.items():
@@ -112,6 +106,18 @@ class CmdModules(cmd.Cmd):
                 data.append([ ', '.join(module.aliases), module_name ])
 
         if data: log.info(utils.prettify.tablify(data, table_border = False))
+
+    def do_help(self, arg, command):
+        """Fixed help."""
+
+        print
+
+        self._print_modules()
+
+        if self.session['shell_sh']['status'] == Status.RUN: print; return
+
+        log.info(messages.terminal.help_no_shell)
+        self._print_command_replacements()
 
         print
 
@@ -139,7 +145,8 @@ class Terminal(CmdModules):
         ).render(
             path = self.session.get('path'),
             conn_info = session.get_connection_info(),
-            version = messages.version
+            version = messages.version,
+            default_shell = self.session.get('default_shell')
         )
 
         # Set default encoding utf8
@@ -185,6 +192,12 @@ class Terminal(CmdModules):
             if not self.session.get('default_shell'):
                 log.error(messages.terminal.backdoor_unavailable)
                 return ''
+
+            # Print an introductory string with php shell
+            if self.session.get('default_shell') == 'shell_php':
+                log.info(messages.terminal.welcome_no_shell)
+                self._print_command_replacements()
+                log.info('\nweevely> %s' % line)
 
             # Get hostname and whoami if not set
             if not self.session['system_info']['results'].get('hostname'):
