@@ -172,6 +172,8 @@ class PhpCode(ModuleExec):
         if not isinstance(payload, basestring):
             raise DevException(messages.vectors.wrong_payload_type)
 
+        self.minifiable = True
+
         ModuleExec.__init__(
             self,
             module = 'shell_php',
@@ -204,8 +206,16 @@ class PhpCode(ModuleExec):
 
     def _minify(self, body):
 
-        # Manually minify PHP is dangerous.
-        # TODO: Use php -w or similar to shrink vector PHP code.
+        # Minify PHP code removing newlines and comments.
+        # With just one fail stop minification for the session.
+
+        if self.minifiable:
+            try:
+                return utils.code.minify_php(body)
+            except Exception as e:
+                self.minifiable = False
+                import traceback; log.debug(traceback.format_exc())
+                log.debug(messages.vectors.skipping_minification_s % str(e))
 
         return body
 
@@ -239,6 +249,8 @@ class PhpFile(PhpCode):
             payload = file(payload_path, 'r').read()
         except Exception as e:
             raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
+
+        self.minifiable = True
 
         self.folder, self.name = os.path.split(payload_path)
 

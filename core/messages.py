@@ -57,6 +57,7 @@ class vectors:
     wrong_payload_type = 'Wrong payload argument type, a string or a list of strings is required'
     wrong_condition_type = 'Wrong condition argument type, a callable function is required'
     wrong_store_name_type = 'Wrong argument type, a string with an argument name is required'
+    skipping_minification_s = 'Skipping minification %s'
 
 class vectorlist:
     vector_s_triggers_an_exc = 'Vector \'%s\' execution triggers an exception'
@@ -214,3 +215,6 @@ class generate:
     error_agent_template_s_s = 'Error with agent template \'%s\': %s'
     error_obfuscator_template_s_s = 'Error with obfuscator template \'%s\': %s'
     generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
+
+class utils_code:
+    minify_php_missing_binary = 'Missing PHP binary'
