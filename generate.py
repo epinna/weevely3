@@ -8,6 +8,7 @@ from core.loggers import log
 from core.config import agent_templates_folder_path, obfuscators_templates_folder_path
 from core import helpparse
 from core import messages
+import utils
 import os
 import sys
 import glob
@@ -37,7 +38,7 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'stegaref_php'):
             messages.generate.error_agent_template_s_s %
             (agent_path, str(e)))
 
-    agent = agent.strip(os.linesep)
+    agent = utils.code.minify_php(agent)
 
     try:
         obfuscated = obfuscator_template.render(agent=agent)
