@@ -24,16 +24,16 @@ class Console(Module):
         self.register_vectors(
             [
             PhpCode(
-              """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\x01";}};mysql_close();}""",
+              """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();}""",
               name = 'mysql',
             ),
-            PhpCode("""$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\x01";}};mysql_close();""",
+            PhpCode("""$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();""",
               name = "mysql_fallback"
             ),
-            PhpCode( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";}echo "\x01";}};pg_close();}""",
+            PhpCode( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}""",
               name = "pgsql"
             ),
-            PhpCode( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."\x00";} echo "\x01";}};pg_close();""",
+            PhpCode( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";} echo "${colsep}";}};pg_close();""",
               name = "pgsql_fallback"
             ),
             ]
@@ -49,12 +49,20 @@ class Console(Module):
 
     def _query(self, vector, args):
 
+
+        # Random generate a separator for columns and lines
+        colsep = '----%s' % utils.strings.randstr(6)
+        linsep = '----%s' % utils.strings.randstr(6)
+        args.update(
+            { 'colsep' : colsep, 'linsep' : linsep, }
+        )
+
         result = self.vectors.get_result(vector, args)
 
         if result:
             return [
-              line.split('\x00') for line
-              in result.strip('\x00').replace('\x00\x01', '\x01').split('\x01') if line
+              line.split(linsep) for line
+              in result.strip(linsep).replace(linsep + colsep, colsep).split(colsep) if line
             ]
 
         # If the result is none, prints error message about missing trailer
