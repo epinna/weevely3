@@ -39,7 +39,7 @@ class Grep(Module):
                 postprocess = lambda r: r[:-1] if r and r.endswith('\n') else r
             ),
             PhpCode(
-                payload = """$m=Array();preg_match_all("/.*${regex}.*/${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));""",
+                payload = """$m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }/m${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));""",
                 name = "grep_php"
             )
             ]
