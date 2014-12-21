@@ -31,12 +31,12 @@ class terminal:
     backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
     welcome_no_shell = """
 The system shell interpreter is not available in this session.
-The terminal now allows PHP code code, modules, and the following
-command replacements to simulate a complete shell.
+PHP code and modules execution are available. Use the following
+command replacements to simulate an unrestricted shell.
 """
     help_no_shell = """
-The system shell interpreter is not available in this session,
-use the following command replacements to simulate a complete shell.
+The system shell interpreter is not available in this session, use the
+following command replacements to simulate a unrestricted shell.
 """
     welcome_to_s = """
 [+] weevely ${version}
