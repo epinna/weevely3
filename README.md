@@ -7,25 +7,23 @@ Weevely3
 
 > If you are a developer or a curious user and desire to contribute, you can to start reading the tutorial [Developing a new module ](https://github.com/epinna/weevely3/wiki/developing-a-new-module) and the [TODO list](https://github.com/epinna/weevely3/issues/1).
 
-Weevely is a PHP web shell that provides a weaponized telnet-like interface to administrate a remote web access.
+Weevely is a dynamically extensible command line shell extended over the network at runtime used for the administration and the pen testing of a remote web access. It provides a weaponized telnet-like console through a PHP script running on the target, even in restricted environments.
 
-It is a swiss army knife to administrate a web account, even in restricted remote environments. Weevely is an essential tool for web application post exploitation, access maintaining, target security audit, pivot deeper in the target network, and much more.
+The low footprint agent and over 30 modules shape an extensible framework to administrate, conduct a pen-test, post-exploit, and audit remote web accesses in order to escalate privileges and pivot deeper in the internal networks.
 
-### The modular framework
-
-Weevely modules extend the terminal providing a layer to interact with the target.
+**Try the [Wiki](https://github.com/epinna/weevely3/wiki#getting-started) for tutorial and uses cases.**
 
 The modules feature:
 
 * Shell/PHP telnet-like network terminal
 * Common server misconfigurations auditing
 * SQL console pivoting on target
-* HTTP traffic proxy through target
+* HTTP traffic proxying through target
 * Mount target file system to local mount point
-* Run scans or pivoted exploiting through target network
+* Run scans pivoting on target
 * File upload and download
 * Spawn reverse and direct TCP shells
-* Zip, gz, bz2 and tar handling even without system command execution
+* Zip, gz, bz2 and tar handling
 
 ### The backdoor agent
 
