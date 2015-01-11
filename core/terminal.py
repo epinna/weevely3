@@ -303,10 +303,12 @@ class Terminal(CmdModules):
     def _load_history(self):
         """Load history file and register dump on exit."""
 
+        history_path = os.path.expanduser(config.history_path)
+
         # Create a file without truncating it in case it exists.
-        open(config.history_path, 'a').close()
+        open(history_path, 'a').close()
 
         readline.set_history_length(100)
-        readline.read_history_file(config.history_path)
+        readline.read_history_file(history_path)
         atexit.register(readline.write_history_file,
-            config.history_path)
+            history_path)
