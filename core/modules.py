@@ -1,3 +1,4 @@
+from core import config
 import glob
 import os
 
@@ -7,7 +8,9 @@ loaded_tree = {}
 def load_modules(session):
     """ Load all modules """
 
-    modules_paths = glob.glob('modules/*/[a-z]*py')
+    modules_paths = glob.glob(
+        '%s/modules/*/[a-z]*py' % config.weevely_path
+    )
 
     for module_path in modules_paths:
 

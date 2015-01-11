@@ -1,6 +1,7 @@
 from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
 from core.loggers import dlog
+from core import config
 import utils
 from mako.template import Template
 import core.messages
@@ -15,9 +16,16 @@ import cookielib
 import urllib2
 import itertools
 import utils
+import os
 
-referrer_templates_path = 'core/channels/stegaref/referrers.tpl'
-languages_list_path = 'core/channels/stegaref/languages.txt'
+referrer_templates_path = os.path.join(
+    config.weevely_path,
+    'core/channels/stegaref/referrers.tpl'
+)
+languages_list_path = os.path.join(
+    config.weevely_path,
+    'core/channels/stegaref/languages.txt'
+)
 
 class StegaRef:
 
@@ -227,7 +235,7 @@ class StegaRef:
             referrer_file = open(referrer_templates_path)
         except Exception as e:
             raise FatalException(
-                core.messages.stegareferrer.error_loading_referrers_s_s %
+                core.messages.generic.error_loading_file_s_s %
                 (referrer_templates_path, str(e)))
 
         for template in referrer_file.read().split('\n'):
