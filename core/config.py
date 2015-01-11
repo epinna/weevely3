@@ -1,11 +1,11 @@
 # Base path for log files and sessions
-base_path = '~/.weevely/'
+base_path = '_weevely/'
 
 # History path
-history_path = '~/.weevely/history'
+history_path = '_weevely/history'
 
 # Session path
-sessions_path = '~/.weevely/sessions/'
+sessions_path = '_weevely/sessions/'
 sessions_ext = '.session'
 
 # Supported Channels

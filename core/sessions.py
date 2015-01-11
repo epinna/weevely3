@@ -1,7 +1,7 @@
 from core import messages
 from core.weexceptions import FatalException
 from mako import template
-from core import config
+from core.config import sessions_path, sessions_ext
 from core.loggers import log, stream_handler
 from core.module import Status
 import os
@@ -137,8 +137,6 @@ class SessionURL(Session):
 
     def __init__(self, url, password, volatile = False):
 
-        sessions_path = os.path.expanduser(config.sessions_path)
-
         if not os.path.isdir(sessions_path):
             os.makedirs(sessions_path)
 
@@ -155,7 +153,7 @@ class SessionURL(Session):
             os.path.join(
                 hostfolder,
                 '*%s' %
-                config.sessions_ext))
+                sessions_ext))
 
         for dbpath in sessions_available:
 
@@ -190,7 +188,7 @@ class SessionURL(Session):
         while True:
             dbpath = os.path.join(
                 hostfolder, '%s_%i%s' %
-                (dbname, index, config.sessions_ext))
+                (dbname, index, sessions_ext))
             if not os.path.isdir(hostfolder):
                 os.makedirs(hostfolder)
 
