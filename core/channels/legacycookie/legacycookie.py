@@ -1,4 +1,5 @@
 from core.loggers import dlog
+from core import config
 import re
 import urlparse
 import random
@@ -90,7 +91,12 @@ class LegacyCookie:
             (cookie_string)
         )
 
-        response = opener.open(self.url).read()
+        url = (
+            self.url if not config.add_random_param_nocache
+            else utils.http.add_random_param_nocache(self.url)
+        )
+
+        response = opener.open(url).read()
 
         if not response:
             return

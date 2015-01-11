@@ -2,7 +2,6 @@ from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
 from core.loggers import dlog
 from core import config
-import utils
 from mako.template import Template
 import core.messages
 import zlib
@@ -88,7 +87,12 @@ class StegaRef:
                     referrer_data[0],
                     referrer_data[1]))
 
-            response = opener.open(self.url).read()
+            url = (
+                self.url if not config.add_random_param_nocache
+                else utils.http.add_random_param_nocache(self.url)
+            )
+
+            response = opener.open(url).read()
 
             if not response:
                 continue

@@ -21,6 +21,10 @@ channels = [
     'LegacyReferrer'
 ]
 
+# Append random GET parameters to every request to
+# make sure the page is not cache by proxies.
+add_random_param_nocache = False
+
 # Agents and obfuscators used by generator.py
 agent_templates_folder_path = 'bd/agents/'
 obfuscators_templates_folder_path = 'bd/obfuscators/'
