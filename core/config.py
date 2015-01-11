@@ -1,11 +1,11 @@
 # Base path for log files and sessions
-base_path = '_weevely/'
+base_path = '~/.weevely/'
 
 # History path
-history_path = '_weevely/history'
+history_path = '~/.weevely/history'
 
 # Session path
-sessions_path = '_weevely/sessions/'
+sessions_path = '~/.weevely/sessions/'
 sessions_ext = '.session'
 
 # Supported Channels
@@ -24,3 +24,24 @@ channels = [
 # Agents and obfuscators used by generator.py
 agent_templates_folder_path = 'bd/agents/'
 obfuscators_templates_folder_path = 'bd/obfuscators/'
+
+
+
+
+
+#######################################
+# Resolve given paths - DO NOT CHANGE #
+#######################################
+import os, sys
+base_path = os.path.expanduser(base_path)
+history_path = os.path.expanduser(history_path)
+sessions_path = os.path.expanduser(sessions_path)
+weevely_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+agent_templates_folder_path = os.path.join(
+    weevely_path,
+    agent_templates_folder_path
+)
+obfuscators_templates_folder_path = os.path.join(
+    weevely_path,
+    obfuscators_templates_folder_path
+)
