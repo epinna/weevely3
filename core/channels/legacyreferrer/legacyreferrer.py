@@ -65,7 +65,7 @@ class LegacyReferrer:
 
         url = (
             self.url if not config.add_random_param_nocache
-            else utils.http.add_random_param_nocache(self.url)
+            else utils.http.add_random_url_param(self.url)
         )
 
         response = opener.open(url).read()
