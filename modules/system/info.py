@@ -23,13 +23,15 @@ class Info(Module):
             [
             PhpCode("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
             PhpCode("""
-                $u=@posix_getpwuid(@posix_geteuid());
-                if($u){
-                    $u=$u['name'];
-                } else {
-                    $u=getenv('username');
+                if(is_callable('posix_getpwuid')&&is_callable('posix_geteuid')) {
+                    $u=@posix_getpwuid(@posix_geteuid());
+                    if($u){
+                        $u=$u['name'];
+                    } else {
+                        $u=getenv('username');
+                    }
+                    print($u);
                 }
-                print($u);
             """, 'whoami'),
             PhpCode("print(@gethostname());", 'hostname'),
             PhpCode("@print(getcwd());", 'cwd'),
