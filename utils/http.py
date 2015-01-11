@@ -27,7 +27,7 @@ def add_random_url_param(url):
         utils.strings.randstr(
             n = 4,
             fixed = False,
-            charset = string.letterss
+            charset = string.letters
         ),
         utils.strings.randstr(
             n = 10,
