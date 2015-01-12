@@ -11,7 +11,7 @@ class generic:
 [!] Error: %s
 
 [+] Run terminal to the target
-    weevely http://<URL> <password>
+    weevely <URL> <password>
 
 [+] Load session file
     weevely session <path>

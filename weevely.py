@@ -7,7 +7,7 @@ from core.config import agent_templates_folder_path, obfuscators_templates_folde
 from core import generate
 from core import modules
 from core import messages
-from core.argparsers import CliParser, SUPPRESS
+from core.argparsers import CliParser
 import pprint
 import glob
 import os
@@ -74,14 +74,12 @@ if __name__ == '__main__':
     generateparser.add_argument('password', help = 'The agent password')
     generateparser.add_argument('path', help = 'Where save the generated agent')
     generateparser.add_argument(
-        '-obfuscator',
-        help = SUPPRESS, #The obfuscation method
+        '-obfuscator', #The obfuscation method
         choices = obfuscators_available,
         default = 'obfusc1_php'
         )
     generateparser.add_argument(
-        '-agent',
-        help = SUPPRESS, #The agent channel type
+        '-agent', #The agent channel type
         choices = agents_available,
         default = 'stegaref_php'
         )
