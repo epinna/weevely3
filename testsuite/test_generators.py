@@ -1,5 +1,5 @@
 from testsuite.config import script_folder, script_folder_url
-from generate import generate, save_generated
+from core.generate import generate, save_generated
 from core.channels.channel import Channel
 from unittest import TestCase
 import utils

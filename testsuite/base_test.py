@@ -1,7 +1,7 @@
 from unittest import TestCase
 import utils
 from testsuite import config
-from generate import generate, save_generated
+from core.generate import generate, save_generated
 from core.loggers import stream_handler
 from core.weexceptions import DevException
 import subprocess

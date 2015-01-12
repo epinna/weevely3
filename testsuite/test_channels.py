@@ -2,7 +2,7 @@ from testsuite.base_test import BaseTest
 from core.channels.channel import Channel
 import utils
 from testsuite.config import script_folder, script_folder_url, test_stress_channels
-from generate import generate, save_generated
+from core.generate import generate, save_generated
 import os
 import random
 import unittest
