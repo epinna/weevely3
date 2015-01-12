@@ -3,10 +3,23 @@ version = '3.0beta'
 class generic:
     file_s_not_found = "File '%s' not found"
     error_creating_file_s_s = "Error creating file '%s': %s"
-    error_missing_arguments = 'Some arguments are missing'
     error_loading_file_s_s = 'Error loading file \'%s\': %s'
     error_file_s_already_exists = 'Error file \'%s\' already exists'
+    error_url_format = 'URL error format \'http(s)://host/agent.php\' is expected'
     error_parsing_command_s = 'Error parsing command: %s'
+    weevely_s_error_s_usage = """[+] weevely %s
+[!] Error: %s
+
+[+] Run terminal to the target
+    weevely http://<URL> <password>
+
+[+] Load session file
+    weevely session <path>
+
+[+] Generate backdoor agent
+    weevely generate <password> <path>
+
+"""
 
 class sessions:
     error_loading_sessions = 'Session can not be loaded'

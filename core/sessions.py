@@ -143,7 +143,7 @@ class SessionURL(Session):
         # Guess a generic hostfolder/dbname
         hostname = urlparse.urlparse(url).hostname
         if not hostname:
-            raise FatalException(messages.sessions.error_loading_sessions)
+            raise FatalException(messages.generic.error_url_format)
 
         hostfolder = os.path.join(sessions_path, hostname)
         dbname = os.path.splitext(os.path.basename(urlparse.urlsplit(url).path))[0]
