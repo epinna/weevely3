@@ -1,4 +1,4 @@
-version = '3.0beta'
+version = '3.0'
 
 class generic:
     file_s_not_found = "File '%s' not found"
@@ -7,7 +7,8 @@ class generic:
     error_file_s_already_exists = 'Error file \'%s\' already exists'
     error_url_format = 'URL error format \'http(s)://host/agent.php\' is expected'
     error_parsing_command_s = 'Error parsing command: %s'
-    weevely_s_error_s_usage = """[+] weevely %s
+    weevely_s_error_s_usage = """
+[+] weevely %s
 [!] Error: %s
 
 [+] Run terminal to the target
