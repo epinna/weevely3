@@ -73,7 +73,7 @@ sql_db = 'test'
 sql_user = ''
 sql_passwd = ''
 # Set if automatically connect if e.g. mysql default login is set
-sql_autologin = True
+sql_autologin = False
 
 
 #
