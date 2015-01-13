@@ -26,13 +26,14 @@ class MySQLConsole(BaseTest):
 
     @unittest.skipIf(not config.sql_autologin,
                     "Autologin is not set")
-
     def test_autologin(self):
         self.assertEqual(self.run_argv(['-query', "select 'A';"]), [["A"]])
         self.assertTrue(self.run_argv(['-query', 'select @@hostname;']))
         self.assertTrue(self.run_argv(['-query', 'show databases;']))
 
     @log_capture()
+    @unittest.skipIf(not config.sql_autologin,
+                    "Autologin is not set")
     def test_wrongcommand(self, log_captured):
         # Wrong command
         self.assertIsNone(self.run_cmdline('-query bogus'))
@@ -45,32 +46,27 @@ class MySQLConsole(BaseTest):
                                     messages.module_sql_console.check_credentials),
                          log_captured.records[-1].msg)
 
-
-    @log_capture()
-    def test_wronglogin(self, log_captured):
+    def test_wronglogin(self):
 
         wrong_login = '-user bogus -passwd bogus -query "select \'A\';"'
 
         # Using run_cmdline to test the outputs
-        self.assertIsNone(self.run_cmdline(wrong_login))
-        self.assertEqual('%s %s' % (messages.module_sql_console.no_data,
-                                    messages.module_sql_console.check_credentials),
-                         log_captured.records[-1].msg)
+        self.assertIn('Access denied for user', self.run_cmdline(wrong_login)['error'])
 
     def test_login(self):
 
         login = ['-user', config.sql_user, '-passwd', config.sql_passwd ]
 
-        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), [["A"]])
-        self.assertTrue(self.run_argv(login + ['-query', 'select @@hostname;']))
-        self.assertTrue(self.run_argv(login + ['-query', 'show databases;']))
+        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : '', 'result' : [["A"]] })
+        self.assertEqual(self.run_argv(login + ['-query', 'select @@hostname;'])['error'], '')
+        self.assertEqual(self.run_argv(login + ['-query', 'show databases;'])['error'], '')
 
         # The user is returned in the form `[[ user@host ]]`
         self.assertEqual(
-            self.run_argv(login + ['-query', 'SELECT USER();'])[0][0][:len(config.sql_user)],
+            self.run_argv(login + ['-query', 'SELECT USER();'])['result'][0][0][:len(config.sql_user)],
             config.sql_user
         )
         self.assertEqual(
-            self.run_argv(login + ['-query', 'SELECT CURRENT_USER();'])[0][0][:len(config.sql_user)],
+            self.run_argv(login + ['-query', 'SELECT CURRENT_USER();'])['result'][0][0][:len(config.sql_user)],
             config.sql_user
         )
