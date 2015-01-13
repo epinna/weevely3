@@ -13,7 +13,7 @@ Normally, the following methods have to be overridden:
 
 from core.vectorlist import VectorList
 from core.vectors import ModuleExec
-from core.weexceptions import DevException
+from core.weexceptions import DevException, ArgparseError
 from core.loggers import log
 from core import argparsers
 from core import messages
@@ -99,12 +99,16 @@ class Module:
             log.warn(messages.generic.error_parsing_command_s % str(e))
             return
 
-        # Execute the command, catching Ctrl-c, Ctrl-d, and other exceptions
+        # Execute the command, catching Ctrl-c, Ctrl-d, argparse exit,
+        # and other exceptions
         try:
             result = self.run_argv(command)
 
         except (KeyboardInterrupt, EOFError):
             log.info(messages.module.module_s_exec_terminated % self.name)
+            return
+
+        except ArgparseError:
             return
 
         except Exception as e:
@@ -145,7 +149,7 @@ class Module:
         try:
             user_args = self.argparser.parse_args(argv)
         except SystemExit:
-            return
+            raise ArgparseError()
 
         self.args.update(
             dict(

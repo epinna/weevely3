@@ -1,4 +1,5 @@
 from testsuite.base_test import BaseTest
+from core.weexceptions import ArgparseError
 from core.vectors import PhpCode
 from core.vectors import Os
 from core import modules
@@ -54,7 +55,7 @@ class SystemInfo(BaseTest):
         modules.loaded['shell_sh'].vectors.append(PhpCode("echo(1);", name=bogus_vector, target=Os.WIN))
 
         # Check if called forced the bogusv vector name, returns Null
-        self.assertIsNone(self.run_argv(["-vector", bogus_vector, "echo 1"]));
+        self.assertRaises(ArgparseError, self.run_argv, ["-vector", bogus_vector, "echo 1"]);
 
     def test_vector_all_os(self):
 

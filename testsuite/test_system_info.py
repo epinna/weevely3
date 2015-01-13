@@ -1,5 +1,6 @@
 from testsuite.base_test import BaseTest
 from testfixtures import log_capture
+from core.weexceptions import ArgparseError
 from core import modules
 from core.sessions import SessionURL
 from core import messages
@@ -28,4 +29,4 @@ class SystemInfo(BaseTest):
         );
 
         # Pass unexistant info
-        self.assertIsNone(self.run_argv(["-info", "BOGUS"]));
+        self.assertRaises(ArgparseError, self.run_argv, ["-info", "BOGUS"]);

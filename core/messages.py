@@ -120,6 +120,7 @@ class module_file_touch:
     failed_touch_file = "File touch failed, please check remote path and permissions"
 
 class module_sql_console:
+    unexpected_response = "Unexpected response"
     check_credentials = "Check credentials and DB availability"
     no_data = "No data returned"
     missing_sql_trailer_s = 'Is the trailing comma missing at the end of the SQL statement \'%s\'?'
