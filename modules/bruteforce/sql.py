@@ -25,6 +25,10 @@ class Sql(Module):
             PhpFile(
               payload_path = os.path.join(self.folder, 'mysql.tpl'),
               name = 'mysql',
+            ),
+            PhpFile(
+              payload_path = os.path.join(self.folder, 'pgsql.tpl'),
+              name = 'pgsql',
             )
             ]
         )
