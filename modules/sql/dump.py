@@ -79,6 +79,16 @@ class Dump(Module):
             )
             lpath = temp_file.name
 
+        if not os.path.isabs(lpath):
+            if lpath.startswith('~'):
+                lpath = os.path.expanduser('~') + os.path.join('/', lpath.replace('~/', ''))
+            else:
+                lpath = os.path.join(os.getcwd(), lpath)
+
+        path, filename = os.path.split(lpath)
+        if not os.path.exists(path):
+            os.makedirs(path)
+
         try:
             open(lpath, 'w').write(result)
         except Exception as e:

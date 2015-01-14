@@ -126,7 +126,7 @@ class Console(Module):
             log.info(result['error'])
 
         if result['result']:
-            Module.print_result(self, result)
+            Module.print_result(self, result['result'])
 
         elif not result['error']:
 
