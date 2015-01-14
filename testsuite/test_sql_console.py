@@ -27,24 +27,22 @@ class MySQLConsole(BaseTest):
     @unittest.skipIf(not config.sql_autologin,
                     "Autologin is not set")
     def test_autologin(self):
-        self.assertEqual(self.run_argv(['-query', "select 'A';"]), [["A"]])
-        self.assertTrue(self.run_argv(['-query', 'select @@hostname;']))
-        self.assertTrue(self.run_argv(['-query', 'show databases;']))
+        self.assertEqual(self.run_argv(['-query', "select 'A';"]), { 'error' : '', 'result' : [["A"]] })
+        self.assertEqual(self.run_argv(['-query', 'select @@hostname;'])['error'], '')
+        self.assertEqual(self.run_argv(['-query', 'show databases;'])['error'], '')
 
     @log_capture()
     @unittest.skipIf(not config.sql_autologin,
                     "Autologin is not set")
     def test_wrongcommand(self, log_captured):
         # Wrong command
-        self.assertIsNone(self.run_cmdline('-query bogus'))
+        self.assertEqual(self.run_cmdline('-query bogus')['result'], [])
 
         # Checking if the error message start about the missing comma is ok
-        self.assertEqual(messages.module_sql_console.missing_sql_trailer_s[:60],
-                         log_captured.records[-2].msg[:60])
-        # Check also other error messages
         self.assertEqual('%s %s' % (messages.module_sql_console.no_data,
                                     messages.module_sql_console.check_credentials),
-                         log_captured.records[-1].msg)
+                         log_captured.records[-2].msg)
+
 
     def test_wronglogin(self):
 
