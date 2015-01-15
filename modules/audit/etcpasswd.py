@@ -22,13 +22,13 @@ class Etcpasswd(Module):
             { 'name' : '-vector', 'choices' : ( 'posix_getpwuid', 'file', 'fread', 'file_get_contents', 'base64' ) }
         ])
 
-    def run(self, args):
+    def run(self):
 
-        if args.get('vector', 'posix_getpwuid') == 'posix_getpwuid':
+        if self.args.get('vector', 'posix_getpwuid') == 'posix_getpwuid':
             pwdresult = PhpCode("""for($n=0; $n<2000;$n++) { $uid = @posix_getpwuid($n); if ($uid) echo join(':',$uid).PHP_EOL;  }""").run(self.args)
 
         if not pwdresult:
-            arg_vector = [ '-vector', args.get('vector') ] if args.get('vector') else []
+            arg_vector = [ '-vector', self.args.get('vector') ] if self.args.get('vector') else []
             pwdresult = ModuleExec('file_read', [ '/etc/passwd' ] + arg_vector).run()
 
         if not pwdresult: return
@@ -41,11 +41,11 @@ class Etcpasswd(Module):
                 shell = fields[6]
 
                 if (
-                    args.get('real') and (
+                    self.args.get('real') and (
                         (uid == 0 or uid > 999) and
                         'false' not in shell
                         )
-                    or not args.get('real')
+                    or not self.args.get('real')
                     ):
                     result += line + '\n'
 
