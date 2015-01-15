@@ -1,12 +1,14 @@
+<%! import json %>
+
 ini_set('mysql.connect_timeout',1);
 $users=array (
     % for u in users:
-    '${ u }',
+    ${ json.dumps(u) },
     % endfor
 );
 $pwds=array (
     % for p in pwds:
-    '${ p }',
+    ${ json.dumps(p) },
     % endfor
 );
 
