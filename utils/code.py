@@ -62,7 +62,7 @@ print(get_tiny($d));
 
     except Exception as e:
         import traceback; log.debug(traceback.format_exc())
-        log.debug(messages.vectors.skipping_minification_s % str(e))
+        log.debug(messages.utils_code.minify_php_error_minifying)
         return None
 
     if len(output) < 8:
