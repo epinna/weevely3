@@ -38,8 +38,8 @@ class Sql(Module):
           { 'name' : '-hostname', 'help' : 'Hostname', 'default' : 'localhost' },
           { 'name' : '-users', 'help' : 'Users', 'nargs' : '*' },
           { 'name' : '-pwds', 'help' : 'Passwords', 'nargs' : '*' },
-          { 'name' : '-fusers', 'help' : 'Local file path containing users list', 'nargs' : '*' },
-          { 'name' : '-fpwds', 'help' : 'Local file path containing password list', 'nargs' : '*' }
+          { 'name' : '-fusers', 'help' : 'Local file path containing users list' },
+          { 'name' : '-fpwds', 'help' : 'Local file path containing password list' }
         ])
 
     def run(self):
