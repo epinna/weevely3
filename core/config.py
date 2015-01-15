@@ -25,6 +25,12 @@ channels = [
 # make sure the page is not cache by proxies.
 add_random_param_nocache = False
 
+# Add additional headers to be sent at every request e.g.
+# additional_headers = [
+#   ( 'Authentication', 'Basic QWxhZGRpbjpvcGVuIHNlc2FtBl==' )
+# ]
+additional_headers = []
+
 # Agents and obfuscators used by generator.py
 agent_templates_folder_path = 'bd/agents/'
 obfuscators_templates_folder_path = 'bd/obfuscators/'

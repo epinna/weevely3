@@ -56,7 +56,7 @@ class LegacyReferrer:
         opener.addheaders = [
             ('User-Agent', random.choice(self.agents)),
             ('Referer', referer),
-        ]
+        ] + config.additional_headers
 
         dlog.debug(
             '[R] %s' %

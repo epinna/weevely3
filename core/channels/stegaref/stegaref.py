@@ -77,7 +77,7 @@ class StegaRef:
                 ('Accept-Language', accept_language_header),
                 ('Accept', accept_header),
                 ('User-Agent', random.choice(self.agents))
-            ]
+            ] + config.additional_headers
 
             dlog.debug(
                 '[v:%i/%i] %s %s %s' %

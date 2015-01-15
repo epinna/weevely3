@@ -84,7 +84,7 @@ class LegacyCookie:
         opener.addheaders = [
             ('User-Agent', random.choice(self.agents)),
             ('Cookie', cookie_string),
-        ]
+        ] + config.additional_headers
 
         dlog.debug(
             '[C] %s' %
