@@ -25,7 +25,7 @@ class Etcpasswd(Module):
     def run(self):
 
         if self.args.get('vector', 'posix_getpwuid') == 'posix_getpwuid':
-            pwdresult = PhpCode("""for($n=0; $n<2000;$n++) { $uid = @posix_getpwuid($n); if ($uid) echo join(':',$uid).PHP_EOL;  }""").run(self.args)
+            pwdresult = PhpCode("""if(is_callable('posix_getpwuid')) { for($n=0; $n<2000;$n++) { $uid = @posix_getpwuid($n); if ($uid) echo join(':',$uid).PHP_EOL; } }""").run(self.args)
 
         if not pwdresult:
             arg_vector = [ '-vector', self.args.get('vector') ] if self.args.get('vector') else []
