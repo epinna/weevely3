@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>core.module &mdash; weevely 3.0beta documentation</title>
+    <title>core.module &mdash; weevely 3.0 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '3.0beta',
+        VERSION:     '3.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="weevely 3.0beta documentation" href="../../index.html" />
+    <link rel="top" title="weevely 3.0 documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -36,7 +36,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">weevely 3.0beta documentation</a> &raquo;</li>
+        <li><a href="../../index.html">weevely 3.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -62,9 +62,9 @@
 
 <span class="kn">from</span> <span class="nn">core.vectorlist</span> <span class="kn">import</span> <span class="n">VectorList</span>
 <span class="kn">from</span> <span class="nn">core.vectors</span> <span class="kn">import</span> <span class="n">ModuleExec</span>
-<span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span>
+<span class="kn">from</span> <span class="nn">core.weexceptions</span> <span class="kn">import</span> <span class="n">DevException</span><span class="p">,</span> <span class="n">ArgparseError</span>
 <span class="kn">from</span> <span class="nn">core.loggers</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">helpparse</span>
+<span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">argparsers</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">messages</span>
 <span class="kn">from</span> <span class="nn">mako.template</span> <span class="kn">import</span> <span class="n">Template</span>
 <span class="kn">from</span> <span class="nn">core</span> <span class="kn">import</span> <span class="n">modules</span>
@@ -115,7 +115,7 @@
             <span class="p">}</span>
 
         <span class="c"># HelpParser is a slightly changed `ArgumentParser`</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span> <span class="o">=</span> <span class="n">helpparse</span><span class="o">.</span><span class="n">HelpParser</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span> <span class="o">=</span> <span class="n">argparsers</span><span class="o">.</span><span class="n">HelpParser</span><span class="p">(</span>
             <span class="n">prog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">description</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span>
         <span class="p">)</span>
@@ -148,12 +148,16 @@
             <span class="n">log</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">generic</span><span class="o">.</span><span class="n">error_parsing_command_s</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">return</span>
 
-        <span class="c"># Execute the command, catching Ctrl-c, Ctrl-d, and other exceptions</span>
+        <span class="c"># Execute the command, catching Ctrl-c, Ctrl-d, argparse exit,</span>
+        <span class="c"># and other exceptions</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_argv</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="p">(</span><span class="ne">KeyboardInterrupt</span><span class="p">,</span> <span class="ne">EOFError</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">messages</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">module_s_exec_terminated</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">except</span> <span class="n">ArgparseError</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -194,7 +198,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">user_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">argparser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">SystemExit</span><span class="p">:</span>
-            <span class="k">return</span>
+            <span class="k">raise</span> <span class="n">ArgparseError</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="nb">dict</span><span class="p">(</span>
@@ -289,7 +293,7 @@
 
 <span class="sd">        Override this to implement the module behaviour.</span>
 
-<span class="sd">        Current execution arguments are in self.args.        </span>
+<span class="sd">        Current execution arguments are in self.args.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Object containing the execution result.</span>
@@ -458,7 +462,7 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">weevely 3.0beta documentation</a> &raquo;</li>
+        <li><a href="../../index.html">weevely 3.0 documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
