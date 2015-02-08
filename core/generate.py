@@ -30,7 +30,10 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'stegaref_php'):
             messages.generate.error_agent_template_s_s %
             (agent_path, str(e)))
 
-    agent = utils.code.minify_php(agent)
+    minified_agent = utils.code.minify_php(agent)
+
+    # Fallback of vanilla agent if minification went wrong
+    agent = minified_agent if minified_agent else agent
 
     try:
         obfuscated = obfuscator_template.render(agent=agent)
