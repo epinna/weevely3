@@ -87,7 +87,7 @@ class LegacyCookie:
             if h[0] == 'Cookie' and h[1]:
                 cookie_string += '; %s' % h[1]
             else:
-                additional.headers.append(h)
+                additional_headers.append(h)
 
         opener.addheaders = [
             ('User-Agent', random.choice(self.agents)),
