@@ -81,10 +81,18 @@ class LegacyCookie:
 
         opener = urllib2.build_opener()
 
+        # Eventually merge cookies
+        additional_headers = []
+        for h in config.additional_headers:
+            if h[0] == 'Cookie' and h[1]:
+                cookie_string += '; %s' % h[1]
+            else:
+                additional.headers.append(h)
+
         opener.addheaders = [
             ('User-Agent', random.choice(self.agents)),
             ('Cookie', cookie_string),
-        ] + config.additional_headers
+        ] + additional_headers
 
         dlog.debug(
             '[C] %s' %
