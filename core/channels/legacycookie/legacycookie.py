@@ -1,4 +1,4 @@
-from core.loggers import dlog
+from core.loggers import dlog, log
 from core import config
 import re
 import urlparse
@@ -51,18 +51,13 @@ class LegacyCookie:
         thirds = third * 2
 
         prefixes = self.default_prefixes[:]
+        cookie_payload_string = ''
 
-        cookie_string = (
-            prefixes.pop()
-            + '='
-            + self.password[:2]
-            + '; '
-        )
-
-        while len(prefixes) > 3:
+        # Add random cookies before payload
+        while len(prefixes) > 3 and len(prefixes) > 4:
             if random.random() > 0.5:
                 break
-            cookie_string += (
+            cookie_payload_string += (
                 prefixes.pop()
                 + '='
                 + utils.strings.randstr(16, False, string.letters + string.digits)
@@ -75,28 +70,48 @@ class LegacyCookie:
             charset = '#&*-/?@~'
         )
 
-        cookie_string += prefixes.pop() + '=' + payload[:third] + '; '
-        cookie_string += prefixes.pop() + '=' + payload[third:thirds] + '; '
-        cookie_string += prefixes.pop() + '=' + payload[thirds:]
+        cookie_payload_string += prefixes.pop() + '=' + payload[:third] + '; '
+        cookie_payload_string += prefixes.pop() + '=' + payload[third:thirds] + '; '
+        cookie_payload_string += prefixes.pop() + '=' + payload[thirds:]
 
         opener = urllib2.build_opener()
 
-        # Eventually merge cookies
+        # When core.conf contains additional cookies, carefully merge
+        # the new cookies and UA and add all the other headers
         additional_headers = []
+        additional_ua = ''
+        additional_cookie = ''
         for h in config.additional_headers:
-            if h[0] == 'Cookie' and h[1]:
-                cookie_string += '; %s' % h[1]
-            else:
+            if h[0].lower() == 'cookie' and h[1]:
+                additional_cookie = ' %s' % h[1]
+            elif h[0].lower() == 'user-agent' and h[1]:
+                additional_ua = h[1]
+	    else:
                 additional_headers.append(h)
 
-        opener.addheaders = [
-            ('User-Agent', random.choice(self.agents)),
-            ('Cookie', cookie_string),
-        ] + additional_headers
 
+        additional_headers.append(
+            ('User-Agent',
+                (additional_ua if additional_ua else random.choice(self.agents))
+            )
+        )
+
+        # If user cookies are specified, insert them between the first
+        # (the trigger) and the lastest three (the splitted payload)
+        additional_headers.append(
+            ('Cookie', '%s=%s;%s %s' % (
+                            prefixes.pop(),
+                            self.password[:2],
+                            additional_cookie if additional_cookie else '',
+                            cookie_payload_string
+                        )
+            )
+        )
+
+        opener.addheaders  = additional_headers
         dlog.debug(
-            '[C] %s' %
-            (cookie_string)
+            '[H]\n%s' %
+            ('\n'.join('> %s: %s' % (h[0], h[1]) for h in additional_headers))
         )
 
         url = (
