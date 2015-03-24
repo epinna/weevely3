@@ -66,6 +66,20 @@ class StegaRef:
         cj = cookielib.CookieJar()
         opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 
+        # When core.conf contains additional cookies, carefully merge
+        # the new headers killing the needed ones
+        additional_headers = []
+        additional_ua = ''
+        additional_cookie = ''
+        for h in config.additional_headers:
+            if h[0].lower() == 'user-agent' and h[1]:
+                additional_ua = h[1]
+            elif h[0].lower() in ('accept', 'accept-language', 'referer'):
+                # Skip sensible headers
+                pass
+            else:
+                additional_headers.append(h)
+
         for referrer_index, referrer_data in enumerate(referrers_data):
 
             accept_language_header = self._generate_header_accept_language(
@@ -76,8 +90,11 @@ class StegaRef:
                 ('Referer', referrer_data[0]),
                 ('Accept-Language', accept_language_header),
                 ('Accept', accept_header),
-                ('User-Agent', random.choice(self.agents))
-            ] + config.additional_headers
+                ('User-Agent', (
+                    additional_ua if additional_ua else random.choice(self.agents)
+                    )
+                )
+            ] + additional_headers
 
             dlog.debug(
                 '[v:%i/%i] %s %s %s' %
@@ -86,6 +103,11 @@ class StegaRef:
                     accept_language_header,
                     referrer_data[0],
                     referrer_data[1]))
+
+            dlog.debug(
+                '[H]\n%s' %
+                ('\n'.join('> %s: %s' % (h[0], h[1]) for h in additional_headers))
+            )
 
             url = (
                 self.url if not config.add_random_param_nocache
