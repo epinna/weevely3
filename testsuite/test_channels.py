@@ -11,6 +11,7 @@ from core.loggers import stream_handler
 import logging
 import subprocess
 import tempfile
+import core.config
 
 
 class StegaRefChannel(BaseTest):
@@ -146,6 +147,23 @@ $sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
 
     def test_100_1000_requests(self):
         self._incremental_requests(100, 1000, 10, 20)
+
+    def test_additional_headers(self):
+        core.config.additional_headers = [
+            ( 'Cookie', 'C1=F1; C2=F2; C3=F3; C4=F4;'),
+            ( 'User-Agent', 'CLIENT'),
+            ( 'X-Other-Cookie', 'OTHER')
+        ]
+
+        headers_string = self.channel.send(
+                            'print_r(getallheaders());'
+        )[0]
+
+        self.assertRegexpMatches(headers_string, '\[Cookie\] => [A-Z0-9]+=[^ ]{2}; C1=F1; C2=F2; C3=F3; C4=F4(; [A-Z0-9]+=[^ ]+)+')
+        self.assertRegexpMatches(headers_string, '\[User-Agent\] => CLIENT')
+        self.assertRegexpMatches(headers_string, '\[X-Other-Cookie\] => OTHER')
+
+        core.config.additional_headers = []
 
 @unittest.skipIf(
     not test_stress_channels,
