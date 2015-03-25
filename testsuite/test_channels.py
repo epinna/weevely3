@@ -263,3 +263,18 @@ class LegacyReferrerChannel(BaseTest):
 
     def test_100_1000_requests(self):
         self._incremental_requests(100, 1000, 10, 20)
+
+    def test_additional_headers(self):
+        self.channel.channel_loaded.additional_headers = [
+            ( 'Cookie', 'C1=F1; C2=F2; C3=F3; C4=F4'),
+            ( 'Referer', 'REFERER'),
+            ( 'X-Other-Cookie', 'OTHER')
+        ]
+
+        headers_string = self.channel.send(
+                            'print_r(getallheaders());'
+        )[0]
+
+        self.assertIn('[Cookie] => C1=F1; C2=F2; C3=F3; C4=F4', headers_string)
+        self.assertNotIn('REFERER1', headers_string)
+        self.assertIn('[X-Other-Cookie] => OTHER', headers_string)

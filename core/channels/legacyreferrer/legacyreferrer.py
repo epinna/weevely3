@@ -35,6 +35,9 @@ class LegacyReferrer:
         # Load agents
         self.agents = utils.http.load_all_agents()
 
+        # Init additional headers list
+        self.additional_headers = config.additional_headers
+
     def send(self, original_payload):
 
         payload = base64.b64encode(original_payload.strip())
@@ -53,10 +56,22 @@ class LegacyReferrer:
 
         opener = urllib2.build_opener()
 
+        # When core.conf contains additional cookies, carefully merge
+        # the new cookies and UA and add all the other headers
+        additional_headers = []
+        additional_ua = ''
+        for h in self.additional_headers:
+            if h[0].lower() == 'user-agent' and h[1]:
+                additional_ua = h[1]
+            elif h[0].lower() == 'referer' and h[1]:
+                pass
+            else:
+                additional_headers.append(h)
+
         opener.addheaders = [
-            ('User-Agent', random.choice(self.agents)),
+            ('User-Agent', (additional_ua if additional_ua else random.choice(self.agents))),
             ('Referer', referer),
-        ] + config.additional_headers
+        ] + additional_headers
 
         dlog.debug(
             '[R] %s' %
