@@ -7,7 +7,7 @@ import os
 
 class Sql(Module):
 
-    """Bruteforce SQL database"""
+    """Bruteforce SQL database."""
 
     def init(self):
 
