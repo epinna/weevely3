@@ -54,8 +54,8 @@ class StegaRefChannelAdditionalHeaders(StegaRefChannel):
         self.assertIn('C2=F2', headers_string)
         self.assertIn('C3=F3', headers_string)
         self.assertIn('C4=F4', headers_string)
-        self.assertNotIn(headers_string, 'ACCEPT1')
-        self.assertNotIn(headers_string, 'REFERER1')
+        self.assertNotIn('ACCEPT1', headers_string)
+        self.assertNotIn('REFERER1', headers_string)
         self.assertIn('OTHERCOOKIE', headers_string)
 
 
