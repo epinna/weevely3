@@ -43,6 +43,9 @@ class LegacyCookie:
         # Load agents
         self.agents = utils.http.load_all_agents()
 
+        # Init additional headers list
+        self.additional_headers = config.additional_headers
+
     def send(self, original_payload):
 
         payload = base64.b64encode(original_payload.strip())
@@ -81,7 +84,7 @@ class LegacyCookie:
         additional_headers = []
         additional_ua = ''
         additional_cookie = ''
-        for h in config.additional_headers:
+        for h in self.additional_headers:
             if h[0].lower() == 'cookie' and h[1]:
                 additional_cookie = ' %s' % h[1]
             elif h[0].lower() == 'user-agent' and h[1]:
