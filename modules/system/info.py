@@ -1,12 +1,20 @@
 from core.vectors import PhpCode
 from core.module import Module
 from core import messages
+from core.loggers import log
 import random
 
 
 class Info(Module):
 
     """Collect system information."""
+
+    aliases = [
+        'whoami',
+        'hostname',
+        'pwd',
+        'uname'
+    ]
 
     def init(self):
 
@@ -34,7 +42,7 @@ class Info(Module):
                 }
             """, 'whoami'),
             PhpCode("print(@gethostname());", 'hostname'),
-            PhpCode("@print(getcwd());", 'cwd'),
+            PhpCode("@print(getcwd());", 'pwd'),
             PhpCode("$v=@ini_get('open_basedir'); if($v) print($v);", 'open_basedir'),
             PhpCode("(@ini_get('safe_mode') && print(1)) || print(0);", 'safe_mode',
              postprocess = lambda x: True if x=='1' else False
@@ -89,3 +97,14 @@ class Info(Module):
             return result[info[0]]
         else:
             return result
+
+
+    def run_alias(self, args, cmd):
+
+        if self.session['default_shell'] != 'shell_sh':
+            log.debug(messages.module.running_the_alias_s % self.name)
+            return self.run_cmdline('-info %s' % cmd)
+        else:
+            modules.loaded['shell_sh'].run_cmdline(
+                '%s -- %s' % (cmd, args)
+            )
