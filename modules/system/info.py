@@ -2,6 +2,7 @@ from core.vectors import PhpCode
 from core.module import Module
 from core import messages
 from core.loggers import log
+from core import modules
 import random
 
 
