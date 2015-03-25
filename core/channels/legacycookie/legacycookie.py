@@ -86,7 +86,7 @@ class LegacyCookie:
         additional_cookie = ''
         for h in self.additional_headers:
             if h[0].lower() == 'cookie' and h[1]:
-                additional_cookie = ' %s' % h[1]
+                additional_cookie = ' %s;' % h[1].strip(';')
             elif h[0].lower() == 'user-agent' and h[1]:
                 additional_ua = h[1]
             else:
