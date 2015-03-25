@@ -58,6 +58,9 @@ class StegaRef:
         # Load agents
         self.agents = utils.http.load_all_agents()
 
+        # Init additional headers list
+        self.additional_headers = config.additional_headers
+
     def send(self, original_payload):
 
         # Generate session id and referrers
@@ -71,9 +74,27 @@ class StegaRef:
         additional_headers = []
         additional_ua = ''
         additional_cookie = ''
-        for h in config.additional_headers:
+        for h in self.additional_headers:
             if h[0].lower() == 'user-agent' and h[1]:
                 additional_ua = h[1]
+            if h[0].lower() == 'cookie' and h[1]:
+                cookies = h[1].rstrip(';').split('; ')
+                for cookie in cookies:
+                    name, value = cookie.split('=')
+                    cj.set_cookie(
+                        cookielib.Cookie(
+                          version=0,
+                          name=name,
+                          value=value,
+                          port=None, port_specified=False,
+                          domain='',
+                          domain_specified=True,
+                          domain_initial_dot=True, path='/',
+                          path_specified=True, secure=False,
+                          expires=None, discard=True, comment=None,
+                          comment_url=None, rest={'HttpOnly': None}
+                        )
+                    )
             elif h[0].lower() in ('accept', 'accept-language', 'referer'):
                 # Skip sensible headers
                 pass
@@ -97,16 +118,13 @@ class StegaRef:
             ] + additional_headers
 
             dlog.debug(
-                '[v:%i/%i] %s %s %s' %
-                (referrer_index,
-                 len(referrers_data),
-                    accept_language_header,
-                    referrer_data[0],
-                    referrer_data[1]))
-
-            dlog.debug(
-                '[H]\n%s' %
-                ('\n'.join('> %s: %s' % (h[0], h[1]) for h in additional_headers))
+                '[H %i/%i]\n%s\n[C] %s' %
+                (
+                    referrer_index,
+                    len(referrers_data) - 1,
+                    '\n'.join('> %s: %s' % (h[0], h[1]) for h in opener.addheaders),
+                    cj
+                )
             )
 
             url = (
