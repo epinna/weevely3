@@ -34,6 +34,31 @@ class StegaRefChannel(BaseTest):
                     payload)[0],
                 payload)
 
+
+class StegaRefChannelAdditionalHeaders(StegaRefChannel):
+
+    def test_additional_headers(self):
+        self.channel.channel_loaded.additional_headers = [
+            ( 'Cookie', 'C1=F1; C2=F2; C3=F3; C4=F4'),
+            ( 'Accept', 'ACCEPT1'),
+            ( 'Referer', 'REFERER1'),
+            ( 'X-Other-Cookie', 'OTHERCOOKIE')
+        ]
+
+        headers_string = self.channel.send(
+                            'print_r(getallheaders());'
+        )[0]
+
+        # Cookiejar used to add cookies in additional headers add them in casual orders
+        self.assertIn('C1=F1', headers_string)
+        self.assertIn('C2=F2', headers_string)
+        self.assertIn('C3=F3', headers_string)
+        self.assertIn('C4=F4', headers_string)
+        self.assertNotIn(headers_string, 'ACCEPT1')
+        self.assertNotIn(headers_string, 'REFERER1')
+        self.assertIn('OTHERCOOKIE', headers_string)
+
+
 @unittest.skipIf(
     not test_stress_channels,
     "Test only default generator agent")
@@ -149,7 +174,7 @@ $sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
         self._incremental_requests(100, 1000, 10, 20)
 
     def test_additional_headers(self):
-        core.config.additional_headers = [
+        self.channel.channel_loaded.additional_headers = [
             ( 'Cookie', 'C1=F1; C2=F2; C3=F3; C4=F4;'),
             ( 'User-Agent', 'CLIENT'),
             ( 'X-Other-Cookie', 'OTHER')
@@ -163,7 +188,7 @@ $sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
         self.assertRegexpMatches(headers_string, '\[User-Agent\] => CLIENT')
         self.assertRegexpMatches(headers_string, '\[X-Other-Cookie\] => OTHER')
 
-        core.config.additional_headers = []
+        self.channel.channel_loaded.additional_headers = [ ]
 
 @unittest.skipIf(
     not test_stress_channels,
