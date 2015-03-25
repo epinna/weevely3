@@ -89,7 +89,7 @@ class LegacyCookie:
                 additional_cookie = ' %s' % h[1]
             elif h[0].lower() == 'user-agent' and h[1]:
                 additional_ua = h[1]
-	    else:
+            else:
                 additional_headers.append(h)
 
 
