@@ -12,10 +12,10 @@ class generic:
 [!] Error: %s
 
 [+] Run terminal to the target
-    weevely <URL> <password>
+    weevely <URL> <password> [cmd]
 
 [+] Load session file
-    weevely session <path>
+    weevely session <path> [cmd]
 
 [+] Generate backdoor agent
     weevely generate <password> <path>

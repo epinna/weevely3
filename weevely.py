@@ -46,7 +46,11 @@ def main(arguments):
     )
 
     modules.load_modules(session)
-    Terminal(session).cmdloop()
+
+    if not arguments.cmd:
+        Terminal(session).cmdloop()
+    else:
+        Terminal(session).onecmd(arguments.cmd)
 
 if __name__ == '__main__':
 
@@ -56,9 +60,11 @@ if __name__ == '__main__':
     terminalparser = subparsers.add_parser('terminal', help='Run terminal')
     terminalparser.add_argument('url', help = 'The agent URL')
     terminalparser.add_argument('password', help = 'The agent password')
+    terminalparser.add_argument('cmd', help = 'Direct command', nargs='?')
 
     sessionparser = subparsers.add_parser('session', help='Recover an existant a session file')
     sessionparser.add_argument('path', help = 'The session file to load')
+    sessionparser.add_argument('cmd', help = 'Direct command', nargs='?')
 
     agents_available = [
         os.path.split(agent)[1].split('.')[0] for agent in
