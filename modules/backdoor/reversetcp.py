@@ -7,7 +7,7 @@ import socket
 
 class Reversetcp(Module):
 
-    """Execute a a reverse TCP shell."""
+    """Execute a reverse TCP shell."""
 
     def init(self):
 

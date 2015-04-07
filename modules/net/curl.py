@@ -7,7 +7,7 @@ import os
 
 class Curl(Module):
 
-    """Perform a curl-like HTTP requests."""
+    """Perform a curl-like HTTP request."""
 
     aliases = [ 'curl' ]
 
