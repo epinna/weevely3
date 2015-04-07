@@ -46,4 +46,4 @@
 
 
 [unreleased]: https://github.com/epinna/weevely3/commit/HEAD
-[3.1.0]: https://github.com/epinna/weevely3/releases/tag/v3.1.0
+[3.1.0]: https://github.com/epinna/weevely3/releases/tag/3.1.0
