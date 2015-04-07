@@ -9,7 +9,7 @@
 - Module file_cp
 - CHANGELOG
 
-## [3.0] - 2015-01-17
+## [3.0.0] - 2015-01-17
 ### Added
 - Module sql_dump
 - Module sql_console
@@ -43,3 +43,7 @@
 ### Removed
 - Module audit_userfiles
 - Module audit_mapwebfiles
+
+
+[unreleased]: https://github.com/epinna/weevely3/commit/HEAD
+[3.0.0]: https://github.com/epinna/weevely3/releases/tag/v3.0
