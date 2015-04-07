@@ -1,6 +1,6 @@
 # Change Log
 
-## [3.1.0] - 2015-04-07
+## [v3.1.0] - 2015-04-07
 ### Added
 - Module bruteforce_sql
 - Additional HTTP headers
@@ -9,7 +9,7 @@
 - Module file_cp
 - CHANGELOG
 
-## 3.0.0 - 2015-01-17
+## v3.0.0 - 2015-01-17
 ### Added
 - Module sql_dump
 - Module sql_console
@@ -46,4 +46,4 @@
 
 
 [unreleased]: https://github.com/epinna/weevely3/commit/HEAD
-[3.1.0]: https://github.com/epinna/weevely3/releases/tag/3.1.0
+[v3.1.0]: https://github.com/epinna/weevely3/releases/tag/v3.1.0
