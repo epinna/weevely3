@@ -1,10 +1,10 @@
 from core.vectors import PhpFile, ShellCmd
 from core.module import Module
 from core.loggers import log
-from core import modules
 from core import messages
 import tempfile
 import os
+
 
 class Dump(Module):
 
@@ -23,26 +23,26 @@ class Dump(Module):
 
         self.register_vectors(
             [
-            ShellCmd(
-              payload = "mysqldump -h ${host} -u${user} -p${passwd} ${db} ${table} --single-transaction",
-              name = 'mysqldump_sh'
-            ),
-            PhpFile(
-              payload_path = os.path.join(self.folder, 'mysqldump.tpl'),
-              name = 'mysqldump_php',
+                ShellCmd(
+                    payload="mysqldump -h ${host} -u${user} -p${passwd} ${db} ${table} --single-transaction",
+                    name='mysqldump_sh'
+                    ),
+                PhpFile(
+                    payload_path=os.path.join(self.folder, 'mysqldump.tpl'),
+                    name='mysqldump_php',
+                    )
+                ]
             )
-            ]
-        )
 
         self.register_arguments([
-          { 'name' : 'db', 'help' : 'Db to dump' },
-          { 'name' : 'user', 'help' : 'SQL username' },
-          # Using passwd instead of pass to avoid rendering the `pass` keyword
-          { 'name' : 'passwd', 'help' : 'SQL password' },
-          { 'name' : '-dbms', 'help' : 'Db type. Vector \'mysqldump_sh\' supports only \'mysql\'.', 'choices' : ('mysql', 'pgsql', 'sqlite', 'dblib'), 'default' : 'mysql' },
-          { 'name' : '-host', 'help' : 'Db host or host:port', 'nargs' : '?', 'default' : '127.0.0.1' },
-          { 'name' : '-lpath', 'help' : 'Dump to local path (default: temporary file)' },
-          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'mysqldump_php' }
+            {'name': 'db', 'help': 'Db to dump'},
+            {'name': 'user', 'help': 'SQL username'},
+            # Using passwd instead of pass to avoid rendering the `pass` keyword
+            {'name': 'passwd', 'help': 'SQL password'},
+            {'name': '-dbms', 'help': 'Db type. Vector \'mysqldump_sh\' supports only \'mysql\'.', 'choices': ('mysql', 'pgsql', 'sqlite', 'dblib'), 'default': 'mysql'},
+            {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': '127.0.0.1'},
+            {'name': '-lpath', 'help': 'Dump to local path (default: temporary file)'},
+            {'name': '-vector', 'choices': self.vectors.get_names(), 'default': 'mysqldump_php'}
         ])
 
     def run(self):
@@ -51,17 +51,16 @@ class Dump(Module):
 
         if self.args['vector'] == 'mysqldump_sh' and self.args['dbms'] != 'mysql':
             log.warn(messages.module.vector_s_not_support_arg_s_s % (
-                            self.args['vector'],
-                            'dbms',
-                            self.args['dbms']
-                        )
-                    )
+                self.args['vector'],
+                'dbms',
+                self.args['dbms'])
+            )
             return
 
         vector_name, result = self.vectors.find_first_result(
-            names = [ self.args.get('vector') ],
-            format_args = self.args,
-            condition = lambda r: r and '-- Dumping data for table' in r
+            names=[self.args.get('vector')],
+            format_args=self.args,
+            condition=lambda r: r and '-- Dumping data for table' in r
         )
 
         if not vector_name:
@@ -72,10 +71,10 @@ class Dump(Module):
         lpath = self.args.get('lpath')
         if not lpath:
             temp_file = tempfile.NamedTemporaryFile(
-                suffix = '_%s_%s_%s_%s.sqldump' % (
+                suffix='_%s_%s_%s_%s.sqldump' % (
                     self.args['user'], self.args['passwd'], self.args['host'], self.args['db']
                 ),
-            delete = False
+                delete=False
             )
             lpath = temp_file.name
 
