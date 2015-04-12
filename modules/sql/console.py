@@ -47,6 +47,7 @@ class Console(Module):
             {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': '127.0.0.1'},
             {'name': '-dbms', 'help': 'Db type', 'choices': ('mysql', 'pgsql'), 'default': 'mysql'},
             {'name': '-query', 'help': 'Execute a single query'},
+            {'name': '-encoding', 'help': 'Db text encoding', 'default': 'utf-8'},
         ])
 
     def _query(self, vector, args):
@@ -60,6 +61,13 @@ class Console(Module):
         )
 
         result = self.vectors.get_result(vector, args)
+
+        # we wan't the result to be unicode, but depending on the source
+        # of the data, it could be encoded differently
+        try:
+            result = unicode(result)
+        except UnicodeError:
+            result = unicode(result.decode(args.get('encoding')))
 
         # If there is not errstr, something gone really bad (e.g. functions not callable)
         if errsep not in result:
@@ -84,6 +92,7 @@ class Console(Module):
 
         # The vector name is given by the db type
         vector = self.args.get('dbms')
+        encoding = self.args.get('encoding')
 
         # And by the user and password presence
         vector += (
