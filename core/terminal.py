@@ -307,6 +307,9 @@ class Terminal(CmdModules):
         open(config.history_path, 'a').close()
 
         readline.set_history_length(100)
-        readline.read_history_file(config.history_path)
+        try:
+            readline.read_history_file(config.history_path)
+        except IOError:
+            pass
         atexit.register(readline.write_history_file,
             config.history_path)
