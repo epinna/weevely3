@@ -177,7 +177,7 @@ class VectorList(list):
         # If os_string is not set, just return True and continue
         if not os_string: return True
 
-        os_current = s.WIN if os_string.lower().startswith('win') else Os.NIX
+        os_current = Os.WIN if os_string.lower().startswith('win') else Os.NIX
 
         return os in (os_current, Os.ANY)
 
