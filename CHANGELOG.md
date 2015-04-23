@@ -4,6 +4,7 @@
 ### Fixed
 - Basic Windows support
 - OS X support
+
 ### Added
 - Python requirements.txt
 - Encoding support for sql_console
