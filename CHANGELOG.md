@@ -1,5 +1,13 @@
 # Change Log
 
+## [Unreleased][unreleased]
+### Fixed
+- Basic Windows support
+- OS X support
+### Added
+- Python requirements.txt
+- Encoding support for sql_console
+
 ## [v3.1.0] - 2015-04-07
 ### Added
 - Module bruteforce_sql
