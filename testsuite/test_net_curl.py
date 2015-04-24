@@ -190,7 +190,7 @@ class Curl(BaseTest):
         self.assertFalse(saved)
 
     def test_all(self):
-        
+
         for vect in self.vector_list:
             result, headers, saved = self.run_argv([ self.urls[1], '-vector', vect, '-i' ])
             self.assertIn('HTTP/1.1 200 OK', headers)

@@ -52,6 +52,9 @@ class Grep(Module):
             { 'name' : '-name-regex', 'help' : 'Regular expression to match file name to grep' },
             { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
             { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
+            { 'name' : '--output', 'dest' : 'output' },
+            { 'name' : '-o', 'dest' : 'output', 'help' : 'Redirect output to remote file', 'nargs' : '?' },
+            { 'name' : '-local', 'action' : 'store_true', 'default' : False, 'help' : 'Save redirected output locally' },
         ])
 
     def run(self):
@@ -82,34 +85,58 @@ class Grep(Module):
         # Validate files presence
         if not isinstance(files, list) or not files:
             log.warn(messages.module_file_grep.failed_retrieve_info)
-            return
+            return None, False
 
         # Store the found data in data dictionary in the
         # form `{ filename : [ line1, line2, ... ] }`
+        # and store them as string whether requested
         results = {}
+        output_str = ''
+        output_path = self.args.get('output')
 
         for rfile in files:
-            result = self.vectors.get_result(
+            result_str = self.vectors.get_result(
                 self.args['vector'],
                 { 'regex' : self.args['regex'], 'rfile' : rfile, 'case' : self.args['case'] }
             )
 
-            result_list = result.split('\n') if isinstance(result, str) and result else []
+            result_list = result_str.split('\n') if isinstance(result_str, str) and result_str else []
 
+            # This means the command returned something something
             if result_list:
 
-                if len(files) > 1:
-                    # Print filepath:line if there are multiple files
+                if output_path:
+                    # If output is redirected, just append to output_str
+                    output_str += result_str
 
-                    for line in result_list:
-                        log.info('%s:%s' % ( rfile, line ))
                 else:
-                    # Else, just print the lines
-                    log.info('\n'.join(result_list))
+                    # Else, print it out
+                    if len(files) > 1:
+                        # Print filepath:line if there are multiple files
+
+                        for line in result_list:
+                            log.info('%s:%s' % ( rfile, line ))
+                    else:
+                        # Else, just print the lines
+                        log.info('\n'.join(result_list))
 
                 results[rfile] = result_list
 
-        return results
+        # Save output to file whether specified
+        saved = False
+        if output_path:
+            if not self.args.get('local'):
+                saved = ModuleExec('file_upload', [ '-content', result_str, output_path ]).run()
+            else:
+                try:
+                    open(output_path, 'wb').write(result_str)
+                except Exception as e:
+                    log.warning(
+                      messages.generic.error_loading_file_s_s % (output_path, str(e)))
+                else:
+                    saved = True
+
+        return results, saved
 
     def print_result(self, result):
         pass
