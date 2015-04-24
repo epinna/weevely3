@@ -29,7 +29,7 @@ class Grep(Module):
         self.register_vectors(
             [
             ShellCmd(
-                payload = "grep ${ '' if case else '-i' } -e '${regex}' '${rfile}'",
+                payload = "grep ${ '' if case else '-i' } ${ '-v' if invert else '' } -e '${regex}' '${rfile}'",
                 name = "grep_sh",
                 arguments = [
                   "-stderr_redirection",
@@ -39,7 +39,11 @@ class Grep(Module):
                 postprocess = lambda r: r[:-1] if r and r.endswith('\n') else r
             ),
             PhpCode(
-                payload = """$m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }/m${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));""",
+                payload = """% if invert:
+$m=file_get_contents("${rfile}");$a=preg_replace("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }".PHP_EOL."/m${ '' if case else 'i'}","",$m);if($a)print(rtrim($a,PHP_EOL));
+% else:
+$m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }/m${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));
+% endif""",
                 name = "grep_php"
             )
             ]
@@ -51,13 +55,13 @@ class Grep(Module):
             { 'name' : '-case', 'help' : 'Search case sensitive expression', 'action' : 'store_true', 'default' : False },
             { 'name' : '-name-regex', 'help' : 'Regular expression to match file name to grep' },
             { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
-            { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
             { 'name' : '-output', 'help' : 'Redirect output to remote file' },
+            { 'name' : '-v', 'dest' : 'invert', 'action' : 'store_true', 'default' : False, 'help' : 'Invert matching to select non-matching lines' },
             { 'name' : '-local', 'action' : 'store_true', 'default' : False, 'help' : 'Save redirected output locally' },
+            { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
         ])
 
     def run(self):
-
 
         files = []
 
@@ -80,7 +84,6 @@ class Grep(Module):
             # If the remote path is a readable file, just store the path
             files = [ self.args['rpath'] ]
 
-
         # Validate files presence
         if not isinstance(files, list) or not files:
             log.warn(messages.module_file_grep.failed_retrieve_info)
@@ -96,7 +99,7 @@ class Grep(Module):
         for rfile in files:
             result_str = self.vectors.get_result(
                 self.args['vector'],
-                { 'regex' : self.args['regex'], 'rfile' : rfile, 'case' : self.args['case'] }
+                { 'regex' : self.args['regex'], 'rfile' : rfile, 'case' : self.args['case'], 'invert' : self.args['invert'] }
             )
 
             result_list = result_str.split('\n') if isinstance(result_str, str) and result_str else []
