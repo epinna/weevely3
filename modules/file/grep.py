@@ -52,8 +52,7 @@ class Grep(Module):
             { 'name' : '-name-regex', 'help' : 'Regular expression to match file name to grep' },
             { 'name' : '-no-recursion', 'action' : 'store_true', 'default' : False },
             { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
-            { 'name' : '--output', 'dest' : 'output' },
-            { 'name' : '-o', 'dest' : 'output', 'help' : 'Redirect output to remote file', 'nargs' : '?' },
+            { 'name' : '-output', 'help' : 'Redirect output to remote file' },
             { 'name' : '-local', 'action' : 'store_true', 'default' : False, 'help' : 'Save redirected output locally' },
         ])
 

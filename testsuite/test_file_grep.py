@@ -103,7 +103,7 @@ class FileGrep(BaseFilesystem):
             output_path = os.path.join(config.script_folder, 'test_%s' % vect)
 
             # grep string3 -> []
-            self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '--output', output_path ])[1])
+            self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '-output', output_path ])[1])
             self.assertEqual(self.check_output(
                 config.cmd_env_cat_s % (output_path),
                 shell=True), ''
@@ -113,7 +113,7 @@ class FileGrep(BaseFilesystem):
                 shell=True)
 
             # grep rpath=folder2 string -> string[3]
-            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '--output', output_path ])[0],{ self.files_rel[2] : ['string3'] })
+            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '-output', output_path ])[0],{ self.files_rel[2] : ['string3'] })
             self.assertEqual(self.check_output(
                 config.cmd_env_cat_s % (output_path),
                 shell=True), 'string3'
@@ -130,12 +130,12 @@ class FileGrep(BaseFilesystem):
             temp_file = tempfile.NamedTemporaryFile()
 
             # grep string3 -> []
-            self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '--output', temp_file.name, '-local' ])[1])
+            self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '-output', temp_file.name, '-local' ])[1])
             self.assertEqual('', open(temp_file.name,'r').read())
             temp_file.truncate()
 
             # grep rpath=folder2 string -> string[3]
-            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '--output', temp_file.name, '-local' ])[0],{ self.files_rel[2] : ['string3'] })
+            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '-output', temp_file.name, '-local' ])[0],{ self.files_rel[2] : ['string3'] })
             self.assertEqual('string3', open(temp_file.name,'r').read())
             temp_file.close()
 
