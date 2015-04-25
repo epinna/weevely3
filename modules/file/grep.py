@@ -34,13 +34,11 @@ class Grep(Module):
                 arguments = [
                   "-stderr_redirection",
                   " 2>/dev/null",
-                ],
-                # Remove the trailing newline
-                postprocess = lambda r: r[:-1] if r and r.endswith('\n') else r
+                ]
             ),
             PhpCode(
                 payload = """% if invert:
-$m=file_get_contents("${rfile}");$a=preg_replace("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }".PHP_EOL."?/m${ '' if case else 'i'}","",$m);if($a)print(rtrim($a,PHP_EOL));
+$m=file_get_contents("${rfile}");$a=preg_replace("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }".PHP_EOL."?/m${ '' if case else 'i'}","",$m);if($a)print($a);
 % else:
 $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }/m${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));
 % endif""",
@@ -101,6 +99,9 @@ $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.rep
                 self.args['vector'],
                 { 'regex' : self.args['regex'], 'rfile' : rfile, 'case' : self.args['case'], 'invert' : self.args['invert'] }
             )
+
+            # Both grep_sh and grep_php -v trail a \n, this should work fine
+            result_str = result_str[:-1] if result_str and result_str.endswith('\n') else result_str
 
             result_list = result_str.split('\n') if isinstance(result_str, str) and result_str else []
 

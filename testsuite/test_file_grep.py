@@ -25,7 +25,7 @@ class FileGrep(BaseFilesystem):
         self.files_abs, self.files_rel = self.populate_files(
                                 self.folders_abs,
                                 [ 'string1', 'string12', 'string3', 'string4' ],
-                                [ 'string1', 'string12', 'string3', 'string4' ]
+                                [ 'string1', 'string12', 'string3\nSTR33', 'string4' ]
                             )
 
         # Change mode of the third file to ---x--x--x 0111 execute
@@ -55,46 +55,55 @@ class FileGrep(BaseFilesystem):
                 config.cmd_env_rmdir_s % (folder),
                 shell=True)
 
-    def test_file_grep_php(self):
+    def test_file_grep(self):
 
-        # grep string1 -> string[0]
-        self.assertEqual(
-            self.run_argv([ self.folders_rel[0], 'tring1' ])[0],
-                          {
-                            self.files_rel[0] : ['string1'],
-                            self.files_rel[1] : ['string12']
-                           }
-                        )
+        for vect in self.vector_list:
 
-        # grep string3 -> []
-        self.assertEqual(self.run_argv([ self.folders_rel[0], 'tring4' ])[0],{})
+            # grep string1 -> string[0]
+            self.assertEqual(
+                self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring1' ])[0],
+                              {
+                                self.files_rel[0] : ['string1'],
+                                self.files_rel[1] : ['string12']
+                               }
+                            )
 
-        # grep string[2-9] -> string[3]
-        self.assertEqual(self.run_argv([ self.folders_rel[0], 'tring[2-9]' ])[0],{ self.files_rel[2] : ['string3'] })
+            # grep string3 -> []
+            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4' ])[0],{})
 
-        # grep rpath=folder2 string -> string[3]
-        self.assertEqual(self.run_argv([ self.folders_rel[2], 'string.*' ])[0],{ self.files_rel[2] : ['string3'] })
+            # grep string[2-9] -> string[3]
+            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring[2-9]' ])[0],{ self.files_rel[2] : ['string3'] })
+
+            # grep rpath=folder2 string -> string[3]
+            self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*' ])[0],{ self.files_rel[2] : ['string3'] })
 
 
-    def test_file_grep_sh(self):
+    def test_file_grep_invert(self):
 
-        # grep string1 -> string[0]
-        self.assertEqual(
-            self.run_argv([ '-vector', 'grep_sh', self.folders_rel[0], 'tring1' ])[0],
-                          {
-                            self.files_rel[0] : ['string1'],
-                            self.files_rel[1] : ['string12']
-                           }
-                        )
+        for vect in self.vector_list:
 
-        # grep string3 -> []
-        self.assertEqual(self.run_argv([ '-vector', 'grep_sh', self.folders_rel[0], 'tring4' ])[0],{})
+            # grep -v string1 -> string3
+            self.assertEqual(
+                self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring1', '-v' ])[0],
+                              {
+                                self.files_rel[2] : ['string3', 'STR33'],
+                                # self.files_rel[3] : ['string4'] # String 4 is 0111
+                               }
+                            )
 
-        # grep string[2-9] -> string[3]
-        self.assertEqual(self.run_argv([ '-vector', 'grep_sh', self.folders_rel[0], 'tring[2-9]' ])[0],{ self.files_rel[2] : ['string3'] })
+            # grep -v bogus -> string1,2,3
+            self.assertEqual(
+                self.run_argv([ '-vector', vect, self.folders_rel[0], 'bogus', '-v' ])[0],
+                              {
+                                self.files_rel[0] : ['string1'],
+                                self.files_rel[1] : ['string12'],
+                                self.files_rel[2] : ['string3', 'STR33']
+                               }
+                            )
 
-        # grep rpath=folder2 string -> string[3]
-        self.assertEqual(self.run_argv([ '-vector', 'grep_sh', self.folders_rel[2], 'string.*' ])[0],{ self.files_rel[2] : ['string3'] })
+            # grep -v -i STR from string[2] -> string3
+            self.assertEqual(self.run_argv([ '-vector', vect, self.files_rel[2], '-v', '-case', 'STR' ])[0],{ self.files_rel[2] : ['string3'] })
+
 
     def test_file_grep_output_remote(self):
 

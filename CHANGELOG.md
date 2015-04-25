@@ -8,7 +8,7 @@
 ### Added
 - Python requirements.txt
 - Encoding support for sql_console
-- Output redirection for file_grep
+- Output redirection and inverse grep for file_grep
 
 ## [v3.1.0] - 2015-04-07
 ### Added
