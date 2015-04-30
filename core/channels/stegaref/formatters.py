@@ -44,6 +44,7 @@ class FirstRefererFormat:
         return utils.strings.randstr(max_size, min_size, string.ascii_letters)
 
     def payload_chunk(self, max_size, min_size=None):
+        """Return the parameter ${ chunk } formatted when sent"""
 
         if min_size is None:
             min_size = max_size
@@ -51,6 +52,11 @@ class FirstRefererFormat:
         self.chunks_sizes.append((min_size, max_size))
 
         return '${ chunk }'
+
+    def get_url(self):
+        """Return the parameter ${ url } formatted when sent"""
+
+        return '${ url }'
 
     def rand_domain(self):
         return random.choice(['com', 'ad', 'ae', 'al', 'am', 'as', 'at', 'az',

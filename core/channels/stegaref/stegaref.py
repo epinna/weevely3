@@ -205,6 +205,10 @@ class StegaRef:
 
             # Separate the query from the rest
             referrer, query = referrer_vanilla.split('?', 1)
+
+            # Apply template on the referrer host
+            referrer = referrer.replace('http://${ url }', self.url)
+
             referrer += '?'
             positions = []
 
