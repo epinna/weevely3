@@ -145,7 +145,7 @@ class Curl(BaseTest):
             self.assertEqual(messages.module_net_curl.unexpected_response,
                              log_captured.records[-1].msg)
 
-        self.assertIsNone(self.run_argv([ 'http://localhost:9999', '--connect-timeout', '1' ])[0])
+        self.assertIsNone(self.run_argv([ 'http://localhost:19999', '--connect-timeout', '1' ])[0])
         self.assertEqual(messages.module_net_curl.unexpected_response,
                          log_captured.records[-1].msg)
 
