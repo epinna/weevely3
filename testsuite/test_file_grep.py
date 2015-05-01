@@ -8,6 +8,7 @@ from core import messages
 import subprocess
 import os
 import tempfile
+import random
 
 class FileGrep(BaseFilesystem):
 
@@ -109,7 +110,7 @@ class FileGrep(BaseFilesystem):
 
         for vect in self.vector_list:
 
-            output_path = os.path.join(config.script_folder, 'test_%s' % vect)
+            output_path = os.path.join(config.script_folder, 'test_%s_%i' % (vect, random.randint(1,99999)))
 
             # grep string3 -> []
             self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '-output', output_path ])[1])
