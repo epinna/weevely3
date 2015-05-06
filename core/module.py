@@ -161,6 +161,10 @@ class Module:
         if self.session[self.name]['status'] == Status.IDLE:
             self.session[self.name]['status'] = self.setup()
 
+            # If setup still not set the status to RUN, return
+            if self.session[self.name]['status'] != Status.RUN:
+                return
+
         # If module status is FAIL, return
         if self.session[self.name]['status'] == Status.FAIL:
             log.debug(messages.module.module_s_inactive % self.name)
