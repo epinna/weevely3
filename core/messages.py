@@ -230,6 +230,9 @@ Unmount it:
     httpfs_agent_removed = 'The PHP agent will be removed at weevely exit'
     httpfs_agent_manually_remove_s = 'Remove manually the PHP agent \'%s\''
 
+class module_shell_su:
+    error_su_executing = 'Error executing commands with su'
+
 class module_shell_sh:
     error_sh_remote_shell = 'Error loading Sh remote shell'
 
