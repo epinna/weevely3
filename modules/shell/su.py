@@ -7,7 +7,9 @@ from core import modules
 
 class Su(Module):
 
-    """Execute commands as another user with su."""
+    """Elevate privileges with su."""
+
+    aliases = [ 'ifconfig' ]
 
     def init(self):
 
@@ -22,9 +24,8 @@ class Su(Module):
 
         self.register_vectors(
             [
-            # All the system-like calls has to be properly wrapped between single quotes
-            ShellCmd("""expect -c "spawn su '${ user }' -c -- bash -c \"${command}\"; expect -re { \"assword\" send \"${ passwd }\\r\\n\"; timeout; }" """, "sh_expect"),
-            ShellCmd("""python -c 'import pexpect as p,sys;c=p.spawn("su ${user} -c ${command}");c.expect(".*assword:");c.sendline("${ passwd }");i=c.expect([p.EOF,p.TIMEOUT]);sys.stdout.write(c.before[3:] if i!=p.TIMEOUT else "")'""")
+            ShellCmd("""expect -c 'spawn su "{ user }" -c -- bash -c "${command}"; expect -re { "assword" send "${ passwd }\\r\\n"; timeout; }'""", "sh_expect"),
+            ShellCmd("""python -c 'import pexpect as p,sys;c=p.spawn("su ${user} -c ${command}");c.expect(".*assword:");c.sendline("${ passwd }");i=c.expect([p.EOF,p.TIMEOUT]);sys.stdout.write(c.before[3:] if i!=p.TIMEOUT else "")'""", "pyexpect")
             ]
         )
 
