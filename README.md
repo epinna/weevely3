@@ -21,7 +21,7 @@ The modules feature:
 
 ### The backdoor agent
 
-The remote agent is a very low footprint agent that receives the dynamically injected code from the client, extending the client functionalities over the network at run-time. The agent code is polymorphic and hardly detectable by AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
+The remote agent is a very low footprint php script that receives dynamically injected code from the client, extending the client functionalities over the network at run-time. The agent code is polymorphic and hardly detectable by AV and HIDS. The communication is covered and obfuscated within the HTTP protocol using steganographic techniques.
 
 ### Modules development
 
