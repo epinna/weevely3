@@ -46,7 +46,7 @@ class LegacyCookie:
         # Init additional headers list
         self.additional_headers = config.additional_headers
 
-    def send(self, original_payload):
+    def send(self, original_payload, additional_handlers = []):
 
         payload = base64.b64encode(original_payload.strip())
         length = len(payload)
@@ -77,7 +77,7 @@ class LegacyCookie:
         cookie_payload_string += prefixes.pop() + '=' + payload[third:thirds] + '; '
         cookie_payload_string += prefixes.pop() + '=' + payload[thirds:]
 
-        opener = urllib2.build_opener()
+        opener = urllib2.build_opener(*additional_handlers)
 
         # When core.conf contains additional cookies, carefully merge
         # the new cookies and UA and add all the other headers

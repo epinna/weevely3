@@ -40,6 +40,7 @@ else:
 
 class channels:
     error_loading_channel_s = 'Error loading channel \'%s\''
+    error_proxy_format = 'Proxy format error, use \'http|https|socks5|sock4://host:port\''
 
 class terminal:
     backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
@@ -143,6 +144,7 @@ class module_shell_php:
     error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
     error_500_executing = 'The remote script execution triggers an error 500, please verify script integrity and sent payload correctness'
     error_URLError_network = 'Network error, unable to connect to the remote backdoor'
+    error_proxy = 'Proxy error, unable to connect to the remote backdoor'
     missing_php_trailer_s = 'Is the trailing comma missing at the end of the PHP code \'%s\'?'
     error_i_executing = 'The request triggers the error %i, please verify running code'
 

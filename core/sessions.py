@@ -12,15 +12,17 @@ import urlparse
 import atexit
 import ast
 
-print_filters = [
+print_filters = (
     'debug',
-    'channel'
-]
+    'channel',
+    'proxy'
+)
 
-set_filters = [
+set_filters = (
     'debug',
-    'channel'
-]
+    'channel',
+    'proxy'
+)
 
 class Session(dict):
 
@@ -80,6 +82,13 @@ class Session(dict):
         else:
             stream_handler.setLevel(logging.INFO)
 
+
+    def action_proxy(self, module_argument, value):
+        """After setting a new proxy, reinitiate channels"""
+
+        self['shell_php']['status'] = Status.IDLE
+
+
     def set(self, module_argument, value):
         """Called by user to set or show the session variables"""
 
@@ -109,7 +118,7 @@ class Session(dict):
                 log.info("%s.%s = '%s'" % (module_name, arg_name, value))
         else:
             module_name = module_argument
-            if module_name not in self or module_name not in set_filters:
+            if module_name not in self and module_name not in set_filters:
                 log.warn(messages.sessions.error_storing_s_not_found % (module_name))
             else:
                 self[module_name] = value

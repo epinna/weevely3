@@ -2,3 +2,4 @@ prettytable
 Mako
 pyaml
 dateutils
+PySocks
