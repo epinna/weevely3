@@ -15,7 +15,15 @@ class TestGenerators(TestCase):
             self._randomize_bd()
             obfuscated = generate(self.password)
             save_generated(obfuscated, self.path)
-            self.channel = Channel(self.url, self.password, 'StegaRef')
+
+            self.channel = Channel(
+                'StegaRef',
+                {
+                    'url' : self.url,
+                    'password' : self.password
+                }
+            )
+
             self._clean_bd()
 
     def _incremental_requests(

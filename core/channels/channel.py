@@ -5,7 +5,7 @@ from core import messages
 
 class Channel:
 
-    def __init__(self, url, password, channel_name):
+    def __init__(self, channel_name, session):
         """
         Import and instanciate dynamically the channel.
 
@@ -27,7 +27,10 @@ class Channel:
             raise FatalException(messages.channels.error_loading_channel_s % (channel_name))
 
         # Create channel instance
-        self.channel_loaded = channel_object(url, password)
+        self.channel_loaded = channel_object(
+            session['url'],
+            session['password']
+        )
         self.channel_name = channel_name
 
     def send(self, payload):

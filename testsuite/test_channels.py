@@ -17,7 +17,13 @@ import core.config
 class StegaRefChannel(BaseTest):
 
     def setUp(self):
-        self.channel = Channel(self.url, self.password, 'StegaRef')
+        self.channel = Channel(
+            'StegaRef',
+            {
+                'url' : self.url,
+                'password' : self.password
+            }
+        )
 
     def _incremental_requests(
             self,
@@ -96,7 +102,13 @@ class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
 class LegacyCookieChannel(BaseTest):
 
     def setUp(self):
-        self.channel = Channel(self.url, self.password, 'LegacyCookie')
+        self.channel = Channel(
+            'LegacyCookie',
+            {
+                'url' : self.url,
+                'password' : self.password
+            }
+        )
 
     def _incremental_requests(
             self,
@@ -196,7 +208,13 @@ $sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
 class LegacyReferrerChannel(BaseTest):
 
     def setUp(self):
-        self.channel = Channel(self.url, self.password, 'LegacyReferrer')
+        self.channel = Channel(
+            'LegacyReferrer',
+            {
+                'url' : self.url,
+                'password' : self.password
+            }
+        )
 
     def _incremental_requests(
             self,

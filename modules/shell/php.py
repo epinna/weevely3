@@ -67,9 +67,8 @@ class Php(Module):
         for channel_name in channels:
 
             channel = Channel(
-                url = self.session['url'],
-                password = self.session['password'],
-                channel_name = channel_name
+                channel_name = channel_name,
+                session = self.session
             )
 
             status = self._check_interpreter(channel)
