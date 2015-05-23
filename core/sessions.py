@@ -56,6 +56,22 @@ class Session(dict):
          path = self['file_cd']['results'].get('cwd', '.')
      )
 
+    def load_session(self, data):
+        """
+        Update the session dictionary, and occasionally run
+        action_<arg> function.
+        """
+
+        self.update(data)
+
+        for module_argument, value in data.items():
+
+            # If action_<module_argument> function exists, trigger the action
+            action_name = 'action_%s' % (module_argument.replace('.','_'))
+            if hasattr(self, action_name):
+                action_func = getattr(self, action_name)
+                if hasattr(action_func, '__call__'):
+                    action_func(module_argument, value)
 
     def action_debug(self, module_argument, value):
 
@@ -124,7 +140,7 @@ class SessionFile(Session):
                 # Register dump at exit and return
                 atexit.register(self._session_save_atexit)
 
-            self.update(sessiondb)
+            self.load_session(sessiondb)
             return
 
         log.warn(
@@ -179,7 +195,7 @@ class SessionURL(Session):
                     if not volatile:
                         atexit.register(self._session_save_atexit)
 
-                    self.update(sessiondb)
+                    self.load_session(sessiondb)
                     return
 
         # If no session was found, create a new one with first available filename
@@ -208,7 +224,7 @@ class SessionURL(Session):
                 if not volatile:
                     atexit.register(self._session_save_atexit)
 
-                self.update(sessiondb)
+                self.load_session(sessiondb)
                 return
 
             else:
