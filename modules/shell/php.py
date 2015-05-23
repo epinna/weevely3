@@ -67,9 +67,8 @@ class Php(Module):
         for channel_name in channels:
 
             channel = Channel(
-                url = self.session['url'],
-                password = self.session['password'],
-                channel_name = channel_name
+                channel_name = channel_name,
+                session = self.session
             )
 
             status = self._check_interpreter(channel)
@@ -142,11 +141,13 @@ class Php(Module):
 
         if response: return
 
-        if code == 404:
+        if code < 0:
+            log.warn(messages.module_shell_php.error_proxy)
+        elif code == 404:
             log.warn(messages.module_shell_php.error_404_remote_backdoor)
         elif code == 500:
             log.warn(messages.module_shell_php.error_500_executing)
-        elif code == -1:
+        elif code == 0:
             log.warn(messages.module_shell_php.error_URLError_network)
         elif code != 200:
             log.warn(messages.module_shell_php.error_i_executing % code)

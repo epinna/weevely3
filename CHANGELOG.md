@@ -4,11 +4,14 @@
 ### Fixed
 - Basic Windows support
 - OS X support
+- Improve Stegaref channel's referrer templates
 
 ### Added
 - Python requirements.txt
 - Encoding support for sql_console
 - Output redirection and inverse grep for file_grep
+- Run actions on start depending from the session load
+- Proxy and SOCKS support
 
 ## [v3.1.0] - 2015-04-07
 ### Added

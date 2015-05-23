@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from core.terminal import Terminal
 from core.weexceptions import FatalException
-from core.loggers import log
+from core.loggers import log, dlog
 from core.sessions import SessionURL, SessionFile
 from core.config import agent_templates_folder_path, obfuscators_templates_folder_path
 from core import generate
@@ -41,7 +41,7 @@ def main(arguments):
     elif arguments.command == 'session':
         session = SessionFile(arguments.path)
 
-    log.debug(
+    dlog.debug(
         pprint.pformat(session)
     )
 

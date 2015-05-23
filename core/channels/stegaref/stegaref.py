@@ -61,13 +61,14 @@ class StegaRef:
         # Init additional headers list
         self.additional_headers = config.additional_headers
 
-    def send(self, original_payload):
+    def send(self, original_payload, additional_handlers = []):
 
         # Generate session id and referrers
         session_id, referrers_data = self._prepare(original_payload)
 
         cj = cookielib.CookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        additional_handlers.append(urllib2.HTTPCookieProcessor(cj))
+        opener = urllib2.build_opener(*additional_handlers)
 
         # When core.conf contains additional cookies, carefully merge
         # the new headers killing the needed ones
