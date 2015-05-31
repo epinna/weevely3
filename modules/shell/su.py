@@ -4,6 +4,8 @@ from core.loggers import log
 from core.vectors import Os
 from core import messages
 from core import modules
+import re
+
 
 class Su(Module):
 
@@ -24,7 +26,11 @@ class Su(Module):
 
         self.register_vectors(
             [
-            ShellCmd("""expect -c 'spawn su -c "${command}" "${user}"; expect -re "assword"; send "${ passwd }\r\n"; expect eof;'""", "sh_expect"),
+            ShellCmd(
+                """expect -c 'spawn su -c "${command}" "${user}"; expect -re "assword"; send "${ passwd }\r\n"; expect eof;'""",
+                name = "sh_expect",
+                postprocess = lambda x: re.findall('Password: (?:\r\n)?([\s\S]+)', x)[0] if 'Password: ' in x else ''
+            ),
             ShellCmd("""python -c 'import pexpect as p,sys;c=p.spawn("su ${user} -c ${command}");c.expect(".*assword:");c.sendline("${ passwd }");i=c.expect([p.EOF,p.TIMEOUT]);sys.stdout.write(c.before[3:] if i!=p.TIMEOUT else "")'""", "pyexpect")
             ]
         )
