@@ -77,10 +77,13 @@ $test->extractTar('./toto.Tar', './new/');
 
 			if ($infos['type']=='5' && @mkdir($dest.$infos['name'], 0775, true))
 			  $result[]=$dest.$infos['name'];
-			elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$infos['name'], $infos['data']))
+			elseif (($infos['type']=='0' || $infos['type']==chr(0)) && file_put_contents($dest.$infos['name'], $infos['data'])) {
 			  $result[]=$dest.$infos['name'];
-			if ($infos)
+			// @weevely3 
+			// Better to not set 0775 on already existant folders 
+			//if ($infos)
 			  chmod($dest.$infos['name'], 0775);
+			}
 		}
 		return $result;
 	}
