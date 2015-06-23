@@ -31,15 +31,17 @@ class BaseTest(TestCase):
 
         cls._randomize_bd()
 
-        # Check `config.script_folder` permissions
+        # Check `config.script_folder` permissions, comparing just the 
+        # last 3 digits
+        
         if (
             subprocess.check_output(
                 config.cmd_env_stat_permissions_s % (config.script_folder),
-                shell=True).strip()
-            != config.script_folder_expected_perms
+                shell=True).strip()[-3:]
+            != config.script_folder_expected_perms[-3:]
             ):
             raise DevException(
-                "Error: give to the http user full permissions to the folder \'%s\'"
+                "Error: give the required permissions to the folder \'%s\'"
                 % config.script_folder
             )
 
@@ -52,7 +54,7 @@ class BaseTest(TestCase):
             shell=True)
 
         subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('777', cls.path),
+            config.cmd_env_chmod_s_s % ('0777', cls.path),
             shell=True)
 
     @classmethod

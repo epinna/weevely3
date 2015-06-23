@@ -87,8 +87,8 @@ class FileTar(BaseFilesystem):
 
         # Uncompress test.tar
         self.assertTrue(self.run_argv(["--decompress", 'test_0.tar', '.']));
-        for file in self.files_abs:
-            self.assertEqual(self.check_output(config.cmd_env_print_repr_s % file),'1')
+        for fle in self.files_abs:
+            self.assertEqual(self.check_output(config.cmd_env_print_repr_s % fle),'1')
         for folder in self.folders_abs:
             self.check_call(config.cmd_env_stat_permissions_s % folder)
 
