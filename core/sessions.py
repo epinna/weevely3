@@ -84,9 +84,10 @@ class Session(dict):
 
 
     def action_proxy(self, module_argument, value):
-        """After setting a new proxy, reinitiate channels"""
+        """After setting a new proxy, reinitiate channel if already set"""
 
-        self['shell_php']['status'] = Status.IDLE
+        if self['shell_php']['status'] == Status.RUN:
+            self['shell_php']['status'] = Status.IDLE
 
 
     def set(self, module_argument, value):
