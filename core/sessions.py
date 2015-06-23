@@ -89,6 +89,10 @@ class Session(dict):
         if self['shell_php']['status'] == Status.RUN:
             self['shell_php']['status'] = Status.IDLE
 
+        if self['channel']:
+            self['channel'] = None
+	 
+
 
     def set(self, module_argument, value):
         """Called by user to set or show the session variables"""
