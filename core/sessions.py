@@ -91,7 +91,38 @@ class Session(dict):
 
         if self['channel']:
             self['channel'] = None
-	 
+
+    def unset(self, module_argument):
+        """Called by user to unset the session variables"""
+
+        # If action_<module_argument> function exists, trigger the action
+        # passing None
+        action_name = 'action_%s' % (module_argument.replace('.','_'))
+        if hasattr(self, action_name):
+            action_func = getattr(self, action_name)
+            if hasattr(action_func, '__call__'):
+                action_func(module_argument, None)
+
+        if module_argument.count('.') == 1:
+            module_name, arg_name = module_argument.split('.')
+            if arg_name not in self[module_name]['stored_args']:
+                log.warn(messages.sessions.error_session_s_not_modified % ( '%s.%s' % (module_name, arg_name) ))
+            else:
+                del self[module_name]['stored_args'][arg_name]
+                log.info("%s.%s is now unset" % (module_name, arg_name))
+        else:
+            module_name = module_argument
+            if module_name not in self and module_name not in set_filters:
+                log.warn(messages.sessions.error_session_s_not_modified % (module_name))
+            else:
+                self[module_name] = None
+                log.info("%s is now unset" % (module_name))
+
+                # If the channel is changed, the basic shell_php is moved
+                # to IDLE and must be setup again.
+                # TODO: can this be replaced by action_channel()?
+                if module_name == 'channel':
+                    self['shell_php']['status'] = Status.IDLE
 
 
     def set(self, module_argument, value):
@@ -117,20 +148,21 @@ class Session(dict):
         if module_argument.count('.') == 1:
             module_name, arg_name = module_argument.split('.')
             if arg_name not in self[module_name]['stored_args']:
-                log.warn(messages.sessions.error_storing_s_not_found % ( '%s.%s' % (module_name, arg_name) ))
+                log.warn(messages.sessions.error_session_s_not_modified % ( '%s.%s' % (module_name, arg_name) ))
             else:
                 self[module_name]['stored_args'][arg_name] = value
                 log.info("%s.%s = '%s'" % (module_name, arg_name, value))
         else:
             module_name = module_argument
             if module_name not in self and module_name not in set_filters:
-                log.warn(messages.sessions.error_storing_s_not_found % (module_name))
+                log.warn(messages.sessions.error_session_s_not_modified % (module_name))
             else:
                 self[module_name] = value
                 log.info("%s = %s" % (module_name, value))
 
                 # If the channel is changed, the basic shell_php is moved
                 # to IDLE and must be setup again.
+                # TODO: can this be replaced by action_channel()?
                 if module_name == 'channel':
                     self['shell_php']['status'] = Status.IDLE
 

@@ -165,7 +165,7 @@ class Terminal(CmdModules):
 
         # Skip slack check is not a remote command
         if not line or any(
-                        line.startswith(cmnd) for cmnd in (':set', ':help')
+                        line.startswith(cmnd) for cmnd in (':set', ':unset', ':help')
                     ):
             return line
 
@@ -272,6 +272,17 @@ class Terminal(CmdModules):
                 args[1] = ' '.join(args[1:])
 
             self.session.set(args[0], args[1])
+
+    def do_unset(self, line, cmd):
+        """Command "unset" to unset session variables."""
+
+        # Print all settings that startswith args[0]
+        if not line:
+            self.session.print_to_user()
+
+        # Set the setting
+        else:
+            self.session.unset(line)
 
     def _load_modules(self):
         """Load all modules assigning corresponding do_* functions."""
