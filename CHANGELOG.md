@@ -12,6 +12,7 @@
 - Output redirection and inverse grep for file_grep
 - Run actions on start depending from the session load
 - Proxy and SOCKS support
+- Unset session variables
 
 ## [v3.1.0] - 2015-04-07
 ### Added
