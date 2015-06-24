@@ -2,7 +2,7 @@ from core import messages
 from core.weexceptions import FatalException
 from mako import template
 from core.config import sessions_path, sessions_ext
-from core.loggers import log, stream_handler
+from core.loggers import log, dlog, stream_handler
 from core.module import Status
 import os
 import yaml
@@ -11,6 +11,7 @@ import logging
 import urlparse
 import atexit
 import ast
+import pprint
 
 print_filters = (
     'debug',
@@ -35,6 +36,8 @@ class Session(dict):
         )
 
     def print_to_user(self, module_filter = ''):
+
+        dlog.info(pprint.pformat(self))
 
         for mod_name, mod_value in self.items():
 

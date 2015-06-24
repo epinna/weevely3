@@ -252,6 +252,11 @@ class Terminal(CmdModules):
 
         log.info(result)
 
+    def do_show(self, line, cmd):
+        """Command "show" which prints session variables"""
+
+        self.session.print_to_user(line)
+
     def do_set(self, line, cmd):
         """Command "set" to set session variables."""
 
@@ -261,10 +266,6 @@ class Terminal(CmdModules):
             import traceback; log.debug(traceback.format_exc())
             log.warn(messages.generic.error_parsing_command_s % str(e))
             return
-
-        # Print all settings that startswith args[0]
-        if len(args) < 2:
-            self.session.print_to_user(args[0] if args else '')
 
         # Set the setting
         else:
