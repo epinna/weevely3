@@ -190,23 +190,24 @@ class Terminal(CmdModules):
             self.session['shell_php']['status'] = Status.IDLE
             self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
 
+        # Set default_shell in any case (could have been changed runtime)
         for shell in ('shell_sh', 'shell_php'):
 
             if self.session[shell]['status'] == Status.RUN:
-                # If current shell is ready, just set it as default set
                 self.session['default_shell'] = shell
                 break
 
-        # Re-check if some shell is loaded
+        # Kill the execution if no shell were loaded
         if not self.session.get('default_shell'):
             log.error(messages.terminal.backdoor_unavailable)
             return ''
 
+        # TODO: do not print this every loop
         # Print an introductory string with php shell
-        if self.session.get('default_shell') == 'shell_php':
-            log.info(messages.terminal.welcome_no_shell)
-            self._print_command_replacements()
-            log.info('\nweevely> %s' % line)
+        #if self.session.get('default_shell') == 'shell_php':
+        #    log.info(messages.terminal.welcome_no_shell)
+        #    self._print_command_replacements()
+        #    log.info('\nweevely> %s' % line)
 
         # Get hostname and whoami if not set
         if not self.session['system_info']['results'].get('hostname'):
