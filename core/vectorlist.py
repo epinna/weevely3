@@ -14,7 +14,7 @@ response in the way we want with `find_first_result()`.
 
 from core.vectors import Os
 from mako.template import Template
-from core.weexceptions import DevException, ModuleError
+from core.weexceptions import DevException
 from core.loggers import log, dlog
 from core import modules
 import utils

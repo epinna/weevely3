@@ -10,7 +10,7 @@ The module `core.vectors` defines the following vectors classes.
 
 from mako.template import Template
 from mako.lookup import TemplateLookup
-from core.weexceptions import DevException, ModuleError
+from core.weexceptions import DevException
 from core.loggers import log
 from core import modules
 import utils
