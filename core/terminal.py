@@ -1,4 +1,4 @@
-from core.weexceptions import FatalException
+from core.weexceptions import FatalException, ChannelException
 from core.loggers import log, dlog
 from core import messages
 from core import modules
@@ -186,9 +186,17 @@ class Terminal(CmdModules):
             # We're implying that no shell is set, so reset default shell
             self.session['default_shell'] = None
 
-            # force shell_php to idle to avoid to be skipped by shell_sh
+            # Force shell_php to idle to avoid to be skipped by shell_sh
             self.session['shell_php']['status'] = Status.IDLE
-            self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
+
+            # Catch every exception which prevent the shell setup.
+            # We imply that at every channel change (proxy, channel name)
+            # this piece of code will be executed.
+            try:
+                self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
+            except ChannelException as e:
+                log.error(e.message)
+                return ''
 
         # Set default_shell in any case (could have been changed runtime)
         for shell in ('shell_sh', 'shell_php'):

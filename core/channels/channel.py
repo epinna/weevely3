@@ -1,5 +1,5 @@
 from core.channels.stegaref.stegaref import StegaRef
-from core.weexceptions import FatalException, ChannelException
+from core.weexceptions import ChannelException
 from urllib2 import HTTPError, URLError
 from core import messages
 from core.loggers import log, dlog
@@ -41,7 +41,7 @@ class Channel:
             # Import object
             channel_object = getattr(module, channel_name)
         except:
-            raise FatalException(messages.channels.error_loading_channel_s % (channel_name))
+            raise ChannelException(messages.channels.error_loading_channel_s % (channel_name))
 
         self.session = session
 
@@ -86,8 +86,7 @@ class Channel:
                     )
                 )
             else:
-                # TODO: Change this to ChannelException and handle it
-                raise FatalException(messages.channels.error_proxy_format)
+                raise ChannelException(messages.channels.error_proxy_format)
 
         return handlers
 
