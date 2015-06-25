@@ -95,10 +95,10 @@ class Sh(Module):
           names = [ self.args.get('vector', '') ],
             format_args = args_check,
             condition = lambda result: (
-                # Stop if shell_php is in FAIL state
-                self.session['shell_php']['status'] == Status.FAIL or
+                # Stop if shell_php is not running
+                self.session['shell_php']['status'] != Status.RUN or
                 # Or if the result is correct
-                self.session['shell_php']['status'] == Status.RUN and result and result.rstrip() == check_digits
+                result and result.rstrip() == check_digits
                 )
             )
 

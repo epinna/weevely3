@@ -165,46 +165,55 @@ class Terminal(CmdModules):
 
         # Skip slack check is not a remote command
         if not line or any(
-                        line.startswith(cmnd) for cmnd in (':set', ':unset', ':help')
+                        line.startswith(cmnd) for cmnd in (
+                            ':set',
+                            ':unset',
+                            ':show',
+                            ':help'
+                        )
                     ):
             return line
 
-        # If no default shell is available
+
+        # Trigger the shell_sh/shell_php probe if
+        # 1. We never tried to raise shells (shell_sh = IDLE)
+        # 2. The basic intepreter shell_php is not running.
+        if (
+            self.session['shell_sh']['status'] == Status.IDLE or
+            self.session['shell_php']['status'] != Status.RUN
+            ):
+
+            # We're implying that no shell is set, so reset default shell
+            self.session['default_shell'] = None
+
+            # force shell_php to idle to avoid to be skipped by shell_sh
+            self.session['shell_php']['status'] = Status.IDLE
+            self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
+
+        for shell in ('shell_sh', 'shell_php'):
+
+            if self.session[shell]['status'] == Status.RUN:
+                # If current shell is ready, just set it as default set
+                self.session['default_shell'] = shell
+                break
+
+        # Re-check if some shell is loaded
         if not self.session.get('default_shell'):
+            log.error(messages.terminal.backdoor_unavailable)
+            return ''
 
-            # Trigger the shell_sh/shell_php probe if
-            # 1. We never tied to raise shells (shell_sh = IDLE)
-            # 2. The basic intepreter shell_php failed. It's OK to retry.
-            if (
-                self.session['shell_sh']['status'] == Status.IDLE or
-                self.session['shell_php']['status'] == Status.FAIL
-                ):
-                # force shell_php to idle to avoid to be skipped by shell_sh
-                self.session['shell_php']['status'] = Status.IDLE
-                self.session['shell_sh']['status'] = modules.loaded['shell_sh'].setup()
+        # Print an introductory string with php shell
+        if self.session.get('default_shell') == 'shell_php':
+            log.info(messages.terminal.welcome_no_shell)
+            self._print_command_replacements()
+            log.info('\nweevely> %s' % line)
 
-            for shell in ('shell_sh', 'shell_php'):
-                if self.session[shell]['status'] == Status.RUN:
-                    self.session['default_shell'] = shell
-                    break
+        # Get hostname and whoami if not set
+        if not self.session['system_info']['results'].get('hostname'):
+            modules.loaded['system_info'].run_argv([ "-info", "hostname"])
 
-            # Re-check if some shell is loaded
-            if not self.session.get('default_shell'):
-                log.error(messages.terminal.backdoor_unavailable)
-                return ''
-
-            # Print an introductory string with php shell
-            if self.session.get('default_shell') == 'shell_php':
-                log.info(messages.terminal.welcome_no_shell)
-                self._print_command_replacements()
-                log.info('\nweevely> %s' % line)
-
-            # Get hostname and whoami if not set
-            if not self.session['system_info']['results'].get('hostname'):
-                modules.loaded['system_info'].run_argv([ "-info", "hostname"])
-
-            if not self.session['system_info']['results'].get('whoami'):
-                modules.loaded['system_info'].run_argv(["-info", "whoami"])
+        if not self.session['system_info']['results'].get('whoami'):
+            modules.loaded['system_info'].run_argv(["-info", "whoami"])
 
         # Get current working directory if not set
         # Should be OK to repeat this every time if not set.

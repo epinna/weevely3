@@ -89,11 +89,14 @@ class Session(dict):
     def action_proxy(self, module_argument, value):
         """After setting a new proxy, reinitiate channel if already set"""
 
-        if self['shell_php']['status'] == Status.RUN:
+        if 'shell_php' in self:
             self['shell_php']['status'] = Status.IDLE
 
-        if self['channel']:
-            self['channel'] = None
+    def action_channel(self, module_argument, value):
+        """After setting a new channel, reinitiate it"""
+
+        if 'shell_php' in self:
+            self['shell_php']['status'] = Status.IDLE
 
     def unset(self, module_argument):
         """Called by user to unset the session variables"""
@@ -120,12 +123,6 @@ class Session(dict):
             else:
                 self[module_name] = None
                 log.info("%s is now unset" % (module_name))
-
-                # If the channel is changed, the basic shell_php is moved
-                # to IDLE and must be setup again.
-                # TODO: can this be replaced by action_channel()?
-                if module_name == 'channel':
-                    self['shell_php']['status'] = Status.IDLE
 
 
     def set(self, module_argument, value):
@@ -162,12 +159,6 @@ class Session(dict):
             else:
                 self[module_name] = value
                 log.info("%s = %s" % (module_name, value))
-
-                # If the channel is changed, the basic shell_php is moved
-                # to IDLE and must be setup again.
-                # TODO: can this be replaced by action_channel()?
-                if module_name == 'channel':
-                    self['shell_php']['status'] = Status.IDLE
 
 class SessionFile(Session):
 
@@ -265,7 +256,7 @@ class SessionURL(Session):
                         'password': password,
                         'debug': False,
                         'channel' : None,
-                        'default_shell' : None
+                        'default_shell' : None,
                     }
                 )
 

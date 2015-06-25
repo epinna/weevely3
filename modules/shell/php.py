@@ -41,10 +41,11 @@ class Php(Module):
         if rand == response:
             status = Status.RUN
         else:
-            status = Status.FAIL
+            # The PHP shell should never return FAIL
+            status = Status.IDLE
 
-        # If the response is wrong, warn about the
-        # error code
+        # If the response is wrong, print debug errors
+        # to avoid flooding
         self._print_response_status(command, code, response)
 
         return status
@@ -52,10 +53,6 @@ class Php(Module):
 
     def setup(self):
         """Instauration of the PHP channel. Returns the module status."""
-
-        # Return if already set. This check has to be done due to
-        # the slack initialization in run()
-        if self.channel: return
 
         # Try a single channel if is manually set, else
         # probe every the supported channel from config
@@ -92,7 +89,7 @@ class Php(Module):
 
         # This is an unusual slack setup at every execution
         # to check and eventually instance the proper channel
-        self.setup()
+        if self.session['shell_php'].get('status') != Status.RUN: self.setup()
 
         cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
@@ -128,14 +125,6 @@ class Php(Module):
         """
         Debug print and warning in case of missing response and HTTP errors
         """
-
-#        log.debug(
-#           utils.prettify.shorten(
-#               command,
-#               keep_header = 40,
-#               keep_trailer = 40
-#           )
-#        )
 
         dlog.info('RESPONSE: %s' % repr(response))
 
