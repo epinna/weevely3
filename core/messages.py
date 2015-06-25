@@ -65,6 +65,9 @@ following command replacements to simulate a unrestricted shell.
 [+] Browse the filesystem or execute commands starts the connection
 [+] to the target. Type :help for more information.
 """
+    run_show = 'Run :show to print the current variables.'
+    set_usage = 'Usage:\n   :set <variable> \'<value>\''
+    unset_usage = 'Usage:\n   :unset <variable>'
 
 class stegareferrer:
     error_generating_id = 'Error generating id, payload too long?'
