@@ -96,3 +96,28 @@ class TerminalTest(BaseTest):
 
         self._assert_exec(':shell_php \'', err_msg, log_captured)
         self._assert_exec(':set shell_php "', err_msg, log_captured)
+
+
+    @log_capture()
+    def test_set(self, log_captured):
+
+        self._assert_exec(':set', messages.terminal.set_usage, log_captured)
+        self._assert_exec(':set ASD', messages.terminal.set_usage, log_captured)
+        self._assert_exec(':set asd asd', messages.sessions.error_session_s_not_modified % 'asd', log_captured)
+        self._assert_exec(':set asd asd asd', messages.sessions.error_session_s_not_modified % 'asd', log_captured)
+        self._assert_exec(':set channel asd', 'channel = asd', log_captured)
+
+    @log_capture()
+    def test_unset(self, log_captured):
+
+        self._assert_exec(':unset', messages.terminal.unset_usage, log_captured)
+        self._assert_exec(':unset ASD', messages.sessions.error_session_s_not_modified % 'ASD', log_captured)
+        self._assert_exec(':unset asd asd', messages.sessions.error_session_s_not_modified % 'asd asd', log_captured)
+
+
+    # @log_capture()
+    # def test_session_channel(self, log_captured):
+    #
+    #     self._assert_exec('echo 1', '1', log_captured)
+    #     self._assert_exec(':set channel BOGUS', 'channel = BOGUS', log_captured)
+    #     self._assert_exec('echo 1', '1', log_captured)

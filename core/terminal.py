@@ -269,22 +269,19 @@ class Terminal(CmdModules):
 
     def do_set(self, line, cmd):
         """Command "set" to set session variables."""
-        if not line:
-            log.warn(messages.terminal.run_show)
-            log.warn(messages.terminal.set_usage)
 
+        try:
+            args = shlex.split(line)
+        except Exception as e:
+            import traceback; log.debug(traceback.format_exc())
+            log.warn(messages.generic.error_parsing_command_s % str(e))
+
+        # Set the setting
         else:
-            try:
-                args = shlex.split(line)
-            except Exception as e:
-                import traceback; log.debug(traceback.format_exc())
-                log.warn(messages.generic.error_parsing_command_s % str(e))
-
-            # Set the setting
-            else:
-                if len(args) > 2:
-                    args[1] = ' '.join(args[1:])
-
+            if len(args) < 2:
+                log.warn(messages.terminal.set_usage)
+            elif len(args) >= 2:
+                args[1] = ' '.join(args[1:])
                 self.session.set(args[0], args[1])
 
     def do_unset(self, line, cmd):
@@ -292,7 +289,6 @@ class Terminal(CmdModules):
 
         # Print all settings that startswith args[0]
         if not line:
-            log.warn(messages.terminal.run_show)
             log.warn(messages.terminal.unset_usage)
 
         # Set the setting
