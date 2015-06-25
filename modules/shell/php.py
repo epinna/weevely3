@@ -3,7 +3,7 @@ from core.module import Module, Status
 from core import messages
 from core.channels.channel import Channel
 from core import config
-from core.loggers import log, dlog
+from core.loggers import log
 import random
 import utils
 
@@ -36,17 +36,13 @@ class Php(Module):
         rand = str(random.randint(11111, 99999))
 
         command = 'echo(%s);' % rand
-        response, code = channel.send(command)
+        response, code, error = channel.send(command)
 
         if rand == response:
             status = Status.RUN
         else:
             # The PHP shell should never return FAIL
             status = Status.IDLE
-
-        # If the response is wrong, print debug errors
-        # to avoid flooding
-        self._print_response_status(command, code, response)
 
         return status
 
@@ -112,38 +108,7 @@ class Php(Module):
         log.debug('PAYLOAD %s' % command)
 
         # Send command
-        response, code = self.channel.send(command)
-
-        # If the response is empty, warn about the error code
-        self._print_response_status(command, code, response)
+        response, code, error = self.channel.send(command)
 
         # Strip last newline if present
         return response
-
-    def _print_response_status(self, command, code, response):
-
-        """
-        Debug print and warning in case of missing response and HTTP errors
-        """
-
-        dlog.info('RESPONSE: %s' % repr(response))
-
-        if response: return
-
-        if code < 0:
-            log.warn(messages.module_shell_php.error_proxy)
-        elif code == 404:
-            log.warn(messages.module_shell_php.error_404_remote_backdoor)
-        elif code == 500:
-            log.warn(messages.module_shell_php.error_500_executing)
-        elif code == 0:
-            log.warn(messages.module_shell_php.error_URLError_network)
-        elif code != 200:
-            log.warn(messages.module_shell_php.error_i_executing % code)
-
-        command_last_chars = utils.prettify.shorten(command.rstrip(),
-                                                    keep_trailer = 10)
-
-        if (command_last_chars and
-              command_last_chars[-1] not in ( ';', '}' )):
-            log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)

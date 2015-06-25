@@ -2,7 +2,8 @@ from core.channels.stegaref.stegaref import StegaRef
 from core.weexceptions import FatalException, ChannelException
 from urllib2 import HTTPError, URLError
 from core import messages
-from core.loggers import log
+from core.loggers import log, dlog
+import utils
 import socks
 import sockshandler
 import urllib2
@@ -94,6 +95,9 @@ class Channel:
 
         response = ''
         code = 200
+        error = ''
+
+        human_error = ''
 
         try:
             response = self.channel_loaded.send(
@@ -102,11 +106,47 @@ class Channel:
             )
         except socks.ProxyError as e:
             if e.socket_err.errno:
-                code = -e.socket_err.errno
+                code = e.socket_err.errno
+            if e.msg:
+                error = str(e.msg)
+
+            human_error = messages.module_shell_php.error_proxy
+
         except HTTPError as e:
             if e.code:
                 code = e.code
+            if e.reason:
+                error = str(e.reason)
+
+            if code == 404:
+                human_error = messages.module_shell_php.error_404_remote_backdoor
+            elif code == 500:
+                human_error = messages.module_shell_php.error_500_executing
+            elif code != 200:
+                human_error = messages.module_shell_php.error_i_executing % code
+
         except URLError as e:
             code = 0
+            if e.reason:
+                error = str(e.reason)
 
-        return response, code
+            human_error = messages.module_shell_php.error_URLError_network
+
+        if response:
+            dlog.info('RESPONSE: %s' % repr(response))
+        else:
+            command_last_chars = utils.prettify.shorten(
+                                    payload.rstrip(),
+                                    keep_trailer = 10
+                                )
+            if (
+                command_last_chars and
+                command_last_chars[-1] not in ( ';', '}' )
+                ):
+                log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
+
+        if error or human_error:
+            log.debug('[ERR] %s [%s]' % (error, code))
+            log.warn(human_error)
+
+        return response, code, error
