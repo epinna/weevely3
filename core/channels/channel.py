@@ -1,5 +1,5 @@
 from core.channels.stegaref.stegaref import StegaRef
-from core.weexceptions import FatalException
+from core.weexceptions import FatalException, ChannelException
 from urllib2 import HTTPError, URLError
 from core import messages
 from core.loggers import log
@@ -85,6 +85,7 @@ class Channel:
                     )
                 )
             else:
+                # TODO: Change this to ChannelException and handle it
                 raise FatalException(messages.channels.error_proxy_format)
 
         return handlers
