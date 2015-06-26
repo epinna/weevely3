@@ -147,11 +147,11 @@ class Session(dict):
 
         if module_argument.count('.') == 1:
             module_name, arg_name = module_argument.split('.')
-            if arg_name not in self[module_name]['stored_args']:
-                log.warn(messages.sessions.error_session_s_not_modified % ( '%s.%s' % (module_name, arg_name) ))
-            else:
-                self[module_name]['stored_args'][arg_name] = value
-                log.info(messages.sessions.set_module_s_s_s % (module_name, arg_name, value))
+
+            # Should be OK to set whethever variable we want
+            # and which will eventually be used by a module.
+            self[module_name]['stored_args'][arg_name] = value
+            log.info(messages.sessions.set_module_s_s_s % (module_name, arg_name, value))
         else:
             module_name = module_argument
             if module_name not in self and module_name not in set_filters:

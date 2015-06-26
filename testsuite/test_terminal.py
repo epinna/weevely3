@@ -106,6 +106,7 @@ class TerminalTest(BaseTest):
         self._assert_exec(':set asd asd', messages.sessions.error_session_s_not_modified % 'asd', log_captured)
         self._assert_exec(':set asd asd asd', messages.sessions.error_session_s_not_modified % 'asd', log_captured)
         self._assert_exec(':set channel asd', messages.sessions.set_s_s % ('channel', 'asd'), log_captured)
+        self._assert_exec(':set shell_sh.vector asd', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'asd'), log_captured)
 
     @log_capture()
     def test_unset(self, log_captured):
@@ -114,7 +115,8 @@ class TerminalTest(BaseTest):
         self._assert_exec(':unset ASD', messages.sessions.error_session_s_not_modified % 'ASD', log_captured)
         self._assert_exec(':unset asd asd', messages.sessions.error_session_s_not_modified % 'asd asd', log_captured)
         self._assert_exec(':unset channel', messages.sessions.unset_s % ('channel'), log_captured)
-
+        self._assert_exec(':set shell_sh.vector asd', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'asd'), log_captured)
+        self._assert_exec(':unset shell_sh.vector', messages.sessions.unset_module_s_s % ('shell_sh', 'vector'), log_captured)
 
     @log_capture()
     def test_session_channel(self, log_captured):
