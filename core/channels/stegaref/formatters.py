@@ -43,6 +43,11 @@ class FirstRefererFormat:
 
         return utils.strings.randstr(max_size, min_size, string.ascii_letters)
 
+
+    def rand_int(self, minint, maxint):
+
+        return random.randint(minint, maxint)
+
     def payload_chunk(self, max_size, min_size=None):
         """Return the parameter ${ chunk } formatted when sent"""
 
@@ -53,10 +58,15 @@ class FirstRefererFormat:
 
         return '${ chunk }'
 
-    def get_url(self):
-        """Return the parameter ${ url } formatted when sent"""
+    def get_url_base(self):
+        """Return the parameter ${ url_base } formatted when sent"""
 
-        return '${ url }'
+        return '${ url_base }'
+
+    def get_url_agent(self):
+        """Return the parameter ${ url_agent } formatted when sent"""
+
+        return '${ url_agent }'
 
     def rand_domain(self):
         return random.choice(['com', 'ad', 'ae', 'al', 'am', 'as', 'at', 'az',

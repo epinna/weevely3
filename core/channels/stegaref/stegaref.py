@@ -36,6 +36,8 @@ class StegaRef:
         self.shared_key = hashlib.md5(password).hexdigest().lower()[:8]
 
         self.url = url
+        url_parsed = urlparse.urlparse(url)
+        self.url_base = '%s://%s' % (url_parsed.scheme, url_parsed.netloc)
 
         # init regexp for the returning data
         self.re_response = re.compile(
@@ -208,7 +210,8 @@ class StegaRef:
             referrer, query = referrer_vanilla.split('?', 1)
 
             # Apply template on the referrer host
-            referrer = referrer.replace('http://${ url }', self.url)
+            referrer = referrer.replace('http://${ url_base }', self.url_base)
+            referrer = referrer.replace('http://${ url_agent }', self.url)
 
             referrer += '?'
             positions = []
