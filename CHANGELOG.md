@@ -1,10 +1,11 @@
 # Change Log
 
-## [Unreleased][unreleased]
+## [v3.2.0][unreleased]
 ### Fixed
 - Basic Windows support
 - OS X support
-- Improve Stegaref channel's referrer templates
+- Improve Stegaref channel referrer templates
+- Reset on channel session variables changes
 
 ### Added
 - Python requirements.txt
@@ -62,3 +63,4 @@
 
 [unreleased]: https://github.com/epinna/weevely3/commit/HEAD
 [v3.1.0]: https://github.com/epinna/weevely3/releases/tag/v3.1.0
+[v3.2.0]: https://github.com/epinna/weevely3/releases/tag/v3.2.0
