@@ -68,7 +68,7 @@ class Curl(Module):
           { 'name' : '-o', 'dest' : 'output' },
           { 'name' : '-i', 'dest' : 'include_headers', 'help' : 'Include response headers', 'action' : 'store_true', 'default' : False },
           { 'name' : '-local', 'action' : 'store_true', 'default' : False, 'help' : 'Save file locally with -o|--output' },
-          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_get_contents' }
         ])
 
     def run(self):
