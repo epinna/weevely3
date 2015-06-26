@@ -47,11 +47,11 @@ class Session(dict):
                 # Is a module, print all the storable stored_arguments
                 for argument, arg_value in mod_args.items():
                     if not module_filter or ("%s.%s" % (mod_name, argument)).startswith(module_filter):
-                        log.info("%s.%s = '%s'" % (mod_name, argument, arg_value))
+                        log.info(messages.sessions.set_module_s_s_s % (mod_name, argument, arg_value))
             else:
                 # If is not a module, just print if matches with print_filters
-                if any(f for f in print_filters if f == mod_name):
-                    log.info("%s = '%s'" % (mod_name, mod_value))
+                if any(f for f in print_filters if f == mod_name and f.startswith(module_filter)):
+                    log.info(messages.sessions.set_s_s % (mod_name, mod_value))
 
     def get_connection_info(self):
      return template.Template(messages.sessions.connection_info).render(
