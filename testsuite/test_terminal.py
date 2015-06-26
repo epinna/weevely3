@@ -118,6 +118,24 @@ class TerminalTest(BaseTest):
         self._assert_exec(':set shell_sh.vector asd', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'asd'), log_captured)
         self._assert_exec(':unset shell_sh.vector', messages.sessions.unset_module_s_s % ('shell_sh', 'vector'), log_captured)
 
+
+    @log_capture()
+    def test_session_shell_vector(self, log_captured):
+
+        self._assert_exec(':set shell_sh.vector BOGUS', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'BOGUS'), log_captured)
+        self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'BOGUS'), log_captured)
+
+        # Vectorlist methods ignore bogus vectors and just keep trying.
+        # TODO: should warn about unexistant vector, but seems too messy to fix
+        self._assert_exec('echo 1', '1', log_captured)
+        self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'system'), log_captured)
+
+        self._assert_exec(':set shell_sh.vector passthru', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)
+        self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)        
+        self._assert_exec('echo 1', '1', log_captured)
+        self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)
+
+
     @log_capture()
     def test_session_channel(self, log_captured):
 
