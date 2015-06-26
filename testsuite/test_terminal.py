@@ -115,9 +115,30 @@ class TerminalTest(BaseTest):
         self._assert_exec(':unset asd asd', messages.sessions.error_session_s_not_modified % 'asd asd', log_captured)
 
 
-    # @log_capture()
-    # def test_session_channel(self, log_captured):
-    #
-    #     self._assert_exec('echo 1', '1', log_captured)
-    #     self._assert_exec(':set channel BOGUS', 'channel = BOGUS', log_captured)
-    #     self._assert_exec('echo 1', '1', log_captured)
+    @log_capture()
+    def test_session_channel(self, log_captured):
+
+        self._assert_exec('echo 1', '1', log_captured)
+        self._assert_exec(':set channel BOGUS', 'channel = BOGUS', log_captured)
+        self._assert_exec('echo 1', messages.channels.error_loading_channel_s % 'BOGUS', log_captured)
+        self._assert_exec(':unset channel', 'channel is now unset', log_captured)
+        # TODO: move unset and set output in messages
+        self._assert_exec('echo 1', '1', log_captured)
+        self._assert_exec(':set channel LegacyCookie', 'channel = LegacyCookie', log_captured)
+        # Test the behaviour when starting terminal on wrong remote pass
+        self._assert_exec('echo 1', messages.terminal.backdoor_unavailable, log_captured)
+        self._assert_exec(':unset channel', 'channel is now unset', log_captured)
+
+    @log_capture()
+    def test_session_proxy(self, log_captured):
+
+        self._assert_exec('echo 1', '1', log_captured)
+        self._assert_exec(':set proxy BOGUS', 'proxy = BOGUS', log_captured)
+        self._assert_exec('echo 1', messages.channels.error_proxy_format, log_captured)
+        self._assert_exec(':unset proxy', 'proxy is now unset', log_captured)
+        # TODO: move unset and set output in messages
+        self._assert_exec('echo 1', '1', log_captured)
+        self._assert_exec(':set proxy http://127.0.0.1:12782', 'proxy = http://127.0.0.1:12782', log_captured)
+        # Test the behaviour when starting terminal on wrong remote pass
+        self._assert_exec('echo 1', messages.terminal.backdoor_unavailable, log_captured)
+        self._assert_exec(':unset proxy', 'proxy is now unset', log_captured)
