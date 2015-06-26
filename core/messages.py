@@ -23,6 +23,10 @@ class generic:
 """
 
 class sessions:
+    set_module_s_s_s = '%s.%s = %s'
+    set_s_s = '%s = %s'
+    unset_module_s_s = '%s.%s is now unset'
+    unset_s = '%s is now unset'
     error_loading_sessions = 'Session can not be loaded'
     error_session_s_not_modified = 'Error, session variable \'%s\' can\'t be modified.'
     connection_info = """<%!

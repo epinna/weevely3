@@ -115,14 +115,14 @@ class Session(dict):
                 log.warn(messages.sessions.error_session_s_not_modified % ( '%s.%s' % (module_name, arg_name) ))
             else:
                 del self[module_name]['stored_args'][arg_name]
-                log.info("%s.%s is now unset" % (module_name, arg_name))
+                log.info(messages.sessions.unset_module_s_s % (module_name, arg_name))
         else:
             module_name = module_argument
             if module_name not in self and module_name not in set_filters:
                 log.warn(messages.sessions.error_session_s_not_modified % (module_name))
             else:
                 self[module_name] = None
-                log.info("%s is now unset" % (module_name))
+                log.info(messages.sessions.unset_s % (module_name))
 
 
     def set(self, module_argument, value):
@@ -151,14 +151,14 @@ class Session(dict):
                 log.warn(messages.sessions.error_session_s_not_modified % ( '%s.%s' % (module_name, arg_name) ))
             else:
                 self[module_name]['stored_args'][arg_name] = value
-                log.info("%s.%s = '%s'" % (module_name, arg_name, value))
+                log.info(messages.sessions.set_module_s_s_s % (module_name, arg_name, value))
         else:
             module_name = module_argument
             if module_name not in self and module_name not in set_filters:
                 log.warn(messages.sessions.error_session_s_not_modified % (module_name))
             else:
                 self[module_name] = value
-                log.info("%s = %s" % (module_name, value))
+                log.info(messages.sessions.set_s_s % (module_name, value))
 
 class SessionFile(Session):
 
