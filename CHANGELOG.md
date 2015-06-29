@@ -1,6 +1,6 @@
 # Change Log
 
-## [v3.2.0][unreleased]
+## [v3.2.0] - 2015-06-29
 ### Fixed
 - Basic Windows support
 - OS X support
