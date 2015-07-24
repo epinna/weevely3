@@ -1,5 +1,5 @@
 prettytable
 Mako
-pyaml
-dateutils
+PyYAML
+python-dateutil
 PySocks
