@@ -5,7 +5,7 @@ class Clearlog(Module):
 
     """Simple Clear Log"""
 
-    aliases = [ 'clearlog' ]
+    aliases = [ 'clearlog' , 'php_clear']
 
     def init(self):
 
@@ -29,13 +29,13 @@ class Clearlog(Module):
                          fputs($f,$line);
                        }
                        fclose($f);""",
-              name = "php-mode"
+              name = "php_clear"
             ),
             ShellCmd("""sed -i /${ip}/d ${file}""",
-              name = "simple"
+              name = "clearlog"
             ),
             ShellCmd("""sed /${ip}/d ${file} > ${file}.$$ && /bin/mv ${file}.$$ ${file}""",
-              name = "old-school"
+              name = "old_school"
             )
             ]
         )
@@ -43,7 +43,7 @@ class Clearlog(Module):
         self.register_arguments([
           { 'name' : 'ip', 'help' : 'Your IP' },
           { 'name' : 'file', 'help' : 'File to Clear' },
-          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : "simple" },
+          { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : "clearlog" },
         ])
 
     def run(self):
