@@ -5,8 +5,6 @@ class Clearlog(Module):
 
     """Simple Clear Log"""
 
-    aliases = [ 'clearlog' , 'php_clear']
-
     def init(self):
 
         self.register_info(
