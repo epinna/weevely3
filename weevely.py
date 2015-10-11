@@ -8,10 +8,12 @@ from core import generate
 from core import modules
 from core import messages
 from core.argparsers import CliParser
+from core.channels.channel import Channel
 import pprint
 import glob
 import os
 import sys
+
 
 def main(arguments):
 
@@ -40,6 +42,9 @@ def main(arguments):
 
     elif arguments.command == 'session':
         session = SessionFile(arguments.path)
+	if arguments.url != None :
+		Channel.add_to_chan(arguments.url[0],arguments.url[1],os.path.join(os.path.dirname(session['path']),"channels"))
+		return
 
     dlog.debug(
         pprint.pformat(session)
@@ -65,6 +70,7 @@ if __name__ == '__main__':
     sessionparser = subparsers.add_parser('session', help='Recover an existant a session file')
     sessionparser.add_argument('path', help = 'The session file to load')
     sessionparser.add_argument('cmd', help = 'Direct command', nargs='?')
+    sessionparser.add_argument('--url', dest='url', help = 'url and password to add as a new entry point. Syntax : --url url passsword.', nargs=2)
 
     agents_available = [
         os.path.split(agent)[1].split('.')[0] for agent in

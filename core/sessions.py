@@ -12,6 +12,7 @@ import urlparse
 import atexit
 import ast
 import pprint
+import random
 
 print_filters = (
     'debug',
@@ -202,7 +203,7 @@ class SessionURL(Session):
             raise FatalException(messages.generic.error_url_format)
 
         hostfolder = os.path.join(sessions_path, hostname)
-        dbname = os.path.splitext(os.path.basename(urlparse.urlsplit(url).path))[0]
+        dbname = os.path.splitext(os.path.basename(urlparse.urlsplit(url[0]).path))[0]
 
         # Check if session already exists
         sessions_available = glob.glob(
@@ -228,7 +229,7 @@ class SessionURL(Session):
                         messages.generic.error_loading_file_s_s %
                         (dbpath, 'no url or password'))
 
-                if saved_url == url and saved_password == password:
+                if saved_url == url[0] and saved_password == password:
 
                     # Found correspondent session file.
                     # Register dump at exit and return
