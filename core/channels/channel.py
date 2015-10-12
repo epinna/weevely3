@@ -76,11 +76,11 @@ class Channel:
     def add_to_chanFile(self,url,password) :
 	Channel.add_to_chan(url,password,self.chanFile)
 
-    def remove_from_chanFile(self,url) :
+    @staticmethod
+    def del_from_chanFile(url,chanFile):
 	ocontent=""
 	ncontent=[]
-	print "[!!!] Removing unreachable backdoor "+url
-        with open(self.chanFile,"r") as f:
+        with open(chanFile,"r") as f:
 		ocontent=f.read()
 	for line in ocontent.split('\n') :
 		if len(line) == 0 or not ' ' in line :
@@ -88,7 +88,7 @@ class Channel:
 		lurl = line.split(' ')[0]
 		if lurl != url :
 			ncontent.append(line)
-	with open(self.chanFile,"w") as f:
+	with open(chanFile,"w") as f:
 		f.write("\n".join(ncontent))
 
     def add_channel(self,url,password):
@@ -186,9 +186,7 @@ class Channel:
                 error = str(e.reason)
 
             if code == 404:
-                human_error = messages.module_shell_php.error_404_remote_backdoor
-		print str(chan)
-		self.remove_from_chanFile(chan.url)
+                human_error = messages.module_shell_php.error_404_remote_backdoor + "(" + chan.url + ")"
             elif code == 500:
                 human_error = messages.module_shell_php.error_500_executing
             elif code != 200:
