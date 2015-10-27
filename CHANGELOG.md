@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Clearlog and Mail module by @AppoPro
+- Socat vector in backdoor tcp module
+
 ## [v3.2.0] - 2015-06-29
 ### Fixed
 - Basic Windows support

