@@ -9,7 +9,7 @@ import base64
 
 class Download(Module):
 
-    """Download file to remote filesystem."""
+    """Download file from remote filesystem."""
 
     def init(self):
 
