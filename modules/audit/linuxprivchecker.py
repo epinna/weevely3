@@ -1,12 +1,12 @@
-from core.vectors import ShellCmd, Os
+from core.vectors import ShellCmd, ModuleExec
 from core.module import Module
 from core import modules
-import base64
-import sys, os
+import random
+import os
 
 class Linuxprivchecker(Module):
 
-    """Dl and execute linuxprivchecker"""
+    """Upload and execute linuxprivchecker"""
 
     def init(self):
 
@@ -19,18 +19,26 @@ class Linuxprivchecker(Module):
             }
         )
 
-        self.register_arguments([])
+        self.register_arguments([
+          { 'name' : 'rpath', 'help' : 'Remote file path', 'default' : '/tmp/%s' % (random.randint(1,99999)), 'nargs' : '?' },
+          { 'name' : 'rpython', 'help' : 'Remote python interpreter path', 'default' : 'python', 'nargs' : '?' },
+        ])
+
+        self.register_vectors(
+            [
+            ModuleExec(
+              module = 'file_upload',
+              arguments = [os.path.join(self.folder, 'linuxprivchecker.py'), '${rpath}'],
+              name = 'upload_script'
+            ),
+            ShellCmd(
+                payload = """${rpython} '${rpath}'""",
+                name = 'exec_script'
+            )
+            ]
+        )
 
     def run(self):
 
-        path_name = os.path.dirname(sys.argv[0])
-        full_path = os.path.abspath(path_name)
-        script_path = os.path.join(full_path, 'utils',
-                              'linuxprivchecker.py')
-
-        content = base64.b64encode(open(script_path, 'r').read())
-
-        pwdresult = ShellCmd('cd /tmp;echo "%s" | base64 -d > /tmp/linuxprivchecker.py; python ./linuxprivchecker.py;rm /tmp/linuxprivchecker.py;' % content).run()
-
-        if not pwdresult: return
-        return pwdresult.rstrip('\n')
+        if self.vectors.get_result('upload_script', format_args=self.args):
+            return self.vectors.get_result('exec_script', format_args=self.args)
