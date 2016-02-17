@@ -104,7 +104,7 @@ class Channel:
                 self._additional_handlers()
             )
         except socks.ProxyError as e:
-            if e.socket_err.errno:
+            if e.socket_err and e.socket_err.errno:
                 code = e.socket_err.errno
             if e.msg:
                 error = str(e.msg)
