@@ -18,7 +18,7 @@ The modules feature:
 * File upload and download
 * Spawn reverse and direct TCP shells
 * Bruteforce internal services
-* Manage comprossed archives
+* Manage compressed archives
 
 ### The backdoor agent
 
