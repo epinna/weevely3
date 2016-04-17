@@ -5,7 +5,7 @@ class generic:
     error_creating_file_s_s = "Error creating file '%s': %s"
     error_loading_file_s_s = 'Error loading file \'%s\': %s'
     error_file_s_already_exists = 'Error file \'%s\' already exists'
-    error_url_format = 'URL error format \'http(s)://host/agent.php\' is expected'
+    error_url_format = 'Expected URL format \'http(s)://host/agent.php\''
     error_parsing_command_s = 'Error parsing command: %s'
     weevely_s_error_s_usage = """
 [+] weevely %s
@@ -27,8 +27,8 @@ class sessions:
     set_s_s = '%s = %s'
     unset_module_s_s = '%s.%s is now unset'
     unset_s = '%s is now unset'
-    error_loading_sessions = 'Session can not be loaded'
-    error_session_s_not_modified = 'Error, session variable \'%s\' can\'t be modified.'
+    error_loading_sessions = 'Session loading error'
+    error_session_s_not_modified = 'Error setting session variable \'%s\''
     connection_info = """<%!
 import urlparse
 %><%
@@ -44,10 +44,10 @@ else:
 
 class channels:
     error_loading_channel_s = 'Error loading channel \'%s\''
-    error_proxy_format = 'Proxy format error, use \'http|https|socks5|sock4://host:port\''
+    error_proxy_format = 'Expected proxy URL format \'http|https|socks5|sock4://host:port\''
 
 class terminal:
-    backdoor_unavailable = 'Backdoor communication failed: please check URL reachability and password'
+    backdoor_unavailable = 'Backdoor communication failed, check URL availability and password'
     welcome_no_shell = """
 The system shell interpreter is not available in this session.
 PHP code and modules execution are available. Use the following
@@ -147,8 +147,8 @@ class module_file_upload2web:
     failed_search_writable_starting_s = "Failed search first writable folder starting from '%s'."
 
 class module_shell_php:
-    error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, please verify its availability'
-    error_500_executing = 'The remote script execution triggers an error 500, please verify script integrity and sent payload correctness'
+    error_404_remote_backdoor = 'The remote backdoor request triggers an error 404, check availability'
+    error_500_executing = 'The remote script execution triggers an error 500, check script and payload integrity'
     error_URLError_network = 'Network error, unable to connect to the remote backdoor'
     error_proxy = 'Proxy error, unable to connect to the remote backdoor'
     missing_php_trailer_s = 'Is the trailing comma missing at the end of the PHP code \'%s\'?'
