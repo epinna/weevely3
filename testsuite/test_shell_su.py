@@ -28,6 +28,6 @@ class ShellSu(BaseTest):
     def test_param_vector(self):
 
         for vect in self.vector_list:
-
             # Check correctness of execution
-            self.assertEqual(self.run_argv(["-vector", vect, "-u", su_user, su_passwd, "whoami"]).rstrip(), "root");
+            self.assertEqual(self.run_argv(["-vector", vect, "-u", su_user, su_passwd, "whoami"]).rstrip(), su_user);
+            
