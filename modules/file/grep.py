@@ -68,7 +68,7 @@ $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.rep
             # files wih given name-regex
 
             # Prepare the arguments for file_find
-            file_find_args = [ '-readable', self.args['rpath'] ]
+            file_find_args = [ '-readable', self.args['rpath'], '-ftype', 'f' ]
             if self.args.get('name_regex'):
                 file_find_args += [ '-name-regex', self.args.get('name_regex') ]
             if self.args.get('no_recursion'):
