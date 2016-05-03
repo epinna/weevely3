@@ -109,7 +109,6 @@ class UploadWeb(BaseFilesystem):
             )
         temp_file.close()
 
-
     @log_capture()
     def test_uploadweb_errs(self, log_captured):
 
