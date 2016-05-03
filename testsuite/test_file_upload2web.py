@@ -75,6 +75,8 @@ class UploadWeb(BaseFilesystem):
         return rpath, rurl
 
     def test_file_uploadweb(self):
+        
+        # TODO: test rname
 
         # Upload lfile with a specific path
         temp_file = tempfile.NamedTemporaryFile()
@@ -108,6 +110,20 @@ class UploadWeb(BaseFilesystem):
             [ ( rpath, rurl ) ]
             )
         temp_file.close()
+
+
+    def test_file_uploadweb_content(self):
+
+        # Upload content with fake lfile guessing first writable path from [1],
+        # that is [2]
+        temp_file_name = '/tmp/nonexistant'
+        temp_folder, temp_filename = os.path.split(temp_file_name)
+        rpath, rurl = self._get_path_url(2, temp_filename)
+        self.filenames.append(rpath)
+        self.assertEqual(
+            self.run_argv([ temp_file_name, self.folders_rel[1], '-content', '1' ]),
+            [ ( rpath, rurl ) ]
+            )
 
     @log_capture()
     def test_uploadweb_errs(self, log_captured):
