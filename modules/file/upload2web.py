@@ -22,10 +22,9 @@ class Upload2web(Module):
         )
 
         self.register_arguments([
-            { 'name' : 'lpath', 'help' : 'Local file path', 'nargs' : '?' },
+            { 'name' : 'lpath', 'help' : 'Local file path. Set remote file name when used with -content.' },
             { 'name' : 'rpath', 'help' : 'Remote path. If it is a folder find the first writable folder in it', 'default' : '.', 'nargs' : '?' },
             { 'name' : '-content', 'help' : 'Optionally specify the file content'},
-            { 'name' : '-rname', 'help' : 'Set a different file name' },
         ])
 
     def _get_env_info(self, script_url):
@@ -96,10 +95,11 @@ class Upload2web(Module):
 
     def run(self):
 
+        file_upload_args = [ self.args['rpath'] ]
+
         content = self.args.get('content')
         lpath = self.args.get('lpath')
-
-
+            
         self._get_env_info(self.session['url'])
         if not self.base_folder_url or not self.base_folder_path:
             log.warn(messages.module_file_upload2web.failed_retrieve_info)
@@ -112,25 +112,16 @@ class Upload2web(Module):
                 log.warn(messages.module_file_upload2web.failed_search_writable_starting_s % self.args['rpath'])
                 return None, None
 
-            # If the remote file name is not set, get it from lpath
-            if self.args.get('rname'):
-                rname = self.args.get('rname')
-            else:
-                lfolder, rname = os.path.split(lpath)
+            # Get remote file name from lpath
+            lfolder, rname = os.path.split(lpath)
 
             # TODO: all the paths should be joined with remote OS_SEP from system_info.
             self.args['rpath'] = os.path.join(folders[0], rname)
 
-        file_upload_args = [ self.args['rpath'] ]
-
+        file_upload_args = [ lpath, self.args['rpath'] ]
         if content:
             file_upload_args += [ '-content', content ]
-        elif lpath:
-            file_upload_args = [ lpath ] + file_upload_args
-        else:
-            log.warning(messages.module_file_upload.error_content_lpath_required)
-            return
-
+            
         if ModuleExec("file_upload", file_upload_args).run():
             # Guess URL from rpath
             return [ self._map_file2web(self.args['rpath']) ]

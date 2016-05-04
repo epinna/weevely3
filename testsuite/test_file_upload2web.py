@@ -75,8 +75,6 @@ class UploadWeb(BaseFilesystem):
         return rpath, rurl
 
     def test_file_uploadweb(self):
-        
-        # TODO: test rname
 
         # Upload lfile with a specific path
         temp_file = tempfile.NamedTemporaryFile()
