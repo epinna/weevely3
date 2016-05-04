@@ -8,10 +8,12 @@ from core import generate
 from core import modules
 from core import messages
 from core.argparsers import CliParser
+from core.channels.channel import Channel
 import pprint
 import glob
 import os
 import sys
+
 
 def main(arguments):
 

@@ -8,6 +8,8 @@ import socks
 import sockshandler
 import urllib2
 import re
+import random
+import os
 
 url_dissector = re.compile(
     r'^(https?|socks4|socks5)://'  # http:// or https://
@@ -44,15 +46,67 @@ class Channel:
             raise ChannelException(messages.channels.error_loading_channel_s % (channel_name))
 
         self.session = session
+        self.channel_name = channel_name
+	self.chanFile = os.path.join(os.path.dirname(self.session['path']),"channels")
 
         # Create channel instance
-        self.channel_loaded = channel_object(
+        self.channel_loaded = []
+	self.add_channel(
             self.session['url'],
             self.session['password']
         )
+	self.add_to_chanFile(self.session['url'],self.session['password'])
 
-        self.channel_name = channel_name
+    def clear_channels(self):
+	self.channel_loaded=[]
 
+    @staticmethod
+    def add_to_chan(url,password,chanFile):
+	ocontent=""
+	if os.path.exists(chanFile) :
+	        with open(chanFile,"r") as f:
+			ocontent=f.read()
+	ocontent=ocontent.split("\n")
+	nl=url+" "+password
+	if not nl in ocontent :
+		ocontent.append(nl)
+	with open(chanFile,"w+") as f:
+		f.write("\n".join(ocontent))
+
+    def add_to_chanFile(self,url,password) :
+	Channel.add_to_chan(url,password,self.chanFile)
+
+    @staticmethod
+    def del_from_chanFile(url,chanFile):
+	ocontent=""
+	ncontent=[]
+        with open(chanFile,"r") as f:
+		ocontent=f.read()
+	for line in ocontent.split('\n') :
+		if len(line) == 0 or not ' ' in line :
+			continue
+		lurl = line.split(' ')[0]
+		if lurl != url :
+			ncontent.append(line)
+	with open(chanFile,"w") as f:
+		f.write("\n".join(ncontent))
+
+    def add_channel(self,url,password):
+	channel_name = self.channel_name
+        module_name = channel_name.lower()
+        try:
+            # Import module
+            module = __import__(
+                'core.channels.%s.%s' %
+                (module_name, module_name), fromlist=["*"])
+
+            # Import object
+            channel_object = getattr(module, channel_name)
+        except:
+            raise ChannelException(messages.channels.error_loading_channel_s % (channel_name))
+
+        self.channel_loaded.append(channel_object(url,password))
+	
     def _get_proxy(self):
 
         url_dissected = url_dissector.findall(
@@ -90,6 +144,18 @@ class Channel:
 
         return handlers
 
+    def update_channels(self):
+		self.clear_channels()
+		with open(self.chanFile,"r") as f :
+			content=f.read()
+		for line in content.split("\n") :
+			#print(line)
+			if len(line) == 0 :
+				continue
+			url=line.split()[0]
+			password=line.split()[1]
+			self.add_channel(url,password)
+
     def send(self, payload):
 
         response = ''
@@ -98,8 +164,10 @@ class Channel:
 
         human_error = ''
 
+	self.update_channels()
+	chan = random.choice(self.channel_loaded)
         try:
-            response = self.channel_loaded.send(
+            response = chan.send(
                 payload,
                 self._additional_handlers()
             )
@@ -118,7 +186,7 @@ class Channel:
                 error = str(e.reason)
 
             if code == 404:
-                human_error = messages.module_shell_php.error_404_remote_backdoor
+                human_error = messages.module_shell_php.error_404_remote_backdoor + "(" + chan.url + ")"
             elif code == 500:
                 human_error = messages.module_shell_php.error_500_executing
             elif code != 200:
