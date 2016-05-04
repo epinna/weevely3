@@ -25,6 +25,7 @@ class Upload2web(Module):
             { 'name' : 'lpath', 'help' : 'Local file path. Set remote file name when used with -content.' },
             { 'name' : 'rpath', 'help' : 'Remote path. If it is a folder find the first writable folder in it', 'default' : '.', 'nargs' : '?' },
             { 'name' : '-content', 'help' : 'Optionally specify the file content'},
+            { 'name' : '-simulate', 'help' : 'Just return the positions without uploading any content', 'action' : 'store_true', 'default' : False },
         ])
 
     def _get_env_info(self, script_url):
@@ -122,6 +123,6 @@ class Upload2web(Module):
         if content:
             file_upload_args += [ '-content', content ]
             
-        if ModuleExec("file_upload", file_upload_args).run():
+        if self.args.get('simulate') or ModuleExec("file_upload", file_upload_args).run():
             # Guess URL from rpath
             return [ self._map_file2web(self.args['rpath']) ]
