@@ -252,3 +252,16 @@ class generate:
 class utils_code:
     minify_php_missing_binary = 'Missing PHP binary, skipping PHP code minify'
     minify_php_error_minifying = 'Error minifying PHP code, skipping'
+
+
+class module_audit_disablefunctionbypass:
+    error_sh_commands_enabled = 'Error, you can already execute system commands'
+    error_mod_cgi_disabled = 'Error, mod_cgi module is not enabled'
+    error_installing_htaccess = 'Error installing .htaccess'
+    error_uploading_script_to_s = 'Error uploading CGI script to \'%s\''
+    error_changing_s_mode = 'Error changing \'%s\' CGI script mode'
+    error_s_unexpected_output = 'Error, \'%s\' doesn\'t execute, htaccess files aren\'t supported'
+    run_s_skip_reinstalling = 'Run console without reinstalling with \':audit_disablefunctionbypass -just-run %s\''
+    requests_not_obfuscated = 'Type \'quit\' to return to weevely shell. Requests are not obfuscated'
+    cgi_installed_remove_s_s = 'After usage, use \':file_rm\' to remove \'%s\' and \'%s\''
+    
