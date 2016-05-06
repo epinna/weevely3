@@ -1,10 +1,14 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- File grep module wrong grepping folders
+
 ### Added
 - Clearlog and Mail module by @AppoPro
 - Socat vector in backdoor tcp module
 - Legacycookie generator
+- Upload2web module content and simulate options
 
 ## [v3.2.0] - 2015-06-29
 ### Fixed
