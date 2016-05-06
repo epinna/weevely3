@@ -9,6 +9,7 @@
 - Socat vector in backdoor tcp module
 - Legacycookie generator
 - Upload2web module content and simulate options
+- Disable_function bypass module
 
 ## [v3.2.0] - 2015-06-29
 ### Fixed
