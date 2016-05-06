@@ -54,11 +54,13 @@ class Sh(Module):
                 }""", "perl_system"),
             # pcntl_fork is unlikely, cause is callable just as CGI or from CLI.
             PhpCode("""
-                $p=@pcntl_fork();
-                if(!$p){
-                    @pcntl_exec("/bin/sh",Array("-c",'${command}'));
-                } else {
-                    @pcntl_waitpid($p,$status);
+                if(is_callable('pcntl_fork')) {
+                    $p=@pcntl_fork();
+                    if(!$p){
+                        @pcntl_exec("/bin/sh",Array("-c",'${command}'));
+                    } else {
+                        @pcntl_waitpid($p,$status);
+                    }
                 }""",
                 name="pcntl", target=Os.NIX),
             ])
