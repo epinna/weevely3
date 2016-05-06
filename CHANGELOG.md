@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - File grep module wrong grepping folders
+- 500 error testing pcntl_fork in shell sh module
 
 ### Added
 - Clearlog and Mail module by @AppoPro
