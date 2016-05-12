@@ -1,6 +1,6 @@
 # Change Log
 
-## [v3.2.1] - 2016-05-12
+## [v3.3.1] - 2016-05-12
 ### Fixed
 - File grep module wrong grepping folders
 - 500 error testing pcntl_fork in shell sh module
