@@ -76,3 +76,4 @@
 [unreleased]: https://github.com/epinna/weevely3/commit/HEAD
 [v3.1.0]: https://github.com/epinna/weevely3/releases/tag/v3.1.0
 [v3.2.0]: https://github.com/epinna/weevely3/releases/tag/v3.2.0
+[v3.3.1]: https://github.com/epinna/weevely3/releases/tag/v3.3.1
