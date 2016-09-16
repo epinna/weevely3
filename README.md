@@ -1,24 +1,24 @@
 Weevely
 =======
 
-Weevely is a command line web shell dynamically extended over the network at runtime, designed for remote administration and penetration testing. It provides a ssh-like terminal just dropping a PHP script on the target server, even in restricted environments.
+Weevely is a command line web shell dynamically extended over the network at runtime, designed for remote server administration and penetration testing.
 
-The low footprint agent and over 30 modules shape an extensible framework to administrate web accounts and post exploit web servers escalating privileges and moving laterally in the network.
+Its terminal executes arbitrary remote code through the small footprint PHP agent that sits on the HTTP server. Over 30 modules shape an adaptable web administration and post-exploitation backdoor for access maintenance, privilege escalation and network lateral movement, even in restricted environment.
 
-**Read the [Wiki](https://github.com/epinna/weevely3/wiki#getting-started) for tutorials and uses cases.**
+**See the [Wiki](https://github.com/epinna/weevely3/wiki#getting-started) for tutorials and uses cases.**
 
-The modules feature:
+The framework features:
 
 * Ssh-like terminal
-* Run SQL console pivoting on target
-* Proxy your HTTP traffic pivoting on target
-* Host configurations security auditing
-* Mount target file system locally
-* Conduct network scans pivoting on target
+* SQL console pivoted on target
+* HTTP proxy pivoted on target
+* Host configuration security auditing
+* Mount of the remote filesystem
+* Network scan pivoted on target
 * File upload and download
-* Spawn reverse and direct TCP shells
-* Bruteforce internal services
-* Manage compressed archives
+* Reverse and direct TCP shell
+* Service account bruteforce
+* Compressed archive management
 
 ### The backdoor agent
 
