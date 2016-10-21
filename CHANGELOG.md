@@ -1,5 +1,10 @@
 # Change Log
 
+## [Unreleased]
+### Added
+- Backdoor_metasploit module
+- System_procs module by @paddlesteamer
+
 ## [v3.3.1] - 2016-05-12
 ### Fixed
 - File grep module wrong grepping folders
