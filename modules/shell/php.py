@@ -24,7 +24,7 @@ class Php(Module):
 
         self.register_arguments([
           { 'name' : 'command', 'help' : 'PHP code wrapped in quotes and terminated by semi-comma', 'nargs' : '+' },
-          { 'name' : '-prefix-string', 'default' : '' },
+          { 'name' : '-prefix-string', 'default' : '@error_reporting(0);' },
           { 'name' : '-post_data' },
           { 'name' : '-postfix-string', 'default' : '' },
         ])
