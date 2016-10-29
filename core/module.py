@@ -143,19 +143,30 @@ class Module:
         """
 
         # Merge stored arguments with line arguments
-        stored_args = self.session[self.name]['stored_args'].copy()
-        self.args = stored_args.copy()
+        stored_args = self.session[self.name]['stored_args']
+        self.args = {}
 
         try:
             user_args = self.argparser.parse_args(argv)
         except SystemExit:
             raise ArgparseError()
 
-        self.args.update(
-            dict(
-                (key, value) for key, value in user_args.__dict__.items() if value != None
-            )
-        )
+        # The new arg must win over the stored one if:
+        # new arg is not none and the value of the old one 
+        # is not just the default value
+        
+        for newarg_key, newarg_value in user_args.__dict__.items():
+                        
+            # Pick the default argument of the current arg
+            default_value = next((action.default for action in self.argparser._actions if action.dest == newarg_key), None)
+            stored_value = stored_args.get(newarg_key)
+                        
+            if newarg_value != None and newarg_value != default_value:
+                self.args[newarg_key] = newarg_value
+            elif stored_value != None:
+                self.args[newarg_key] = stored_value
+            else:
+                self.args[newarg_key] = default_value
 
         # If module status is IDLE, launch setup()
         if self.session[self.name]['status'] == Status.IDLE:
@@ -172,12 +183,11 @@ class Module:
 
         # Setup() could has been stored additional args, so all the updated
         # stored arguments are applied to args
-        self.args.update(
-            dict(
-                (key, value) for key, value in self.session[self.name]['stored_args'].items()
-                if value != stored_args.get(key)
-                )
-        )
+        stored_args = self.session[self.name]['stored_args']
+        for stored_arg_key, stored_arg_value in stored_args.items():
+            if stored_arg_key != None and stored_arg_value != self.args.get(stored_arg_key):
+                self.args[stored_arg_key] = stored_arg_value
+
 
         return self.run()
 
