@@ -35,6 +35,10 @@ class Console(Module):
                     name="pgsql"
                 ),
                 PhpCode(
+                    """if(pg_connect("host=${host} user=${user} dbname=${database} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}echo "${errsep}".@pg_last_error();""",
+                    name="pgsql_database"
+                ),
+                PhpCode(
                     """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";} echo "${colsep}";}};pg_close();echo "${errsep}".@pg_last_error();""",
                     name="pgsql_fallback"
                 ),
@@ -46,6 +50,7 @@ class Console(Module):
             {'name': '-passwd', 'help': 'SQL password'},
             {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': '127.0.0.1'},
             {'name': '-dbms', 'help': 'Db type', 'choices': ('mysql', 'pgsql'), 'default': 'mysql'},
+            {'name': '-database', 'help': 'Database name (Only PostgreSQL)'},
             {'name': '-query', 'help': 'Execute a single query'},
             {'name': '-encoding', 'help': 'Db text encoding', 'default': 'utf-8'},
         ])
@@ -93,12 +98,17 @@ class Console(Module):
         # The vector name is given by the db type
         vector = self.args.get('dbms')
         encoding = self.args.get('encoding')
+        database = self.args.get('database')
 
-        # And by the user and password presence
-        vector += (
-            '' if self.args.get('user') and self.args.get('passwd')
-            else '_fallback'
-        )
+        # Check if PostgreSQL and database is given
+        if vector == 'pgsql' and database:
+            vector += '_database'
+        else:
+            # And by the user and password presence
+            vector += (
+                '' if self.args.get('user') and self.args.get('passwd')
+                else '_fallback'
+            )
 
         # If the query is set, just execute it
         if self.args.get('query'):
