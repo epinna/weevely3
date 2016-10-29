@@ -6,6 +6,7 @@
 ### Added
 - Backdoor_metasploit module
 - System_procs module by @paddlesteamer
+- Support for database/schema selection for PostgreSQL by @caeaguilar
 
 ## [v3.3.1] - 2016-05-12
 ### Fixed
