@@ -5,7 +5,7 @@
 - Stored/Passed/Default arguments handling
 
 ### Added
-- Backdoor_metasploit module
+- Backdoor_meterpreter module
 - System_procs module by @paddlesteamer
 - Support for database/schema selection for PostgreSQL by @caeaguilar
 
