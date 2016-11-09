@@ -61,10 +61,10 @@ class Download(Module):
         # to see if the output is decodable as base64 string.
         expected_md5 = ModuleExec('file_check', [ self.args.get('rpath'), 'md5' ]).run()
         if expected_md5:
-            check_md5 = lambda r: hashlib.md5(base64.b64decode(r)).hexdigest() == expected_md5
+            check_md5 = lambda r: r != None and hashlib.md5(base64.b64decode(r)).hexdigest() == expected_md5
         else:
             log.debug(messages.module_file_download.skipping_md5_check)
-            check_md5 = lambda r: bool(base64.b64decode(r))
+            check_md5 = lambda r: r != None and bool(base64.b64decode(r))
 
         # Find the first vector that satisfy the md5 check
         vector_name, result = self.vectors.find_first_result(
