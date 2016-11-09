@@ -8,6 +8,7 @@ import socks
 import sockshandler
 import urllib2
 import re
+import ssl
 
 url_dissector = re.compile(
     r'^(https?|socks4|socks5)://'  # http:// or https://
@@ -87,6 +88,13 @@ class Channel:
                 )
             else:
                 raise ChannelException(messages.channels.error_proxy_format)
+
+        # Skip certificate checks
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        
+        handlers.append(urllib2.HTTPSHandler(context=ctx))
 
         return handlers
 

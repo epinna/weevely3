@@ -13,7 +13,17 @@ import logging
 import subprocess
 import tempfile
 import core.config
+import socket
 
+
+def _get_google_ip():
+    try:
+        data = socket.gethostbyname('www.google.com')
+        ip = repr(data)
+        if ip:
+            return ip
+    except Exception:
+        pass
 
 class StegaRefChannel(BaseTest):
 
@@ -65,6 +75,32 @@ class StegaRefChannelAdditionalHeaders(StegaRefChannel):
         self.assertNotIn('REFERER1', headers_string)
         self.assertIn('OTHERCOOKIE', headers_string)
 
+
+
+class StegaRefChannelWrongCert(BaseTest):
+
+    def setUp(self):
+        
+        ip = _get_google_ip()
+        if not ip:
+            return 
+            
+        url = 'https://%s/nonexistent' % (ip)
+        
+        self.channel = Channel(
+            'StegaRef',
+            {
+                'url' : url,
+                'password' : 'none'
+            }
+        )
+
+    def test_wrong_cert(self):
+        
+        try:
+            self.channel.send('echo("1");')
+        except Exception as e:
+            self.fail("test_wrong_cert exception\n%s" % (str(e)))
 
 @unittest.skipIf(
     not test_stress_channels,
@@ -165,6 +201,27 @@ class LegacyCookieChannel(BaseTest):
 
         self.channel.channel_loaded.additional_headers = [ ]
 
+    def test_wrong_cert(self):
+        
+        ip = _get_google_ip()
+        if not ip:
+            return 
+            
+        url = 'https://%s/nonexistent' % (ip)
+        
+        channel = Channel(
+            'LegacyCookie',
+            {
+                'url' : url,
+                'password' : 'none'
+            }
+        )
+        
+        try:
+            channel.send('echo("1");')
+        except Exception as e:
+            self.fail("LegacyCookie test_wrong_cert exception\n%s" % (str(e)))
+
 @unittest.skipIf(
     not test_stress_channels,
     "Test only default generator agent")
@@ -262,3 +319,25 @@ class LegacyReferrerChannel(BaseTest):
         self.assertIn('[Cookie] => C1=F1; C2=F2; C3=F3; C4=F4', headers_string)
         self.assertNotIn('REFERER1', headers_string)
         self.assertIn('[X-Other-Cookie] => OTHER', headers_string)
+
+
+    def test_wrong_cert(self):
+        
+        ip = _get_google_ip()
+        if not ip:
+            return 
+            
+        url = 'https://%s/nonexistent' % (ip)
+        
+        channel = Channel(
+            'LegacyReferrer',
+            {
+                'url' : url,
+                'password' : 'none'
+            }
+        )
+        
+        try:
+            channel.send('echo("1");')
+        except Exception as e:
+            self.fail("LegacyReferrer test_wrong_cert exception\n%s" % (str(e)))
