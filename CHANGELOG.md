@@ -1,5 +1,9 @@
 # Change Log
 
+## [Unreleased]
+### Fixed
+- Connection to HTTPS sites with wrong certificates
+
 ## [v3.4] - 2016-11-02
 ### Fixed
 - Stored/Passed/Default arguments handling
