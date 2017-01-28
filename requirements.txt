@@ -3,3 +3,4 @@ Mako
 PyYAML
 python-dateutil
 PySocks
+readline
