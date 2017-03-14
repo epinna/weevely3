@@ -1,6 +1,6 @@
 from core.weexceptions import ChannelException, FatalException
 from core.channels.stegaref.formatters import FirstRefererFormat
-from core.loggers import dlog
+from core.loggers import dlog, log
 from core import config
 from mako.template import Template
 import core.messages
@@ -16,6 +16,7 @@ import urllib2
 import itertools
 import utils
 import os
+import httplib
 
 referrer_templates_path = os.path.join(
     config.weevely_path,
@@ -135,8 +136,13 @@ class StegaRef:
                 else utils.http.add_random_url_param(self.url)
             )
 
-            response = opener.open(url).read()
-
+            try:
+                response = opener.open(url).read()
+            except httplib.BadStatusLine as e:
+                # TODO: add this check to the other channels
+                log.warn('Connection closed unexpectedly, aborting command.')
+                return
+                
             if not response:
                 continue
 
