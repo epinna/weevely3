@@ -34,8 +34,8 @@ class Phpproxy(Module):
                 'file_upload2web',
                 [
                     os.path.join(self.folder, 'poxy.php'),
-                    self.args['rpath'],
-                    '-rname', self.args['rname']
+                    self.args['rpath'], 
+                    self.args['rname']
                 ]
             ).run(self.args)
 
