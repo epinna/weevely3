@@ -1,5 +1,6 @@
-from testsuite.base_fs import BaseFilesystem
-from testsuite import config
+from testfixtures import log_capture
+from tests.base_test import BaseTest
+from tests import config
 from core.sessions import SessionURL
 from core import modules
 import utils
@@ -7,7 +8,23 @@ from core import messages
 import subprocess
 import os
 
-class FileLs(BaseFilesystem):
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_cd/"
+mkdir -p "$BASE_FOLDER/dir1/dir2/dir3/dir4"
+chmod 0 "$BASE_FOLDER/dir1/dir2/dir3/dir4"
+""".format(
+config = config
+), shell=True)
+
+class FileLs(BaseTest):
+
+    folders = [ os.path.join(config.base_folder, f) for f in (
+        'test_cd/dir1',
+        'test_cd/dir1/dir2',
+        'test_cd/dir1/dir2/dir3',
+        'test_cd/dir1/dir2/dir3/dir4',
+    ) ] 
 
     def setUp(self):
         self.session = SessionURL(
@@ -18,27 +35,7 @@ class FileLs(BaseFilesystem):
 
         modules.load_modules(self.session)
 
-        # Create the folder tree
-        self.folders, folders_rel = self.populate_folders()
-
-        # Change mode of the last folder to 0
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0', self.folders[-1]),
-            shell=True)
-
         self.run_argv = modules.loaded['file_ls'].run_argv
-
-    def tearDown(self):
-
-        # Reset mode of the last folder to 777
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0777', self.folders[-1]),
-            shell=True)
-
-        for folder in reversed(self.folders):
-            self.check_call(
-                config.cmd_env_rmdir_s % (folder),
-                shell=True)
 
     def test_ls(self):
 
