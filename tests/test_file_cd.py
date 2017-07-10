@@ -11,8 +11,8 @@ import os
 def setUpModule():
     subprocess.check_output("""
 BASE_FOLDER="{config.base_folder}/test_cd/"
-mkdir -p "$BASE_FOLDER/test_cd/dir1/dir2/dir3/dir4"
-chmod 0 "$BASE_FOLDER/test_cd/dir1/dir2/dir3/dir4"
+mkdir -p "$BASE_FOLDER/dir1/dir2/dir3/dir4"
+chmod 0 "$BASE_FOLDER/dir1/dir2/dir3/dir4"
 """.format(
 config = config
 ), shell=True)

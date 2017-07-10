@@ -33,11 +33,6 @@ class FileCheck(BaseTest):
         'test_file_check/dir1/dir2/dir3/0333/0444',
     ]
     
-    file_0_time = int(subprocess.check_output(
-        'stat -c %%Y "%s"' % (os.path.join(config.base_folder, 'test_file_check/dir1/0777')),
-        shell=True)
-    )
-    
     folders_rel = [
         'test_file_check/dir1/',
         'test_file_check/dir1/dir2/',
@@ -48,6 +43,11 @@ class FileCheck(BaseTest):
     def setUp(self):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
+        
+        self.file_0_time = int(subprocess.check_output(
+            'stat -c %%Y "%s"' % (os.path.join(config.base_folder, 'test_file_check/dir1/0777')),
+            shell=True)
+        )
 
         self.run_argv = modules.loaded['file_check'].run_argv
 
