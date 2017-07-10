@@ -23,7 +23,15 @@ sY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>" > "$FOLDER_TEST_CHANNELS/l
 python ./weevely.py generate -agent stegaref_php_debug "$PWD" "$FOLDER_TEST_CHANNELS/stegaref_php_debug.php"
 python ./weevely.py generate -agent legacycookie_php "$PWD" "$FOLDER_TEST_CHANNELS/legacycookie_php.php"
 
+# Test_cd env setup
+mkdir -p "$BASE_FOLDER/test_cd/dir1/dir2/dir3/dir4"
+chmod 0 "$BASE_FOLDER/test_cd/dir1/dir2/dir3/dir4"
 
+if [ -z "$1" ]
+  then
+    TEST='*'
+else
+    TEST="$1"
+fi
 
-
-python -m unittest discover -s ./tests/
+python -m unittest discover ./tests/ "test_$TEST.py"
