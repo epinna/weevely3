@@ -1,11 +1,10 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from core.weexceptions import FatalException
 from testfixtures import log_capture
 from core.terminal import Terminal
 from core.sessions import SessionURL, SessionFile
 from core import modules
 from core import messages
-
 
 class TerminalTest(BaseTest):
 

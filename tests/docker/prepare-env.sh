@@ -24,4 +24,6 @@ python ./weevely.py generate -agent stegaref_php_debug "$PWD" "$FOLDER_TEST_CHAN
 python ./weevely.py generate -agent legacycookie_php "$PWD" "$FOLDER_TEST_CHANNELS/legacycookie_php.php"
 
 
+
+
 python -m unittest discover -s ./tests/
