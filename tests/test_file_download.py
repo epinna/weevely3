@@ -10,6 +10,19 @@ import datetime
 import logging
 import os
 
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_download/"
+mkdir -p "$BASE_FOLDER/test_download/"
+echo -n 'OK' > "$BASE_FOLDER/test_download/ok.test"
+echo -n 'KO' > "$BASE_FOLDER/test_download/ko.test"
+# Set ko.test to ---x--x--x 0111 execute, should be no readable
+chmod 0111 "$BASE_FOLDER/test_download/ko.test"
+""".format(
+config = config
+), shell=True)
+
+
 class FileDownload(BaseTest):
 
     file_ok = os.path.join(config.base_folder, '/test_download/ok.test')

