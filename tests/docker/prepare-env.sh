@@ -27,6 +27,13 @@ python ./weevely.py generate -agent legacycookie_php "$PWD" "$FOLDER_TEST_CHANNE
 mkdir -p "$BASE_FOLDER/test_cd/dir1/dir2/dir3/dir4"
 chmod 0 "$BASE_FOLDER/test_cd/dir1/dir2/dir3/dir4"
 
+# Test_download env setup
+mkdir -p "$BASE_FOLDER/test_download/"
+echo -n 'OK' > "$BASE_FOLDER/test_download/ok.test"
+echo -n 'KO' > "$BASE_FOLDER/test_download/ko.test"
+# Set ko.test to ---x--x--x 0111 execute, should be no readable
+chmod 0111 "$BASE_FOLDER/test_download/ko.test"
+
 if [ -z "$1" ]
   then
     TEST='*'
