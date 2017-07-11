@@ -1,19 +1,16 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from core.weexceptions import ArgparseError
 from core.vectors import PhpCode
 from core.vectors import Os
 from core import modules
 from core.sessions import SessionURL
 from core import messages
-from testsuite.config import su_user, su_passwd
+from tests.config import su_user, su_passwd
 import core.config
 import unittest
 import logging
 import os
 
-@unittest.skipIf(
-    not su_user or not su_passwd,
-    "Skip su shell tests")
 class ShellSu(BaseTest):
 
     def setUp(self):

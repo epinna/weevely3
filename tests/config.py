@@ -7,3 +7,6 @@ base_url = 'http://localhost/'
 
 debug = True
 test_stress_channels = True
+
+su_user = 'testuser'
+su_passwd = 'testuser'
