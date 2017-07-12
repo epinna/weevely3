@@ -98,11 +98,11 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.assertIsNone(self.run_argv([ 'http://127.0.0.1:0', '-vector', vect ])[0])
+            self.assertIsNone(self.run_argv([ 'http://co.uk', '-vector', vect ])[0])
             self.assertEqual(messages.module_net_curl.unexpected_response,
                              log_captured.records[-1].msg)
 
-        self.assertIsNone(self.run_argv([ 'hhttp://127.0.0.1:0' ])[0])
+        self.assertIsNone(self.run_argv([ 'http://co.uk' ])[0])
         self.assertEqual(messages.module_net_curl.unexpected_response,
                          log_captured.records[-1].msg)
 
