@@ -1,17 +1,27 @@
-from testsuite.config import script_folder, script_folder_url
+from tests.config import base_folder, base_url
 from core.generate import generate, save_generated
 from core.channels.channel import Channel
 from unittest import TestCase
+import subprocess
 import utils
 import random
 import hashlib
 import os
 
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{base_folder}/generators/"
+mkdir "$BASE_FOLDER"
+chown www-data: -R "$BASE_FOLDER/"
+""".format(
+base_folder = base_folder
+), shell=True)
+
 class TestGenerators(TestCase):
 
     def test_generators(self):
 
-        for i in range(0, 500):
+        for i in range(0, 100):
             self._randomize_bd()
             obfuscated = generate(self.password)
             save_generated(obfuscated, self.path)
@@ -47,8 +57,8 @@ class TestGenerators(TestCase):
         password_hash = hashlib.md5(cls.password).hexdigest().lower()
         filename = '%s_%s.php' % (
             __name__, cls.password)
-        cls.url = os.path.join(script_folder_url, filename)
-        cls.path = os.path.join(script_folder, filename)
+        cls.url = os.path.join(base_url, 'generators', filename)
+        cls.path = os.path.join(base_folder, 'generators', filename)
 
     @classmethod
     def _clean_bd(cls):
