@@ -12,6 +12,7 @@ import os
 def setUpModule():
     subprocess.check_output("""
 BASE_FOLDER="{config.base_folder}/test_file_check/"
+rm -rf "$BASE_FOLDER"
 mkdir -p "$BASE_FOLDER/dir1/dir2/dir3/0333"
 chmod 0333 "$BASE_FOLDER/dir1/dir2/dir3/0333"
 echo -n 1 > "$BASE_FOLDER/dir1/0777"

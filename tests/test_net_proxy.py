@@ -12,7 +12,9 @@ import re
 
 def setUpModule():
     subprocess.check_output("""
-BASE_FOLDER="{config.base_folder}/test_curl/"
+BASE_FOLDER="{config.base_folder}/test_net_proxy/"
+rm -rf "$BASE_FOLDER"
+
 mkdir -p "$BASE_FOLDER"
 echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
 echo -n '1' > "$BASE_FOLDER/check2.html"
@@ -27,7 +29,7 @@ class Proxy(BaseTest):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
-        self.checkurl = 'http://localhost/test_curl/check1.php'
+        self.checkurl = 'http://localhost/test_net_proxy/check1.php'
 
         modules.loaded['net_proxy'].run_argv([ ])
 

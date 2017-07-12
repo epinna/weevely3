@@ -12,7 +12,8 @@ import os
 
 def setUpModule():
     subprocess.check_output("""
-BASE_FOLDER="{config.base_folder}/test_download/"
+BASE_FOLDER="{config.base_folder}/test_file_download/"
+rm -rf "$BASE_FOLDER"
 mkdir -p "$BASE_FOLDER"
 echo -n 'OK' > "$BASE_FOLDER/ok.test"
 echo -n 'KO' > "$BASE_FOLDER/ko.test"
@@ -25,8 +26,8 @@ config = config
 
 class FileDownload(BaseTest):
 
-    file_ok = os.path.join(config.base_folder, '/test_download/ok.test')
-    file_ko = os.path.join(config.base_folder, '/test_download/ko.test')
+    file_ok = os.path.join(config.base_folder, '/test_file_download/ok.test')
+    file_ko = os.path.join(config.base_folder, '/test_file_download/ko.test')
 
     def setUp(self):
         session = SessionURL(self.url, self.password, volatile = True)
@@ -38,7 +39,7 @@ class FileDownload(BaseTest):
         temp_file = tempfile.NamedTemporaryFile()
 
         # Simple download
-        self.assertEqual(self.run_argv(['test_download/ok.test', temp_file.name]), 'OK')
+        self.assertEqual(self.run_argv(['test_file_download/ok.test', temp_file.name]), 'OK')
         self.assertEqual(open(temp_file.name,'r').read(), 'OK')
         temp_file.truncate()
 
@@ -49,7 +50,7 @@ class FileDownload(BaseTest):
         temp_file.truncate()
 
         # Download of an unreadable file
-        self.assertEqual(self.run_argv(['test_download/ko.test', temp_file.name]), None)
+        self.assertEqual(self.run_argv(['test_file_download/ko.test', temp_file.name]), None)
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         # Download of an remote unexistant file
@@ -57,7 +58,7 @@ class FileDownload(BaseTest):
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         # Download to a local unexistant folder
-        self.assertEqual(self.run_argv(['test_download/ok.test', '/tmp/bogus/bogus']), None)
+        self.assertEqual(self.run_argv(['test_file_download/ok.test', '/tmp/bogus/bogus']), None)
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         # Download to a directory
@@ -71,7 +72,7 @@ class FileDownload(BaseTest):
         temp_file = tempfile.NamedTemporaryFile()
 
         # Simple download
-        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_download/ok.test', temp_file.name]), 'OK')
+        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_download/ok.test', temp_file.name]), 'OK')
         self.assertEqual(open(temp_file.name,'r').read(), 'OK')
         temp_file.truncate()
 
@@ -82,7 +83,7 @@ class FileDownload(BaseTest):
         temp_file.truncate()
 
         # Download of an unreadable file
-        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_download/ko.test', temp_file.name]), None)
+        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_download/ko.test', temp_file.name]), None)
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         # Download of an remote unexistant file
@@ -90,11 +91,11 @@ class FileDownload(BaseTest):
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         # Download to a local unexistant folder
-        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_download/ok.test', '/tmp/bogus/bogus']), None)
+        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_download/ok.test', '/tmp/bogus/bogus']), None)
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         # Download to a directory
-        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_download/ok.test', '/tmp/']), None)
+        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_download/ok.test', '/tmp/']), None)
         self.assertEqual(open(temp_file.name,'r').read(), '')
 
         temp_file.close()

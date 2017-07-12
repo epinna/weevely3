@@ -12,7 +12,9 @@ import os
 
 def setUpModule():
     subprocess.check_output("""
-BASE_FOLDER="{config.base_folder}/test_upload/"
+BASE_FOLDER="{config.base_folder}/test_file_upload/"
+rm -rf "$BASE_FOLDER"
+
 mkdir -p "$BASE_FOLDER"
 echo -n 'KO' > "$BASE_FOLDER/ok.test"
 chown www-data: -R "$BASE_FOLDER/"
@@ -32,24 +34,24 @@ class FileUpload(BaseTest):
     def test_upload(self, log_captured):
 
         # Upload content
-        self.assertTrue(self.run_argv([ 'test_upload/f1', '-content', 'CONTENT' ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/f1', '-content', 'CONTENT' ]))
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
         temp_file.write('CONTENT')
-        self.assertTrue(self.run_argv([ temp_file.name, 'test_upload/f2' ]))
+        self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f2' ]))
         temp_file.close()
 
     @log_capture()
     def test_upload_fwrite(self, log_captured):
 
         # Upload content
-        self.assertTrue(self.run_argv([ 'test_upload/f3', '-content', 'CONTENT', '-vector', 'fwrite' ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/f3', '-content', 'CONTENT', '-vector', 'fwrite' ]))
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
         temp_file.write('CONTENT')
-        self.assertTrue(self.run_argv([ temp_file.name, 'test_upload/f4', '-vector', 'fwrite' ]))
+        self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f4', '-vector', 'fwrite' ]))
         temp_file.close()
 
     @log_capture()
@@ -73,11 +75,11 @@ class FileUpload(BaseTest):
     def test_upload_empty(self):
 
         # Upload content
-        self.assertTrue(self.run_argv([ 'test_upload/f5', '-content', '' ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/f5', '-content', '' ]))
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
-        self.assertTrue(self.run_argv([ temp_file.name, 'test_upload/f6' ]))
+        self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f6' ]))
         temp_file.close()
 
 
@@ -85,23 +87,23 @@ class FileUpload(BaseTest):
     def test_upload_overwrite(self, log_captured):
 
         # Try to overwrite
-        self.assertFalse(self.run_argv([ 'test_upload/ok.test', '-content', 'CONTENT' ]))
+        self.assertFalse(self.run_argv([ 'test_file_upload/ok.test', '-content', 'CONTENT' ]))
         self.assertEqual(log_captured.records[-1].msg,
-                         messages.generic.error_file_s_already_exists % 'test_upload/ok.test')
+                         messages.generic.error_file_s_already_exists % 'test_file_upload/ok.test')
 
         # Now force
-        self.assertTrue(self.run_argv([ 'test_upload/ok.test', '-content', 'CONTENT', '-force' ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/ok.test', '-content', 'CONTENT', '-force' ]))
 
     @log_capture()
     def test_upload_overwrite_fwrite(self, log_captured):
 
         # Try to overwrite
-        self.assertFalse(self.run_argv([ 'test_upload/ok.test', '-content', 'CONTENT', '-vector', 'fwrite' ]))
+        self.assertFalse(self.run_argv([ 'test_file_upload/ok.test', '-content', 'CONTENT', '-vector', 'fwrite' ]))
         self.assertEqual(log_captured.records[-1].msg,
-                         messages.generic.error_file_s_already_exists % 'test_upload/ok.test')
+                         messages.generic.error_file_s_already_exists % 'test_file_upload/ok.test')
 
         # Now force
-        self.assertTrue(self.run_argv([ 'test_upload/ok.test', '-content', 'CONTENT', '-force', '-vector', 'fwrite' ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/ok.test', '-content', 'CONTENT', '-force', '-vector', 'fwrite' ]))
 
     @log_capture()
     def test_upload_binary(self, log_captured):
@@ -109,12 +111,12 @@ class FileUpload(BaseTest):
         binary_content = '\xbe\x00\xc8d\xf8d\x08\xe4'
 
         # Upload content
-        self.assertTrue(self.run_argv([ 'test_upload/f7', '-content', binary_content ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/f7', '-content', binary_content ]))
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
         temp_file.write(binary_content)
-        self.assertTrue(self.run_argv([ temp_file.name, 'test_upload/f8' ]))
+        self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f8' ]))
         temp_file.close()
 
     @log_capture()
@@ -123,10 +125,10 @@ class FileUpload(BaseTest):
         binary_content = '\xbe\x00\xc8d\xf8d\x08\xe4'
 
         # Upload content
-        self.assertTrue(self.run_argv([ 'test_upload/f9', '-content', binary_content, '-vector', 'fwrite' ]))
+        self.assertTrue(self.run_argv([ 'test_file_upload/f9', '-content', binary_content, '-vector', 'fwrite' ]))
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
         temp_file.write(binary_content)
-        self.assertTrue(self.run_argv([ temp_file.name, 'test_upload/f10', '-vector', 'fwrite' ]))
+        self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f10', '-vector', 'fwrite' ]))
         temp_file.close()

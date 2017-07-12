@@ -5,7 +5,18 @@ from core.sessions import SessionURL
 from core import messages
 from tests import config
 import unittest
+import subprocess
 import os
+
+def setUpModule():
+    subprocess.check_output("""service mysql start""".format(
+config = config
+), shell=True)
+
+def tearDownModule():
+    subprocess.check_output("""service mysql stop""".format(
+config = config
+), shell=True)
 
 class MySQLConsole(BaseTest):
 

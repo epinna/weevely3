@@ -11,6 +11,7 @@ import os
 def setUpModule():
     subprocess.check_output("""
 BASE_FOLDER="{config.base_folder}/test_file_find/"
+rm -rf "$BASE_FOLDER"
 
 mkdir -p "$BASE_FOLDER/dir1/0777/dir3/dir4"
 chmod 0777 "$BASE_FOLDER/dir1/0777/"

@@ -10,7 +10,8 @@ import os
 
 def setUpModule():
     subprocess.check_output("""
-BASE_FOLDER="{config.base_folder}/test_cd/"
+BASE_FOLDER="{config.base_folder}/test_file_cd/"
+rm -rf "$BASE_FOLDER"
 mkdir -p "$BASE_FOLDER/dir1/dir2/dir3/dir4"
 chmod 0 "$BASE_FOLDER/dir1/dir2/dir3/dir4"
 """.format(
@@ -20,10 +21,10 @@ config = config
 class FileCd(BaseTest):
 
     folders = [ os.path.join(config.base_folder, f) for f in (
-        'test_cd/dir1',
-        'test_cd/dir1/dir2',
-        'test_cd/dir1/dir2/dir3',
-        'test_cd/dir1/dir2/dir3/dir4',
+        'test_file_cd/dir1',
+        'test_file_cd/dir1/dir2',
+        'test_file_cd/dir1/dir2/dir3',
+        'test_file_cd/dir1/dir2/dir3/dir4',
     ) ] 
 
     def setUp(self):

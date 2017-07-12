@@ -12,6 +12,8 @@ import os
 def setUpModule():
     subprocess.check_output("""
 BASE_FOLDER="{config.base_folder}/test_file_upload2web/"
+rm -rf "$BASE_FOLDER"
+
 mkdir -p "$BASE_FOLDER/0777/0555/0777/0555"
 chown www-data: -R "$BASE_FOLDER/"
 chmod 0777 "$BASE_FOLDER/0777" 

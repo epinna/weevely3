@@ -12,7 +12,9 @@ import re
 
 def setUpModule():
     subprocess.check_output("""
-BASE_FOLDER="{config.base_folder}/test_curl/"
+BASE_FOLDER="{config.base_folder}/test_net_curl/"
+rm -rf "$BASE_FOLDER"
+
 mkdir -p "$BASE_FOLDER"
 echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
 echo -n '1' > "$BASE_FOLDER/check2.html"
@@ -28,8 +30,8 @@ class Curl(BaseTest):
         modules.load_modules(session)
 
         self.urls = [
-            config.base_url + '/test_curl/check1.php',
-            config.base_url + '/test_curl/check2.html',
+            config.base_url + '/test_net_curl/check1.php',
+            config.base_url + '/test_net_curl/check2.html',
         ]
 
         self.vector_list = modules.loaded['net_curl'].vectors.get_names()
@@ -136,10 +138,10 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-o', 'test_curl/test_%s' % vect ])
+            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-o', 'test_net_curl/test_%s' % vect ])
             self.assertTrue(saved)
 
-        result, headers, saved = self.run_argv([ self.urls[0], '-o', 'test_curl/test_all' ])
+        result, headers, saved = self.run_argv([ self.urls[0], '-o', 'test_net_curl/test_all' ])
         self.assertTrue(saved)
 
         # Check saved = None without -o

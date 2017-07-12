@@ -11,6 +11,8 @@ import os
 def setUpModule():
     subprocess.check_output("""
 BASE_FOLDER="{base_folder}/generators/"
+rm -rf "$BASE_FOLDER"
+
 mkdir "$BASE_FOLDER"
 chown www-data: -R "$BASE_FOLDER/"
 """.format(
