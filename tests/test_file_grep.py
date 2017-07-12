@@ -1,6 +1,6 @@
 from testfixtures import log_capture
-from testsuite.base_fs import BaseFilesystem
-from testsuite import config
+from tests.base_test import BaseTest
+from tests import config
 from core.sessions import SessionURL
 from core import modules
 import utils
@@ -10,7 +10,39 @@ import os
 import tempfile
 import random
 
-class FileGrep(BaseFilesystem):
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_file_grep/"
+rm -rf "$BASE_FOLDER"
+
+mkdir -p "$BASE_FOLDER/dir1/dir2/dir3/dir4"
+
+echo string1 > "$BASE_FOLDER/dir1/string1"
+echo string12 > "$BASE_FOLDER/dir1/dir2/string12"
+echo 'string3\nSTR33' > "$BASE_FOLDER/dir1/dir2/dir3/string3"
+echo string4 > "$BASE_FOLDER/dir1/dir2/dir3/dir4/string4"
+chmod 0111 "$BASE_FOLDER/dir1/dir2/dir3/dir4/string4"
+chown www-data: -R "$BASE_FOLDER/"
+
+""".format(
+config = config
+), shell=True)
+
+class FileGrep(BaseTest):
+
+    folders_rel = [
+        'test_file_grep/dir1',
+        'test_file_grep/dir1/dir2',
+        'test_file_grep/dir1/dir2/dir3',
+        'test_file_grep/dir1/dir2/dir3/dir4',
+    ]
+    
+    files_rel = [
+        'test_file_grep/dir1/string1',
+        'test_file_grep/dir1/dir2/string12',
+        'test_file_grep/dir1/dir2/dir3/string3',
+        'test_file_grep/dir1/dir2/dir3/dir4/string4',
+    ]
 
     def setUp(self):
         self.session = SessionURL(
@@ -21,40 +53,9 @@ class FileGrep(BaseFilesystem):
 
         modules.load_modules(self.session)
 
-        # Create the folder tree
-        self.folders_abs, self.folders_rel =  self.populate_folders()
-        self.files_abs, self.files_rel = self.populate_files(
-                                self.folders_abs,
-                                [ 'string1', 'string12', 'string3', 'string4' ],
-                                [ 'string1', 'string12', 'string3\nSTR33', 'string4' ]
-                            )
-
-        # Change mode of the third file to ---x--x--x 0111 execute
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0111', self.files_abs[3]),
-            shell=True)
-
-        self.vector_list = [
-            m for m in modules.loaded['file_grep'].vectors.get_names()
-        ]
+        self.vector_list = modules.loaded['file_grep'].vectors.get_names()
 
         self.run_argv = modules.loaded['file_grep'].run_argv
-
-    def tearDown(self):
-        # Reset recursively all the permissions to 0777
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
-            shell=True)
-
-        for folder in reversed(self.folders_abs):
-
-            self.check_call(
-                config.cmd_env_remove_s % (self.files_abs.pop()),
-                shell=True)
-
-            self.check_call(
-                config.cmd_env_rmdir_s % (folder),
-                shell=True)
 
     def test_file_grep(self):
 
@@ -110,30 +111,31 @@ class FileGrep(BaseFilesystem):
 
         for vect in self.vector_list:
 
-            output_path = os.path.join(config.script_folder, 'test_%s_%i' % (vect, random.randint(1,99999)))
+            output_path = os.path.join(config.base_folder, 'test_file_grep', 'test_%s_%i' % (vect, random.randint(1,99999)))
 
             # grep string3 -> []
             self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '-output', output_path ])[1])
-            self.assertEqual(self.check_output(
-                config.cmd_env_cat_s % (output_path),
-                shell=True), ''
+            self.assertEqual(subprocess.check_output(
+                    'cat "%s"' % (output_path),
+                    shell=True
+                ), ''
             )
-            self.check_call(
-                config.cmd_env_remove_s % (output_path),
+            
+            subprocess.check_output(
+                'rm -f %s' % (output_path),
                 shell=True)
 
             # grep rpath=folder2 string -> string[3]
             self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '-output', output_path ])[0],{ self.files_rel[2] : ['string3'] })
-            self.assertEqual(self.check_output(
-                config.cmd_env_cat_s % (output_path),
+            self.assertEqual(subprocess.check_output(
+                'cat "%s"' % (output_path),
                 shell=True), 'string3'
             )
-            self.check_call(
-                config.cmd_env_remove_s % (output_path),
+            subprocess.check_output(
+                'rm -f %s' % (output_path),
                 shell=True)
 
     def test_file_grep_output_local(self):
-
 
         for vect in self.vector_list:
 
