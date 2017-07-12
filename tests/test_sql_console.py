@@ -1,20 +1,12 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from testfixtures import log_capture
 from core import modules
 from core.sessions import SessionURL
 from core import messages
-from testsuite import config
+from tests import config
 import unittest
 import os
 
-@unittest.skipIf(not
-                    (config.sql_dbms == 'mysql'
-                    and config.sql_db
-                    and config.sql_user
-                    and config.sql_passwd
-                    ),
-                "Mysql console test is not properly configured"
-                )
 class MySQLConsole(BaseTest):
 
     def setUp(self):
