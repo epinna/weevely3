@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e -x
+set -e
 
 BASE_FOLDER="`python -c 'from tests import config;print(config.base_folder)'`"
 AGENT="`python -c 'from tests import config;print(config.agent)'`"

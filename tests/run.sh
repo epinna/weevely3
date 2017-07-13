@@ -10,7 +10,7 @@ if [ "$1" = "bash" ];then
 fi
 
 # Change folder to the root folder
-PARENTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/../../ && pwd )"
+PARENTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/../ && pwd )"
 cd $PARENTDIR
 
 docker build -f tests/docker/Dockerfile . -t weevely
