@@ -97,47 +97,47 @@ chown www-data: -R "$BASE_FOLDER/"
                 subprocess.check_output('cat "%s"' % self.uncompressed[index], shell=True),
                 self.binstring[index]
             )
-    # 
-    # 
-    # @log_capture()
-    # def test_already_exists(self, log_captured):
-    # 
-    #     # Decompress keeping it and check test file
-    #     self.assertTrue(self.run_argv(["--decompress", self.compressed[0], '--keep']));
-    #     self.assertEqual(
-    #         subprocess.check_output(config.cmd_env_print_repr_s % self.uncompressed[0]),
-    #         self.binstring[0]
-    #     )
-    # 
-    #     # Do it again and trigger that the file decompressed already exists
-    #     self.assertIsNone(self.run_argv(["--decompress", self.compressed[0]]));
-    #     self.assertEqual(log_captured.records[-1].msg,
-    #                      "File '%s' already exists, skipping decompressing" % self.uncompressed[0])
-    # 
-    #     # Compress and trigger that the file compressed already exists
-    #     self.assertIsNone(self.run_argv([self.uncompressed[0]]));
-    #     self.assertEqual(log_captured.records[-1].msg,
-    #                      "File '%s' already exists, skipping compressing" % self.compressed[0])
-    # 
-    # @log_capture()
-    # def test_wrong_ext(self, log_captured):
-    # 
-    #     # Decompress it and check test file
-    #     self.assertTrue(self.run_argv(["--decompress", self.compressed[0]]));
-    #     self.assertEqual(
-    #         subprocess.check_output(config.cmd_env_print_repr_s % self.uncompressed[0]),
-    #         self.binstring[0]
-    #     )
-    # 
-    #     # Decompress the decompressed, wrong ext
-    #     self.assertIsNone(self.run_argv(["--decompress", self.uncompressed[0]]));
-    #     self.assertEqual(log_captured.records[-1].msg,
-    #                      "Unknown suffix, skipping decompressing")
-    # 
-    # @log_capture()
-    # def test_unexistant(self, log_captured):
-    # 
-    #     # Decompress it and check test file
-    #     self.assertIsNone(self.run_argv(["--decompress", 'bogus']));
-    #     self.assertEqual(log_captured.records[-1].msg,
-    #                      "Skipping file '%s', check existance and permission" % 'bogus')
+    
+    
+    @log_capture()
+    def test_already_exists(self, log_captured):
+    
+        # Decompress keeping it and check test file
+        self.assertTrue(self.run_argv(["--decompress", self.compressed[0], '--keep']));
+        self.assertEqual(
+            subprocess.check_output('cat "%s"' % self.uncompressed[0], shell=True),
+            self.binstring[0]
+        )
+    
+        # Do it again and trigger that the file decompressed already exists
+        self.assertIsNone(self.run_argv(["--decompress", self.compressed[0]]));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "File '%s' already exists, skipping decompressing" % self.uncompressed[0])
+    
+        # Compress and trigger that the file compressed already exists
+        self.assertIsNone(self.run_argv([self.uncompressed[0]]));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "File '%s' already exists, skipping compressing" % self.compressed[0])
+    
+    @log_capture()
+    def test_wrong_ext(self, log_captured):
+    
+        # Decompress it and check test file
+        self.assertTrue(self.run_argv(["--decompress", self.compressed[0]]));
+        self.assertEqual(
+            subprocess.check_output('cat "%s"' % self.uncompressed[0], shell=True),
+            self.binstring[0]
+        )
+    
+        # Decompress the decompressed, wrong ext
+        self.assertIsNone(self.run_argv(["--decompress", self.uncompressed[0]]));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "Unknown suffix, skipping decompressing")
+    
+    @log_capture()
+    def test_unexistant(self, log_captured):
+    
+        # Decompress it and check test file
+        self.assertIsNone(self.run_argv(["--decompress", 'bogus']));
+        self.assertEqual(log_captured.records[-1].msg,
+                         "Skipping file '%s', check existance and permission" % 'bogus')
