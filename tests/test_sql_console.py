@@ -1,20 +1,23 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from testfixtures import log_capture
 from core import modules
 from core.sessions import SessionURL
 from core import messages
-from testsuite import config
+from tests import config
 import unittest
+import subprocess
 import os
 
-@unittest.skipIf(not
-                    (config.sql_dbms == 'mysql'
-                    and config.sql_db
-                    and config.sql_user
-                    and config.sql_passwd
-                    ),
-                "Mysql console test is not properly configured"
-                )
+def setUpModule():
+    subprocess.check_output("""service mysql start""".format(
+config = config
+), shell=True)
+
+def tearDownModule():
+    subprocess.check_output("""service mysql stop""".format(
+config = config
+), shell=True)
+
 class MySQLConsole(BaseTest):
 
     def setUp(self):

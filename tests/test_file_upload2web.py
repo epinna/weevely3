@@ -1,6 +1,6 @@
 from testfixtures import log_capture
-from testsuite.base_fs import BaseFilesystem
-from testsuite import config
+from tests.base_test import BaseTest
+from tests import config
 from core.sessions import SessionURL
 from core import modules
 import utils
@@ -9,7 +9,22 @@ import subprocess
 import tempfile
 import os
 
-class UploadWeb(BaseFilesystem):
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_file_upload2web/"
+rm -rf "$BASE_FOLDER"
+
+mkdir -p "$BASE_FOLDER/0777/0555/0777/0555"
+chown www-data: -R "$BASE_FOLDER/"
+chmod 0777 "$BASE_FOLDER/0777" 
+chmod 0777 "$BASE_FOLDER/0777/0555/0777/"
+chmod 0555 "$BASE_FOLDER/0777/0555" 
+chmod 0555 "$BASE_FOLDER/0777/0555/0777/0555"
+""".format(
+config = config
+), shell=True)
+
+class UploadWeb(BaseTest):
 
     def setUp(self):
         self.session = SessionURL(
@@ -21,54 +36,25 @@ class UploadWeb(BaseFilesystem):
         modules.load_modules(self.session)
 
         # Create the folder tree
-        self.folders_abs, self.folders_rel =  self.populate_folders()
-
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0777', self.folders_abs[0]),
-            shell=True)
-
-        # Change mode of the folders [1] and [3] to -r-xr-xr-x 0555 read & execute
-        for fold in (self.folders_abs[1], self.folders_abs[3]):
-            self.check_call(
-                config.cmd_env_chmod_s_s % ('0555', fold),
-                shell=True)
-
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0777', self.folders_abs[2]),
-            shell=True)
-
-        self.filenames = []
+        self.folders_rel = [
+            'test_file_upload2web/0777/',
+            'test_file_upload2web/0777/0555/',
+            'test_file_upload2web/0777/0555/0777/',
+            'test_file_upload2web/0777/0555/0777/0555'
+        ]
 
         self.run_argv = modules.loaded['file_upload2web'].run_argv
 
-    def tearDown(self):
-
-        for f in self.filenames:
-            self.check_call(
-                config.cmd_env_remove_s % (os.path.join(config.script_folder, f)),
-                shell=True)
-
-        # This has to be done before and in order, since in case of
-        # nonwritable/writable folders the writable one can't be deleted.
-        for folder in self.folders_abs:
-            self.check_call(
-                config.cmd_env_chmod_s_s % ('0777', folder),
-                shell=True)
-
-        for folder in reversed(self.folders_abs):
-
-            self.check_call(
-                config.cmd_env_rmdir_s % (folder),
-                shell=True)
 
     def _get_path_url(self, folder_deepness, filename):
+        
         rurl = os.path.sep.join([
-                            config.script_folder_url.rstrip('/'),
+                            config.base_url.rstrip('/'),
                             self.folders_rel[folder_deepness].strip('/'),
                             filename.lstrip('/')]
                             )
         rpath = os.path.sep.join([
-                            config.script_folder.rstrip('/'),
+                            config.base_folder.rstrip('/'),
                             self.folders_rel[folder_deepness].strip('/'),
                             filename.lstrip('/')]
                             )
@@ -79,7 +65,6 @@ class UploadWeb(BaseFilesystem):
         # Upload lfile with a specific path
         temp_file = tempfile.NamedTemporaryFile()
         rpath, rurl = self._get_path_url(0, 'f1')
-        self.filenames.append(rpath)
         self.assertEqual(
             self.run_argv([ temp_file.name, rpath ]),
             [ ( rpath, rurl ) ]
@@ -90,7 +75,6 @@ class UploadWeb(BaseFilesystem):
         temp_file = tempfile.NamedTemporaryFile()
         temp_folder, temp_filename = os.path.split(temp_file.name)
         rpath, rurl = self._get_path_url(0, temp_filename)
-        self.filenames.append(rpath)
         self.assertEqual(
             self.run_argv([ temp_file.name, self.folders_rel[0] ]),
             [ ( rpath, rurl ) ]
@@ -102,7 +86,6 @@ class UploadWeb(BaseFilesystem):
         temp_file = tempfile.NamedTemporaryFile()
         temp_folder, temp_filename = os.path.split(temp_file.name)
         rpath, rurl = self._get_path_url(2, temp_filename)
-        self.filenames.append(rpath)
         self.assertEqual(
             self.run_argv([ temp_file.name, self.folders_rel[1] ]),
             [ ( rpath, rurl ) ]
@@ -117,7 +100,6 @@ class UploadWeb(BaseFilesystem):
         temp_file_name = '/tmp/nonexistant'
         temp_folder, temp_filename = os.path.split(temp_file_name)
         rpath, rurl = self._get_path_url(2, temp_filename)
-        self.filenames.append(rpath)
         self.assertEqual(
             self.run_argv([ temp_file_name, self.folders_rel[1], '-content', '1' ]),
             [ ( rpath, rurl ) ]

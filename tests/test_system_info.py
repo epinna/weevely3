@@ -1,4 +1,4 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from testfixtures import log_capture
 from core.weexceptions import ArgparseError
 from core import modules

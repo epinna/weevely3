@@ -1,15 +1,40 @@
 from testfixtures import log_capture
-from testsuite.base_fs import BaseFilesystem
-from testsuite import config
+from tests.base_test import BaseTest
 from core.sessions import SessionURL
 from core import modules
+from tests import config
 import utils
 from core import messages
 import subprocess
 import tempfile
 import os
 
-class FileEnum(BaseFilesystem):
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_file_enum/"
+rm -rf "$BASE_FOLDER"
+
+mkdir -p "$BASE_FOLDER/dir1/dir2/dir3/dir4"
+
+touch "$BASE_FOLDER/dir1/0111-exec"
+chmod 0111 "$BASE_FOLDER/dir1/0111-exec"
+
+touch "$BASE_FOLDER/dir1/dir2/0222-write"
+chmod 0222 "$BASE_FOLDER/dir1/dir2/0222-write"
+
+touch "$BASE_FOLDER/dir1/dir2/dir3/0000"
+chmod 0000 "$BASE_FOLDER/dir1/dir2/dir3/0000"
+""".format(
+config = config
+), shell=True)
+
+class FileEnum(BaseTest):
+
+    files_rel = [
+        'test_file_enum/dir1/0111-exec',
+        'test_file_enum/dir1/dir2/0222-write',
+        'test_file_enum/dir1/dir2/dir3/0000',
+    ]
 
     def setUp(self):
         self.session = SessionURL(
@@ -20,46 +45,7 @@ class FileEnum(BaseFilesystem):
 
         modules.load_modules(self.session)
 
-        # Create the folder tree
-        self.folders_abs, self.folders_rel =  self.populate_folders()
-        self.files_abs, self.files_rel = self.populate_files(
-                                self.folders_abs,
-                                [ 'executable', 'writable', 'write-executable', 'readable' ]
-                            )
-
-        # Change mode of the first file to ---x--x--x 0111 execute
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0111', self.files_abs[0]),
-            shell=True)
-
-        # Change mode of the second file to --w--w--w- 0222 write
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0222', self.files_abs[1]),
-            shell=True)
-
-        # Change mode of the third file to 0000
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0000', self.files_abs[2]),
-            shell=True)
-
         self.run_argv = modules.loaded['file_enum'].run_argv
-
-    def tearDown(self):
-
-        # Reset recursively all the permissions to 0777
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
-            shell=True)
-
-        for folder in reversed(self.folders_abs):
-
-            self.check_call(
-                config.cmd_env_remove_s % (self.files_abs.pop()),
-                shell=True)
-
-            self.check_call(
-                config.cmd_env_rmdir_s % (folder),
-                shell=True)
 
     def test_file_enum(self):
 

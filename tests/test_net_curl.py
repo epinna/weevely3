@@ -1,6 +1,6 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from testfixtures import log_capture
-from testsuite import config
+from tests import config
 from core.sessions import SessionURL
 from core import modules
 from core import messages
@@ -10,52 +10,37 @@ import tempfile
 import os
 import re
 
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_net_curl/"
+rm -rf "$BASE_FOLDER"
+
+mkdir -p "$BASE_FOLDER"
+echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
+echo -n '1' > "$BASE_FOLDER/check2.html"
+chown www-data: -R "$BASE_FOLDER/"
+""".format(
+config = config
+), shell=True)
+
 class Curl(BaseTest):
 
     def setUp(self):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
-        fnames = [ 'check1.php', 'check2.html' ]
-
-        self.files = [
-            os.path.join(config.script_folder, fnames[0]),
-            os.path.join(config.script_folder, fnames[1])
-            ]
-
-        self.check_call(
-            config.cmd_env_content_s_to_s % ('<?php print_r(\$_SERVER);print_r(\$_REQUEST); ?>', self.files[0]),
-            shell=True)
-
-        self.check_call(
-            config.cmd_env_content_s_to_s % ('1', self.files[1]),
-            shell=True)
-
         self.urls = [
-            os.path.sep.join([
-                config.script_folder_url.rstrip('/'),
-                fnames[0]]
-            ),
-            os.path.sep.join([
-                config.script_folder_url.rstrip('/'),
-                fnames[1]]
-            )
+            config.base_url + '/test_net_curl/check1.php',
+            config.base_url + '/test_net_curl/check2.html',
         ]
 
-        self.vector_list = [
-            m for m in modules.loaded['net_curl'].vectors.get_names()
-            if m not in config.curl_skip_vectors
-        ]
+        self.vector_list = modules.loaded['net_curl'].vectors.get_names()
+        
+        # Install pecl_http is complex and php-version dependant, so
+        # let's just skip this vector test. 
+        self.vector_list.remove('php_httprequest1')
 
         self.run_argv = modules.loaded['net_curl'].run_argv
-
-
-    def tearDown(self):
-
-        for f in self.files:
-            self.check_call(
-                config.cmd_env_remove_s % (f),
-                shell=True)
 
     def _clean_result(self, result):
         return result if not result else re.sub('[\n]|[ ]{2,}',' ', result)
@@ -115,11 +100,11 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus', '-vector', vect ])[0])
+            self.assertIsNone(self.run_argv([ 'http://co.uk', '-vector', vect ])[0])
             self.assertEqual(messages.module_net_curl.unexpected_response,
                              log_captured.records[-1].msg)
 
-        self.assertIsNone(self.run_argv([ 'http://unreachable-bogus-bogus' ])[0])
+        self.assertIsNone(self.run_argv([ 'http://co.uk' ])[0])
         self.assertEqual(messages.module_net_curl.unexpected_response,
                          log_captured.records[-1].msg)
 
@@ -153,12 +138,10 @@ class Curl(BaseTest):
 
         for vect in self.vector_list:
 
-            self.files.append(os.path.join(config.script_folder, 'test_%s' % vect))
-            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-o', self.files[-1] ])
+            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-o', 'test_net_curl/test_%s' % vect ])
             self.assertTrue(saved)
 
-        self.files.append(os.path.join(config.script_folder, 'test_all'))
-        result, headers, saved = self.run_argv([ self.urls[0], '-o', 'test_all' ])
+        result, headers, saved = self.run_argv([ self.urls[0], '-o', 'test_net_curl/test_all' ])
         self.assertTrue(saved)
 
         # Check saved = None without -o
@@ -174,7 +157,6 @@ class Curl(BaseTest):
         temp_file = tempfile.NamedTemporaryFile()
         for vect in self.vector_list:
 
-            self.files.append(temp_file.name)
             result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
             self.assertTrue(saved)
             self.assertIn('[FIND] => THIS', open(temp_file.name,'r').read())

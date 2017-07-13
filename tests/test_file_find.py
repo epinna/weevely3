@@ -1,6 +1,6 @@
 from testfixtures import log_capture
-from testsuite.base_fs import BaseFilesystem
-from testsuite import config
+from tests.base_test import BaseTest
+from tests import config
 from core.sessions import SessionURL
 from core import modules
 import utils
@@ -8,7 +8,44 @@ from core import messages
 import subprocess
 import os
 
-class FindPerms(BaseFilesystem):
+def setUpModule():
+    subprocess.check_output("""
+BASE_FOLDER="{config.base_folder}/test_file_find/"
+rm -rf "$BASE_FOLDER"
+
+mkdir -p "$BASE_FOLDER/dir1/0777/dir3/dir4"
+chmod 0777 "$BASE_FOLDER/dir1/0777/"
+
+touch "$BASE_FOLDER/dir1/0111-exec"
+chmod 0111 "$BASE_FOLDER/dir1/0111-exec"
+
+touch "$BASE_FOLDER/dir1/0777/0222-write"
+chmod 0222 "$BASE_FOLDER/dir1/0777/0222-write"
+
+touch "$BASE_FOLDER/dir1/0777/dir3/0333-write-exec"
+chmod 0333 "$BASE_FOLDER/dir1/0777/dir3/0333-write-exec"
+
+touch "$BASE_FOLDER/dir1/0777/dir3/dir4/0444-read"
+chmod 0444 "$BASE_FOLDER/dir1/0777/dir3/dir4/0444-read"
+""".format(
+config = config
+), shell=True)
+
+class FindPerms(BaseTest):
+    
+    folders_rel = [
+        'test_file_find/dir1',
+        'test_file_find/dir1/0777',
+        'test_file_find/dir1/0777/dir3',
+        'test_file_find/dir1/0777/dir3/dir4',
+    ]
+    
+    files_rel = [
+        'test_file_find/dir1/0111-exec',
+        'test_file_find/dir1/0777/0222-write',
+        'test_file_find/dir1/0777/dir3/0333-write-exec',
+        'test_file_find/dir1/0777/dir3/dir4/0444-read',
+    ]
 
     def setUp(self):
         self.session = SessionURL(
@@ -19,56 +56,7 @@ class FindPerms(BaseFilesystem):
 
         modules.load_modules(self.session)
 
-        # Create the folder tree
-        self.folders_abs, self.folders_rel =  self.populate_folders()
-        self.files_abs, self.files_rel = self.populate_files(
-                                self.folders_abs,
-                                [ 'executable', 'writable', 'write-executable', 'readable' ]
-                            )
-
-        # Change mode of the first file to ---x--x--x 0111 execute
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0111', self.files_abs[0]),
-            shell=True)
-
-        # Change mode of the second file to --w--w--w- 0222 write
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0222', self.files_abs[1]),
-            shell=True)
-
-        # Change mode of the third file to --wx-wx-wx 0333 write & execute
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0333', self.files_abs[2]),
-            shell=True)
-
-        # Change mode of the forth file to -r--r--r-- 0444 read
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0444', self.files_abs[3]),
-            shell=True)
-
-        # Change mode of the first folder to -rwxrwxrwx 0777 read, write, & execute
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('0777', self.folders_abs[1]),
-            shell=True)
-
         self.run_argv = modules.loaded['file_find'].run_argv
-
-    def tearDown(self):
-
-        # Reset recursively all the permissions to 0777
-        self.check_call(
-            config.cmd_env_chmod_s_s % ('-R 0777', self.folders_abs[0]),
-            shell=True)
-
-        for folder in reversed(self.folders_abs):
-
-            self.check_call(
-                config.cmd_env_remove_s % (self.files_abs.pop()),
-                shell=True)
-
-            self.check_call(
-                config.cmd_env_rmdir_s % (folder),
-                shell=True)
 
     def test_file_find_php(self):
 

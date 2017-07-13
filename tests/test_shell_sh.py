@@ -1,4 +1,4 @@
-from testsuite.base_test import BaseTest
+from tests.base_test import BaseTest
 from core.weexceptions import ArgparseError
 from core.vectors import PhpCode
 from core.vectors import Os
