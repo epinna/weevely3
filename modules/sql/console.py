@@ -3,6 +3,7 @@ from core.module import Module
 from core.loggers import log
 from core import messages
 import utils
+import re
 
 
 class Console(Module):
@@ -23,23 +24,23 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """if(mysql_connect("${host}","${user}","${passwd}")){$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();}echo "${errsep}".@mysql_error();""",
+                    """if(mysql_connect('${host}','${user}','${passwd}')){$r=mysql_query('${query}');if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysql_close();}echo '${errsep}'.@mysql_error();""",
                     name='mysql',
                 ),
                 PhpCode(
-                    """$r=mysql_query("${query}");if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};mysql_close();echo "${errsep}".@mysql_error();""",
+                    """$r=mysql_query('${query}');if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysql_close();echo '${errsep}'.@mysql_error();""",
                     name="mysql_fallback"
                 ),
                 PhpCode(
-                    """if(pg_connect("host=${host} user=${user} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}echo "${errsep}".@pg_last_error();""",
+                    """if(pg_connect('host=${host} user=${user} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
                     name="pgsql"
                 ),
                 PhpCode(
-                    """if(pg_connect("host=${host} user=${user} dbname=${database} password=${passwd}")){$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";}echo "${colsep}";}};pg_close();}echo "${errsep}".@pg_last_error();""",
+                    """if(pg_connect('host=${host} user=${user} dbname=${database} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
                     name="pgsql_database"
                 ),
                 PhpCode(
-                    """$r=pg_query("${query}");if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value."${linsep}";} echo "${colsep}";}};pg_close();echo "${errsep}".@pg_last_error();""",
+                    """$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';} echo '${colsep}';}};pg_close();echo '${errsep}'.@pg_last_error();""",
                     name="pgsql_fallback"
                 ),
             ]
@@ -64,6 +65,9 @@ class Console(Module):
         args.update(
             {'colsep': colsep, 'linsep': linsep, 'errsep': errsep}
         )
+        
+        # Escape ' in query strings
+        self.args['query'] = self.args['query'].replace('\\', '\\\\').replace('\'', '\\\'')
 
         result = self.vectors.get_result(vector, args)
 
