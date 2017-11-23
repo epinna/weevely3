@@ -325,7 +325,7 @@ class StegaRef:
         import string
         for letter in string.ascii_lowercase:
             if not any([l for l in languages if l.startswith(letter)]):
-                raise ChannelException(error_language_start_letter_s % letter)
+                raise ChannelException(core.messages.stegareferrer.error_language_start_letter_s % letter)
 
         return languages
 
