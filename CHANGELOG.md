@@ -1,6 +1,6 @@
 # Change Log
 
-## [Unreleased]
+## [v3.5] - 2017-23-11
 ### Fixed
 - Connection to HTTPS sites with wrong certificates
 - Fix net_phpproxy params
