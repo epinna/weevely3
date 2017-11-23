@@ -3,6 +3,12 @@
 ## [Unreleased]
 ### Fixed
 - Connection to HTTPS sites with wrong certificates
+- Fix net_phpproxy params
+- Fix broken audit_etcpasswd
+- Fix strings passing on SQL console
+
+### Added
+- Dockerized test suite
 
 ## [v3.4] - 2016-11-02
 ### Fixed
