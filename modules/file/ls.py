@@ -39,7 +39,7 @@ class Ls(Module):
                         print(join(PHP_EOL,$a));
                     }
                 }""",
-                postprocess = lambda x: x.split('\n')
+                postprocess = lambda x: x.split('\n') if x else []
                ).run(self.args)
 
     def print_result(self, result):
