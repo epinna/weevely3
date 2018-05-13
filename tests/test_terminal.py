@@ -5,6 +5,14 @@ from core.terminal import Terminal
 from core.sessions import SessionURL, SessionFile
 from core import modules
 from core import messages
+import subprocess
+
+def setUpModule():
+    subprocess.check_output("""
+echo 1 > "/tmp/sessionfile1"
+echo 'url: http://localhost:123' > "/tmp/sessionfile2"
+echo '' > "/tmp/sessionfile3"
+""", shell=True)
 
 class TerminalTest(BaseTest):
 
@@ -15,6 +23,13 @@ class TerminalTest(BaseTest):
         modules.load_modules(session)
 
         self.terminal = Terminal(session)
+
+        self.brokensessionfiles = [
+            '/nonexistent',
+            '/tmp/sessionfile1',
+            '/tmp/sessionfile2',
+            '/tmp/sessionfile3'
+        ]
 
     def _assert_exec(self, line, expected, log_captured):
         line = self.terminal.precmd(line)
@@ -47,9 +62,10 @@ class TerminalTest(BaseTest):
     @log_capture()
     def test_session(self, log_captured):
 
-        # Test to generate a session with a wrong file
-        self.assertRaises(FatalException, lambda: SessionFile('BOGUS'))
-
+        # Test to open a session from wrong files
+        for path in self.brokensessionfiles:
+            self.assertRaises(FatalException, lambda: SessionFile(path))
+                
     @log_capture()
     def test_run_wrong_pass(self, log_captured):
 

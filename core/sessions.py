@@ -172,19 +172,21 @@ class SessionFile(Session):
                 (dbpath, str(e)))
             raise FatalException(messages.sessions.error_loading_sessions)
 
-        saved_url = sessiondb.get('url')
-        saved_password = sessiondb.get('password')
+        if sessiondb and isinstance(sessiondb, dict):
 
-        if saved_url and saved_password:
-            if not volatile:
-                # Register dump at exit and return
-                atexit.register(self._session_save_atexit)
+            saved_url = sessiondb.get('url')
+            saved_password = sessiondb.get('password')
 
-            self.load_session(sessiondb)
-            return
+            if saved_url and saved_password:
+                if not volatile:
+                    # Register dump at exit and return
+                    atexit.register(self._session_save_atexit)
+
+                self.load_session(sessiondb)
+                return
 
         log.warn(
-            messages.sessions.error_loading_file_s %
+            messages.generic.error_loading_file_s_s %
             (dbpath, 'no url or password'))
 
         raise FatalException(messages.sessions.error_loading_sessions)
