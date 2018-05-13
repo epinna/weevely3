@@ -1,6 +1,8 @@
 Weevely
 =======
 
+[![Build Status](https://travis-ci.org/epinna/weevely3.svg?branch=master)](https://travis-ci.org/epinna/weevely3)
+
 Weevely is a web shell designed for remote server administration and penetration testing that can be extended over the network at runtime with more than 30 modules.
 
 It executes remote code via an obfuscated PHP agent located on the compromised HTTP server. It fits both web administration and penetration testing post-exploitation scenarios to maintain access, provide situational awareness, escalate the privileges, and move laterally in the network.
