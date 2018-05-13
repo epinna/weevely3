@@ -9,14 +9,16 @@ import subprocess
 import os
 
 def setUpModule():
-    subprocess.check_output("""service mysql start""".format(
-config = config
-), shell=True)
+    try:
+        # This workaround fixes https://github.com/docker/for-linux/issues/72
+        subprocess.check_output("""find /var/lib/mysql -type f -exec touch {} \; && service mysql start""", shell=True)
+    except Exception as e:
+        print('[!] Failed mysql')
+        print(subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True))
+        raise
 
 def tearDownModule():
-    subprocess.check_output("""service mysql stop""".format(
-config = config
-), shell=True)
+    subprocess.check_output("""service mysql stop""", shell=True)
 
 class MySQLConsole(BaseTest):
 
