@@ -3,7 +3,7 @@ FROM python:2
 WORKDIR /app
 
 RUN apt-get update
-RUN apt-get -y install apache2 php5 libapache2-mod-php5 expect php5-curl php5-mysql zip unzip
+RUN apt-get -y install apache2 php libapache2-mod-php expect php-curl php-mysql zip unzip
 
 RUN bash -c "debconf-set-selections <<< 'mysql-server mysql-server/root_password password root'"
 RUN bash -c "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"

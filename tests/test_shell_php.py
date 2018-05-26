@@ -23,7 +23,7 @@ class ShellPHP(BaseTest):
         # this should warn about the missing PHP comma.
 
         self.assertEqual(self.run_argv(["echo(1)"]),"");
-        self.assertRegexpMatches(log_captured.records[-1].msg,
+        self.assertRegexpMatches(log_captured.records[-3].msg,
                                 messages.module_shell_php.missing_php_trailer_s % ".*echo\(1\)")
 
         # Check warnings on 404.
