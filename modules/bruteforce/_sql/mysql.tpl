@@ -14,10 +14,10 @@ $pwds=array (
 
 foreach($users as $u) {
     foreach($pwds as $p) {
-        $c=@mysql_connect("${ hostname }", "$u", "$p");
+        $c=@mysqli_connect("${ hostname }", "$u", "$p");
         if($c){
             print("$u:$p".PHP_EOL);
             break;
         }
     }
-}mysql_close();
+}mysqli_close();

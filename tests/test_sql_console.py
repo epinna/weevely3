@@ -17,9 +17,6 @@ def setUpModule():
         print(subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True))
         raise
 
-def tearDownModule():
-    subprocess.check_output("""service mysql stop""", shell=True)
-
 class MySQLConsole(BaseTest):
 
     def setUp(self):
@@ -60,9 +57,9 @@ class MySQLConsole(BaseTest):
 
         login = ['-user', config.sql_user, '-passwd', config.sql_passwd ]
 
-        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : '', 'result' : [["A"]] })
-        self.assertEqual(self.run_argv(login + ['-query', 'select @@hostname;'])['error'], '')
-        self.assertEqual(self.run_argv(login + ['-query', 'show databases;'])['error'], '')
+        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : u' ', 'result' : [[u"A"]] })
+        self.assertEqual(self.run_argv(login + ['-query', 'select @@hostname;'])['error'], u' ')
+        self.assertEqual(self.run_argv(login + ['-query', 'show databases;'])['error'], u' ')
 
         # The user is returned in the form `[[ user@host ]]`
         self.assertEqual(

@@ -24,11 +24,11 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """if(mysql_connect('${host}','${user}','${passwd}')){$r=mysql_query('${query}');if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysql_close();}echo '${errsep}'.@mysql_error();""",
+                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
                     name='mysql',
                 ),
                 PhpCode(
-                    """$r=mysql_query('${query}');if($r){while($c=mysql_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysql_close();echo '${errsep}'.@mysql_error();""",
+                    """$r=mysqli_query('${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close();echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
                     name="mysql_fallback"
                 ),
                 PhpCode(
@@ -49,7 +49,7 @@ class Console(Module):
         self.register_arguments([
             {'name': '-user', 'help': 'SQL username'},
             {'name': '-passwd', 'help': 'SQL password'},
-            {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': '127.0.0.1'},
+            {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': 'localhost'},
             {'name': '-dbms', 'help': 'Db type', 'choices': ('mysql', 'pgsql'), 'default': 'mysql'},
             {'name': '-database', 'help': 'Database name (Only PostgreSQL)'},
             {'name': '-query', 'help': 'Execute a single query'},
@@ -77,7 +77,7 @@ class Console(Module):
             result = unicode(result)
         except UnicodeError:
             result = unicode(result.decode(args.get('encoding')))
-
+        
         # If there is not errstr, something gone really bad (e.g. functions not callable)
         if errsep not in result:
             return {
@@ -88,7 +88,7 @@ class Console(Module):
 
             # Split result by errsep
             result, error = result.split(errsep)
-
+            
             return {
                 'error': error,
                 'result': [
