@@ -13,4 +13,7 @@ python ./weevely.py generate "$PWD" "$AGENT"
 service apache2 start
 service mysql start
 
+# Grant root user to connect from network socket
+mysql -u root --password=root -e "grant all privileges on *.* to 'root'@'localhost' identified by 'root'; flush privileges;"
+
 sleep 10000
