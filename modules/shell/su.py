@@ -9,7 +9,7 @@ import re
 
 class Su(Module):
 
-    """Elevate privileges with su command."""
+    """Execute commands with su."""
 
     aliases = [ 'ifconfig' ]
 

@@ -4,7 +4,7 @@ from core import modules
 
 class Etcpasswd(Module):
 
-    """Get /etc/passwd with different techniques."""
+    """Read /etc/passwd with different techniques."""
 
     def init(self):
 
