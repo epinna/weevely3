@@ -12,8 +12,8 @@ import zlib
 import httplib
 import string
 
-PREPEND = utils.strings.randstr(255, charset = string.printable)
-APPEND = utils.strings.randstr(8, charset = string.printable)
+PREPEND = utils.strings.randstr(16, charset = string.printable)
+APPEND = utils.strings.randstr(16, charset = string.printable)
 
 class ObfPost:
 
