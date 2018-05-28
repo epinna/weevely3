@@ -39,8 +39,10 @@ class ObfPost:
             "%sDEBUG(.*?)%sDEBUG" % (self.header, self.trailer), re.DOTALL
             )
 
-        # Load agents
-        self.agents = utils.http.load_all_agents()
+        # Load agent
+        agents = utils.http.load_all_agents()
+        random.shuffle(agents)
+        self.agent = agents[0]
 
         # Init additional headers list
         self.additional_headers = config.additional_headers
@@ -64,7 +66,7 @@ class ObfPost:
                 break
 
         opener.addheaders = [
-            ('User-Agent', (additional_ua if additional_ua else random.choice(self.agents)))
+            ('User-Agent', (additional_ua if additional_ua else self.agent))
         ] + self.additional_headers
 
         dlog.debug(
