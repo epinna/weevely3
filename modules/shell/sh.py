@@ -8,7 +8,7 @@ import random
 
 class Sh(Module):
 
-    """Execute Shell commands."""
+    """Execute shell commands."""
 
     def init(self):
 

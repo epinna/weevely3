@@ -7,7 +7,7 @@ import datetime
 
 class Webdownload(Module):
 
-    """Download URL to the filesystem"""
+    """Download an URL."""
 
     aliases = [ 'wget' ]
 

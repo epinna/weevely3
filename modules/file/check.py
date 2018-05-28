@@ -7,7 +7,7 @@ import datetime
 
 class Check(Module):
 
-    """Get remote file information."""
+    """Get attributes and permissions of a file."""
 
     def init(self):
 

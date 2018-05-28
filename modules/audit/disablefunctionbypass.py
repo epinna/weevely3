@@ -10,7 +10,7 @@ import os
 
 class Disablefunctionbypass(Module):
 
-    """ Bypassing system-like disable_function with mod_cgi and .htaccess"""
+    """Bypass disable_function restrictions with mod_cgi and .htaccess."""
 
     def init(self):
 

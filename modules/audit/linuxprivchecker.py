@@ -6,7 +6,7 @@ import os
 
 class Linuxprivchecker(Module):
 
-    """Upload and execute linuxprivchecker"""
+    """Upload and execute linuxprivchecker."""
 
     def init(self):
 

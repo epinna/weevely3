@@ -3,7 +3,7 @@ from core.module import Module
 
 class Clearlog(Module):
 
-    """Simple Clear Log"""
+    """Remove string from a file."""
 
     def init(self):
 

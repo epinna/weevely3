@@ -6,7 +6,7 @@ import utils
 
 class Filesystem(Module):
 
-    """Audit system files for wrong permissions."""
+    """Audit the file system for weak permissions."""
 
     def init(self):
 
