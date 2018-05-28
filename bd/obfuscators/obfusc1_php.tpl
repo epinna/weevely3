@@ -32,7 +32,7 @@ agent_minified = re.sub('[\n\r\t]','',agent)
 obfuscation_agent = find_substr_not_in_str(agent_minified)
 obfuscated_agent = obfuscate(agent_minified, obfuscation_agent, 6, ('eval', 'base64', 'gzuncompress', 'gzcompress'))
 
-agent_splitted_line_number = random.randint(10,14)
+agent_splitted_line_number = random.randint(5,8)
 
 agent_splitted = list(utils.strings.divide(obfuscated_agent, len(obfuscated_agent)/agent_splitted_line_number-random.randint(0,5), len(obfuscated_agent)/agent_splitted_line_number, agent_splitted_line_number))
 
