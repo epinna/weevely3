@@ -9,6 +9,7 @@ import base64
 import urllib2
 import hashlib
 import zlib
+import httplib
 
 class ObfPost:
 
