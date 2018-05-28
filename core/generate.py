@@ -5,7 +5,7 @@ from core import messages
 import utils
 import os
 
-def generate(password, obfuscator = 'obfusc1_php', agent = 'stegaref_php'):
+def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 
     obfuscator_path = os.path.join(
         obfuscators_templates_folder_path,

@@ -87,7 +87,7 @@ if __name__ == '__main__':
     generateparser.add_argument(
         '-agent', #The agent channel type
         choices = agents_available,
-        default = 'stegaref_php'
+        default = 'obfpost_php'
         )
 
     parser.set_default_subparser('terminal')
