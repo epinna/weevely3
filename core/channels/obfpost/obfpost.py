@@ -10,6 +10,10 @@ import urllib2
 import hashlib
 import zlib
 import httplib
+import string
+
+PREPEND = utils.strings.randstr(255, charset = string.printable)
+APPEND = utils.strings.randstr(8, charset = string.printable)
 
 class ObfPost:
 
@@ -49,7 +53,7 @@ class ObfPost:
                 zlib.compress(original_payload),
                 self.shared_key)).rstrip('=')
 
-        wrapped_payload = self.header + obfuscated_payload + self.trailer
+        wrapped_payload = PREPEND + self.header + obfuscated_payload + self.trailer + APPEND
 
         opener = urllib2.build_opener(*additional_handlers)
 
