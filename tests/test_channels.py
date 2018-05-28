@@ -93,7 +93,7 @@ class StegaRefChannelAdditionalHeaders(BaseStegaRefChannel):
 
 
 
-class StegaRefChannelWrongCert(BaseTest):
+class ObfPostChannelWrongCert(BaseTest):
 
     def setUp(self):
         
@@ -104,7 +104,7 @@ class StegaRefChannelWrongCert(BaseTest):
         url = 'https://%s/nonexistent' % (ip)
         
         self.channel = Channel(
-            'StegaRef',
+            'ObfPost',
             {
                 'url' : url,
                 'password' : 'none'

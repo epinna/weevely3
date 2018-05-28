@@ -6,7 +6,7 @@ base_folder = '/var/www/html/'
 base_url = 'http://localhost/'
 
 debug = False
-test_stress_channels = True
+test_stress_channels = False
 
 su_user = 'testuser'
 su_passwd = 'testuser'
