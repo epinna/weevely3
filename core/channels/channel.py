@@ -1,4 +1,3 @@
-from core.channels.stegaref.stegaref import StegaRef
 from core.weexceptions import ChannelException
 from urllib2 import HTTPError, URLError
 from core import messages
