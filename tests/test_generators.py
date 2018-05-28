@@ -29,12 +29,13 @@ class TestGenerators(TestCase):
             save_generated(obfuscated, self.path)
 
             self.channel = Channel(
-                'StegaRef',
+                'ObfPost',
                 {
                     'url' : self.url,
                     'password' : self.password
                 }
             )
+            self._incremental_requests(10, 100, 30, 50)
 
             self._clean_bd()
 
