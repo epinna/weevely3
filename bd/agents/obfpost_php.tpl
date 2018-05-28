@@ -4,7 +4,7 @@ key = passwordhash[:8]
 header = passwordhash[8:20]
 footer = passwordhash[20:32]
 
-PREPEND = utils.strings.randstr(24, charset = string.digits + string.letters + ' !#%&\()*+,-./:;<=>?@[]^_{|}~')
+PREPEND = utils.strings.randstr(24, charset = string.digits + string.letters)
 %>$k="${key}";
 $kh="${header}";
 $kf="${footer}";
