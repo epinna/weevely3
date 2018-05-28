@@ -1,5 +1,14 @@
 # Change Log
 
+## [v3.6] - [Unreleased]
+### Fixed
+- PHP 7 support
+- Add exceptions catches
+
+### Added
+- ObfPost is the default channel to obfuscate traffic in POST requests
+- Travic-CI integration
+
 ## [v3.5] - 2017-23-11
 ### Fixed
 - Connection to HTTPS sites with wrong certificates
