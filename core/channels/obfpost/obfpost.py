@@ -40,6 +40,7 @@ class ObfPost:
             )
 
         # Load agent
+        # TODO: add this to the other channels
         agents = utils.http.load_all_agents()
         random.shuffle(agents)
         self.agent = agents[0]
