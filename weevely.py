@@ -27,7 +27,8 @@ def main(arguments):
 
         log.info(
         messages.generate.generated_backdoor_with_password_s_in_s_size_i %
-        (arguments.password, arguments.path, len(obfuscated))
+        (arguments.path,
+        arguments.password, len(obfuscated))
         )
 
         return

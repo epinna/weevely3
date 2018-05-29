@@ -247,7 +247,7 @@ class module_shell_sh:
 class generate:
     error_agent_template_s_s = 'Error with agent template \'%s\': %s'
     error_obfuscator_template_s_s = 'Error with obfuscator template \'%s\': %s'
-    generated_backdoor_with_password_s_in_s_size_i = 'Generated backdoor with password \'%s\' in \'%s\' of %i byte size.'
+    generated_backdoor_with_password_s_in_s_size_i = 'Generated \'%s\' with password \'%s\' of %i byte size.'
 
 class utils_code:
     minify_php_missing_binary = 'Missing PHP binary, skipping PHP code minify'
