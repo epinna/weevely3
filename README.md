@@ -9,7 +9,7 @@ Upload weevely PHP agent to a target web server to get remote shell access to it
 
 Read the [Install](https://github.com/epinna/weevely3/wiki/Install) page to install weevely and its dependencies.
 
-Read the [Getting Started](https://github.com/epinna/weevely3/wiki/Install) page to generate an agent and connect to it.
+Read the [Getting Started](https://github.com/epinna/weevely3/wiki/Getting-Started) page to generate an agent and connect to it.
 
 Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and use cases.
 
