@@ -5,17 +5,17 @@ Weevely
 
 Weevely is a web shell designed for post-exploitation purposes that can be extended over the network at runtime.
 
-Upload its PHP agent to a target web server to get remote shell access to it. It has more than 30 modules to assist administrative tasks, maintain access, provide situational awareness, elevate privileges, and move laterally in the network.
+Upload weevely PHP agent to a target web server to get remote shell access to it. It has more than 30 modules to assist administrative tasks, maintain access, provide situational awareness, elevate privileges, and spread into the target network.
 
-Read the [Install](https://github.com/epinna/weevely3/wiki/Install) wiki page to install weevely and its dependencies.
+Read the [Install](https://github.com/epinna/weevely3/wiki/Install) page to install weevely and its dependencies.
 
-Generate and upload the agent and to get access to a server as shown in the [Getting Started](https://github.com/epinna/weevely3/wiki/Install) wiki page.
+Read the [Getting Started](https://github.com/epinna/weevely3/wiki/Install) page to generate an agent and connect to it.
 
-See the [Wiki](https://github.com/epinna/weevely3/wiki) home page on how to see examples and use cases.
+Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and use cases.
 
 **Features** 
 
-* Shell commands execution on a terminal
+* Shell access to the target
 * SQL console pivoting on the target
 * HTTP proxy pivoting on the target
 * Upload and download files
@@ -28,7 +28,7 @@ See the [Wiki](https://github.com/epinna/weevely3/wiki) home page on how to see 
 
 **Agent**
 
-The agent is a small, polymorphic PHP script which is hardly detectable by AV software, and the communication between the client and the agent is obfuscated within HTTP requests.
+The agent is a small, polymorphic PHP script hardly detected by AV and the communication protocol is obfuscated within HTTP requests.
 
 **Modules**
 
@@ -77,7 +77,6 @@ The agent is a small, polymorphic PHP script which is hardly detectable by AV so
 | :net_phpproxy               |  Install PHP proxy on the target.
 | :net_curl                   |  Perform a curl-like HTTP request.
 | :net_proxy                  |  Proxify local HTTP traffic passing through the target.
-| :net_socksproxy             |  Forward local TCP traffic through the target via reGeorg.
 | :net_scan                   |  TCP Port scan.
 | :net_ifconfig               |  Get network interfaces addresses.
 
