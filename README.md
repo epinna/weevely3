@@ -7,11 +7,11 @@ Weevely is a web shell designed for post-exploitation purposes that can be exten
 
 Upload its PHP agent to a target web server to get remote shell access to it. It has more than 30 modules to assist administrative tasks, maintain access, provide situational awareness, elevate privileges, and move laterally in the network.
 
-Read the [Install](Install) wiki page to install weevely and its dependencies.
+Read the [Install](https://github.com/epinna/weevely3/wiki/Install) wiki page to install weevely and its dependencies.
 
-Generate and upload the agent and to get access to a server as shown in the [Getting Started](Getting-Started) wiki page.
+Generate and upload the agent and to get access to a server as shown in the [Getting Started](https://github.com/epinna/weevely3/wiki/Install) wiki page.
 
-See the [Wiki](wiki) home page on how to see examples and use cases.
+See the [Wiki](https://github.com/epinna/weevely3/wiki) home page on how to see examples and use cases.
 
 **Features** 
 
