@@ -1,6 +1,6 @@
 # Change Log
 
-## [v3.6] - [Unreleased]
+## [v3.6] - 2018-06-02
 ### Fixed
 - PHP 7 support
 - Add exceptions catches
