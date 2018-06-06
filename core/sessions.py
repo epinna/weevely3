@@ -221,7 +221,9 @@ class SessionURL(Session):
                 log.warn(
                     messages.generic.error_loading_file_s_s %
                     (dbpath, str(e)))
-            else:
+
+            if sessiondb and isinstance(sessiondb, dict):
+
                 saved_url = sessiondb.get('url')
                 saved_password = sessiondb.get('password')
 
