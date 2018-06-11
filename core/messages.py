@@ -1,4 +1,4 @@
-version = '3.6'
+version = '3.5'
 
 class generic:
     file_s_not_found = "File '%s' not found"
@@ -11,13 +11,13 @@ class generic:
 [+] weevely %s
 [!] Error: %s
 
-[+] Run terminal to the target
+[+] Run terminal or command on the target
     weevely <URL> <password> [cmd]
 
-[+] Load session file
+[+] Recover an existing session
     weevely session <path> [cmd]
 
-[+] Generate backdoor agent
+[+] Generate new agent
     weevely generate <password> <path>
 
 """

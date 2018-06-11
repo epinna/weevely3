@@ -58,14 +58,14 @@ if __name__ == '__main__':
     parser = CliParser(prog='weevely')
     subparsers = parser.add_subparsers(dest = 'command')
 
-    terminalparser = subparsers.add_parser('terminal', help='Run terminal')
+    terminalparser = subparsers.add_parser('terminal', help='Run terminal or command on the target')
     terminalparser.add_argument('url', help = 'The agent URL')
     terminalparser.add_argument('password', help = 'The agent password')
-    terminalparser.add_argument('cmd', help = 'Direct command', nargs='?')
+    terminalparser.add_argument('cmd', help = 'Command', nargs='?')
 
-    sessionparser = subparsers.add_parser('session', help='Recover an existant a session file')
-    sessionparser.add_argument('path', help = 'The session file to load')
-    sessionparser.add_argument('cmd', help = 'Direct command', nargs='?')
+    sessionparser = subparsers.add_parser('session', help='Recover an existing session')
+    sessionparser.add_argument('path', help = 'Session file path')
+    sessionparser.add_argument('cmd', help = 'Command', nargs='?')
 
     agents_available = [
         os.path.split(agent)[1].split('.')[0] for agent in
@@ -77,9 +77,9 @@ if __name__ == '__main__':
         glob.glob('%s/*.tpl' % obfuscators_templates_folder_path)
     ]
 
-    generateparser = subparsers.add_parser('generate', help='Generate a new password')
-    generateparser.add_argument('password', help = 'The agent password')
-    generateparser.add_argument('path', help = 'Where save the generated agent')
+    generateparser = subparsers.add_parser('generate', help='Generate new agent')
+    generateparser.add_argument('password', help = 'Agent password')
+    generateparser.add_argument('path', help = 'Agent file path')
     generateparser.add_argument(
         '-obfuscator', #The obfuscation method
         choices = obfuscators_available,
