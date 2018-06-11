@@ -7,6 +7,13 @@ Weevely
 
 Weevely - Weaponized web shell
 
+## Usage
+
+```
+weevely generate <password> <path>
+weevely <URL> <password> [cmd]
+```
+  
 ## Description
 
 Weevely is a web shell designed for post-exploitation purposes that can be extended over the network at runtime.
