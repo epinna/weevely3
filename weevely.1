@@ -1,0 +1,293 @@
+.TH WEEVELY "1" "June 2018" "weevely 3.2.0" "User Commands"
+.SH NAME
+Weevely \- Weaponized web shell
+.SH DESCRIPTION
+.PP
+A web shell designed for post\-exploitation purposes that can
+be extended over the network at runtime.
+.PP
+Upload weevely PHP agent to a target web server to get remote shell
+access to it.
+Once connected you can make use of the more than 30 modules to assist
+administrative tasks, maintain access, provide situational awareness,
+elevate privileges, and spread into the target network.
+.SH SYNOPSIS
+.nf
+\f[C]
+Run terminal to the target
+\fBweevely\ <URL>\ <password>\ [cmd]\fR
+
+Generate backdoor agent
+\fBweevely\ generate\ <password>\ <path>\fR
+
+Load session file
+\fBweevely\ session\ <path>\fR
+\f[]
+
+.SS Features
+.IP \[bu] 2
+Shell access to the target
+.IP \[bu] 2
+SQL console pivoting on the target
+.IP \[bu] 2
+HTTP proxy pivoting on the target
+.IP \[bu] 2
+Upload and download files
+.IP \[bu] 2
+Spawn reverse and direct TCP shells
+.IP \[bu] 2
+Audit remote target security
+.IP \[bu] 2
+Run Meterpreter payloads
+.IP \[bu] 2
+Port scan pivoting on target
+.IP \[bu] 2
+Mount the remote filesystem
+.IP \[bu] 2
+Bruteforce SQL accounts pivoting on the target
+.SS Agent
+.PP
+The agent is a small, polymorphic PHP script hardly detected by AV and
+the communication protocol is obfuscated within HTTP requests.
+.SS Modules
+.PP
+.TS
+tab(@);
+lw(27.4n) lw(42.6n).
+T{
+Module
+T}@T{
+Description
+T}
+_
+T{
+:audit_filesystem
+T}@T{
+Audit the file system for weak permissions.
+T}
+T{
+:audit_suidsgid
+T}@T{
+Find files with SUID or SGID flags.
+T}
+T{
+:audit_disablefunctionbypass
+T}@T{
+Bypass disable_function restrictions with mod_cgi and .htaccess.
+T}
+T{
+:audit_etcpasswd
+T}@T{
+Read /etc/passwd with different techniques.
+T}
+T{
+:audit_linuxprivchecker
+T}@T{
+Upload and execute linuxprivchecker.
+T}
+T{
+:audit_phpconf
+T}@T{
+Audit PHP configuration.
+T}
+T{
+:shell_sh
+T}@T{
+Execute shell commands.
+T}
+T{
+:shell_su
+T}@T{
+Execute commands with su.
+T}
+T{
+:shell_php
+T}@T{
+Execute PHP commands.
+T}
+T{
+:system_extensions
+T}@T{
+Collect PHP and webserver extension list.
+T}
+T{
+:system_info
+T}@T{
+Collect system information.
+T}
+T{
+:system_procs
+T}@T{
+List running processes.
+T}
+T{
+:backdoor_reversetcp
+T}@T{
+Execute a reverse TCP shell.
+T}
+T{
+:backdoor_tcp
+T}@T{
+Spawn a shell on a TCP port.
+T}
+T{
+:backdoor_meterpreter
+T}@T{
+Start a meterpreter session.
+T}
+T{
+:bruteforce_sql
+T}@T{
+Bruteforce SQL database.
+T}
+T{
+:file_gzip
+T}@T{
+Compress or expand gzip files.
+T}
+T{
+:file_clearlog
+T}@T{
+Remove string from a file.
+T}
+T{
+:file_check
+T}@T{
+Get attributes and permissions of a file.
+T}
+T{
+:file_upload
+T}@T{
+Upload file to remote filesystem.
+T}
+T{
+:file_webdownload
+T}@T{
+Download an URL.
+T}
+T{
+:file_tar
+T}@T{
+Compress or expand tar archives.
+T}
+T{
+:file_download
+T}@T{
+Download file from remote filesystem.
+T}
+T{
+:file_bzip2
+T}@T{
+Compress or expand bzip2 files.
+T}
+T{
+:file_edit
+T}@T{
+Edit remote file on a local editor.
+T}
+T{
+:file_grep
+T}@T{
+Print lines matching a pattern in multiple files.
+T}
+T{
+:file_ls
+T}@T{
+List directory content.
+T}
+T{
+:file_cp
+T}@T{
+Copy single file.
+T}
+T{
+:file_rm
+T}@T{
+Remove remote file.
+T}
+T{
+:file_upload2web
+T}@T{
+Upload file automatically to a web folder and get corresponding URL.
+T}
+T{
+:file_zip
+T}@T{
+Compress or expand zip files.
+T}
+T{
+:file_touch
+T}@T{
+Change file timestamp.
+T}
+T{
+:file_find
+T}@T{
+Find files with given names and attributes.
+T}
+T{
+:file_mount
+T}@T{
+Mount remote filesystem using HTTPfs.
+T}
+T{
+:file_enum
+T}@T{
+Check existence and permissions of a list of paths.
+T}
+T{
+:file_read
+T}@T{
+Read remote file from the remote filesystem.
+T}
+T{
+:file_cd
+T}@T{
+Change current working directory.
+T}
+T{
+:sql_console
+T}@T{
+Execute SQL query or run console.
+T}
+T{
+:sql_dump
+T}@T{
+Multi dbms mysqldump replacement.
+T}
+T{
+:net_mail
+T}@T{
+Send mail.
+T}
+T{
+:net_phpproxy
+T}@T{
+Install PHP proxy on the target.
+T}
+T{
+:net_curl
+T}@T{
+Perform a curl\-like HTTP request.
+T}
+T{
+:net_proxy
+T}@T{
+Proxify local HTTP traffic passing through the target.
+T}
+T{
+:net_scan
+T}@T{
+TCP Port scan.
+T}
+T{
+:net_ifconfig
+T}@T{
+Get network interfaces addresses.
+T}
+.TE
+.SH SEE ALSO
+https://github.com/epinna/weevely3/wiki
+.SH AUTHOR
+weevely is developed by The Weevely Developers, this manpage was made by Emilio <epinna> and Samuel Henrique <samueloph@debian.org> based on weevely's README.md and can be used by other projects as well.
+
