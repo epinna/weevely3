@@ -1,5 +1,13 @@
 # Change Log
 
+## [v3.6.1] - 2018-06-26
+### Fixed
+- Fixed corrupted session file #83
+- Vendor files licensing
+
+### Added
+- Man page
+
 ## [v3.6] - 2018-06-02
 ### Fixed
 - PHP 7 support
