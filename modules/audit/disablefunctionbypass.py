@@ -1,3 +1,4 @@
+#!/usr/env python
 from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module, Status
 from core.loggers import log
