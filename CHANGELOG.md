@@ -1,5 +1,9 @@
 # Change Log
 
+## [v3.6.2] - 2018-06-27
+### Fixed
+- Remove audit_linuxprivchecker module
+
 ## [v3.6.1] - 2018-06-26
 ### Fixed
 - Fixed corrupted session file #83
