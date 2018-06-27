@@ -51,7 +51,6 @@ The agent is a small, polymorphic PHP script hardly detected by AV and the commu
 | :audit_suidsgid             |  Find files with SUID or SGID flags.
 | :audit_disablefunctionbypass|  Bypass disable_function restrictions with mod_cgi and .htaccess.
 | :audit_etcpasswd            |  Read /etc/passwd with different techniques.
-| :audit_linuxprivchecker     |  Upload and execute linuxprivchecker.
 | :audit_phpconf              |  Audit PHP configuration.
 | :shell_sh                   |  Execute shell commands.
 | :shell_su                   |  Execute commands with su.
