@@ -1,5 +1,4 @@
 from tests.base_test import BaseTest
-from testfixtures import log_capture
 from tests import config
 from core.sessions import SessionURL
 from core import modules
@@ -9,6 +8,7 @@ import logging
 import tempfile
 import os
 import re
+import time
 
 def setUpModule():
     subprocess.check_output("""
@@ -31,23 +31,36 @@ class Proxy(BaseTest):
 
         self.checkurl = 'http://localhost/test_net_proxy/check1.php'
 
-        modules.loaded['net_proxy'].run_argv([ ])
+        modules.loaded['net_proxy'].run_argv([ '-lhost', '0.0.0.0', '-lport', '8080' ])
+        
 
     def run_argv(self, arguments):
 
-        arguments += [ '--proxy', 'localhost:8080' ]
+        arguments += [ '--proxy', '127.0.0.1:8080' ]
         result = subprocess.check_output(
-            'curl -s "%s"' % ('" "'.join(arguments)),
+            'curl -s --cacert ~/.weevely/certs/ca.crt "%s"' % ('" "'.join(arguments)),
             shell=True).strip()
 
-        return result if result != 'None' else None
+        return result
 
 
     def _clean_result(self, result):
         return result if not result else re.sub('[\n]|[ ]{2,}',' ', result)
 
-    @log_capture()
-    def test_all(self, log_captured):
+    def test_all(self):
+
+
+        # Simple HTTPS GET with no SSL check
+        self.assertIn(
+            'Google',
+            self._clean_result(self.run_argv([ 'https://www.google.com', '-k' ]))
+        )
+
+        # Simple HTTPS GET with cacert
+        self.assertIn(
+            'Google',
+            self._clean_result(self.run_argv([ 'https://www.google.com' ]))
+        )
 
         # Simple GET
         self.assertIn(
@@ -97,16 +110,10 @@ class Proxy(BaseTest):
         )
 
         # UNREACHABLE
-        self.assertIsNone(self.run_argv([ 'http://co.uk:0' ]))
-        self.assertEqual(messages.module_net_curl.unexpected_response,
-                         log_captured.records[-1].msg)
+        self.assertIn('Message: Bad Gateway.', self.run_argv([ 'http://co.uk:0' ]))
 
         # FILTERED
-        self.assertIsNone(self.run_argv([ 'http://www.google.com:9999', '--connect-timeout', '1' ]))
-        self.assertEqual(messages.module_net_curl.unexpected_response,
-                         log_captured.records[-1].msg)
+        self.assertIn('Message: Bad Gateway.', self.run_argv([ 'http://www.google.com:9999', '--connect-timeout', '1' ]))
 
         # CLOSED
-        self.assertIsNone(self.run_argv([ 'http://localhost:9999', '--connect-timeout', '1' ]))
-        self.assertEqual(messages.module_net_curl.unexpected_response,
-                         log_captured.records[-1].msg)
+        self.assertIn('Message: Bad Gateway.', self.run_argv([ 'http://localhost:9999', '--connect-timeout', '1' ]))

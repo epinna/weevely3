@@ -200,11 +200,10 @@ class module_net_curl:
     unexpected_response = 'Unexpected response, please check URL reachability'
 
 class module_net_proxy:
-    https_not_implemented = 'HTTPS connection is not implemented, use module :net_phpproxy'
-    request_timed_out_s = 'Request timed out: %s'
-    proxy_set_address_s_i = 'Set proxy address to your browser as \'http://%s:%i\' and start browsing'
-    proxy_started_background = 'Background proxy started, will shutdown at weevely exit'
-    proxy_started_foreground = 'Foreground proxy started, press Ctrl-C to force shutdown'
+    proxy_starting_s_i = 'Starting HTTP/HTTPS proxy at \'http://%s:%i\''
+    proxy_set_proxy = 'Set the proxy to tunnel through the target. Visit \'http://weevely/\' to install the certificate'
+    proxy_started_background = 'Proxy has been started in background and will shutdown at exit'
+    proxy_started_foreground = 'Foreground proxy has been started, press Ctrl-C to stop it'
 
 class module_net_phpproxy:
     phpproxy_installed_to_s_browser_to_s = 'PHP proxy installed to \'%s\', browse \'%s\' with your browser'
