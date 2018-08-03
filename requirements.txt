@@ -4,3 +4,4 @@ PyYAML
 python-dateutil
 PySocks
 readline
+pyOpenSSL

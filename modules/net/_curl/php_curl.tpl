@@ -4,6 +4,7 @@ curl_setopt($ch, CURLOPT_URL, '${url}');
 
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "${ request if not data else 'POST' }");
 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ${ connect_timeout });
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
 
 % if header or cookie or user_agent or data:
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
