@@ -30,7 +30,7 @@ Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and 
 
 * Shell access to the target
 * SQL console pivoting on the target
-* HTTP proxy pivoting on the target
+* HTTP/HTTPS proxy to browse through the target
 * Upload and download files
 * Spawn reverse and direct TCP shells
 * Audit remote target security
@@ -88,7 +88,7 @@ The agent is a small, polymorphic PHP script hardly detected by AV and the commu
 | :net_mail                   |  Send mail.
 | :net_phpproxy               |  Install PHP proxy on the target.
 | :net_curl                   |  Perform a curl-like HTTP request.
-| :net_proxy                  |  Proxify local HTTP traffic passing through the target.
+| :net_proxy                  |  Run local proxy to pivot HTTP/HTTPS browsing through the target.
 | :net_scan                   |  TCP Port scan.
 | :net_ifconfig               |  Get network interfaces addresses.
 
