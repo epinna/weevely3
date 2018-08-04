@@ -34,11 +34,11 @@ class Proxy(BaseTest):
         modules.loaded['net_proxy'].run_argv([ '-lhost', '0.0.0.0', '-lport', '8080' ])
         
 
-    def run_argv(self, arguments):
+    def run_argv(self, arguments, cacert = ''):
 
         arguments += [ '--proxy', '127.0.0.1:8080' ]
         result = subprocess.check_output(
-            'curl -s --cacert ~/.weevely/certs/ca.crt "%s"' % ('" "'.join(arguments)),
+            'curl -s %s "%s"' % (cacert, '" "'.join(arguments)),
             shell=True).strip()
 
         return result
@@ -50,17 +50,25 @@ class Proxy(BaseTest):
     def test_all(self):
 
 
-        # Simple HTTPS GET with no SSL check
+        #  HTTPS GET with no SSL check
         self.assertIn(
             'Google',
             self._clean_result(self.run_argv([ 'https://www.google.com', '-k' ]))
         )
 
-        # Simple HTTPS GET with cacert
+        #  HTTPS GET with cacert
         self.assertIn(
             'Google',
-            self._clean_result(self.run_argv([ 'https://www.google.com' ]))
+            self._clean_result(self.run_argv([ 'https://www.google.com' ], cacert='--cacert ~/.weevely/certs/ca.crt'))
         )
+        
+        # HTTPS without cacert
+        try:
+            self.run_argv([ 'https://www.google.com' ])
+        except subprocess.CalledProcessError:
+            pass
+        else:
+            fail("No error")
 
         # Simple GET
         self.assertIn(
