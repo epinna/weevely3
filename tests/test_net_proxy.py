@@ -68,7 +68,7 @@ class Proxy(BaseTest):
         except subprocess.CalledProcessError:
             pass
         else:
-            fail("No error")
+            self.fail("No error")
 
         # Simple GET
         self.assertIn(
