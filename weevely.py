@@ -13,34 +13,34 @@ import glob
 import os
 import sys
 
-def main(arguments):
+def main(Arguments):
 
-    if arguments.command == 'generate':
+    if Arguments.command == 'generate':
 
         obfuscated = generate.generate(
-            password = arguments.password,
-            obfuscator = arguments.obfuscator,
-            agent = arguments.agent
+            password = Arguments.password,
+            obfuscator = Arguments.obfuscator,
+            agent = Arguments.agent
         )
 
-        generate.save_generated(obfuscated, arguments.path)
+        generate.save_generated(obfuscated, Arguments.path)
 
         log.info(
         messages.generate.generated_backdoor_with_password_s_in_s_size_i %
-        (arguments.path,
-        arguments.password, len(obfuscated))
+        (Arguments.path,
+        Arguments.password, len(obfuscated))
         )
 
         return
 
-    elif arguments.command == 'terminal':
+    elif Arguments.command == 'terminal':
         session = SessionURL(
-            url = arguments.url,
-            password = arguments.password
+            url = Arguments.url,
+            password = Arguments.password
         )
 
-    elif arguments.command == 'session':
-        session = SessionFile(arguments.path)
+    elif Arguments.command == 'session':
+        session = SessionFile(Arguments.path)
 
     dlog.debug(
         pprint.pformat(session)
@@ -48,24 +48,24 @@ def main(arguments):
 
     modules.load_modules(session)
 
-    if not arguments.cmd:
+    if not Arguments.cmd:
         Terminal(session).cmdloop()
     else:
-        Terminal(session).onecmd(arguments.cmd)
+        Terminal(session).onecmd(Arguments.cmd)
 
 if __name__ == '__main__':
 
     parser = CliParser(prog='weevely')
     subparsers = parser.add_subparsers(dest = 'command')
 
-    terminalparser = subparsers.add_parser('terminal', help='Run terminal or command on the target')
-    terminalparser.add_argument('url', help = 'The agent URL')
-    terminalparser.add_argument('password', help = 'The agent password')
-    terminalparser.add_argument('cmd', help = 'Command', nargs='?')
+    TerminalParser = subparsers.add_parser('terminal', help='Run terminal or command on the target')
+    TerminalParser.add_argument('url', help = 'The agent URL')
+    TerminalParser.add_argument('password', help = 'The agent password')
+    TerminalParser.add_argument('cmd', help = 'Command', nargs='?')
 
-    sessionparser = subparsers.add_parser('session', help='Recover an existing session')
-    sessionparser.add_argument('path', help = 'Session file path')
-    sessionparser.add_argument('cmd', help = 'Command', nargs='?')
+    SessionParser = subparsers.add_parser('session', help='Recover an existing session')
+    SessionParser.add_argument('path', help = 'Session file path')
+    SessionParser.add_argument('cmd', help = 'Command', nargs='?')
 
     agents_available = [
         os.path.split(agent)[1].split('.')[0] for agent in
@@ -77,15 +77,15 @@ if __name__ == '__main__':
         glob.glob('%s/*.tpl' % obfuscators_templates_folder_path)
     ]
 
-    generateparser = subparsers.add_parser('generate', help='Generate new agent')
-    generateparser.add_argument('password', help = 'Agent password')
-    generateparser.add_argument('path', help = 'Agent file path')
-    generateparser.add_argument(
+    GenerateParser = subparsers.add_parser('generate', help='Generate new agent')
+    GenerateParser.add_argument('password', help = 'Agent password')
+    GenerateParser.add_argument('path', help = 'Agent file path')
+    GenerateParser.add_argument(
         '-obfuscator', #The obfuscation method
         choices = obfuscators_available,
         default = 'obfusc1_php'
         )
-    generateparser.add_argument(
+    GenerateParser.add_argument(
         '-agent', #The agent channel type
         choices = agents_available,
         default = 'obfpost_php'
@@ -93,10 +93,10 @@ if __name__ == '__main__':
 
     parser.set_default_subparser('terminal')
 
-    arguments = parser.parse_args()
+    Arguments = parser.parse_args()
 
     try:
-        main(arguments)
+        main(Arguments)
     except (KeyboardInterrupt, EOFError):
         log.info('Exiting.')
     except FatalException as e:
