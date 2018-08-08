@@ -19,8 +19,6 @@ import select
 import httplib
 import urlparse
 import threading
-import gzip
-import zlib
 import time
 import json
 import re
@@ -167,14 +165,13 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         
-
         if self.path == 'http://weevely/':
             self.send_cacert()
             return
 
         req = self
         content_length = int(req.headers.get('Content-Length', 0))
-        req_body = self.rfile.read(content_length) if content_length else None
+        req_body = self.rfile.read(content_length) if content_length else ''
 
         if req.path[0] == '/':
             if isinstance(self.connection, ssl.SSLSocket):
@@ -182,13 +179,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
             else:
                 req.path = "http://%s%s" % (req.headers['Host'], req.path)
 
-        req_body_modified = self.request_handler(req, req_body)
-        if req_body_modified is False:
-            self.send_error(403)
-            return
-        elif req_body_modified is not None:
-            req_body = req_body_modified
-            req.headers['Content-length'] = str(len(req_body))
+        req.headers['Content-length'] = str(len(req_body))
 
         u = urlparse.urlsplit(req.path)
         scheme, netloc, path = u.scheme, u.netloc, (u.path + '?' + u.query if u.query else u.path)
@@ -240,7 +231,6 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
                 
         # support streaming
         if not 'Content-Length' in res.headers and 'no-store' in res.headers.get('Cache-Control', ''):
-            self.response_handler(req, req_body, res, '')
             setattr(res, 'headers', self.filter_headers(res.headers))
             self.relay_streaming(res)
             return
@@ -251,18 +241,6 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
             log.debug(e)
             self.send_error(500)
             return
-
-        content_encoding = res.headers.get('Content-Encoding', 'identity')
-        res_body_plain = self.decode_content_body(res_body, content_encoding)
-
-        res_body_modified = self.response_handler(req, req_body, res, res_body_plain)
-        if res_body_modified is False:
-            self.send_error(403)
-            return
-        elif res_body_modified is not None:
-            res_body_plain = res_body_modified
-            res_body = self.encode_content_body(res_body_plain, content_encoding)
-            res.headers['Content-Length'] = str(len(res_body))
 
         setattr(res, 'headers', self.filter_headers(res.headers))
 
@@ -301,44 +279,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         for k in hop_by_hop:
             del headers[k]
 
-        # accept only supported encodings
-        if 'Accept-Encoding' in headers:
-            ae = headers['Accept-Encoding']
-            filtered_encodings = [x for x in re.split(r',\s*', ae) if x in ('identity', 'gzip', 'x-gzip', 'deflate')]
-            headers['Accept-Encoding'] = ', '.join(filtered_encodings)
-
         return headers
-
-    def encode_content_body(self, text, encoding):
-        if encoding == 'identity':
-            data = text
-        elif encoding in ('gzip', 'x-gzip'):
-            io = StringIO()
-            with gzip.GzipFile(fileobj=io, mode='wb') as f:
-                f.write(text)
-            data = io.getvalue()
-        elif encoding == 'deflate':
-            data = zlib.compress(text)
-        else:
-            raise Exception("Unknown Content-Encoding: %s" % encoding)
-        return data
-
-    def decode_content_body(self, data, encoding):
-        if encoding == 'identity':
-            text = data
-        elif encoding in ('gzip', 'x-gzip'):
-            io = StringIO(data)
-            with gzip.GzipFile(fileobj=io) as f:
-                text = f.read()
-        elif encoding == 'deflate':
-            try:
-                text = zlib.decompress(data)
-            except zlib.error:
-                text = zlib.decompress(data, -zlib.MAX_WBITS)
-        else:
-            raise Exception("Unknown Content-Encoding: %s" % encoding)
-            
-        return text
 
     def send_cacert(self):
         with open(self.cacert, 'rb') as f:
@@ -350,12 +291,6 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Connection', 'close')
         self.end_headers()
         self.wfile.write(data)
-
-    def request_handler(self, req, req_body):
-        pass
-
-    def response_handler(self, req, req_body, res, res_body):
-        pass
 
 
 def run_proxy2(HandlerClass=ProxyRequestHandler, ServerClass=ThreadingHTTPServer, protocol="HTTP/1.1", hostname='127.0.0.1', port = '8080'):
