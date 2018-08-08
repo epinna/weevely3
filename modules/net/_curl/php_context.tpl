@@ -19,13 +19,12 @@ $opts = array(
 % endif
 % if data:
             'Content-Type: application/x-www-form-urlencoded',
-            'Content-Length: ${ len(''.join(data)) }',
 % endif
 % if header or cookie or user_agent or data:
     ),
 % endif
 % if data:
-    'content' => '${ ''.join(data) }',
+    'content' => "${ ''.join(data) }",
 % endif
   )
 );

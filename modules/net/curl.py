@@ -4,6 +4,7 @@ from core import modules
 from core import messages
 from core.loggers import log
 import os
+from ast import literal_eval
 
 class Curl(Module):
 
@@ -45,7 +46,7 @@ class Curl(Module):
               name = 'php_httprequest1',
             ),
             ShellCmd(
-              payload = """curl -s -i ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } ${ ' '.join([ "-d '%s'" % d for d in data ]) } '${ url }'""",
+              payload = """curl -s -i ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } --data-binary '${ ' '.join(data) }' '${ url }'""",
               name = 'sh_curl'
             )
             ]
@@ -75,6 +76,8 @@ class Curl(Module):
 
         headers = []
         saved = None
+        
+        self.args['data'] = [ repr(x).strip('\'') for x in self.args['data'] ]
 
         vector_name, result = self.vectors.find_first_result(
                 names = [ self.args.get('vector') ],

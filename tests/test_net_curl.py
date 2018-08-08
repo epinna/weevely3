@@ -9,6 +9,7 @@ import logging
 import tempfile
 import os
 import re
+import hashlib
 
 def setUpModule():
     subprocess.check_output("""
@@ -18,6 +19,7 @@ rm -rf "$BASE_FOLDER"
 mkdir -p "$BASE_FOLDER"
 echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
 echo -n '1' > "$BASE_FOLDER/check2.html"
+echo -n '<?php print($_REQUEST['data']); ?>' > "$BASE_FOLDER/check3.php"
 chown www-data: -R "$BASE_FOLDER/"
 """.format(
 config = config
@@ -32,6 +34,7 @@ class Curl(BaseTest):
         self.urls = [
             config.base_url + '/test_net_curl/check1.php',
             config.base_url + '/test_net_curl/check2.html',
+            config.base_url + '/test_net_curl/check3.php',
         ]
 
         self.vector_list = modules.loaded['net_curl'].vectors.get_names()
@@ -89,6 +92,25 @@ class Curl(BaseTest):
                 '[f1] => data1  [f2] => data2',
                 result
             )
+
+            # POST request with binary string
+            result = self._clean_result(self.run_argv([ self.urls[0], '--data', 'FIELD=D\x41\x54A\x00B', '-vector', vect ])[0])
+            self.assertIn(
+                '[REQUEST_METHOD] => POST',
+                result
+            )
+            self.assertIn(
+                '[FIELD] => DATA',
+                result
+            )
+
+            # # POST request with binary data
+            # bindata = '\xbe\x00\xc8d\xf8d\x08\xe4'
+            # result = self._clean_result(self.run_argv([ self.urls[2], '--data', 'data=' + bindata, '-vector', vect ])[0])
+            # self.assertEqual(
+            #     hashlib.md5(bindata).hexdigest(),
+            #     result
+            # )
 
             # GET request with URL
             result = self._clean_result(self.run_argv([ self.urls[0] + '/?f1=data1&f2=data2', '-vector', vect ])[0])

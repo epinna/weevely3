@@ -22,7 +22,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 % endif
 % if data:
           'Content-Type: application/x-www-form-urlencoded',
-          'Content-Length: ${ len(''.join(data)) }',
 % endif
 % if header or cookie or user_agent or data:
   ));
@@ -30,7 +29,7 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 
 % if data:
 curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, '${ ''.join(data) }');
+curl_setopt($ch, CURLOPT_POSTFIELDS, "${ ''.join(data) }");
 % endif
 
 curl_setopt($ch, CURLOPT_HEADER, 1);
