@@ -29,6 +29,9 @@ from subprocess import Popen, PIPE
 from HTMLParser import HTMLParser
 from tempfile import mkdtemp
 
+re_valid_ip = re.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
+re_valid_hostname  = re.compile("^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$")
+
 temp_certdir = mkdtemp()
 
 class FakeSocket():
@@ -113,6 +116,10 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         hostname = self.path.split(':')[0]
         certname = "%s.crt" % (hostname)
         certpath = os.path.join(self.certdir, certname)
+
+        if not (re_valid_ip.match(hostname) or re_valid_hostname.match(hostname)):
+            log.warn("CN name '%s' is not valid, using 'www.weevely.com'" % (hostname))
+            hostname = 'www.weevely.com'
 
         with self.lock:
             if not os.path.isfile(certpath):
