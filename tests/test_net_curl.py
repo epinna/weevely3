@@ -61,7 +61,7 @@ class Curl(BaseTest):
                 self._clean_result(self.run_argv([ self.urls[0], '-X', 'PUT', '-vector', vect ])[0])
             )
 
-            # PUT request
+            # OPTIONS request
             self.assertIn(
                 '[REQUEST_METHOD] => OPTIONS',
                 self._clean_result(self.run_argv([ self.urls[0], '-X', 'OPTIONS', '-vector', vect ])[0])
