@@ -22,7 +22,7 @@ if(class_exists('HttpRequest')) {
     % endif
 
     % if data:
-    $r->addRawPostData('${ ''.join(data) }');
+    $r->addRawPostData("${ ''.join(data) }");
     % endif
 
     try {

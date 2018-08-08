@@ -263,7 +263,7 @@ class PhpFile(PhpCode):
         return [
                  Template(
                         text = arg,
-                        lookup = TemplateLookup(directories = [ self.folder ])
+                        lookup = TemplateLookup(directories = [ self.folder ]),
                         ).render(**values)
                  for arg in self.arguments
                 ]
