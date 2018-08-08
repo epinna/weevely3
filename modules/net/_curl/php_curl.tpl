@@ -20,9 +20,6 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 % if user_agent:
           "User-Agent: ${ user_agent }",
 % endif
-% if data:
-          'Content-Type: application/x-www-form-urlencoded',
-% endif
 % if header or cookie or user_agent or data:
   ));
 % endif
