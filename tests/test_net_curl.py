@@ -19,7 +19,7 @@ rm -rf "$BASE_FOLDER"
 mkdir -p "$BASE_FOLDER"
 echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
 echo -n '1' > "$BASE_FOLDER/check2.html"
-echo -n '<?php print($_REQUEST['data']); ?>' > "$BASE_FOLDER/check3.php"
+echo -n '<?php print(md5($_REQUEST['data'])); ?>' > "$BASE_FOLDER/check3.php"
 chown www-data: -R "$BASE_FOLDER/"
 """.format(
 config = config
@@ -104,13 +104,14 @@ class Curl(BaseTest):
                 result
             )
 
-            # # POST request with binary data
-            # bindata = '\xbe\x00\xc8d\xf8d\x08\xe4'
-            # result = self._clean_result(self.run_argv([ self.urls[2], '--data', 'data=' + bindata, '-vector', vect ])[0])
-            # self.assertEqual(
-            #     hashlib.md5(bindata).hexdigest(),
-            #     result
-            # )
+            # POST request with binary data
+            bindata = '\xbe\xee\xc8d\xf8d\x08\xe4'
+            result = self.run_argv([ self.urls[2], '--data', 'data=' + bindata, '-vector', vect ])[0]
+            self.assertEqual(
+                hashlib.md5(bindata).hexdigest(),
+                result,
+                vect
+            )
 
             # GET request with URL
             result = self._clean_result(self.run_argv([ self.urls[0] + '/?f1=data1&f2=data2', '-vector', vect ])[0])
