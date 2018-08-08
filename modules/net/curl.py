@@ -46,7 +46,7 @@ class Curl(Module):
               name = 'php_httprequest1',
             ),
             ShellCmd(
-              payload = """curl -s -i ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } --data-binary '${ ' '.join(data) }' '${ url }'""",
+              payload = """curl -s -i ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } ${ '--data-binary $(env echo -ne "%s")' % ' '.join(data) if data else '' } '${ url }'""",
               name = 'sh_curl'
             )
             ]
