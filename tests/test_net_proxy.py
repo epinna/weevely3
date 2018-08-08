@@ -82,6 +82,12 @@ class Proxy(BaseTest):
             self._clean_result(self.run_argv([ self.checkurl, '-X', 'PUT' ]))
         )
 
+        # OPTIONS request
+        self.assertIn(
+            '[REQUEST_METHOD] => OPTIONS',
+            self._clean_result(self.run_argv([ self.checkurl, '-X', 'OPTIONS' ]))
+        )
+
         # Add header
         self.assertIn(
             '[HTTP_X_ARBITRARY_HEADER] => bogus',
