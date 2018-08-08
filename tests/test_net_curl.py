@@ -10,6 +10,7 @@ import tempfile
 import os
 import re
 import hashlib
+import json
 
 def setUpModule():
     subprocess.check_output("""
@@ -17,9 +18,6 @@ BASE_FOLDER="{config.base_folder}/test_net_curl/"
 rm -rf "$BASE_FOLDER"
 
 mkdir -p "$BASE_FOLDER"
-echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
-echo -n '1' > "$BASE_FOLDER/check2.html"
-echo -n '<?php print(md5($_REQUEST['data'])); ?>' > "$BASE_FOLDER/check3.php"
 chown www-data: -R "$BASE_FOLDER/"
 """.format(
 config = config
@@ -31,11 +29,7 @@ class Curl(BaseTest):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
-        self.urls = [
-            config.base_url + '/test_net_curl/check1.php',
-            config.base_url + '/test_net_curl/check2.html',
-            config.base_url + '/test_net_curl/check3.php',
-        ]
+        self.url = 'http://httpbin-inst'
 
         self.vector_list = modules.loaded['net_curl'].vectors.get_names()
         
@@ -45,83 +39,83 @@ class Curl(BaseTest):
 
         self.run_argv = modules.loaded['net_curl'].run_argv
 
-    def _clean_result(self, result):
-        return result if not result else re.sub('[\n]|[ ]{2,}',' ', result)
+    def _json_result(self, args):
+        
+        result = self.run_argv(args)[0]
+        try:
+            return result if not result else json.loads(result)
+        except Exception as e:
+            self.fail(result)
 
+    def _headers_result(self, args):
+        
+        return self.run_argv(args)[1]
+        
     def test_sent_data(self):
 
         for vect in self.vector_list:
 
             # Simple GET
-            self.assertIn(
-                '[REQUEST_METHOD] => GET',
-                self._clean_result(self.run_argv([ self.urls[0], '-vector', vect ])[0])
+            url = self.url + '/get'
+            self.assertEqual(
+                url,
+                self._json_result([ url, '-vector', vect ])['url']
             )
 
             # PUT request
-            self.assertIn(
-                '[REQUEST_METHOD] => PUT',
-                self._clean_result(self.run_argv([ self.urls[0], '-X', 'PUT', '-vector', vect ])[0])
+            url = self.url + '/put'
+            self.assertEqual(
+                url,
+                self._json_result([ url, '-X', 'PUT', '-vector', vect ])['url']
             )
 
-            # OPTIONS request
-            self.assertIn(
-                '[REQUEST_METHOD] => OPTIONS',
-                self._clean_result(self.run_argv([ self.urls[0], '-X', 'OPTIONS', '-vector', vect ])[0])
+            # OPTIONS request - there is nothing to test OPTIONS in 
+            # httpbin, but still it's an accepted VERB which returns 200 OK
+            url = self.url + '/anything'
+            self.assertEqual(
+                '200 OK',
+                self._headers_result([ url, '-X', 'PUT', '-vector', vect ])[0][-6:]
             )
 
             # Add header
-            self.assertIn(
-                '[HTTP_X_ARBITRARY_HEADER] => bogus',
-                self._clean_result(self.run_argv([ self.urls[0], '-H', 'X-Arbitrary-Header: bogus', '-vector', vect ])[0])
+            url = self.url + '/headers'
+            self.assertEqual(
+                'value',
+                self._json_result([ url, '-H', 'X-Arbitrary-Header: value', '-vector', vect ])['headers']['X-Arbitrary-Header']
             )
 
             # Add cookie
-            self.assertIn(
-                '[HTTP_COOKIE] => C1=bogus;C2=bogus2',
-                self._clean_result(self.run_argv([ self.urls[0], '-b', 'C1=bogus;C2=bogus2', '-vector', vect ])[0])
+            url = self.url + '/cookies'
+            self.assertEqual(
+                {'C1': 'bogus', 'C2' : 'bogus2'},
+                self._json_result([ url, '-b', 'C1=bogus;C2=bogus2', '-vector', vect ])['cookies']
             )
 
             # POST request with data
-            result = self._clean_result(self.run_argv([ self.urls[0], '--data', 'f1=data1&f2=data2', '-vector', vect ])[0])
-            self.assertIn(
-                '[REQUEST_METHOD] => POST',
-                result
+            url = self.url + '/post'
+            result = self._json_result([ url, '--data', 'f1=data1&f2=data2', '-vector', vect ])
+            self.assertEqual(
+                { 'f1': 'data1', 'f2': 'data2' },
+                result['form']
             )
-            self.assertIn(
-                '[f1] => data1  [f2] => data2',
-                result
+            self.assertEqual(
+                "application/x-www-form-urlencoded",
+                result['headers']['Content-Type']
             )
 
             # POST request with binary string
-            result = self._clean_result(self.run_argv([ self.urls[0], '--data', 'FIELD=D\x41\x54A\x00B', '-vector', vect ])[0])
-            self.assertIn(
-                '[REQUEST_METHOD] => POST',
-                result
-            )
-            self.assertIn(
-                '[FIELD] => DATA',
-                result
-            )
-
-            # POST request with binary data
-            bindata = '\xbe\xee\xc8d\xf8d\x08\xe4'
-            result = self.run_argv([ self.urls[2], '--data', 'data=' + bindata, '-vector', vect ])[0]
+            url = self.url + '/post'
+            result = self._json_result([ url, '--data', 'FIELD=D\x41\x54A\x00B', '-vector', vect ])
             self.assertEqual(
-                hashlib.md5(bindata).hexdigest(),
-                result,
-                vect
+                { 'FIELD': 'DATA\x00B' },
+                result['form']
             )
 
-            # GET request with URL
-            result = self._clean_result(self.run_argv([ self.urls[0] + '/?f1=data1&f2=data2', '-vector', vect ])[0])
-            self.assertIn(
-                '[REQUEST_METHOD] => GET',
-                result
-            )
-            self.assertIn(
-                '[f1] => data1  [f2] => data2',
-                result
+            # Simple GET with parameters
+            url = self.url + '/get?f1=data1&f2=data2'
+            self.assertEqual(
+                { 'f1': 'data1', 'f2': 'data2'},
+                self._json_result([ url, '-vector', vect ])['args']
             )
 
     @log_capture()
@@ -165,20 +159,22 @@ class Curl(BaseTest):
 
     def test_output_remote(self):
 
+        url = self.url + '/get'
+
         for vect in self.vector_list:
 
-            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '-o', 'test_net_curl/test_%s' % vect ])
+            result, headers, saved = self.run_argv([ url, '-vector', vect, '-o', 'test_net_curl/test_%s' % vect ])
             self.assertTrue(saved)
 
-        result, headers, saved = self.run_argv([ self.urls[0], '-o', 'test_net_curl/test_all' ])
+        result, headers, saved = self.run_argv([ url, '-o', 'test_net_curl/test_all' ])
         self.assertTrue(saved)
 
         # Check saved = None without -o
-        result, headers, saved = self.run_argv([ self.urls[1] ])
+        result, headers, saved = self.run_argv([ url ])
         self.assertIsNone(saved)
 
         # Check saved = False with a wrong path
-        result, headers, saved = self.run_argv([ self.urls[1], '-o', 'bogus/bogusbogus' ])
+        result, headers, saved = self.run_argv([ url, '-o', 'bogus/bogusbogus' ])
         self.assertFalse(saved)
 
     def test_output_local(self):
@@ -186,34 +182,17 @@ class Curl(BaseTest):
         temp_file = tempfile.NamedTemporaryFile()
         for vect in self.vector_list:
 
-            result, headers, saved = self.run_argv([ self.urls[0], '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
+            result, headers, saved = self.run_argv([ self.url + '/post', '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
             self.assertTrue(saved)
-            self.assertIn('[FIND] => THIS', open(temp_file.name,'r').read())
+            
+            json_result = json.loads(result)
+            with open(temp_file.name) as f:
+                json_saved = json.load(f)
+                
+            self.assertEqual(json_result, json_saved)
 
-        temp_file.truncate()
-        result, headers, saved = self.run_argv([ self.urls[0], '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
-        self.assertTrue(saved)
-        self.assertIn('[FIND] => THIS', open(temp_file.name,'r').read())
         temp_file.close()
 
         # Check saved = False with a wrong path
-        result, headers, saved = self.run_argv([ self.urls[1], '-o', 'bogus/bogusbogus', '-local' ])
+        result, headers, saved = self.run_argv([ self.url, '-o', 'bogus/bogusbogus', '-local' ])
         self.assertFalse(saved)
-
-    def test_all(self):
-
-        for vect in self.vector_list:
-            result, headers, saved = self.run_argv([ self.urls[1], '-vector', vect, '-i' ])
-            self.assertIn('HTTP/1.1 200 OK', headers)
-            self.assertIn('Content-Length: 1', headers)
-            self.assertEqual(result, '1')
-            self.assertIsNone(saved)
-
-            # Check if content-length is real
-            cont_len = 0
-            for h in headers:
-                if h.startswith('Content-Length: '):
-                    cont_len = int(h[16:])
-                    break
-
-            self.assertEqual(cont_len, len(result))
