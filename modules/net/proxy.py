@@ -30,7 +30,7 @@ from HTMLParser import HTMLParser
 from tempfile import mkdtemp
 
 re_valid_ip = re.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
-re_valid_hostname  = re.compile("^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$")
+re_valid_hostname  = re.compile("^(([a-zA-Z0-9\-]+)\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$")
 
 temp_certdir = mkdtemp()
 
