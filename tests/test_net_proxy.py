@@ -9,19 +9,7 @@ import tempfile
 import os
 import re
 import time
-
-def setUpModule():
-    subprocess.check_output("""
-BASE_FOLDER="{config.base_folder}/test_net_proxy/"
-rm -rf "$BASE_FOLDER"
-
-mkdir -p "$BASE_FOLDER"
-echo -n '<?php print_r($_SERVER);print_r($_REQUEST); ?>' > "$BASE_FOLDER/check1.php"
-echo -n '1' > "$BASE_FOLDER/check2.html"
-chown www-data: -R "$BASE_FOLDER/"
-""".format(
-config = config
-), shell=True)
+import json
 
 class Proxy(BaseTest):
 
@@ -29,7 +17,7 @@ class Proxy(BaseTest):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
 
-        self.checkurl = 'http://localhost/test_net_proxy/check1.php'
+        self.url = 'http://httpbin-inst'
 
         modules.loaded['net_proxy'].run_argv([ '-lhost', '0.0.0.0', '-lport', '8080' ])
         
@@ -43,23 +31,30 @@ class Proxy(BaseTest):
 
         return result
 
+    def _json_result(self, args, unquoted_args = ''):
+        
+        result = self.run_argv(args, unquoted_args)
+        try:
+            return result if not result else json.loads(result)
+        except Exception as e:
+            print(e)
+            self.fail(result)
 
-    def _clean_result(self, result):
-        return result if not result else re.sub('[\n]|[ ]{2,}',' ', result)
+    def _headers_result(self, args):
+        return self.run_argv(args, unquoted_args = '-sSL -D - -o /dev/null').splitlines()
 
     def test_all(self):
-
 
         #  HTTPS GET with no SSL check
         self.assertIn(
             'Google',
-            self._clean_result(self.run_argv([ 'https://www.google.com', '-k' ]))
+            self.run_argv([ 'https://www.google.com', '-k' ])
         )
 
         #  HTTPS GET with cacert
         self.assertIn(
             'Google',
-            self._clean_result(self.run_argv([ 'https://www.google.com' ], unquoted_args='--cacert ~/.weevely/certs/ca.crt'))
+            self.run_argv([ 'https://www.google.com' ], unquoted_args='--cacert ~/.weevely/certs/ca.crt')
         )
         
         # HTTPS without cacert
@@ -71,56 +66,67 @@ class Proxy(BaseTest):
             self.fail("No error")
 
         # Simple GET
-        self.assertIn(
-            '[REQUEST_METHOD] => GET',
-            self._clean_result(self.run_argv([ self.checkurl ]))
+        url = self.url + '/get'
+        self.assertEqual(
+            url,
+            self._json_result([ url ])['url']
         )
 
         # PUT request
-        self.assertIn(
-            '[REQUEST_METHOD] => PUT',
-            self._clean_result(self.run_argv([ self.checkurl, '-X', 'PUT' ]))
+        url = self.url + '/put'
+        self.assertEqual(
+            url,
+            self._json_result([ url, '-X', 'PUT' ])['url']
         )
 
-        # OPTIONS request
-        self.assertIn(
-            '[REQUEST_METHOD] => OPTIONS',
-            self._clean_result(self.run_argv([ self.checkurl, '-X', 'OPTIONS' ]))
+        # OPTIONS request - there is nothing to test OPTIONS in 
+        # httpbin, but still it's an accepted VERB which returns 200 OK
+        url = self.url + '/anything'
+        self.assertEqual(
+            '200 OK',
+            self._headers_result([ url, '-X', 'PUT' ])[0][-6:]
         )
 
         # Add header
-        self.assertIn(
-            '[HTTP_X_ARBITRARY_HEADER] => bogus',
-            self._clean_result(self.run_argv([ '-H', 'X-Arbitrary-Header: bogus', self.checkurl ]))
+        url = self.url + '/headers'
+        self.assertEqual(
+            'value',
+            self._json_result([ url, '-H', 'X-Arbitrary-Header: value' ])['headers']['X-Arbitrary-Header']
         )
-
 
         # Add cookie
-        self.assertIn(
-            '[HTTP_COOKIE] => C1=bogus;C2=bogus2',
-            self._clean_result(self.run_argv([ self.checkurl, '-b', 'C1=bogus;C2=bogus2']))
+        url = self.url + '/cookies'
+        self.assertEqual(
+            {'C1': 'bogus', 'C2' : 'bogus2'},
+            self._json_result([ url, '-b', 'C1=bogus;C2=bogus2' ])['cookies']
         )
-
+        
+        
         # POST request with data
-        result = self._clean_result(self.run_argv([ self.checkurl, '--data', 'f1=data1&f2=data2' ]))
-        self.assertIn(
-            '[REQUEST_METHOD] => POST',
-            result
+        url = self.url + '/post'
+        result = self._json_result([ url, '--data', 'f1=data1&f2=data2' ])
+        self.assertEqual(
+            { u'f1': u'data1', u'f2': u'data2' },
+            result['form']
         )
-        self.assertIn(
-            'f1] => data1  [f2] => data2',
-            result
+        self.assertEqual(
+            "application/x-www-form-urlencoded",
+            result['headers']['Content-Type']
         )
 
-        # GET request with URL
-        result = self._clean_result(self.run_argv([ self.checkurl + '/?f1=data1&f2=data2' ]))
-        self.assertIn(
-            '[REQUEST_METHOD] => GET',
-            result
+        # POST request with binary string
+        url = self.url + '/post'
+        result = self._json_result([ url ], unquoted_args="--data FIELD=$(env echo -ne 'D\\x41\\x54A\\x00B')")
+        self.assertEqual(
+            { u'FIELD': u'DATAB' },
+            result['form']
         )
-        self.assertIn(
-            '[f1] => data1  [f2] => data2',
-            result
+
+        # Simple GET with parameters
+        url = self.url + '/get?f1=data1&f2=data2'
+        self.assertEqual(
+            { u'f1': u'data1', u'f2': u'data2' },
+            self._json_result([ url ])['args']
         )
 
         # UNREACHABLE
