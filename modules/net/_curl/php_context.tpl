@@ -1,4 +1,10 @@
 $opts = array(
+  'ssl' => array (
+    'verify_peer'       => false,
+    'verify_peer_name'  => false,
+    'allow_self_signed' => true,
+    'verify_depth'      => 0,
+  ),
   'http'=>array(
     'follow_location' => false,
     'method'=>'${ request if not data else 'POST' }',

@@ -10,6 +10,8 @@ import os
 import re
 import time
 import json
+import socket
+
 
 class Proxy(BaseTest):
 
@@ -127,6 +129,13 @@ class Proxy(BaseTest):
         self.assertEqual(
             { u'f1': u'data1', u'f2': u'data2' },
             self._json_result([ url ])['args']
+        )
+
+        #  HTTPS GET to test SSL checks are disabled
+        google_ip = socket.gethostbyname('www.google.com')
+        self.assertIn(
+            'google',
+            self.run_argv([ 'https://' + google_ip, "-k" ])
         )
 
         # UNREACHABLE
