@@ -11,6 +11,7 @@ import os
 import re
 import hashlib
 import json
+import socket
 
 def setUpModule():
     subprocess.check_output("""
@@ -116,6 +117,13 @@ class Curl(BaseTest):
             self.assertEqual(
                 { 'f1': 'data1', 'f2': 'data2'},
                 self._json_result([ url, '-vector', vect ])['args']
+            )
+
+            #  HTTPS GET to test SSL checks are disabled
+            google_ip = socket.gethostbyname('www.google.com')
+            self.assertIn(
+                'google',
+                self.run_argv([ 'https://' + google_ip, '-vector', vect ])[0]
             )
 
     @log_capture()
