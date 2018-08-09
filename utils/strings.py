@@ -2,6 +2,8 @@ import random
 import string
 import itertools
 
+str2hex = lambda x: "\\x" + "\\x".join([hex(ord(c))[2:].zfill(2) for c in x])
+
 def randstr(n=4, fixed=True, charset=None):
 
     if not n:

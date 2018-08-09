@@ -2,6 +2,7 @@ from core.vectors import PhpCode, ShellCmd, ModuleExec, PhpFile, Os
 from core.module import Module
 from core import modules
 from core import messages
+from utils.strings import str2hex
 from core.loggers import log
 import os
 from ast import literal_eval
@@ -83,8 +84,9 @@ class Curl(Module):
 
         headers = []
         saved = None
-        
-        self.args['data'] = [ repr(x).strip('\'') for x in self.args['data'] ]
+
+        self.args['data'] = [ str2hex(x) for x in self.args['data'] ]
+
 
         vector_name, result = self.vectors.find_first_result(
                 names = [ self.args.get('vector') ],
