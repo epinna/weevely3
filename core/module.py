@@ -145,10 +145,6 @@ class Module:
         # Merge stored arguments with line arguments
         stored_args = self.session[self.name]['stored_args']
         
-        # Work on a clean arg list. This will be assigned to self.args
-        # after the process to minimize concurrecy problems.
-        args = {}
-
         try:
             user_args = self.argparser.parse_args(argv)
         except SystemExit:
@@ -165,11 +161,11 @@ class Module:
             stored_value = stored_args.get(newarg_key)
                         
             if newarg_value != None and newarg_value != default_value:
-                args[newarg_key] = newarg_value
+                self.args[newarg_key] = newarg_value
             elif stored_value != None:
-                args[newarg_key] = stored_value
+                self.args[newarg_key] = stored_value
             else:
-                args[newarg_key] = default_value
+                self.args[newarg_key] = default_value
 
         # If module status is IDLE, launch setup()
         if self.session[self.name]['status'] == Status.IDLE:
@@ -188,10 +184,9 @@ class Module:
         # stored arguments are applied to args
         stored_args = self.session[self.name]['stored_args']
         for stored_arg_key, stored_arg_value in stored_args.items():
-            if stored_arg_key != None and stored_arg_value != args.get(stored_arg_key):
-                args[stored_arg_key] = stored_arg_value
+            if stored_arg_key != None and stored_arg_value != self.args.get(stored_arg_key):
+                self.args[stored_arg_key] = stored_arg_value
 
-        self.args = args
 
         return self.run()
 
