@@ -144,7 +144,8 @@ class Module:
 
         # Merge stored arguments with line arguments
         stored_args = self.session[self.name]['stored_args']
-        
+        self.args = {}
+
         try:
             user_args = self.argparser.parse_args(argv)
         except SystemExit:
