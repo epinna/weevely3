@@ -34,6 +34,8 @@ re_valid_hostname  = re.compile("^(([a-zA-Z0-9\-]+)\.)*([A-Za-z]|[A-Za-z][A-Za-z
 
 temp_certdir = mkdtemp()
 
+lock = threading.Lock()
+
 class FakeSocket():
     def __init__(self, response_str):
         self._file = StringIO(response_str)
@@ -214,10 +216,15 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
             content_len = int(self.headers.getheader('content-length', 0))
             net_curl_args += [ '-d', req_body ]
 
-        result, headers, saved = ModuleExec(
-            'net_curl',
-            net_curl_args
-        ).run()
+        lock.acquire()
+        try:
+            result, headers, saved = ModuleExec(
+                'net_curl',
+                net_curl_args
+            ).run()
+        finally:
+            lock.release()
+            
         
         if not headers:
             log.debug('Error no headers')
