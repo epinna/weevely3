@@ -12,7 +12,7 @@ curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 % endif
 % for h in header:
-%   if not (data and (h.title().startswith('Content-Type: ') or h.title().startswith('Content-Length: '))) and not (user_agent and h.title().startswith('User-Agent: ')):
+%   if not (data and (h.title().startswith('Content-Length: '))) and not (user_agent and h.title().startswith('User-Agent: ')):
         '${h}',
 %   endif
 % endfor
