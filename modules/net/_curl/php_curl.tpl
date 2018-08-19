@@ -1,6 +1,6 @@
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL, '${url}');
+curl_setopt($ch, CURLOPT_URL, "${url}");
 
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "${ request if not data else 'POST' }");
 curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, ${ connect_timeout });
@@ -13,11 +13,11 @@ curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 % endif
 % for h in header:
 %   if not (data and (h.title().startswith('Content-Length: '))) and not (user_agent and h.title().startswith('User-Agent: ')):
-        '${h}',
+        "${h}",
 %   endif
 % endfor
 % if cookie:
-          'Cookie: ${ cookie }',
+          "Cookie: ${ cookie }",
 % endif
 % if user_agent:
           "User-Agent: ${ user_agent }",
