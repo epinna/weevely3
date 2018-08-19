@@ -47,15 +47,12 @@ class Curl(Module):
               payload_path = os.path.join(self.folder, 'php_httprequest1.tpl'),
               name = 'php_httprequest1',
             ),
-            # Invoking `sh_curl` vector when called by `net_proxy` may introduce
-            # command injection vulnerability on weevely client. For semplicity, I
-            # just comment this out since the other vectors are less noisy and 
-            # less probable to be limited.
             
-            # DO NOT UNCOMMENT THIS WHILE USING `net_proxy` MODULE.
+            # TODO: fix this, it fails the "POST request with binary string" test
+            # due to some bash limitation with null bytes.
             
             # ShellCmd(
-            #   payload = """curl -s -i ${ "-A '%s'" % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ "-H '%s'" % h for h in header ]) } ${ "-b '%s'" % cookie if cookie else '' } ${ '--data-binary $(env echo -ne "%s")' % ' '.join(data) if data else '' } '${ url }'""",
+            #   payload = """curl -s -i ${ '-A "$(env echo -ne \"%s\")"' % user_agent if user_agent else "" } ${ '--connect-timeout %i' % connect_timeout } ${ '-X %s' % request if (not data and request) else '' } ${ " ".join([ '-H "$(env echo -ne \"%s\")"' % h for h in header ]) } ${ '-b "$(env echo -ne \"%s\")"' % cookie if cookie else '' } ${ '--data-binary $(env echo -ne "%s")' % ' '.join(data) if data else '' } ${ '$(env echo -ne "%s")' % url }""",
             #   name = 'sh_curl'
             # )
             ]
