@@ -1,5 +1,5 @@
 if(class_exists('HttpRequest')) {
-    $r = new HttpRequest('${ url }', HttpRequest::METH_${ request if not data else 'POST' });
+    $r = new HttpRequest("${ url }", HttpRequest::METH_${ request if not data else 'POST' });
 
     $r->setOptions(array('connecttimeout'=>${ connect_timeout }));
 
@@ -8,14 +8,14 @@ if(class_exists('HttpRequest')) {
         array(
     % for h in header:
     %   if not (data and (h.title().startswith('Content-Length: '))) and not (user_agent and h.title().startswith('User-Agent: ')):
-            '${ h.split(':')[0] }' => '${ h.split(':')[1].lstrip() }',
+            "${ h.split(':')[0] }" => "${ h.split(':')[1].lstrip() }",
     %   endif
     % endfor
     % if user_agent:
-            'User-Agent'=>'${ user_agent }',
+            'User-Agent'=>"${ user_agent }",
     % endif
     % if cookie:
-              'Cookie'=>'${ cookie }',
+              'Cookie'=>"${ cookie }",
     % endif
         )
     );

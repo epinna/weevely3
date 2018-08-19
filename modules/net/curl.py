@@ -6,6 +6,7 @@ from utils.strings import str2hex
 from core.loggers import log
 import os
 from ast import literal_eval
+import urllib
 
 class Curl(Module):
 
@@ -80,13 +81,28 @@ class Curl(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_get_contents' }
         ])
 
+    def _encode(self):
+        
+        self.args['url'] = str2hex(self.args['url'])
+    
+        if self.args['data']:
+            self.args['data'] = [ str2hex(x) for x in self.args['data'] ]
+        
+        if self.args['user_agent']:
+            self.args['user_agent'] = str2hex(self.args['user_agent'])
+        
+        if self.args['cookie']:
+            self.args['cookie'] = str2hex(self.args['cookie'])
+
+        if self.args['header']:
+            self.args['header'] = [ str2hex(x) for x in self.args['header'] ]
+
     def run(self):
 
         headers = []
         saved = None
-
-        self.args['data'] = [ str2hex(x) for x in self.args['data'] ]
-
+        
+        self._encode()
 
         vector_name, result = self.vectors.find_first_result(
                 names = [ self.args.get('vector') ],
