@@ -25,11 +25,13 @@ class Etcpasswd(Module):
     def run(self):
 
         pwdresult = ''
-        if self.args.get('vector', 'posix_getpwuid') == 'posix_getpwuid':
+        vector = self.args.get('vector')
+        
+        if vector in (None,  'posix_getpwuid'):
             pwdresult = PhpCode("""if(is_callable('posix_getpwuid')) { for($n=0; $n<2000;$n++) { $uid = @posix_getpwuid($n); if ($uid) echo join(':',$uid).PHP_EOL; } }""").run(self.args)
 
         if not pwdresult:
-            arg_vector = [ '-vector', self.args.get('vector') ] if self.args.get('vector') else []
+            arg_vector = [ '-vector', vector ] if vector else []
             pwdresult = ModuleExec('file_read', [ '/etc/passwd' ] + arg_vector).run()
 
         if not pwdresult: return
