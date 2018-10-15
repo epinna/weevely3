@@ -1,5 +1,14 @@
 # Change Log
 
+## [v3.7.0] - 2018-10-15
+### Fixed
+- Fix vector handling in audit_etcpasswd #93
+
+### Added
+- HTTPS proxy support
+- Support OPTIONS request in net_curl module
+- Use httpbin for net_proxy testing
+
 ## [v3.6.2] - 2018-06-27
 ### Fixed
 - Remove audit_linuxprivchecker module
