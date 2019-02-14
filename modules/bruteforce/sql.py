@@ -36,8 +36,8 @@ class Sql(Module):
         self.register_arguments([
           { 'name' : 'service', 'help' : 'Service to bruteforce', 'choices' : self.vectors.get_names() },
           { 'name' : '-hostname', 'help' : 'Hostname', 'default' : 'localhost' },
-          { 'name' : '-users', 'help' : 'Users', 'nargs' : '*' },
-          { 'name' : '-pwds', 'help' : 'Passwords', 'nargs' : '*' },
+          { 'name' : '-users', 'help' : 'Users', 'nargs' : '*', 'default': [] },
+          { 'name' : '-pwds', 'help' : 'Passwords', 'nargs' : '*', 'default': [] },
           { 'name' : '-fusers', 'help' : 'Local file path containing users list' },
           { 'name' : '-fpwds', 'help' : 'Local file path containing password list' }
         ])
