@@ -6,7 +6,12 @@ from core import config
 from core.module import Status
 import utils
 from mako import template
-import readline
+
+try:
+    import gnureadline as readline
+except ImportError:
+    import readline
+
 import cmd
 import glob
 import os
@@ -27,7 +32,6 @@ class CmdModules(cmd.Cmd):
         Otherwise try to call complete_<command> to get list of completions.
         """
         if state == 0:
-            import readline
             origline = readline.get_line_buffer()
 
             # Offer completion just for commands that starts
