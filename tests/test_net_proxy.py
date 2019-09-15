@@ -139,6 +139,7 @@ class Proxy(BaseTest):
         )
 
         # UNREACHABLE
+        # This is not true depending on the used ISP, commenting it out
         #self.assertIn('Message: Bad Gateway.', self.run_argv([ 'http://co.uk:0' ]))
 
         # FILTERED
