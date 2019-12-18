@@ -14,7 +14,7 @@ def port_range(input_string):
     return sum(
                 (
                     (
-                    list(range(*[int(j) + k for k,j in enumerate(i.split('-'))]))
+                    list(range(*[int(j) + k for k, j in enumerate(i.split('-'))]))
                     if '-' in i else [int(i)]
                     )
                     for i in input_string.split(',')

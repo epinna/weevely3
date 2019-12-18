@@ -1,4 +1,4 @@
-from core.vectors import ShellCmd,PhpCode
+from core.vectors import ShellCmd, PhpCode
 from core.module import Module
 
 class Clearlog(Module):

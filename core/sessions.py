@@ -72,7 +72,7 @@ class Session(dict):
         for module_argument, value in list(data.items()):
 
             # If action_<module_argument> function exists, trigger the action
-            action_name = 'action_%s' % (module_argument.replace('.','_'))
+            action_name = 'action_%s' % (module_argument.replace('.', '_'))
             if hasattr(self, action_name):
                 action_func = getattr(self, action_name)
                 if hasattr(action_func, '__call__'):
@@ -103,7 +103,7 @@ class Session(dict):
 
         # If action_<module_argument> function exists, trigger the action
         # passing None
-        action_name = 'action_%s' % (module_argument.replace('.','_'))
+        action_name = 'action_%s' % (module_argument.replace('.', '_'))
         if hasattr(self, action_name):
             action_func = getattr(self, action_name)
             if hasattr(action_func, '__call__'):
@@ -139,7 +139,7 @@ class Session(dict):
             pass
 
         # If action_<module_argument> function exists, trigger the action
-        action_name = 'action_%s' % (module_argument.replace('.','_'))
+        action_name = 'action_%s' % (module_argument.replace('.', '_'))
         if hasattr(self, action_name):
             action_func = getattr(self, action_name)
             if hasattr(action_func, '__call__'):
@@ -259,8 +259,8 @@ class SessionURL(Session):
                         'url': url,
                         'password': password,
                         'debug': False,
-                        'channel' : None,
-                        'default_shell' : None,
+                        'channel': None,
+                        'default_shell': None,
                     }
                 )
 

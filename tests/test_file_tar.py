@@ -83,7 +83,7 @@ class FileTar(BaseTest):
         # Uncompress test.tar
         self.assertTrue(self.run_argv(["--decompress", self.tars_rel[0], 'test_file_tar/' ]));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True),'1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
 
@@ -95,7 +95,7 @@ class FileTar(BaseTest):
         # Uncompress the new archive and recheck
         self.assertTrue(self.run_argv(["--decompress", 'test_file_tar/test_1.tar', 'test_file_tar/']));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True),'1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
 
@@ -104,7 +104,7 @@ class FileTar(BaseTest):
         # Uncompress test.tar
         self.assertTrue(self.run_argv(["--decompress", self.tars_rel[0], 'test_file_tar/' ]));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True),'1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
     
@@ -120,11 +120,11 @@ class FileTar(BaseTest):
         # Uncompress the new archive and recheck
         self.assertTrue(self.run_argv(["--decompress", 'test_file_tar/test_2.tar', 'test_file_tar/']));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True),'1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
 
-        self.assertEqual(subprocess.check_output("cat %s" % self.other_file_abs, shell=True),'1')
+        self.assertEqual(subprocess.check_output("cat %s" % self.other_file_abs, shell=True), '1')
 
     @log_capture()
     def test_already_exists(self, log_captured):

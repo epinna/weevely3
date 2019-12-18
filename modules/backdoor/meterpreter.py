@@ -79,7 +79,7 @@ class Meterpreter(Module):
             msvenom_path, 
             '-p', self.args['payload'],
             '-o', local_path 
-        ] + [ '%s=%s' % (v, f) for v,f in options ]
+        ] + [ '%s=%s' % (v, f) for v, f in options ]
         
         # Add executable format to the argument list
         if self.args['payload'].startswith('linux/'):
