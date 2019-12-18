@@ -1,10 +1,10 @@
 <%! import hashlib, utils, string %><%
-passwordhash = hashlib.md5(password).hexdigest().lower()
+passwordhash = hashlib.md5(password.encode('utf-8')).hexdigest().lower()
 key = passwordhash[:8]
 header = passwordhash[8:20]
 footer = passwordhash[20:32]
 
-PREPEND = utils.strings.randstr(16, charset = string.digits + string.letters)
+PREPEND = utils.strings.randstr(16, charset = string.digits + string.ascii_letters).decode('utf-8')
 %>$k="${key}";
 $kh="${header}";
 $kf="${footer}";

@@ -74,7 +74,7 @@ class Curl(BaseTest):
             # httpbin, but still it's an accepted VERB which returns 200 OK
             url = self.url + '/anything'
             self.assertEqual(
-                '200 OK',
+                b'200 OK',
                 self._headers_result([ url, '-X', 'PUT', '-vector', vect ])[0][-6:]
             )
 
@@ -122,7 +122,7 @@ class Curl(BaseTest):
             #  HTTPS GET to test SSL checks are disabled
             google_ip = socket.gethostbyname('www.google.com')
             self.assertIn(
-                'google',
+                b'google',
                 self.run_argv([ 'https://' + google_ip, '-vector', vect ])[0]
             )
 

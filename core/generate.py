@@ -20,11 +20,11 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
     obfuscator_template = Template(filename=obfuscator_path)
 
     try:
-        agent = Template(
-            open(
-                agent_path,
-                'r').read()).render(
-            password=password)
+
+        with open(agent_path, 'r') as templatefile:
+            agent = Template(templatefile.read()).render(
+                password=password)
+
     except Exception as e:
         raise FatalException(
             messages.generate.error_agent_template_s_s %
@@ -32,7 +32,7 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 
     minified_agent = utils.code.minify_php(agent)
 
-    # Fallback of vanilla agent if minification went wrong
+    # Fallback to vanilla agent if minification went wrong
     agent = minified_agent if minified_agent else agent
 
     try:
@@ -48,7 +48,8 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 def save_generated(obfuscated, output):
 
     try:
-        open(output, 'w+').write(obfuscated)
+        with open(output, 'w+') as genfile:
+            genfile.write(obfuscated)
     except Exception as e:
         raise FatalException(
             messages.generic.error_creating_file_s_s %

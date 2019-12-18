@@ -83,7 +83,7 @@ class FileZip(BaseTest):
         # Uncompress test.zip
         self.assertTrue(self.run_argv(["--decompress", self.zips_rel[0], 'test_file_zip/' ]));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), b'1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
 
@@ -95,7 +95,7 @@ class FileZip(BaseTest):
         # Uncompress the new archive and recheck
         self.assertTrue(self.run_argv(["--decompress", 'test_file_zip/test_1.zip', 'test_file_zip/']));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), b'1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
 
@@ -104,7 +104,7 @@ class FileZip(BaseTest):
         # Uncompress test.zip
         self.assertTrue(self.run_argv(["--decompress", self.zips_rel[0], 'test_file_zip/' ]));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), b'1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
     
@@ -120,7 +120,7 @@ class FileZip(BaseTest):
         # Uncompress the new archive and recheck
         self.assertTrue(self.run_argv(["--decompress", 'test_file_zip/test_2.zip', 'test_file_zip/']));
         for file in self.files_abs:
-            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), '1')
+            self.assertEqual(subprocess.check_output("cat %s" % file, shell=True), b'1')
         for folder in self.folders_abs:
             subprocess.check_call('stat -c %%a "%s"' % folder, shell=True)
 

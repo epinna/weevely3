@@ -24,7 +24,7 @@ import json
 import re
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
-from io import StringIO
+from io import BytesIO
 from subprocess import Popen, PIPE
 from html.parser import HTMLParser
 from tempfile import mkdtemp
@@ -38,7 +38,7 @@ lock = threading.Lock()
 
 class FakeSocket():
     def __init__(self, response_str):
-        self._file = StringIO(response_str)
+        self._file = BytesIO(response_str)
     def makefile(self, *args, **kwargs):
         return self._file
 
@@ -120,7 +120,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         certpath = os.path.join(self.certdir, certname)
 
         if not (re_valid_ip.match(hostname) or re_valid_hostname.match(hostname)):
-            log.warn("CN name '%s' is not valid, using 'www.weevely.com'" % (hostname))
+            log.warning("CN name '%s' is not valid, using 'www.weevely.com'" % (hostname))
             hostname = 'www.weevely.com'
 
         with self.lock:
@@ -130,7 +130,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
                 p2 = Popen(["openssl", "x509", "-req", "-days", "3650", "-CA", self.cacert, "-CAkey", self.cakey, "-set_serial", epoch, "-out", certpath], stdin=p1.stdout, stderr=PIPE)
                 p2.communicate()
 
-        self.wfile.write("%s %d %s\r\n" % (self.protocol_version, 200, 'Connection Established'))
+        self.send_response_only(200, 'Connection Established')
         self.end_headers()
 
         try:
@@ -209,11 +209,11 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
                 
             if h.title().lower() == 'host':
                 host = self.headers[h]
-                
-            net_curl_args += [ '-H', '%s: %s' % ( h.title(), self.headers[h] ) ]
+            else:
+                net_curl_args += [ '-H', '%s: %s' % ( h.title(), self.headers[h] ) ]
 
         if self.command == 'POST':
-            content_len = int(self.headers.getheader('content-length', 0))
+            content_len = int(self.headers.get('content-length', 0))
             net_curl_args += [ '-d', req_body ]
 
         lock.acquire()
@@ -225,16 +225,23 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         finally:
             lock.release()
             
-        
         if not headers:
             log.debug('Error no headers')
             self.send_error(502)
             return
-            
-        log.debug('> ' + '\r\n> '.join([ '%s: %s' % (h.title(), self.headers[h]) for h in self.headers ]))
-        log.debug('< ' + '\r\n< '.join(headers))
 
-        http_response_str = '\r\n'.join(headers) + '\r\n\r\n' + result
+        log.debug(
+                '> ' + '\r\n> '.join(
+                    [ '%s: %s' % (
+                        h.title(), 
+                        self.headers[h]
+                        ) for h in self.headers 
+                        ]
+                    )
+                )
+        log.debug('< ' + '\r\n< '.join([ h.decode('utf-8', 'replace') for h in headers ]))
+
+        http_response_str = b'\r\n'.join(headers) + b'\r\n\r\n' + result
         source = FakeSocket(http_response_str)
         res = HTTPResponse(source)
         res.begin()
@@ -258,18 +265,18 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
 
         setattr(res, 'headers', self.filter_headers(res.headers))
 
-        self.wfile.write("%s %d %s\r\n" % (self.protocol_version, res.status, res.reason))
-        for line in res.headers.headers:
-            self.wfile.write(line)
-        self.end_headers()
+        respstring = "%s %d %s\r\n" % (self.protocol_version, res.status, res.reason)
+        self.wfile.write(respstring.encode('utf-8'))
+        self.wfile.write(res.headers.as_bytes())
         self.wfile.write(res_body)
         self.wfile.flush()
         
     def relay_streaming(self, res):
-        self.wfile.write("%s %d %s\r\n" % (self.protocol_version, res.status, res.reason))
-        for line in res.headers.headers:
-            self.wfile.write(line)
-        self.end_headers()
+
+        respstring = "%s %d %s\r\n" % (self.protocol_version, res.status, res.reason)
+        self.wfile.write(respstring.encode('utf-8'))
+        self.wfile.write(res.headers.as_bytes() + b"\r\n")
+
         try:
             while True:
                 chunk = res.read(8192)
@@ -340,19 +347,19 @@ class Proxy(Module):
 
     def run(self):
 
-        log.warn(messages.module_net_proxy.proxy_starting_s_i % ( self.args['lhost'], self.args['lport'] ))
-        log.warn(messages.module_net_proxy.proxy_set_proxy)
+        log.warning(messages.module_net_proxy.proxy_starting_s_i % ( self.args['lhost'], self.args['lport'] ))
+        log.warning(messages.module_net_proxy.proxy_set_proxy)
 
         initialize_certificates()
 
         if self.args['no_background']:
-            log.warn(messages.module_net_proxy.proxy_started_foreground)
+            log.warning(messages.module_net_proxy.proxy_started_foreground)
             run_proxy2(
                 hostname = self.args['lhost'],
                 port = self.args['lport']
             )
         else:
-            log.warn(messages.module_net_proxy.proxy_started_background)
+            log.warning(messages.module_net_proxy.proxy_started_background)
             server_thread = threading.Thread(target=run_proxy2, kwargs = {
                 'hostname': self.args['lhost'],
                 'port': self.args['lport']

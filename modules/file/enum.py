@@ -58,7 +58,7 @@ class Enum(Module):
 
         result_verbose = {}
 
-        for path, perms in list(result.items()):
+        for path, perms in result.items():
 
             if len(perms) == 1 and perms[0] == 'e':
                 result_verbose[path] = 'exists'

@@ -46,23 +46,26 @@ class Upload(Module):
 
     def run(self):
 
-        # Load local file
         content_orig = self.args.get('content')
+
         if content_orig == None:
 
+            # Load local file
             lpath = self.args.get('lpath')
             if not lpath:
                 log.warning(messages.module_file_upload.error_content_lpath_required)
                 return
 
             try:
-                content_orig = open(lpath, 'r').read()
+                content_orig = open(lpath, 'rb').read()
             except Exception as e:
                 log.warning(
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
                 return
+        else:
+            content_orig = content_orig.encode('utf-8')
 
-        self.args['content'] = base64.b64encode(content_orig)
+        self.args['content'] = base64.b64encode(content_orig).decode('utf-8')
 
         # Check remote file existence
         if not self.args['force'] and ModuleExec('file_check', [ self.args['rpath'], 'exists' ]).run():

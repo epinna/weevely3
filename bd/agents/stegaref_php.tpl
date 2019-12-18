@@ -1,5 +1,5 @@
 <%! import hashlib %><%
-key = hashlib.md5(password).hexdigest().lower()
+key = hashlib.md5(password.encode('utf-8')).hexdigest().lower()
 header = key[:4]
 footer = key[4:8]
 %>$kh="${header}";

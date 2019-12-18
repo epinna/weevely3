@@ -35,7 +35,7 @@ class FileRead(BaseTest):
     def test_read_php(self):
 
         # Simple download
-        self.assertEqual(self.run_argv(['test_file_read/ok.test']), 'OK')
+        self.assertEqual(self.run_argv(['test_file_read/ok.test']), b'OK')
 
         # Downoad binary. Skip check cause I don't know the remote content, and
         # the md5 check is already done inside file_download.
@@ -51,12 +51,12 @@ class FileRead(BaseTest):
     def test_read_allvectors(self):
 
         for vect in modules.loaded['file_download'].vectors.get_names():
-            self.assertEqual(self.run_argv(['-vector', vect, 'test_file_read/ok.test']), 'OK')
+            self.assertEqual(self.run_argv(['-vector', vect, 'test_file_read/ok.test']), b'OK')
 
     def test_read_sh(self):
 
         # Simple download
-        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_read/ok.test']), 'OK')
+        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_read/ok.test']), b'OK')
 
         # Downoad binary. Skip check cause I don't know the remote content, and
         # the md5 check is already done inside file_download.
