@@ -57,7 +57,7 @@ class Upload(Module):
 
             try:
                 content_orig = open(lpath, 'r').read()
-            except Exception, e:
+            except Exception as e:
                 log.warning(
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
                 return

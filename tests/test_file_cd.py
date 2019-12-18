@@ -44,12 +44,12 @@ class FileCd(BaseTest):
         # cd [0]
         new = self.folders[0]
         self.run_argv([ new ])
-        self.assertEquals(new, self.session['file_cd']['results']['cwd'])
+        self.assertEqual(new, self.session['file_cd']['results']['cwd'])
 
         # cd [-1]
         new = self.folders[-1]
         self.run_argv([ new ])
-        self.assertEquals(self.folders[0], self.session['file_cd']['results']['cwd'])
+        self.assertEqual(self.folders[0], self.session['file_cd']['results']['cwd'])
         self.assertEqual(
             messages.module_file_cd.failed_directory_change_to_s % new,
             log_captured.records[-1].msg
@@ -58,12 +58,12 @@ class FileCd(BaseTest):
         # new [1]/.././[1]/./
         new = self.folders[1]
         self.run_argv([ '%s/.././%s/./' % (new, os.path.split(new)[-1]) ])
-        self.assertEquals(new, self.session['file_cd']['results']['cwd'])
+        self.assertEqual(new, self.session['file_cd']['results']['cwd'])
 
         # new bogus
         new = 'bogus'
         self.run_argv([ new ])
-        self.assertEquals(self.folders[1], self.session['file_cd']['results']['cwd'])
+        self.assertEqual(self.folders[1], self.session['file_cd']['results']['cwd'])
         self.assertEqual(
             messages.module_file_cd.failed_directory_change_to_s % new,
             log_captured.records[-1].msg
@@ -72,4 +72,4 @@ class FileCd(BaseTest):
         # new [2]/.././[2]/../
         new = self.folders[2]
         self.run_argv([ '%s/.././////////%s/../' % (new, os.path.split(new)[-1]) ])
-        self.assertEquals(self.folders[1], self.session['file_cd']['results']['cwd'])
+        self.assertEqual(self.folders[1], self.session['file_cd']['results']['cwd'])

@@ -154,7 +154,7 @@ class Disablefunctionbypass(Module):
         # Console loop
         while True:
 
-            query = raw_input('CGI shell replacement $ ').strip()
+            query = input('CGI shell replacement $ ').strip()
 
             if not query:
                 continue

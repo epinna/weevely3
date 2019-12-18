@@ -4,7 +4,7 @@ from core.sessions import SessionURL
 from testfixtures import log_capture
 from core import messages
 import logging
-import config
+from . import config
 import os
 import subprocess
 

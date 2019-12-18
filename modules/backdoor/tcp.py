@@ -2,7 +2,7 @@ from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
 from core.module import Module
 from core.loggers import log
 from core import messages
-import urlparse
+import urllib.parse
 import telnetlib
 import time
 
@@ -75,7 +75,7 @@ class Tcp(Module):
             # Give some time to spawn the shell
             time.sleep(1)
 
-            urlparsed = urlparse.urlparse(self.session['url'])
+            urlparsed = urllib.parse.urlparse(self.session['url'])
 
             if not urlparsed.hostname:
                 log.debug(

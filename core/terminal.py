@@ -96,7 +96,7 @@ class CmdModules(cmd.Cmd):
     def _print_modules(self):
 
         data = []
-        for module_group, names in modules.loaded_tree.items():
+        for module_group, names in list(modules.loaded_tree.items()):
             for module_name in names:
                 data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
 
@@ -105,7 +105,7 @@ class CmdModules(cmd.Cmd):
     def _print_command_replacements(self):
 
         data = []
-        for module_name, module in modules.loaded.items():
+        for module_name, module in list(modules.loaded.items()):
             if module.aliases:
                 data.append([ ', '.join(module.aliases), module_name ])
 
@@ -114,16 +114,16 @@ class CmdModules(cmd.Cmd):
     def do_help(self, arg, command):
         """Fixed help."""
 
-        print
+        print()
 
         self._print_modules()
 
-        if self.session['shell_sh']['status'] == Status.RUN: print; return
+        if self.session['shell_sh']['status'] == Status.RUN: print(); return
 
         log.info(messages.terminal.help_no_shell)
         self._print_command_replacements()
 
-        print
+        print()
 
 
 class Terminal(CmdModules):
@@ -268,7 +268,7 @@ class Terminal(CmdModules):
 
         # Clean trailing newline if existent to prettify output
         result = result[:-1] if (
-                isinstance(result, basestring) and
+                isinstance(result, str) and
                 result.endswith('\n')
             ) else result
 
@@ -310,7 +310,7 @@ class Terminal(CmdModules):
     def _load_modules(self):
         """Load all modules assigning corresponding do_* functions."""
 
-        for module_name, module_class in modules.loaded.items():
+        for module_name, module_class in list(modules.loaded.items()):
 
             # Set module.do_terminal_module() function as terminal
             # self.do_modulegroup_modulename()

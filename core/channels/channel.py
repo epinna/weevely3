@@ -1,11 +1,11 @@
 from core.weexceptions import ChannelException
-from urllib2 import HTTPError, URLError
+from urllib.error import HTTPError, URLError
 from core import messages
 from core.loggers import log, dlog
 import utils
 import socks
 import sockshandler
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import re
 import ssl
 
@@ -93,7 +93,7 @@ class Channel:
         ctx.check_hostname = False
         ctx.verify_mode = ssl.CERT_NONE
         
-        handlers.append(urllib2.HTTPSHandler(context=ctx))
+        handlers.append(urllib.request.HTTPSHandler(context=ctx))
 
         return handlers
 

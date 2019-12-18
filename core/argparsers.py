@@ -35,7 +35,7 @@ class CliParser(argparse.ArgumentParser):
     		for x in self._subparsers._actions:
     		    if not isinstance(x, argparse._SubParsersAction):
     		        continue
-    		    for sp_name in x._name_parser_map.keys():
+    		    for sp_name in list(x._name_parser_map.keys()):
     		        if sp_name in sys.argv[1:]:
     		            subparser_found = True
     		if not subparser_found:

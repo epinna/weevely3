@@ -17,7 +17,7 @@ import utils
 from core import messages
 import re
 import os
-import thread
+import _thread
 
 class Os:
     """Represent the operating system vector compatibility.
@@ -115,7 +115,7 @@ class ModuleExec:
         # The background argument is set at vector init in order
         # to threadify vectors also if called by VectorList methods.
         if self.background:
-            thread.start_new_thread(modules.loaded[self.module].run_argv, (formatted, ))
+            _thread.start_new_thread(modules.loaded[self.module].run_argv, (formatted, ))
             result = None
         else:
             result = modules.loaded[self.module].run_argv(formatted)
@@ -169,7 +169,7 @@ class PhpCode(ModuleExec):
 
     def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = [], background = False):
 
-        if not isinstance(payload, basestring):
+        if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         ModuleExec.__init__(
@@ -224,7 +224,7 @@ class PhpFile(PhpCode):
 
     def __init__(self, payload_path, name = None, target = 0, postprocess = None, arguments = [], background = False):
 
-        if not isinstance(payload_path, basestring):
+        if not isinstance(payload_path, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         try:
@@ -290,7 +290,7 @@ class ShellCmd(PhpCode):
 
     def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = [], background = False):
 
-        if not isinstance(payload, basestring):
+        if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         ModuleExec.__init__(

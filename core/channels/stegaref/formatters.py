@@ -1,7 +1,7 @@
 import random
-import urlparse
+import urllib.parse
 import string
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import utils
 from core import messages
 
@@ -15,7 +15,7 @@ class FirstRefererFormat:
 
     def target_name(self):
 
-        parsed_url = urlparse.urlparse(self.url)
+        parsed_url = urllib.parse.urlparse(self.url)
         if parsed_url.netloc:
             domain_classes_num = parsed_url.netloc.count('.') + 1
 
@@ -30,8 +30,8 @@ class FirstRefererFormat:
 
     def target_url_encoded(self):
 
-        parsed_url = urlparse.urlparse(self.url)
-        return urllib.quote_plus(
+        parsed_url = urllib.parse.urlparse(self.url)
+        return urllib.parse.quote_plus(
             '%s://%s' %
             (parsed_url.scheme, parsed_url.netloc))
 
