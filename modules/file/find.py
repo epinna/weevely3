@@ -60,7 +60,7 @@ class Find(Module):
                     self.args
                 )
 
-        return result.rstrip().split('\n') if isinstance(result,str) else result
+        return result.rstrip().split('\n') if isinstance(result, str) else result
 
     def print_result(self, result):
         if result: log.info('\n'.join(result))

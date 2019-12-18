@@ -87,9 +87,9 @@ class Disablefunctionbypass(Module):
             return
         
         htaccess_absolute_path = result_install_htaccess[0][0]
-        script_absolute_path = '%s.%s' % (htaccess_absolute_path.replace('.htaccess',filename), ext)
+        script_absolute_path = '%s.%s' % (htaccess_absolute_path.replace('.htaccess', filename), ext)
         script_url = '%s.%s' % (
-            result_install_htaccess[0][1].replace('.htaccess',filename), 
+            result_install_htaccess[0][1].replace('.htaccess', filename), 
             ext
         )
         
