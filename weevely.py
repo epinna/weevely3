@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 from core.terminal import Terminal
 from core.weexceptions import FatalException
 from core.loggers import log, dlog
