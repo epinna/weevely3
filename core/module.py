@@ -118,7 +118,7 @@ class Module:
 
         self.print_result(
             result[:-1] if (
-                isinstance(result, basestring) and
+                isinstance(result, str) and
                 result.endswith('\n')
             ) else result
         )
@@ -155,7 +155,7 @@ class Module:
         # new arg is not none and the value of the old one 
         # is not just the default value
         
-        for newarg_key, newarg_value in user_args.__dict__.items():
+        for newarg_key, newarg_value in list(user_args.__dict__.items()):
                         
             # Pick the default argument of the current arg
             default_value = next((action.default for action in self.argparser._actions if action.dest == newarg_key), None)
@@ -184,7 +184,7 @@ class Module:
         # Setup() could has been stored additional args, so all the updated
         # stored arguments are applied to args
         stored_args = self.session[self.name]['stored_args']
-        for stored_arg_key, stored_arg_value in stored_args.items():
+        for stored_arg_key, stored_arg_value in list(stored_args.items()):
             if stored_arg_key != None and stored_arg_value != self.args.get(stored_arg_key):
                 self.args[stored_arg_key] = stored_arg_value
 
@@ -328,7 +328,7 @@ class Module:
 
                 self.argparser.add_argument(
                     arg_opts['name'],
-                    **dict((k, v) for k, v in arg_opts.items() if k != 'name')
+                    **dict((k, v) for k, v in list(arg_opts.items()) if k != 'name')
                 )
         except Exception as e:
             raise DevException(messages.module.error_setting_arguments_s % (e))

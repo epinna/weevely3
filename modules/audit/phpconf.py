@@ -163,7 +163,7 @@ class Phpconf(Module):
 
         result = []
 
-        for ftype, flist in functions.items():
+        for ftype, flist in list(functions.items()):
 
             func_found = PhpCode("""foreach ( Array("${ '", "'.join(functions) }") as $f) if(function_exists($f)&&is_callable($f)) print($f. "\n");""").run(
                             { 'functions' : flist }

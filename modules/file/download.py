@@ -83,7 +83,7 @@ class Download(Module):
         try:
             result_decoded = base64.b64decode(result)
             open(lpath, 'wb').write(result_decoded)
-        except Exception, e:
+        except Exception as e:
             log.warning(
               messages.generic.error_loading_file_s_s % (lpath, str(e)))
             return

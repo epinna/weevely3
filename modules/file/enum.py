@@ -34,7 +34,7 @@ class Enum(Module):
 
             try:
                 paths = open(lpath, 'r').read().split('\n')
-            except Exception, e:
+            except Exception as e:
                 log.warning(
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
                 return
@@ -58,7 +58,7 @@ class Enum(Module):
 
         result_verbose = {}
 
-        for path, perms in result.items():
+        for path, perms in list(result.items()):
 
             if len(perms) == 1 and perms[0] == 'e':
                 result_verbose[path] = 'exists'

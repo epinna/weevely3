@@ -1,15 +1,15 @@
 from core.loggers import dlog
 from core import config
 import re
-import urlparse
+import urllib.parse
 import random
 import utils
 import string
 import base64
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import hashlib
 import zlib
-import httplib
+import http.client
 import string
 
 PREPEND = utils.strings.randstr(16, charset = string.printable)
@@ -28,7 +28,7 @@ class ObfPost:
         self.trailer = passwordhash[20:32]
         
         self.url = url
-        url_parsed = urlparse.urlparse(url)
+        url_parsed = urllib.parse.urlparse(url)
         self.url_base = '%s://%s' % (url_parsed.scheme, url_parsed.netloc)
 
         # init regexp for the returning data
@@ -58,7 +58,7 @@ class ObfPost:
 
         wrapped_payload = PREPEND + self.header + obfuscated_payload + self.trailer + APPEND
 
-        opener = urllib2.build_opener(*additional_handlers)
+        opener = urllib.request.build_opener(*additional_handlers)
 
         additional_ua = ''
         for h in self.additional_headers:
@@ -82,7 +82,7 @@ class ObfPost:
 
         try:
             response = opener.open(url, data = wrapped_payload).read()
-        except httplib.BadStatusLine as e:
+        except http.client.BadStatusLine as e:
             # TODO: add this check to the other channels
             log.warn('Connection closed unexpectedly, aborting command.')
             return

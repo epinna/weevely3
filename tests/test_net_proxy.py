@@ -108,7 +108,7 @@ class Proxy(BaseTest):
         url = self.url + '/post'
         result = self._json_result([ url, '--data', 'f1=data1&f2=data2' ])
         self.assertEqual(
-            { u'f1': u'data1', u'f2': u'data2' },
+            { 'f1': 'data1', 'f2': 'data2' },
             result['form']
         )
         self.assertEqual(
@@ -120,14 +120,14 @@ class Proxy(BaseTest):
         url = self.url + '/post'
         result = self._json_result([ url ], unquoted_args="--data FIELD=$(env echo -ne 'D\\x41\\x54A\\x00B')")
         self.assertEqual(
-            { u'FIELD': u'DATAB' },
+            { 'FIELD': 'DATAB' },
             result['form']
         )
 
         # Simple GET with parameters
         url = self.url + '/get?f1=data1&f2=data2'
         self.assertEqual(
-            { u'f1': u'data1', u'f2': u'data2' },
+            { 'f1': 'data1', 'f2': 'data2' },
             self._json_result([ url ])['args']
         )
 

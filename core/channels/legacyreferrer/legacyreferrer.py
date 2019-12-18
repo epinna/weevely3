@@ -1,12 +1,12 @@
 from core.loggers import dlog
 from core import config
 import re
-import urlparse
+import urllib.parse
 import random
 import utils
 import string
 import base64
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 class LegacyReferrer:
 
@@ -22,7 +22,7 @@ class LegacyReferrer:
             re.DOTALL
         )
 
-        self.parsed = urlparse.urlparse(self.url)
+        self.parsed = urllib.parse.urlparse(self.url)
         self.data = None
 
         if not self.parsed.path:
@@ -47,14 +47,14 @@ class LegacyReferrer:
 
         referer = "http://www.google.com/url?sa=%s&source=web&ct=7&url=%s&rct=j&q=%s&ei=%s&usg=%s&sig2=%s" % (
             self.password[:2],
-            urllib2.quote(self.url),
+            urllib.parse.quote(self.url),
             self.query.strip(),
             payload[:third],
             payload[ third:thirds],
             payload[thirds:]
         )
 
-        opener = urllib2.build_opener(*additional_handlers)
+        opener = urllib.request.build_opener(*additional_handlers)
 
         # When core.conf contains additional cookies, carefully merge
         # the new cookies and UA and add all the other headers

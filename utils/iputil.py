@@ -3,8 +3,8 @@ import itertools
 # Explode IP format 10.10.10.10-233
 def ip_range(input_string):
     octets = input_string.split('.')
-    chunks = [map(int, octet.split('-')) for octet in octets]
-    ranges = [range(c[0], c[1] + 1) if len(c) == 2 else c for c in chunks]
+    chunks = [list(map(int, octet.split('-'))) for octet in octets]
+    ranges = [list(range(c[0], c[1] + 1)) if len(c) == 2 else c for c in chunks]
 
     for address in itertools.product(*ranges):
         yield '.'.join(map(str, address))

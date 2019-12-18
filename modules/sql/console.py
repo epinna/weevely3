@@ -74,9 +74,9 @@ class Console(Module):
         # we wan't the result to be unicode, but depending on the source
         # of the data, it could be encoded differently
         try:
-            result = unicode(result)
+            result = str(result)
         except UnicodeError:
-            result = unicode(result.decode(args.get('encoding')))
+            result = str(result.decode(args.get('encoding')))
         
         # If there is not errstr, something gone really bad (e.g. functions not callable)
         if errsep not in result:
@@ -135,7 +135,7 @@ class Console(Module):
         # Console loop
         while True:
 
-            query = raw_input('%s SQL> ' % user).strip()
+            query = input('%s SQL> ' % user).strip()
 
             if not query:
                 continue

@@ -1019,7 +1019,7 @@ class BaseV4(object):
 
         """
         octets = []
-        for _ in xrange(4):
+        for _ in range(4):
             octets.insert(0, str(ip_int & 0xFF))
             ip_int >>= 8
         return '.'.join(octets)
@@ -1149,7 +1149,7 @@ class IPv4Address(BaseV4, BaseIP):
         BaseV4.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, int):
             self._ip = address
             if address < 0 or address > self._ALL_ONES:
                 raise IPv4IpValidationError(address)
@@ -1217,7 +1217,7 @@ class IPv4Network(BaseV4, BaseNet):
         BaseV4.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, int):
             self._ip = address
             self.ip = IPv4Address(self._ip)
             self._prefixlen = 32
@@ -1354,7 +1354,7 @@ class BaseV6(object):
             ipv4_string = fields.pop()
             ipv4_int = IPv4Network(ipv4_string)._ip
             octets = []
-            for _ in xrange(2):
+            for _ in range(2):
                 octets.append(hex(ipv4_int & 0xFFFF).lstrip('0x').rstrip('L'))
                 ipv4_int >>= 16
             fields.extend(reversed(octets))
@@ -1457,7 +1457,7 @@ class BaseV6(object):
             sep = len(hextet[0].split(':')) + len(hextet[1].split(':'))
             new_ip = hextet[0].split(':')
 
-            for _ in xrange(8 - sep):
+            for _ in range(8 - sep):
                 new_ip.append('0000')
             new_ip += hextet[1].split(':')
 
@@ -1689,7 +1689,7 @@ class IPv6Address(BaseV6, BaseIP):
         BaseV6.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, int):
             self._ip = address
             if address < 0 or address > self._ALL_ONES:
                 raise IPv6IpValidationError(address)
@@ -1756,7 +1756,7 @@ class IPv6Network(BaseV6, BaseNet):
         BaseV6.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, int):
             self._ip = address
             self.ip = IPv6Address(self._ip)
             self._prefixlen = 128

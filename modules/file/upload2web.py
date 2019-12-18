@@ -3,7 +3,7 @@ from core.module import Module
 from core import modules
 from core import messages
 from core.loggers import log
-import urlparse
+import urllib.parse
 import os
 
 class Upload2web(Module):
@@ -33,7 +33,7 @@ class Upload2web(Module):
         script_folder = ModuleExec('system_info', [ '-info', 'script_folder' ]).load_result_or_run('script_folder')
         if not script_folder: return
 
-        script_url_splitted = urlparse.urlsplit(script_url)
+        script_url_splitted = urllib.parse.urlsplit(script_url)
         script_url_path_folder, script_url_path_filename = os.path.split(
             script_url_splitted.path)
 
@@ -48,7 +48,7 @@ class Upload2web(Module):
                 break
 
         base_url_path_folder = os.sep.join(url_folder_pieces)
-        self.base_folder_url = urlparse.urlunsplit(
+        self.base_folder_url = urllib.parse.urlunsplit(
             script_url_splitted[:2] + (base_url_path_folder, ) + script_url_splitted[3:])
         self.base_folder_path = os.sep.join(folder_pieces)
 

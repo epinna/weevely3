@@ -3,12 +3,12 @@ from core import messages
 from core.vectors import ModuleExec
 from core.module import Module
 from core.config import base_path
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from tempfile import gettempdir
-from SocketServer import ThreadingMixIn
-from urlparse import urlparse, urlunparse, ParseResult
-from StringIO import StringIO
-from httplib import HTTPResponse
+from socketserver import ThreadingMixIn
+from urllib.parse import urlparse, urlunparse, ParseResult
+from io import StringIO
+from http.client import HTTPResponse
 import threading
 import re
 import os
@@ -16,17 +16,17 @@ import sys
 import socket
 import ssl
 import select
-import httplib
-import urlparse
+import http.client
+import urllib.parse
 import threading
 import time
 import json
 import re
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from SocketServer import ThreadingMixIn
-from cStringIO import StringIO
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
+from io import StringIO
 from subprocess import Popen, PIPE
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from tempfile import mkdtemp
 
 re_valid_ip = re.compile("^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$")
@@ -190,7 +190,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
 
         req.headers['Content-length'] = str(len(req_body))
 
-        u = urlparse.urlsplit(req.path)
+        u = urllib.parse.urlsplit(req.path)
         scheme, netloc, path = u.scheme, u.netloc, (u.path + '?' + u.query if u.query else u.path)
         assert scheme in ('http', 'https')
         if netloc:

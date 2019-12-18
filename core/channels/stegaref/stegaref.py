@@ -7,16 +7,16 @@ import core.messages
 import zlib
 import hashlib
 import base64
-import urlparse
+import urllib.parse
 import re
 import random
 import string
-import cookielib
-import urllib2
+import http.cookiejar
+import urllib.request, urllib.error, urllib.parse
 import itertools
 import utils
 import os
-import httplib
+import http.client
 
 referrer_templates_path = os.path.join(
     config.weevely_path,
@@ -37,7 +37,7 @@ class StegaRef:
         self.shared_key = hashlib.md5(password).hexdigest().lower()[:8]
 
         self.url = url
-        url_parsed = urlparse.urlparse(url)
+        url_parsed = urllib.parse.urlparse(url)
         self.url_base = '%s://%s' % (url_parsed.scheme, url_parsed.netloc)
 
         # init regexp for the returning data
@@ -69,9 +69,9 @@ class StegaRef:
         # Generate session id and referrers
         session_id, referrers_data = self._prepare(original_payload)
 
-        cj = cookielib.CookieJar()
-        additional_handlers.append(urllib2.HTTPCookieProcessor(cj))
-        opener = urllib2.build_opener(*additional_handlers)
+        cj = http.cookiejar.CookieJar()
+        additional_handlers.append(urllib.request.HTTPCookieProcessor(cj))
+        opener = urllib.request.build_opener(*additional_handlers)
 
         # When core.conf contains additional cookies, carefully merge
         # the new headers killing the needed ones
@@ -86,7 +86,7 @@ class StegaRef:
                 for cookie in cookies:
                     name, value = cookie.split('=')
                     cj.set_cookie(
-                        cookielib.Cookie(
+                        http.cookiejar.Cookie(
                           version=0,
                           name=name,
                           value=value,
@@ -138,7 +138,7 @@ class StegaRef:
 
             try:
                 response = opener.open(url).read()
-            except httplib.BadStatusLine as e:
+            except http.client.BadStatusLine as e:
                 # TODO: add this check to the other channels
                 log.warn('Connection closed unexpectedly, aborting command.')
                 return
@@ -223,7 +223,7 @@ class StegaRef:
             positions = []
 
             # Loop the parameters
-            parameters = urlparse.parse_qsl(query)
+            parameters = urllib.parse.parse_qsl(query)
             for parameter_index, content in enumerate(parameters):
 
                 param, value = content

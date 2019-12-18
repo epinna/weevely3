@@ -6,7 +6,7 @@ from utils.strings import str2hex
 from core.loggers import log
 import os
 from ast import literal_eval
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 class Curl(Module):
 

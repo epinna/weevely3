@@ -14,7 +14,7 @@ def setUpModule():
         subprocess.check_output("""find /var/lib/mysql -type f -exec touch {} \; && service mysql start""", shell=True)
     except Exception as e:
         print('[!] Failed mysql')
-        print(subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True))
+        print((subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True)))
         raise
 
 class MySQLConsole(BaseTest):
@@ -57,9 +57,9 @@ class MySQLConsole(BaseTest):
 
         login = ['-user', config.sql_user, '-passwd', config.sql_passwd ]
 
-        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : u' ', 'result' : [[u"A"]] })
-        self.assertEqual(self.run_argv(login + ['-query', 'select @@hostname;'])['error'], u' ')
-        self.assertEqual(self.run_argv(login + ['-query', 'show databases;'])['error'], u' ')
+        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : ' ', 'result' : [["A"]] })
+        self.assertEqual(self.run_argv(login + ['-query', 'select @@hostname;'])['error'], ' ')
+        self.assertEqual(self.run_argv(login + ['-query', 'show databases;'])['error'], ' ')
 
         # The user is returned in the form `[[ user@host ]]`
         self.assertEqual(
