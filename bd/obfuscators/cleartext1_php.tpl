@@ -1,3 +1,3 @@
 <?php
-${agent}
+${agent.decode('utf-8')}
 ?>

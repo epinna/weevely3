@@ -30,10 +30,10 @@ class sessions:
     error_loading_sessions = 'Session loading error'
     error_session_s_not_modified = 'Error setting session variable \'%s\''
     connection_info = """<%!
-import urlparse
+from urllib.parse import urlparse
 %><%
 if not host:
-    urlparsed = urlparse.urlparse(url)
+    urlparsed = urlparse(url)
     if urlparsed and urlparsed.netloc:
         hostname = urlparsed.netloc
     else:
@@ -71,13 +71,6 @@ following command replacements to simulate a unrestricted shell.
 """
     set_usage = 'Set session variable (run :show to print). Usage:\n:set <variable> \'<value>\''
     unset_usage = 'Unset session variable (run :show to print). Usage:\n:unset <variable>'
-
-class stegareferrer:
-    error_generating_id = 'Error generating id, payload too long?'
-    error_password_hash = 'Error generating trigger, please use another password'
-    error_language_start_letter_s = 'Error, at least one language must start with the letter \'%s\''
-    error_chunk_position_i_s = 'Error chunk position %i is not indexable, delete template \'%s\''
-
 
 class vectors:
     wrong_target_type = 'Wrong target operating system type'

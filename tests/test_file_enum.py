@@ -50,60 +50,60 @@ class FileEnum(BaseTest):
     def test_file_enum(self):
 
         # Enum self.files_rel[:2] passed with arguments
-        self.assertItemsEqual(self.run_argv( self.files_rel[:3] ), {
-                    self.files_rel[0] : [ 'ex' ],
-                    self.files_rel[1] : [ 'ew' ],
-                    self.files_rel[2] : [ 'e' ]
+        self.assertEqual(self.run_argv( self.files_rel[:3] ), {
+                    self.files_rel[0] :  'ex',
+                    self.files_rel[1] :  'ew',
+                    self.files_rel[2] :  'e' 
         })
 
         # Enum self.files_rel[:2] + bogus passed with arguments
-        self.assertItemsEqual(self.run_argv( self.files_rel[:3] + [ 'bogus' ] ), {
-                    self.files_rel[0] : [ 'ex' ],
-                    self.files_rel[1] : [ 'ew' ],
-                    self.files_rel[2] : [ 'e' ]
+        self.assertEqual(self.run_argv( self.files_rel[:3] + [ 'bogus' ] ), {
+                    self.files_rel[0] :  'ex',
+                    self.files_rel[1] :  'ew',
+                    self.files_rel[2] :  'e' 
         })
 
         # Enum self.files_rel[:2] + bogus passed with arguments and -print
-        self.assertItemsEqual(self.run_argv( self.files_rel[:3] + [ 'bogus', '-print' ] ), {
-                    self.files_rel[0] : [ 'ex' ],
-                    self.files_rel[1] : [ 'ew' ],
-                    self.files_rel[2] : [ 'e' ],
-                    'bogus' : []
+        self.assertEqual(self.run_argv( self.files_rel[:3] + [ 'bogus', '-print' ] ), {
+                    self.files_rel[0] :  'ex',
+                    self.files_rel[1] :  'ew',
+                    self.files_rel[2] :  'e',
+                    'bogus' : ''
         })
 
     def test_file_enum_lpath(self):
 
         # Enum self.files_rel[:2] passed with lfile
         temp_file = tempfile.NamedTemporaryFile()
-        temp_file.write('\n'.join(self.files_rel[:3]))
+        temp_file.write('\n'.join(self.files_rel[:3]).encode('utf-8'))
         temp_file.flush()
-        self.assertItemsEqual(self.run_argv( [ '-lpath-list', temp_file.name ] ), {
-            self.files_rel[0] : [ 'ex' ],
-            self.files_rel[1] : [ 'ew' ],
-            self.files_rel[2] : [ 'e' ]
+        self.assertEqual(self.run_argv( [ '-lpath-list', temp_file.name ] ), {
+            self.files_rel[0] :  'ex',
+            self.files_rel[1] :  'ew',
+            self.files_rel[2] :  'e' 
         })
         temp_file.close()
 
         # Enum self.files_rel[:2] + bogus passed with lfile
         temp_file = tempfile.NamedTemporaryFile()
-        temp_file.write('\n'.join(self.files_rel[:3] + [ 'bogus' ]))
+        temp_file.write('\n'.join(self.files_rel[:3] + [ 'bogus' ]).encode('utf-8'))
         temp_file.flush()
-        self.assertItemsEqual(self.run_argv( [ '-lpath-list', temp_file.name ] ), {
-            self.files_rel[0] : [ 'ex' ],
-            self.files_rel[1] : [ 'ew' ],
-            self.files_rel[2] : [ 'e' ]
+        self.assertEqual(self.run_argv( [ '-lpath-list', temp_file.name ] ), {
+            self.files_rel[0] : 'ex' ,
+            self.files_rel[1] : 'ew' ,
+            self.files_rel[2] : 'e' 
         })
         temp_file.close()
 
         # Enum self.files_rel[:2] + bogus passed with lfile and -print
         temp_file = tempfile.NamedTemporaryFile()
-        temp_file.write('\n'.join(self.files_rel[:3] + [ 'bogus' ]))
+        temp_file.write('\n'.join(self.files_rel[:3] + [ 'bogus' ]).encode('utf-8'))
         temp_file.flush()
-        self.assertItemsEqual(self.run_argv( [ '-lpath-list', temp_file.name, '-print' ] ), {
-                    self.files_rel[0] : [ 'ex' ],
-                    self.files_rel[1] : [ 'ew' ],
-                    self.files_rel[2] : [ 'e' ],
-                    'bogus' : []
+        self.assertEqual(self.run_argv( [ '-lpath-list', temp_file.name, '-print' ] ), {
+                    self.files_rel[0] :  'ex' ,
+                    self.files_rel[1] :  'ew' ,
+                    self.files_rel[2] :  'e' ,
+                    'bogus' : ''
         })
         temp_file.close()
 

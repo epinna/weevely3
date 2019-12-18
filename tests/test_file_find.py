@@ -61,31 +61,31 @@ class FindPerms(BaseTest):
     def test_file_find_php(self):
 
         # find first writable starting from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-writable', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
+        self.assertEqual(self.run_argv([ '-writable', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
 
         # find first writable file from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-writable', '-quit', self.folders_rel[0], '-ftype', 'f' ]), [ self.files_rel[1] ])
+        self.assertEqual(self.run_argv([ '-writable', '-quit', self.folders_rel[0], '-ftype', 'f' ]), [ self.files_rel[1] ])
 
         # find all executable starting from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-executable', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] )
+        self.assertEqual(sorted(self.run_argv([ '-executable', self.folders_rel[0] ])), sorted(self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] ))
 
         # find all executable starting from folder[0] that matches the regexp 'te-ex' -> folder[2]
-        self.assertItemsEqual(self.run_argv([ '-executable', self.folders_rel[0], 'te-ex' ]), [ self.files_rel[2] ])
+        self.assertEqual(self.run_argv([ '-executable', self.folders_rel[0], 'te-ex' ]), [ self.files_rel[2] ])
 
         # find all starting from folder[0] that matches the regexp 'TE-EX' -> folder[2]
-        self.assertItemsEqual(self.run_argv([ self.folders_rel[0], 'TE-EX' ]), [ self.files_rel[2] ])
+        self.assertEqual(self.run_argv([ self.folders_rel[0], 'TE-EX' ]), [ self.files_rel[2] ])
 
         # find all  starting from folder[0] that matches the regexp 'TE-EX' and case sensitive -> []
-        self.assertItemsEqual(self.run_argv([ '-case', self.folders_rel[0], 'TE-EX' ]), [ '' ])
+        self.assertEqual(self.run_argv([ '-case', self.folders_rel[0], 'TE-EX' ]), [ '' ])
 
         # find all readable starting from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-readable', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[3] ] )
+        self.assertEqual(sorted(self.run_argv([ '-readable', self.folders_rel[0] ])), sorted(self.folders_rel + [  self.files_rel[3] ] ))
 
         # find all readable starting from folder[0] with a wrong regex -> none
-        self.assertItemsEqual(self.run_argv([ '-readable', self.folders_rel[0], 'bogus' ]), [ '' ] )
+        self.assertEqual(self.run_argv([ '-readable', self.folders_rel[0], 'bogus' ]), [ '' ] )
 
         # find readable starting from folder[0] with no recursion
-        self.assertItemsEqual(self.run_argv([ '-readable', '-no-recursion', self.folders_rel[0] ]), self.folders_rel[:2] )
+        self.assertEqual(sorted(self.run_argv([ '-readable', '-no-recursion', self.folders_rel[0] ])), sorted(self.folders_rel[:2] ))
 
         # test bogus path
         self.assertEqual(self.run_argv([ '-readable', 'bogus' ]), [''] )
@@ -94,28 +94,28 @@ class FindPerms(BaseTest):
     def test_file_find_sh(self):
 
         # find first writable starting from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-writable', '-vector', 'sh_find', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
+        self.assertEqual(self.run_argv([ '-writable', '-vector', 'sh_find', '-quit', self.folders_rel[0] ]), [ self.folders_rel[1] ])
 
         # find all executable starting from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-executable', '-vector', 'sh_find', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] )
+        self.assertEqual(sorted(self.run_argv([ '-executable', '-vector', 'sh_find', self.folders_rel[0] ])), sorted(self.folders_rel + [  self.files_rel[2], self.files_rel[0] ] ))
 
         # find all executable starting from folder[0] that matches the regexp '-' -> folder[2]
-        self.assertItemsEqual(self.run_argv([ '-executable', '-vector', 'sh_find', self.folders_rel[0], 'te-ex' ]), [ self.files_rel[2] ])
+        self.assertEqual(self.run_argv([ '-executable', '-vector', 'sh_find', self.folders_rel[0], 'te-ex' ]), [ self.files_rel[2] ])
 
         # find all starting from folder[0] that matches the regexp 'TE-EX' -> folder[2]
-        self.assertItemsEqual(self.run_argv([ '-vector', 'sh_find', self.folders_rel[0], 'TE-EX' ]), [ self.files_rel[2] ])
+        self.assertEqual(self.run_argv([ '-vector', 'sh_find', self.folders_rel[0], 'TE-EX' ]), [ self.files_rel[2] ])
 
         # find all  starting from folder[0] that matches the regexp 'TE-EX' and case sensitive -> []
-        self.assertItemsEqual(self.run_argv([ '-case', '-vector', 'sh_find', self.folders_rel[0], 'TE-EX' ]), [ '' ])
+        self.assertEqual(self.run_argv([ '-case', '-vector', 'sh_find', self.folders_rel[0], 'TE-EX' ]), [ '' ])
 
         # find all readable starting from folder[0]
-        self.assertItemsEqual(self.run_argv([ '-readable', '-vector', 'sh_find', self.folders_rel[0] ]), self.folders_rel + [  self.files_rel[3] ] )
+        self.assertEqual(sorted(self.run_argv([ '-readable', '-vector', 'sh_find', self.folders_rel[0] ])), sorted(self.folders_rel + [  self.files_rel[3] ] ))
 
         # find all readable starting from folder[0] with a wrong regex -> none
-        self.assertItemsEqual(self.run_argv([ '-readable', self.folders_rel[0], 'bogus' ]), [ '' ] )
+        self.assertEqual(self.run_argv([ '-readable', self.folders_rel[0], 'bogus' ]), [ '' ] )
 
         # find readable starting from folder[0] with no recursion
-        self.assertItemsEqual(self.run_argv([ '-readable', '-vector', 'sh_find', '-no-recursion', self.folders_rel[0] ]), self.folders_rel[:2] )
+        self.assertEqual(sorted(self.run_argv([ '-readable', '-vector', 'sh_find', '-no-recursion', self.folders_rel[0] ])), sorted(self.folders_rel[:2] ))
 
         # test bogus path
-        self.assertEqual(self.run_argv([ '-readable', '-vector', 'sh_find', 'bogus' ]), [''] )
+        self.assertEqual(self.run_argv([ '-readable', '-vector', 'sh_find', 'bogus' ]), [ '' ] )

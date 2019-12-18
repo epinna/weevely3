@@ -25,14 +25,14 @@ class TestGenerators(TestCase):
 
         for i in range(0, 100):
             self._randomize_bd()
-            obfuscated = generate(self.password)
+            obfuscated = generate(self.password.decode('utf-8'))
             save_generated(obfuscated, self.path)
 
             self.channel = Channel(
                 'ObfPost',
                 {
                     'url' : self.url,
-                    'password' : self.password
+                    'password' : self.password.decode('utf-8')
                 }
             )
             self._incremental_requests(10, 100, 30, 50)
@@ -51,7 +51,7 @@ class TestGenerators(TestCase):
             self.assertEqual(
                 self.channel.send(
                     'echo("%s");' %
-                    payload)[0],
+                    payload.decode('utf-8'))[0],
                 payload)
 
     @classmethod

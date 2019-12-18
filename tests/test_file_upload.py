@@ -38,7 +38,7 @@ class FileUpload(BaseTest):
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
-        temp_file.write('CONTENT')
+        temp_file.write(b'CONTENT')
         self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f2' ]))
         temp_file.close()
 
@@ -50,7 +50,7 @@ class FileUpload(BaseTest):
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
-        temp_file.write('CONTENT')
+        temp_file.write(b'CONTENT')
         self.assertTrue(self.run_argv([ temp_file.name, 'test_file_upload/f4', '-vector', 'fwrite' ]))
         temp_file.close()
 
@@ -108,10 +108,7 @@ class FileUpload(BaseTest):
     @log_capture()
     def test_upload_binary(self, log_captured):
 
-        binary_content = '\xbe\x00\xc8d\xf8d\x08\xe4'
-
-        # Upload content
-        self.assertTrue(self.run_argv([ 'test_file_upload/f7', '-content', binary_content ]))
+        binary_content = b'\xbe\x00\xc8d\xf8d\x08\xe4'
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()
@@ -122,10 +119,7 @@ class FileUpload(BaseTest):
     @log_capture()
     def test_upload_binary_fwrite(self, log_captured):
 
-        binary_content = '\xbe\x00\xc8d\xf8d\x08\xe4'
-
-        # Upload content
-        self.assertTrue(self.run_argv([ 'test_file_upload/f9', '-content', binary_content, '-vector', 'fwrite' ]))
+        binary_content = b'\xbe\x00\xc8d\xf8d\x08\xe4'
 
         # Upload lfile
         temp_file = tempfile.NamedTemporaryFile()

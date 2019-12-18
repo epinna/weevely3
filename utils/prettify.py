@@ -9,7 +9,7 @@ def tablify(data, table_border = True):
     output = ''
 
     # Empty outputs. False is probably a good output value
-    if data and not data:
+    if data != False and not data:
         output = ''
     else:
 
@@ -47,6 +47,13 @@ def tablify(data, table_border = True):
 
         # Else, try to stringify
         else:
+
+            # Normalize byte-like objects
+            try:
+                data = data.decode('utf-8')
+            except (UnicodeDecodeError, AttributeError):
+                pass
+
             output = str(data)
 
         if not output:
@@ -61,6 +68,12 @@ def shorten(body, keep_header = 0, keep_trailer = 0):
     """
     Smartly shorten a given string.
     """
+
+    # Normalize byte-like objects
+    try:
+        body = body.decode('utf-8')
+    except (UnicodeDecodeError, AttributeError):
+        pass
 
     # Cut header
     if (keep_header

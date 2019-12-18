@@ -39,14 +39,14 @@ class FileDownload(BaseTest):
         temp_file = tempfile.NamedTemporaryFile()
 
         # Simple download
-        self.assertEqual(self.run_argv(['test_file_download/ok.test', temp_file.name]), 'OK')
+        self.assertEqual(self.run_argv(['test_file_download/ok.test', temp_file.name]), b'OK')
         self.assertEqual(open(temp_file.name, 'r').read(), 'OK')
         temp_file.truncate()
 
         # Downoad binary. Skip check cause I don't know the remote content, and
         # the md5 check is already done inside file_download.
         self.assertTrue(self.run_argv(['/bin/ls', temp_file.name]))
-        self.assertTrue(open(temp_file.name, 'r').read(), 'OK')
+        self.assertTrue(open(temp_file.name, 'rb').read())
         temp_file.truncate()
 
         # Download of an unreadable file
@@ -72,14 +72,14 @@ class FileDownload(BaseTest):
         temp_file = tempfile.NamedTemporaryFile()
 
         # Simple download
-        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_download/ok.test', temp_file.name]), 'OK')
+        self.assertEqual(self.run_argv(['-vector', 'base64', 'test_file_download/ok.test', temp_file.name]), b'OK')
         self.assertEqual(open(temp_file.name, 'r').read(), 'OK')
         temp_file.truncate()
 
         # Downoad binary. Skip check cause I don't know the remote content, and
         # the md5 check is already done inside file_download.
         self.assertTrue(self.run_argv(['-vector', 'base64', '/bin/ls', temp_file.name]))
-        self.assertTrue(open(temp_file.name, 'r').read(), 'OK')
+        self.assertTrue(open(temp_file.name, 'rb').read())
         temp_file.truncate()
 
         # Download of an unreadable file

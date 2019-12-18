@@ -13,15 +13,6 @@ channels = [
     # Obfuscated channel inside POST requests introduced 
     # in Weevely 3.6
     'ObfPost',
-    # Steganographed cover channel inside Referrer
-    # introduced in Weevely 3.0beta.
-    'StegaRef',
-    # Legacy payload obfuscation in cookies, introduced
-    # in Weevely 0.5.1 the December, 2011.
-    'LegacyCookie',
-    # Legacy payload obfuscation in referrers, introduced
-    # with the first Weevely versions.
-    'LegacyReferrer'
 ]
 
 # Append random GET parameters to every request to

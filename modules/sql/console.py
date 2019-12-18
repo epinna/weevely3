@@ -59,9 +59,10 @@ class Console(Module):
     def _query(self, vector, args):
 
         # Randomly generate separators
-        colsep = '----%s' % utils.strings.randstr(6)
-        linsep = '----%s' % utils.strings.randstr(6)
-        errsep = '----%s' % utils.strings.randstr(6)
+        colsep = '----%s' % utils.strings.randstr(6).decode('utf-8')
+        linsep = '----%s' % utils.strings.randstr(6).decode('utf-8')
+        errsep = '----%s' % utils.strings.randstr(6).decode('utf-8')
+
         args.update(
             {'colsep': colsep, 'linsep': linsep, 'errsep': errsep}
         )

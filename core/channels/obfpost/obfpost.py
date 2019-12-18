@@ -21,11 +21,12 @@ class ObfPost:
 
         # Generate the 8 char long main key. Is shared with the server and
         # used to check header, footer, and encrypt the payload.
+        password = password.encode('utf-8')
 
         passwordhash = hashlib.md5(password).hexdigest().lower()
-        self.shared_key = passwordhash[:8]
-        self.header = passwordhash[8:20]
-        self.trailer = passwordhash[20:32]
+        self.shared_key = passwordhash[:8].encode('utf-8')
+        self.header = passwordhash[8:20].encode('utf-8')
+        self.trailer = passwordhash[20:32].encode('utf-8')
         
         self.url = url
         url_parsed = urllib.parse.urlparse(url)
@@ -33,10 +34,10 @@ class ObfPost:
 
         # init regexp for the returning data
         self.re_response = re.compile(
-            "%s(.*)%s" % (self.header, self.trailer), re.DOTALL
+            b"%s(.*)%s" % (self.header, self.trailer), re.DOTALL
             )
         self.re_debug = re.compile(
-            "%sDEBUG(.*?)%sDEBUG" % (self.header, self.trailer), re.DOTALL
+            b"%sDEBUG(.*?)%sDEBUG" % (self.header, self.trailer), re.DOTALL
             )
 
         # Load agent
@@ -51,10 +52,15 @@ class ObfPost:
 
     def send(self, original_payload, additional_handlers = []):
 
-        obfuscated_payload = base64.b64encode(
-            utils.strings.sxor(
+        if isinstance(original_payload, str):
+            original_payload = original_payload.encode('utf-8')
+
+        xorred_payload = utils.strings.sxor(
                 zlib.compress(original_payload),
-                self.shared_key)).rstrip('=')
+                self.shared_key
+                )
+
+        obfuscated_payload = base64.b64encode(xorred_payload).rstrip(b'=')
 
         wrapped_payload = PREPEND + self.header + obfuscated_payload + self.trailer + APPEND
 
@@ -98,8 +104,10 @@ class ObfPost:
         matched = self.re_response.search(response)
     
         if matched and matched.group(1):
-            return zlib.decompress(
+
+            response = zlib.decompress(
                 utils.strings.sxor(
-                    base64.b64decode(
-                        matched.group(1)),
+                    base64.b64decode(matched.group(1)),
                     self.shared_key))
+
+            return response

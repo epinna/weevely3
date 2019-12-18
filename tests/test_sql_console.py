@@ -14,7 +14,7 @@ def setUpModule():
         subprocess.check_output("""find /var/lib/mysql -type f -exec touch {} \; && service mysql start""", shell=True)
     except Exception as e:
         print('[!] Failed mysql')
-        print((subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True)))
+        print(subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True))
         raise
 
 class MySQLConsole(BaseTest):

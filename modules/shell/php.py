@@ -1,9 +1,9 @@
 from mako.template import Template
 from core.module import Module, Status
-from core import messages
 from core.channels.channel import Channel
 from core import config
 from core.loggers import log
+from core.argparsers import SUPPRESS
 import random
 import utils
 
@@ -27,6 +27,7 @@ class Php(Module):
           { 'name' : '-prefix-string', 'default' : '@error_reporting(0);' },
           { 'name' : '-post_data' },
           { 'name' : '-postfix-string', 'default' : '' },
+          { 'name' : '-raw-response', 'help' : SUPPRESS, 'action' : 'store_true', 'default' : False },
         ])
 
         self.channel = None
@@ -38,7 +39,7 @@ class Php(Module):
         command = 'echo(%s);' % rand
         response, code, error = channel.send(command)
 
-        if rand == response:
+        if rand == response.decode('utf-8'):
             status = Status.RUN
         else:
             # The PHP shell should never return FAIL
@@ -110,5 +111,7 @@ class Php(Module):
         # Send command
         response, code, error = self.channel.send(command)
 
-        # Strip last newline if present
-        return response
+        if self.args.get('raw_response'):
+            return response
+        else:
+            return response.decode('utf-8')

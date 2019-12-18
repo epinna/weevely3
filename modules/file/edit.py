@@ -72,13 +72,13 @@ class Edit(Module):
             if result_download == None: return
 
             # Store original md5
-            md5_orig = hashlib.md5(open(lpath, 'rb').read()).hexdigest()
+            md5_orig = hashlib.md5(open(lpath, 'rb', encoding='utf-8').read()).hexdigest()
 
             # Run editor
             subprocess.check_call( [ self.args['editor'], lpath ])
 
             # With no changes, just return
-            if md5_orig == hashlib.md5(open(lpath, 'rb').read()).hexdigest():
+            if md5_orig == hashlib.md5(open(lpath, 'rb', encoding='utf-8').read()).hexdigest():
                 log.debug(messages.module_file_edit.unmodified_file)
                 temp_file.close()
                 return

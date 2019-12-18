@@ -228,7 +228,8 @@ class PhpFile(PhpCode):
             raise DevException(messages.vectors.wrong_payload_type)
 
         try:
-            payload = file(payload_path, 'r').read()
+            with open(payload_path, 'r') as templatefile:
+                payload = templatefile.read()
         except Exception as e:
             raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
 

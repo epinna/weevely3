@@ -39,13 +39,13 @@ class Session(dict):
 
         dlog.info(pprint.pformat(self))
 
-        for mod_name, mod_value in list(self.items()):
+        for mod_name, mod_value in self.items():
 
             if isinstance(mod_value, dict):
                 mod_args = mod_value.get('stored_args')
 
                 # Is a module, print all the storable stored_arguments
-                for argument, arg_value in list(mod_args.items()):
+                for argument, arg_value in mod_args.items():
                     if not module_filter or ("%s.%s" % (mod_name, argument)).startswith(module_filter):
                         log.info(messages.sessions.set_module_s_s_s % (mod_name, argument, arg_value))
             else:
@@ -69,7 +69,7 @@ class Session(dict):
 
         self.update(data)
 
-        for module_argument, value in list(data.items()):
+        for module_argument, value in data.items():
 
             # If action_<module_argument> function exists, trigger the action
             action_name = 'action_%s' % (module_argument.replace('.', '_'))
@@ -165,7 +165,7 @@ class SessionFile(Session):
     def __init__(self, dbpath, volatile = False):
 
         try:
-            sessiondb = yaml.load(open(dbpath, 'r').read())
+            sessiondb = yaml.safe_load(open(dbpath, 'r').read())
         except Exception as e:
             log.warn(
                 messages.generic.error_loading_file_s_s %
@@ -216,7 +216,7 @@ class SessionURL(Session):
         for dbpath in sessions_available:
 
             try:
-                sessiondb = yaml.load(open(dbpath, 'r').read())
+                sessiondb = yaml.safe_load(open(dbpath, 'r').read())
             except Exception as e:
                 log.warn(
                     messages.generic.error_loading_file_s_s %

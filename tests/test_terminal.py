@@ -158,12 +158,6 @@ class TerminalTest(BaseTest):
         self._assert_exec(':set channel BOGUS', messages.sessions.set_s_s % ('channel', 'BOGUS'), log_captured)
         self._assert_exec('echo 1', messages.channels.error_loading_channel_s % 'BOGUS', log_captured)
         self._assert_exec(':unset channel', messages.sessions.unset_s % ('channel'), log_captured)
-        # TODO: move unset and set output in messages
-        self._assert_exec('echo 1', '1', log_captured)
-        self._assert_exec(':set channel LegacyCookie', messages.sessions.set_s_s % ('channel', 'LegacyCookie'), log_captured)
-        # Test the behaviour when starting terminal on wrong remote pass
-        self._assert_exec('echo 1', messages.terminal.backdoor_unavailable, log_captured)
-        self._assert_exec(':unset channel', messages.sessions.unset_s % ('channel'), log_captured)
 
     @log_capture()
     def test_session_proxy(self, log_captured):

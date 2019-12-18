@@ -132,7 +132,8 @@ $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.rep
                 saved = ModuleExec('file_upload', [ '-content', result_str, output_path ]).run()
             else:
                 try:
-                    open(output_path, 'wb').write(result_str)
+                    with open(output_path, 'wb') as outputfile:
+                        outputfile.write(result_str.encode('utf-8'))
                 except Exception as e:
                     log.warning(
                       messages.generic.error_loading_file_s_s % (output_path, str(e)))

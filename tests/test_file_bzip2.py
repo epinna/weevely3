@@ -4,7 +4,7 @@ from core.sessions import SessionURL
 from testfixtures import log_capture
 from core import messages
 import logging
-from . import config
+import config
 import os
 import subprocess
 
@@ -12,8 +12,8 @@ class FileBzip(BaseTest):
 
     # Create and bzip2 binary files for the test
     binstring = [
-        '\\xe0\\xf5\\xfe\\xe2\\xbd\\x0c\\xbc\\x9b\\xa0\\x8f\\xed?\\xa1\\xe1',
-        '\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00'
+        b'\\xe0\\xf5\\xfe\\xe2\\xbd\\x0c\\xbc\\x9b\\xa0\\x8f\\xed?\\xa1\\xe1',
+        b'\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x06\\x00\\x00\\x00'
          ]
     uncompressed = [
         os.path.join(config.base_folder, 'test_file_bzip2', 'binfile0'),

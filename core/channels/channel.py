@@ -99,7 +99,7 @@ class Channel:
 
     def send(self, payload):
 
-        response = ''
+        response = b''
         code = 200
         error = ''
 
@@ -141,6 +141,7 @@ class Channel:
         if response:
             dlog.info('RESPONSE: %s' % repr(response))
         else:
+            response = b''
             command_last_chars = utils.prettify.shorten(
                                     payload.rstrip(),
                                     keep_trailer = 10

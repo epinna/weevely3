@@ -118,7 +118,7 @@ class FileGrep(BaseTest):
             self.assertEqual(subprocess.check_output(
                     'cat "%s"' % (output_path),
                     shell=True
-                ), ''
+                ), b''
             )
             
             subprocess.check_output(
@@ -129,7 +129,7 @@ class FileGrep(BaseTest):
             self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '-output', output_path ])[0], { self.files_rel[2] : ['string3'] })
             self.assertEqual(subprocess.check_output(
                 'cat "%s"' % (output_path),
-                shell=True), 'string3'
+                shell=True), b'string3'
             )
             subprocess.check_output(
                 'rm -f %s' % (output_path),
