@@ -150,10 +150,10 @@ class Channel:
                 command_last_chars and
                 command_last_chars[-1] not in ( ';', '}' )
                 ):
-                log.warn(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
+                log.warning(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
 
         if error or human_error:
             log.debug('[ERR] %s [%s]' % (error, code))
-            log.warn(human_error)
+            log.warning(human_error)
 
         return response, code, error

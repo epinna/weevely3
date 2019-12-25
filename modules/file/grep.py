@@ -84,7 +84,7 @@ $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.rep
 
         # Validate files presence
         if not isinstance(files, list) or not files:
-            log.warn(messages.module_file_grep.failed_retrieve_info)
+            log.warning(messages.module_file_grep.failed_retrieve_info)
             return None, False
 
         # Store the found data in data dictionary in the

@@ -143,12 +143,14 @@ class FileGrep(BaseTest):
 
             # grep string3 -> []
             self.assertTrue(self.run_argv([ '-vector', vect, self.folders_rel[0], 'tring4', '-output', temp_file.name, '-local' ])[1])
-            self.assertEqual('', open(temp_file.name, 'r').read())
+            with open(temp_file.name, 'r') as temp_file2:
+                self.assertEqual('', temp_file2.read())
             temp_file.truncate()
 
             # grep rpath=folder2 string -> string[3]
             self.assertEqual(self.run_argv([ '-vector', vect, self.folders_rel[2], 'string.*', '-output', temp_file.name, '-local' ])[0], { self.files_rel[2] : ['string3'] })
-            self.assertEqual('string3', open(temp_file.name, 'r').read())
+            with open(temp_file.name, 'r') as temp_file2:
+                self.assertEqual('string3', temp_file2.read())
             temp_file.close()
 
 
