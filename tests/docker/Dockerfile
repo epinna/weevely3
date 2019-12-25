@@ -11,7 +11,7 @@ RUN apt-get -y install default-mysql-server
 
 COPY requirements.txt /app/
 RUN pip install -r /app/requirements.txt
-RUN pip install testfixtures # Additional library for testing
+RUN pip install testfixtures coverage # Additional library for testing
 
 # Add unprivileged testuser:testuser user
 RUN echo 'testuser:$1$xyz$iqgi.17OXQwhicZgFC1OZ.:1001:1002:,,,:/home/testuser:/bin/bash' >> /etc/passwd
