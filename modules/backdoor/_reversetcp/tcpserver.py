@@ -63,15 +63,15 @@ class TcpServer:
                 [self.socket, sys.stdin], [], [self.socket, sys.stdin])
 
             try:
-                buffer = self.socket.recv(100)
-                while(buffer != ''):
+                buf = self.socket.recv(100)
+                while(buf != ''):
 
                     self.socket_state = True
 
-                    sys.stdout.write(buffer)
+                    sys.stdout.write(buf.decode('utf-8', 'replace'))
                     sys.stdout.flush()
-                    buffer = self.socket.recv(100)
-                if(buffer == ''):
+                    buf = self.socket.recv(100)
+                if(buf == ''):
                     return
             except socket.error:
                 pass
@@ -82,5 +82,5 @@ class TcpServer:
                 c = sys.stdin.read(1)
                 if(c == ''):
                     return
-                if(self.socket.sendall(c) != None):
+                if(self.socket.sendall(c.encode('utf-8')) != None):
                     return
