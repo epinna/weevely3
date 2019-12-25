@@ -1,5 +1,16 @@
 # Change Log
 
+## [v4.0.0] - 2019-26-12
+### Added
+- Full port to Python 3
+
+### Fixed
+- Module net_phpproxy
+
+### Removed
+- Old backdoor formats LegacyCookie, LegacyReferrer, and Stegaref
+- Module backdoor_meterpreter
+
 ## [v3.7.0] - 2018-10-15
 ### Fixed
 - Fix vector handling in audit_etcpasswd #93

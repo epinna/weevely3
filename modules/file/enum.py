@@ -33,7 +33,8 @@ class Enum(Module):
         if lpath:
 
             try:
-                paths = open(lpath, 'r').read().split('\n')
+                with open(lpath, 'r') as lfile:
+                    paths = lfile.read().split('\n')
             except Exception as e:
                 log.warning(
                   messages.generic.error_loading_file_s_s % (lpath, str(e)))
