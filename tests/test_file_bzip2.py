@@ -1,10 +1,10 @@
 from tests.base_test import BaseTest
+from tests import config
 from core import modules
 from core.sessions import SessionURL
 from testfixtures import log_capture
 from core import messages
 import logging
-import config
 import os
 import subprocess
 
