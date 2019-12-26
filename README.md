@@ -34,7 +34,6 @@ Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and 
 * Upload and download files
 * Spawn reverse and direct TCP shells
 * Audit remote target security
-* Run Meterpreter payloads
 * Port scan pivoting on target
 * Mount the remote filesystem
 * Bruteforce SQL accounts pivoting on the target
@@ -60,7 +59,6 @@ The agent is a small, polymorphic PHP script hardly detected by AV and the commu
 | :system_procs               |  List running processes.
 | :backdoor_reversetcp        |  Execute a reverse TCP shell.
 | :backdoor_tcp               |  Spawn a shell on a TCP port.
-| :backdoor_meterpreter       |  Start a meterpreter session.
 | :bruteforce_sql             |  Bruteforce SQL database.
 | :file_gzip                  |  Compress or expand gzip files.
 | :file_clearlog              |  Remove string from a file.
