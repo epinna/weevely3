@@ -139,3 +139,4 @@
 [v3.2.0]: https://github.com/epinna/weevely3/releases/tag/v3.2.0
 [v3.3.1]: https://github.com/epinna/weevely3/releases/tag/v3.3.1
 [v3.4]: https://github.com/epinna/weevely3/releases/tag/v3.4
+[v4.0.0]: https://github.com/epinna/weevely3/releases/tag/v4.0.0
