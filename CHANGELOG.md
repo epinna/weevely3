@@ -1,11 +1,12 @@
 # Change Log
 
-## [v4.0.0] - 2019-26-12
+## [v4.0.0] - 2019-12-26
 ### Added
 - Full port to Python 3
 
 ### Fixed
 - Module net_phpproxy
+- Fixes alias management #117
 
 ### Removed
 - Old backdoor formats LegacyCookie, LegacyReferrer, and Stegaref
