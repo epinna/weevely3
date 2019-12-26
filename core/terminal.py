@@ -57,7 +57,13 @@ class CmdModules(cmd.Cmd):
                 compfunc = self.completenames
             self.completion_matches = compfunc(text, line, begidx, endidx)
         try:
-            return self.completion_matches[state]
+            if self.completion_matches[state].startswith('alias_'):
+                if self.session.get('default_shell') == 'shell_php':
+                    return self.completion_matches[state][6:]
+                else:
+                    return ''
+            else:
+                return self.completion_matches[state]
         except IndexError:
             return None
 
@@ -74,33 +80,30 @@ class CmdModules(cmd.Cmd):
         cmd, arg, line = self.parseline(line)
         if not line:
             return self.emptyline()
-        if cmd is None:
+        if cmd in (None, ''):
             return self.default(line)
         self.lastcmd = line
         if line == 'EOF' :
             #self.lastcmd = ''
             raise EOFError()
-        if cmd == '':
-            return self.default(line)
         if cmd:
-
             # Try running module  command
             try:
                 func = getattr(self, 'do_' + cmd.lstrip(':'))
             except AttributeError:
-                return self.default(line)
+                # If there is no module command, check if we have a PHP shelli
+                # And in case try running alias command
+                if self.session.get('default_shell') == 'shell_php':
+                    try:
+                        func = getattr(self, 'do_alias_' + cmd.lstrip(':'))
+                    except AttributeError:
+                        pass
+                    else:
+                        return func(arg, cmd)
+            else:
+                return func(arg, cmd)
 
-            # If we have a PHP shell, try running alias command
-            if self.session.get('default_shell') == 'shell_php':
-                try:
-                    func = getattr(self, 'do_alias_' + cmd.lstrip(':'))
-                except AttributeError:
-                    return self.default(line)
-
-            return func(arg, cmd)
-
-        else:
-            return self.default(line)
+        return self.default(line)
 
     def _print_modules(self):
 
@@ -182,7 +185,6 @@ class Terminal(CmdModules):
                         )
                     ):
             return line
-
 
         # Trigger the shell_sh/shell_php probe if
         # 1. We never tried to raise shells (shell_sh = IDLE)

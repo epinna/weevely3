@@ -114,4 +114,4 @@ class Php(Module):
         if self.args.get('raw_response'):
             return response
         else:
-            return response.decode('utf-8')
+            return response.decode('utf-8', 'replace')
