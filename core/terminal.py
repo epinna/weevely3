@@ -83,10 +83,19 @@ class CmdModules(cmd.Cmd):
         if cmd == '':
             return self.default(line)
         if cmd:
+
+            # Try running module  command
             try:
                 func = getattr(self, 'do_' + cmd.lstrip(':'))
             except AttributeError:
                 return self.default(line)
+
+            # If we have a PHP shell, try running alias command
+            if self.session.get('default_shell') == 'shell_php':
+                try:
+                    func = getattr(self, 'do_alias_' + cmd.lstrip(':'))
+                except AttributeError:
+                    return self.default(line)
 
             return func(arg, cmd)
 
@@ -318,7 +327,7 @@ class Terminal(CmdModules):
             # self.do_alias() for every defined `Module.aliases`.
             for alias in module_class.aliases:
                 setattr(
-                    Terminal, 'do_%s' %
+                    Terminal, 'do_alias_%s' %
                     (alias), module_class.run_alias)
                 setattr(
                     Terminal, 'help_%s' %
