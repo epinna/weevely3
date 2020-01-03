@@ -5,7 +5,6 @@ from core import config
 from core.loggers import log
 from core.argparsers import SUPPRESS
 import random
-import utils
 
 class Php(Module):
 
@@ -94,17 +93,6 @@ class Php(Module):
         # Compose command with cwd, pre_command, and post_command option.
         self.args.update({ 'chdir' : chdir })
         command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""", strict_undefined=True).render(**self.args)
-
-        # Minify PHP payload.
-        #
-        # In case of error, modify session minify variable and
-        # return original code.
-        if self.session['shell_php']['stored_args'].get('minify', True):
-            minified = utils.code.minify_php(command)
-            self.session['shell_php'][
-                        'stored_args'][
-                        'minify'] = bool(minified)
-            command = minified if minified else command
 
         log.debug('PAYLOAD %s' % command)
 
