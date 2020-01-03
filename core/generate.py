@@ -2,7 +2,6 @@ from core.config import agent_templates_folder_path, obfuscators_templates_folde
 from mako.template import Template
 from core.weexceptions import FatalException
 from core import messages
-import utils
 import os
 
 def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
@@ -23,17 +22,12 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 
         with open(agent_path, 'r') as templatefile:
             agent = Template(templatefile.read()).render(
-                password=password)
+                password=password).encode('utf-8')
 
     except Exception as e:
         raise FatalException(
             messages.generate.error_agent_template_s_s %
             (agent_path, str(e)))
-
-    minified_agent = utils.code.minify_php(agent)
-
-    # Fallback to vanilla agent if minification went wrong
-    agent = minified_agent if minified_agent else agent
 
     try:
         obfuscated = obfuscator_template.render(agent=agent)

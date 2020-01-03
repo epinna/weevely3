@@ -3,4 +3,3 @@ from . import http
 from . import strings
 from . import prettify
 from . import iputil
-from . import code

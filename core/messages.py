@@ -241,11 +241,6 @@ class generate:
     error_obfuscator_template_s_s = 'Error with obfuscator template \'%s\': %s'
     generated_backdoor_with_password_s_in_s_size_i = 'Generated \'%s\' with password \'%s\' of %i byte size.'
 
-class utils_code:
-    minify_php_missing_binary = 'Missing PHP binary, skipping PHP code minify'
-    minify_php_error_minifying = 'Error minifying PHP code, skipping'
-
-
 class module_audit_disablefunctionbypass:
     error_sh_commands_enabled = 'Error, you can already execute system commands'
     error_mod_cgi_disabled = 'Error, mod_cgi module is not enabled'
@@ -256,11 +251,3 @@ class module_audit_disablefunctionbypass:
     run_s_skip_reinstalling = 'Run console without reinstalling with \':audit_disablefunctionbypass -just-run %s\''
     requests_not_obfuscated = 'Type \'quit\' to return to weevely shell. Requests are not obfuscated'
     cgi_installed_remove_s_s = 'After usage, use \':file_rm\' to remove \'%s\' and \'%s\''
-    
-class module_backdoor_metasploit:
-    msfvenom_s_not_found = "Msfvenom '%s' not found, specify with -msfvenom-path"
-    error_payload_s_requires_lhost = 'Error reverse payload \'%s\' requires LHOST, specify with -lhost'
-    make_sure_run_msfconsole = 'Make sure the listener is running on another terminal as below'
-    error_generating_payload = "Error generating meterpreter payload"
-    error_payload_s_requires_shell_use_php = 'Error payload \'%s\' requires remote shell, use PHP payloads instead'
-    error_searching_writable_folder_under_s = "Error searching writable folder under '%s'"
