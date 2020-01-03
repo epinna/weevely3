@@ -1,5 +1,9 @@
 # Change Log
 
+## [v4.0.1]
+### Removed
+- Remove PHP minification
+
 ## [v4.0.0] - 2019-12-26
 ### Added
 - Full port to Python 3
