@@ -93,7 +93,7 @@ class CmdModules(cmd.Cmd):
             except AttributeError:
                 # If there is no module command, check if we have a PHP shelli
                 # And in case try running alias command
-                if self.session.get('default_shell') == 'shell_php':
+                if self.session.get('default_shell') == 'shell_php' or cmd.lstrip(':') == 'cd':
                     try:
                         func = getattr(self, 'do_alias_' + cmd.lstrip(':'))
                     except AttributeError:
