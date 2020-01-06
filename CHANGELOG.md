@@ -1,6 +1,6 @@
 # Change Log
 
-## v4.0.1
+## [v4.0.1] - 2020-01-06
 ### Removed
 - Remove PHP minification
 
@@ -146,4 +146,10 @@
 [v3.2.0]: https://github.com/epinna/weevely3/releases/tag/v3.2.0
 [v3.3.1]: https://github.com/epinna/weevely3/releases/tag/v3.3.1
 [v3.4]: https://github.com/epinna/weevely3/releases/tag/v3.4
+[v3.5]: https://github.com/epinna/weevely3/releases/tag/v3.5
+[v3.6]: https://github.com/epinna/weevely3/releases/tag/v3.6
+[v3.6.1]: https://github.com/epinna/weevely3/releases/tag/v3.6.1
+[v3.6.2]: https://github.com/epinna/weevely3/releases/tag/v3.6.2
+[v3.7.0]: https://github.com/epinna/weevely3/releases/tag/v3.7.0
 [v4.0.0]: https://github.com/epinna/weevely3/releases/tag/v4.0.0
+[v4.0.1]: https://github.com/epinna/weevely3/releases/tag/v4.0.1
