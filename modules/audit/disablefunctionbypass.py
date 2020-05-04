@@ -161,4 +161,4 @@ class Disablefunctionbypass(Module):
             if query == 'quit':
                 break
 
-            log.info(http.request('%s?c=%s' % (script_url, query)))
+            log.info(http.request('%s?c=%s' % (script_url, query)).decode())
