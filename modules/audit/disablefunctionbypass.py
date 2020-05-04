@@ -154,7 +154,7 @@ class Disablefunctionbypass(Module):
         # Console loop
         while True:
 
-            query = input('CGI shell replacement $ ').strip()
+            query = input('CGI shell replacement $ ').strip().replace(' ', '%20')
 
             if not query:
                 continue
