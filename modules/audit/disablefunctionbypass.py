@@ -71,8 +71,8 @@ class Disablefunctionbypass(Module):
             log.warning(messages.module_audit_disablefunctionbypass.error_mod_cgi_disabled)
             return
 
-        filename = strings.randstr(5, charset = string.ascii_lowercase)
-        ext = strings.randstr(3, charset = string.ascii_lowercase)
+        filename = strings.randstr(5, charset = string.ascii_lowercase).decode('utf-8')
+        ext = strings.randstr(3, charset = string.ascii_lowercase).decode('utf-8')
 
         result_install_htaccess = self.vectors.get_result(
             'install_htaccess', 
@@ -124,10 +124,10 @@ class Disablefunctionbypass(Module):
     def _check_response(self, script_url):
 
         script_query = '%s?c=' % (script_url)
-        query_random_str = strings.randstr(5)
+        query_random_str = strings.randstr(5).decode('utf-8')
         command_query = '%secho%%20%s' % (script_query, query_random_str)
 
-        result_request = http.request(command_query)
+        result_request = http.request(command_query).decode('utf-8')
 
         return query_random_str in result_request
 
