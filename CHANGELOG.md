@@ -1,5 +1,10 @@
 # Change Log
 
+## [v4.0.2] - 
+
+### Fixed
+- Broken file_edit #133
+
 ## [v4.0.1] - 2020-01-06
 ### Removed
 - Remove PHP minification
