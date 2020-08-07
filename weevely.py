@@ -13,7 +13,7 @@ import glob
 import os
 import sys
 
-if (sys.stdout.encoding is None):
+if sys.stdout.encoding is None:
     print("Please set PYTHONIOENCODING=UTF-8 running 'export PYTHONIOENCODING=UTF-8' before starting Weevely.")
     exit(1)
 

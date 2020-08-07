@@ -14,7 +14,7 @@ def tablify(data, table_border = True):
     else:
 
         table = prettytable.PrettyTable()
-
+        table.field_names = data.pop(0)
         # List outputs.
         if isinstance(data, (list, tuple)):
 
@@ -57,7 +57,7 @@ def tablify(data, table_border = True):
             output = str(data)
 
         if not output:
-            table.header = False
+            table.header = True
             table.align = 'l'
             table.border = table_border
             output = table.get_string()
