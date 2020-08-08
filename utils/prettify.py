@@ -1,7 +1,7 @@
 import prettytable
 import types
 
-def tablify(data, table_border = True):
+def tablify(data, table_border = True, header=False):
 
     # TODO: Check that is prettytable-0.7.2 that supports the
     # dynamic table columns number setting. Version 0.5 does not.
@@ -14,7 +14,7 @@ def tablify(data, table_border = True):
     else:
 
         table = prettytable.PrettyTable()
-        if type(data) is list:
+        if header and type(data) is list:
             table.field_names = data.pop(0)
             table.header = True
         else:
