@@ -1,13 +1,11 @@
-from core.vectors import PhpCode
-from core.module import Module
-from core.loggers import log
-from core import messages
 import utils
-import re
+from core import messages
+from core.loggers import log
+from core.module import Module
+from core.vectors import PhpCode
 
 
 class Console(Module):
-
     """Execute SQL query or run console."""
 
     def init(self):
@@ -70,7 +68,7 @@ class Console(Module):
         args.update(
             {'colsep': colsep, 'linsep': linsep, 'errsep': errsep}
         )
-        
+
         # Escape ' in query strings
         self.args['query'] = self.args['query'].replace('\\', '\\\\').replace('\'', '\\\'')
 
@@ -92,7 +90,7 @@ class Console(Module):
 
             # Split result by errsep
             result, error = result.split(errsep)
-            
+
             return {
                 'error': error,
                 'result': [
@@ -143,8 +141,8 @@ class Console(Module):
 
             if not query:
                 continue
-            if query in ['quit','\q','exit']:
-                break
+            if query in ['quit', '\q', 'exit']:
+                return {"result": "sql_console exited.", "error": False}
 
             self.args['query'] = query
             result = self._query(vector, self.args)
@@ -156,14 +154,17 @@ class Console(Module):
             log.info(result['error'])
 
         if result['result']:
-            Module.print_result(self, result['result'])
+            if type(result['result']) is str:
+                log.info(result["result"])
+            else:
+                Module.print_result(self, result['result'])
 
         elif not result['error']:
 
             log.warn('%s %s' % (
                 messages.module_sql_console.no_data,
                 messages.module_sql_console.check_credentials)
-            )
+                     )
 
             command_last_chars = utils.prettify.shorten(
                 self.args['query'].rstrip(),
