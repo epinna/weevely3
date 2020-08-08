@@ -3,7 +3,7 @@ from core import messages
 from core.loggers import log
 from core.module import Module
 from core.vectors import PhpCode
-
+import re
 
 class Console(Module):
     """Execute SQL query or run console."""
@@ -137,13 +137,18 @@ class Console(Module):
         # Console loop
         while True:
 
-            query = input('%s SQL> ' % user).strip()
+            query = input('{}:{} SQL> '.format(user, database)).strip()
 
             if not query:
                 continue
             if query in ['quit', '\q', 'exit']:
                 return {"result": "sql_console exited.", "error": False}
-
+            m = re.findall("^use\s+([\w_]+);?$", query, re.IGNORECASE)
+            if len(m):
+                database = m[0]
+                self.args.update({"database": database})
+                print("databse changed to {}.".format(database))
+                continue
             self.args['query'] = query
             result = self._query(vector, self.args)
             self.print_result(result)
