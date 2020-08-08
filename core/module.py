@@ -346,7 +346,7 @@ class Module:
 
         self.vectors.extend(vectors)
 
-    def print_result(self, result):
+    def print_result(self, result, header=False):
         """Format and print execution result.
 
         Called at every executions from command line.
@@ -355,11 +355,13 @@ class Module:
 
         Args:
             result (Object): The result to format and print.
+            :param result:
+            :param header:
 
         """
 
         if result not in (None, ''):
-            log.info(utils.prettify.tablify(result))
+            log.info(utils.prettify.tablify(result, header))
 
 
     def _store_result(self, field, value):

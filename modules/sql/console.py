@@ -162,7 +162,7 @@ class Console(Module):
             if type(result['result']) is str:
                 log.info(result["result"])
             else:
-                Module.print_result(self, result['result'])
+                Module.print_result(self, result['result'], header=True)
 
         elif not result['error']:
 
