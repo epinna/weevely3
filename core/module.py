@@ -361,7 +361,7 @@ class Module:
         """
 
         if result not in (None, ''):
-            log.info(utils.prettify.tablify(result, header))
+            log.info(utils.prettify.tablify(result, header=header))
 
 
     def _store_result(self, field, value):
