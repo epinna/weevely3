@@ -22,11 +22,11 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
+                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error($s);@mysqli_close($s);""",
                     name='mysql',
                 ),
                 PhpCode(
-                    """if($s=mysqli_connect('${host}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
+                    """if($s=mysqli_connect('${host}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error($s);@mysqli_close($s);""",
                     name='mysql_database',
                 ),
                 PhpCode(
