@@ -29,7 +29,7 @@ class MySQLConsole(BaseTest):
     @unittest.skipIf(not config.sql_autologin,
                     "Autologin is not set")
     def test_autologin(self):
-        self.assertEqual(self.run_argv(['-query', "select 'A';"]), { 'error' : '', 'result' : [["A"]] })
+        self.assertEqual(self.run_argv(['-query', "select 'A';"]), { 'error' : '', 'result' : [["A"], ["A"]] })
         self.assertEqual(self.run_argv(['-query', 'select @@hostname;'])['error'], '')
         self.assertEqual(self.run_argv(['-query', 'show databases;'])['error'], '')
 
@@ -57,16 +57,16 @@ class MySQLConsole(BaseTest):
 
         login = ['-user', config.sql_user, '-passwd', config.sql_passwd ]
 
-        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : ' ', 'result' : [["A"]] })
+        self.assertEqual(self.run_argv(login + [ '-query', "select 'A';"]), { 'error' : ' ', 'result' :  [['A'], ['A']] })
         self.assertEqual(self.run_argv(login + ['-query', 'select @@hostname;'])['error'], ' ')
         self.assertEqual(self.run_argv(login + ['-query', 'show databases;'])['error'], ' ')
 
         # The user is returned in the form `[[ user@host ]]`
         self.assertEqual(
-            self.run_argv(login + ['-query', 'SELECT USER();'])['result'][0][0][:len(config.sql_user)],
+            self.run_argv(login + ['-query', 'SELECT USER();'])['result'][1][0][:len(config.sql_user)],
             config.sql_user
         )
         self.assertEqual(
-            self.run_argv(login + ['-query', 'SELECT CURRENT_USER();'])['result'][0][0][:len(config.sql_user)],
+            self.run_argv(login + ['-query', 'SELECT CURRENT_USER();'])['result'][1][0][:len(config.sql_user)],
             config.sql_user
         )
