@@ -1,11 +1,10 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
+from core.vectors import PhpCode, ModuleExec
 from core.module import Module
 from core import messages
-from core import modules
 import re
 
-class Phpconf(Module):
 
+class Phpconf(Module):
     """Audit PHP configuration."""
 
     def init(self):
@@ -20,7 +19,8 @@ class Phpconf(Module):
         )
 
     def _check_user(self):
-        user = ModuleExec('system_info', [ '-info', 'whoami' ]).load_result_or_run('whoami')
+
+        user = ModuleExec('system_info', ['-info', 'whoami']).load_result_or_run('whoami')
         if not user: return messages.module_audit_phpconf.error
 
         result = user
@@ -31,13 +31,13 @@ class Phpconf(Module):
 
     def _check_openbasedir(self):
 
-        open_basedir = ModuleExec('system_info', [ '-info', 'open_basedir' ]).load_result_or_run('open_basedir')
+        open_basedir = ModuleExec('system_info', ['-info', 'open_basedir']).load_result_or_run('open_basedir')
         if not open_basedir: return messages.module_audit_phpconf.basedir_unrestricted
 
-        dir_sep = ModuleExec('system_info', [ '-info', 'dir_sep' ]).load_result_or_run('dir_sep')
+        dir_sep = ModuleExec('system_info', ['-info', 'dir_sep']).load_result_or_run('dir_sep')
         if not self.os_type or not dir_sep: return messages.module_audit_phpconf.error
 
-        path_sep = ':' if 'win' in self.os_type else ';'
+        path_sep = ';' if 'win' in self.os_type else ':'
 
         paths = open_basedir.split(path_sep)
 
@@ -48,7 +48,7 @@ class Phpconf(Module):
             elif path == '.': result += ' ' + messages.module_audit_phpconf.basedir_dot
             result += '\n'
 
-        return result[-2:]
+        return result[:-1]
 
     def _check_features(self):
 
@@ -63,11 +63,13 @@ class Phpconf(Module):
             'magic_quotes_gpc',
             'allow_url_include',
             'session.use_trans_sid'
-            ]
+        ]
 
-        feat_found = PhpCode("""foreach ( Array("${ '", "'.join(features) }") as $f) if((bool)ini_get($f)) print($f. "\n");""").run(
-                        { 'features' : features }
-                    )
+        feat_found = PhpCode(
+            """foreach ( Array("${ '", "'.join(features) }") as $f) if((bool)ini_get($f)) print($f. "\n");"""
+        ).run({
+            'features': features
+        })
 
         result = []
         if feat_found:
@@ -84,11 +86,13 @@ class Phpconf(Module):
             'splFileObject',
             'COM',
             'Java'
-            ]
+        ]
 
-        class_found = PhpCode("""foreach ( Array("${ '", "'.join(classes) }") as $f) if((bool)class_exists($f)) print($f. "\n");""").run(
-                        { 'classes' : classes }
-                    )
+        class_found = PhpCode(
+            """foreach ( Array("${ '", "'.join(classes) }") as $f) if((bool)class_exists($f)) print($f. "\n");"""
+        ).run({
+            'classes': classes
+        })
 
         result = []
         if class_found:
@@ -103,7 +107,7 @@ class Phpconf(Module):
 
         functions = {
 
-            'info' : [
+            'info': [
                 'apache_get_modules',
                 'apache_get_version',
                 'apache_getenv',
@@ -111,7 +115,7 @@ class Phpconf(Module):
                 'phpinfo',
                 'phpversion',
             ],
-            'files' : [
+            'files': [
                 'chgrp',
                 'chmod',
                 'chown',
@@ -125,14 +129,14 @@ class Phpconf(Module):
                 'unlink',
                 'posix_mkfifo'
             ],
-            'log' : [
+            'log': [
                 'openlog',
                 'syslog',
                 'debugger_off',
                 'debugger_on',
                 'closelog'
             ],
-            'proc_execution' : [
+            'proc_execution': [
                 'exec',
                 'passthru',
                 'pcntl_exec',
@@ -142,7 +146,7 @@ class Phpconf(Module):
                 'system',
                 'dotnet_load'
             ],
-            'proc_manipulation' : [
+            'proc_manipulation': [
                 'apache_child_terminate',
                 'apache_note',
                 'apache_setenv',
@@ -165,32 +169,38 @@ class Phpconf(Module):
 
         for ftype, flist in functions.items():
 
-            func_found = PhpCode("""foreach ( Array("${ '", "'.join(functions) }") as $f) if(function_exists($f)&&is_callable($f)) print($f. "\n");""").run(
-                            { 'functions' : flist }
-                        )
+            func_found = PhpCode((
+                    "foreach ( Array(\"${ '\", \"'.join(functions) }\") as $f) " +
+                    "if(function_exists($f)&&is_callable($f)) print($f. \"\\n\");"
+            )).run({
+                'functions': flist
+            })
 
             if func_found:
                 for func_name in func_found.split('\n'):
                     type_msg = 'func_' + re.sub('[^a-zA-Z_]', '_', ftype)
                     if hasattr(messages.module_audit_phpconf, type_msg):
-                        result.append((func_name, getattr(messages.module_audit_phpconf, type_msg)))
+                        msg = getattr(messages.module_audit_phpconf, type_msg)
+                        if len(func_name) == 0:
+                            msg = ''
+                        result.append((func_name, msg))
 
         return result
 
     def run(self):
 
-        self.os_type = ModuleExec('system_info', [ '-info', 'os' ]).load_result_or_run('os')
-        self.php_version = ModuleExec('system_info', [ '-info', 'php_version' ]).load_result_or_run('php_version')
+        self.os_type = ModuleExec('system_info', ['-info', 'os']).load_result_or_run('os')
+        self.php_version = ModuleExec('system_info', ['-info', 'php_version']).load_result_or_run('php_version')
 
         results = [
-            ( 'Operating System',
-                self.os_type if self.os_type else 'Undetected' ),
-            ( 'PHP version',
-                self.php_version if self.php_version else 'Undetected' ),
-            ( 'User',
-                self._check_user() ),
-            ( 'open_basedir',
-                self._check_openbasedir() )
-        ] + self._check_features() + self._check_classes() + self._check_functions()
+                      ('Operating System',
+                       self.os_type if self.os_type else 'Undetected'),
+                      ('PHP version',
+                       self.php_version if self.php_version else 'Undetected'),
+                      ('User',
+                       self._check_user()),
+                      ('open_basedir',
+                       self._check_openbasedir())
+                  ] + self._check_features() + self._check_classes() + self._check_functions()
 
         return results
