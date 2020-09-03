@@ -53,7 +53,7 @@ class Tcp(Module):
         self.register_arguments([
           { 'name' : 'port', 'help' : 'Port to spawn', 'type' : int },
           { 'name' : '-shell', 'help' : 'Specify shell', 'default' : '/bin/sh' },
-          { 'name' : '-no-autonnect', 'help' : 'Skip autoconnect', 'action' : 'store_true', 'default' : False },
+          { 'name' : '-no-autoconnect', 'help' : 'Skip autoconnect', 'action' : 'store_true', 'default' : False },
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
