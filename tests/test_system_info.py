@@ -20,7 +20,7 @@ class SystemInfo(BaseTest):
 
         # Get all infos, returns a dict
         vectors_names = [v.name for v in modules.loaded['system_info'].vectors ]
-        self.assertEqual(set(self.run_argv([]).keys()), set(vectors_names));
+        self.assertEqual(set(self.run_argv([ '-extended' ]).keys()), set(vectors_names));
 
         # Get just one info, returns a string
         self.assertEqual(

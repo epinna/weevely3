@@ -87,7 +87,7 @@ class FileCheck(BaseTest):
         self.assertFalse(self.run_argv([ self.files_rel[0], 'dir']))
         self.assertTrue(self.run_argv([ self.files_rel[0], 'executable']))
         self.assertTrue(self.run_argv([ self.files_rel[0], 'writable']))
-        self.assertEqual(self.run_argv([ self.files_rel[0], 'size']), 1)
+        self.assertEqual(self.run_argv([ self.files_rel[0], 'size']), '1o')
         self.assertEqual(self.run_argv([ self.files_rel[0], 'md5']), 'c4ca4238a0b923820dcc509a6f75849b')
         self.assertAlmostEqual(self.run_argv([ self.files_rel[0], 'time']), self.file_0_time, delta = 20)
         self.assertEqual(self.run_argv([ self.files_rel[0], 'datetime']).split(' ')[0], rdatetime)
