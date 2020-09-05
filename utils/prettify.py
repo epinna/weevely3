@@ -9,7 +9,7 @@ def tablify(data, table_border = True, header=False):
     output = ''
 
     # Empty outputs. False is probably a good output value
-    if data != False and not data:
+    if data is not False and not data:
         output = ''
     else:
 
@@ -31,7 +31,7 @@ def tablify(data, table_border = True, header=False):
                 for row in data:
                     if not row:
                         continue
-                        
+
                     if isinstance(row, (list, tuple)):
                         table.add_row(row)
                     else:
@@ -96,3 +96,11 @@ def shorten(body, keep_header = 0, keep_trailer = 0):
             return '%s .. %s' % (body[:keep_header], body[-keep_trailer:])
 
     return body
+
+
+def format_size(size, suffix='o'):
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(size) < 1000.0:
+            return "%.3G%s%s" % (size, unit, suffix)
+        size /= 1000.0
+    return "%.3G%s%s" % (size, 'Y', suffix)
