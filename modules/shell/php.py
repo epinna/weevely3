@@ -6,8 +6,8 @@ from core.loggers import log
 from core.argparsers import SUPPRESS
 import random
 
-class Php(Module):
 
+class Php(Module):
     """Execute PHP commands."""
 
     def init(self):
@@ -22,11 +22,11 @@ class Php(Module):
         )
 
         self.register_arguments([
-          { 'name' : 'command', 'help' : 'PHP code wrapped in quotes and terminated by semi-comma', 'nargs' : '+' },
-          { 'name' : '-prefix-string', 'default' : '@error_reporting(0);' },
-          { 'name' : '-post_data' },
-          { 'name' : '-postfix-string', 'default' : '' },
-          { 'name' : '-raw-response', 'help' : SUPPRESS, 'action' : 'store_true', 'default' : False },
+            {'name': 'command', 'help': 'PHP code wrapped in quotes and terminated by semi-comma', 'nargs': '+'},
+            {'name': '-prefix', 'default': '@error_reporting(0);'},
+            {'name': '-suffix', 'default': ''},
+            {'name': '-post_data'},
+            {'name': '-raw-response', 'help': SUPPRESS, 'action': 'store_true', 'default': False},
         ])
 
         self.channel = None
@@ -46,22 +46,21 @@ class Php(Module):
 
         return status
 
-
     def setup(self):
         """Instauration of the PHP channel. Returns the module status."""
 
         # Try a single channel if is manually set, else
         # probe every the supported channel from config
         if self.session.get('channel'):
-            channels = [ self.session['channel'] ]
+            channels = [self.session['channel']]
         else:
             channels = config.channels
 
         for channel_name in channels:
 
             channel = Channel(
-                channel_name = channel_name,
-                session = self.session
+                channel_name=channel_name,
+                session=self.session
             )
 
             status = self._check_interpreter(channel)
@@ -87,12 +86,15 @@ class Php(Module):
         # to check and eventually instance the proper channel
         if self.session['shell_php'].get('status') != Status.RUN: self.setup()
 
-        cwd = self._get_stored_result('cwd', module = 'file_cd', default = '.')
+        cwd = self._get_stored_result('cwd', module='file_cd', default='.')
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
 
         # Compose command with cwd, pre_command, and post_command option.
-        self.args.update({ 'chdir' : chdir })
-        command = Template("""${chdir}${prefix_string}${ ' '.join(command) }${postfix_string}""", strict_undefined=True).render(**self.args)
+        self.args.update({'chdir': chdir})
+        command = Template(
+            """${chdir}${prefix}${ ' '.join(command) }${suffix}""",
+            strict_undefined=True
+        ).render(**self.args)
 
         log.debug('PAYLOAD %s' % command)
 
