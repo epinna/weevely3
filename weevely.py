@@ -54,7 +54,7 @@ def main(arguments):
     modules.load_modules(session)
 
     if not arguments.cmd:
-        Terminal(session).cmdloop()
+        Terminal(session, arguments.aliases).cmdloop()
     else:
         Terminal(session).onecmd(arguments.cmd)
 
@@ -64,6 +64,8 @@ if __name__ == '__main__':
     subparsers = parser.add_subparsers(dest = 'command')
 
     terminalparser = subparsers.add_parser('terminal', help='Run terminal or command on the target')
+    terminalparser.add_argument('-a', '--aliases', help = 'Path to file containing aliases',
+                                default=None)
     terminalparser.add_argument('url', help = 'The agent URL')
     terminalparser.add_argument('password', help = 'The agent password')
     terminalparser.add_argument('cmd', help = 'Command', nargs='?')

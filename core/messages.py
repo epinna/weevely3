@@ -69,6 +69,14 @@ following command replacements to simulate a unrestricted shell.
 [+] Browse the filesystem or execute commands starts the connection
 [+] to the target. Type :help for more information.
 """
+    help_help = 'Show this help text'
+    set_help = 'Set a global setting'
+    unset_help = 'Unset a global setting'
+    show_help = 'List all settings'
+    alias_help = 'Add an alias'
+    unalias_help = 'Add an alias'
+    show_alias_help = 'Show an alias'
+    list_alias_help = 'List all aliases'
     set_usage = 'Set session variable (run :show to print). Usage:\n:set <variable> \'<value>\''
     unset_usage = 'Unset session variable (run :show to print). Usage:\n:unset <variable>'
 

@@ -1,9 +1,10 @@
-from core.weexceptions import FatalException, ChannelException
+from core.weexceptions import ChannelException
 from core.loggers import log, dlog
 from core import messages
 from core import modules
 from core import config
 from core.module import Status
+from core.user_aliases import UserAliases
 import utils
 from mako import template
 
@@ -13,11 +14,9 @@ except ImportError:
     import readline
 
 import cmd
-import glob
-import os
 import shlex
 import atexit
-import sys
+
 
 class CmdModules(cmd.Cmd):
 
@@ -86,6 +85,7 @@ class CmdModules(cmd.Cmd):
         if line == 'EOF' :
             #self.lastcmd = ''
             raise EOFError()
+
         if cmd:
             # Try running module  command
             try:
@@ -126,7 +126,7 @@ class CmdModules(cmd.Cmd):
     def do_help(self, arg, command):
         """Fixed help."""
 
-        print()
+        print('\nModules:')
 
         self._print_modules()
 
@@ -142,7 +142,7 @@ class Terminal(CmdModules):
 
     """Weevely Terminal"""
 
-    def __init__(self, session):
+    def __init__(self, session, aliases=None):
 
         cmd.Cmd.__init__(self)
 
@@ -154,6 +154,9 @@ class Terminal(CmdModules):
 
         # Load history file
         self._load_history()
+
+        # Load aliases file
+        self.user_aliases = UserAliases(aliases)
 
         # Set a nice intro
         self.intro = template.Template(
@@ -178,6 +181,8 @@ class Terminal(CmdModules):
         # Skip slack check is not a remote command
         if not line or any(
                         line.startswith(cmnd) for cmnd in (
+                            ':alias',
+                            ':unalias',
                             ':set',
                             ':unset',
                             ':show',
@@ -240,6 +245,8 @@ class Terminal(CmdModules):
         if not self.session['file_cd']['results'].get('cwd'):
             self.do_file_cd(".")
 
+        line = self.user_aliases.apply(line)
+
         return line
 
     def postcmd(self, stop, line):
@@ -280,6 +287,48 @@ class Terminal(CmdModules):
             ) else result
 
         log.info(result)
+
+    def do_help(self, arg, command):
+
+        print('\nCommands:')
+
+        log.info(utils.prettify.tablify([
+            ('help, :help', messages.terminal.help_help),
+            (':set name "value"', messages.terminal.set_help),
+            (':unset name', messages.terminal.unset_help),
+            (':show', messages.terminal.show_help),
+            (':alias name "code"', messages.terminal.alias_help),
+            (':unalias name', messages.terminal.unalias_help),
+            (':alias name', messages.terminal.show_alias_help),
+            (':alias', messages.terminal.list_alias_help)
+        ], table_border=False))
+
+        super(Terminal, self).do_help(arg, command)
+
+    def do_alias(self, line, cmd):
+        """Handles :alias functions"""
+
+        try:
+            args = shlex.split(line)
+        except Exception as e:
+            import traceback; log.debug(traceback.format_exc())
+            log.warning(messages.generic.error_parsing_command_s % str(e))
+        else:
+            argc = len(args)
+
+            if argc == 0:
+                self.user_aliases.print_to_user()
+            elif argc == 1:
+                self.user_aliases.print_to_user(args[0])
+            elif argc >= 2:
+                self.user_aliases.set(args[0],  ' '.join(args[1:]))
+            else:
+                log.warning(':alias usage')
+
+    def do_unalias(self, line, cmd):
+        """Handles :unalias function"""
+
+        self.user_aliases.unset(line)
 
     def do_show(self, line, cmd):
         """Command "show" which prints session variables"""
