@@ -10,6 +10,8 @@ import random
 class Php(Module):
     """Execute PHP commands."""
 
+    max_time_bypass = '@error_reporting(0);set_time_limit(0);@ignore_user_abort(1);ini_set(max_execution_time,0);'
+
     def init(self):
 
         self.register_info(
@@ -90,9 +92,12 @@ class Php(Module):
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
 
         # Compose command with cwd, pre_command, and post_command option.
-        self.args.update({'chdir': chdir})
+        self.args.update({
+            'chdir': chdir,
+            'bypass': Php.max_time_bypass if self.session['max_time'] else ''
+        })
         command = Template(
-            """${chdir}${prefix}${ ' '.join(command) }${suffix}""",
+            """${chdir}${bypass}${prefix}${ ' '.join(command) }${suffix}""",
             strict_undefined=True
         ).render(**self.args)
 

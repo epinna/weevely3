@@ -77,8 +77,12 @@ following command replacements to simulate a unrestricted shell.
     unalias_help = 'Add an alias'
     show_alias_help = 'Show an alias'
     list_alias_help = 'List all aliases'
+    max_time_help = 'Toggle max_execution_time bypass'
     set_usage = 'Set session variable (run :show to print). Usage:\n:set <variable> \'<value>\''
     unset_usage = 'Unset session variable (run :show to print). Usage:\n:unset <variable>'
+
+    max_time_status = 'Bypass for max_execution_time is {}'
+
 
 class vectors:
     wrong_target_type = 'Wrong target operating system type'

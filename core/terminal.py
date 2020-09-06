@@ -186,6 +186,7 @@ class Terminal(CmdModules):
                             ':set',
                             ':unset',
                             ':show',
+                            ':max_time',
                             ':help'
                         )
                     ):
@@ -290,7 +291,7 @@ class Terminal(CmdModules):
 
     def do_help(self, arg, command):
 
-        print('\nCommands:')
+        print('\nBuilt-in commands:')
 
         log.info(utils.prettify.tablify([
             ('help, :help', messages.terminal.help_help),
@@ -300,7 +301,8 @@ class Terminal(CmdModules):
             (':alias name "code"', messages.terminal.alias_help),
             (':unalias name', messages.terminal.unalias_help),
             (':alias name', messages.terminal.show_alias_help),
-            (':alias', messages.terminal.list_alias_help)
+            (':alias', messages.terminal.list_alias_help),
+            (':max_time', messages.terminal.max_time_help)
         ], table_border=False))
 
         super(Terminal, self).do_help(arg, command)
@@ -329,6 +331,18 @@ class Terminal(CmdModules):
         """Handles :unalias function"""
 
         self.user_aliases.unset(line)
+
+    def do_max_time(self, line, cmd):
+        """Toggles a session variable used by :shell_php module"""
+
+        k = 'max_time'
+
+        if k not in self.session:
+            self.session[k] = False
+
+        self.session[k] = not self.session[k]
+        status = 'ENABLED' if self.session[k] else 'DISABLED'
+        log.info(messages.terminal.max_time_status.format(status))
 
     def do_show(self, line, cmd):
         """Command "show" which prints session variables"""
