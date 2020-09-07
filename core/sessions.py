@@ -16,7 +16,8 @@ import pprint
 print_filters = (
     'debug',
     'channel',
-    'proxy'
+    'proxy',
+    'max_time_bypass'
 )
 
 set_filters = (

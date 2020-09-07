@@ -302,7 +302,7 @@ class Terminal(CmdModules):
             (':unalias name', messages.terminal.unalias_help),
             (':alias name', messages.terminal.show_alias_help),
             (':alias', messages.terminal.list_alias_help),
-            (':max_time', messages.terminal.max_time_help)
+            (':max_time_bypass', messages.terminal.max_time_help)
         ], table_border=False))
 
         super(Terminal, self).do_help(arg, command)
@@ -332,10 +332,10 @@ class Terminal(CmdModules):
 
         self.user_aliases.unset(line)
 
-    def do_max_time(self, line, cmd):
+    def do_max_time_bypass(self, line, cmd):
         """Toggles a session variable used by :shell_php module"""
 
-        k = 'max_time'
+        k = 'max_time_bypass'
 
         if k not in self.session:
             self.session[k] = False
