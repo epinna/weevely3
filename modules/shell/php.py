@@ -94,7 +94,7 @@ class Php(Module):
         # Compose command with cwd, pre_command, and post_command option.
         self.args.update({
             'chdir': chdir,
-            'bypass': Php.max_time_bypass if self.session['max_time'] else ''
+            'bypass': Php.max_time_bypass if self.session['max_time_bypass'] else ''
         })
         command = Template(
             """${chdir}${bypass}${prefix}${ ' '.join(command) }${suffix}""",
