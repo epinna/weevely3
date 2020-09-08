@@ -90,11 +90,12 @@ class Php(Module):
 
         cwd = self._get_stored_result('cwd', module='file_cd', default='.')
         chdir = '' if cwd == '.' else "chdir('%s');" % cwd
+        bypass = Php.max_time_bypass if 'max_time_bypass' in self.session and self.session['max_time_bypass'] else ''
 
         # Compose command with cwd, pre_command, and post_command option.
         self.args.update({
             'chdir': chdir,
-            'bypass': Php.max_time_bypass if self.session['max_time_bypass'] else ''
+            'bypass': bypass
         })
         command = Template(
             """${chdir}${bypass}${prefix}${ ' '.join(command) }${suffix}""",
