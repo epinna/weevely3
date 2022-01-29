@@ -156,7 +156,7 @@ class Phpconf(Module):
                 'proc_terminate',
                 'proc_nice',
                 'putenv',
-                'virtual'
+                'virtual',
                 'posix_kill',
                 'posix_setpgid',
                 'posix_setsid',
