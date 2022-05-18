@@ -42,7 +42,7 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 def save_generated(obfuscated, output):
 
     try:
-        with open(output, 'w+') as genfile:
+        with open(output, 'w') as genfile:
             genfile.write(obfuscated)
     except Exception as e:
         raise FatalException(
