@@ -91,6 +91,7 @@ class Channel:
         # Skip certificate checks
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
+        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
         ctx.verify_mode = ssl.CERT_NONE
         
         handlers.append(urllib.request.HTTPSHandler(context=ctx))
