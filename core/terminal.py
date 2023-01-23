@@ -10,7 +10,10 @@ from mako import template
 try:
     import gnureadline as readline
 except ImportError:
-    import readline
+    try:
+        import readline
+    except ImportError:
+        import pyreadline3.rlmain as readline
 
 import cmd
 import glob

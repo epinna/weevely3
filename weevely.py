@@ -31,20 +31,19 @@ def main(arguments):
 
         generate.save_generated(obfuscated, arguments.path)
 
-        if arguments.path != '-':
-            log.info(messages.generate.generated_backdoor_with_password_s_in_s_size_i %
-                     (arguments.path,
-                      arguments.password,
-                      len(obfuscated)
-                      )
-                     )
+        log.info(
+            messages.generate.generated_backdoor_with_password_s_in_s_size_i % (
+                arguments.path,
+                arguments.password,
+                len(obfuscated)
+            )
+        )
 
         return
 
     elif arguments.command == 'terminal':
         session = SessionURL(
-            url = arguments.url,
-            password = arguments.password
+            **vars(arguments)
         )
 
     elif arguments.command == 'session':
@@ -69,6 +68,9 @@ if __name__ == '__main__':
     terminalparser = subparsers.add_parser('terminal', help='Run terminal or command on the target')
     terminalparser.add_argument('url', help = 'The agent URL')
     terminalparser.add_argument('password', help = 'The agent password')
+    terminalparser.add_argument('-H', '--header', dest="headers", action='append', help = '(HTTP)  Extra header to include in the request. This option can be used multiple times to add/replace/remove multiple headers.')
+    terminalparser.add_argument('-x', '--proxy', help = 'Use a specific proxy [protocol://]host[:port].')
+    terminalparser.add_argument('-u', '--user', help='<user:password> server user and password for basic auth')
     terminalparser.add_argument('cmd', help = 'Command', nargs='?')
 
     sessionparser = subparsers.add_parser('session', help='Recover an existing session')

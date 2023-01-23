@@ -17,7 +17,12 @@ APPEND = utils.strings.randstr(16, charset = string.printable)
 
 class ObfPost:
 
-    def __init__(self, url, password):
+    def __init__(self, session):
+
+        password = session['password']
+        url = session['url']
+        headers = session['headers']
+        user = session['user']
 
         # Generate the 8 char long main key. Is shared with the server and
         # used to check header, footer, and encrypt the payload.
@@ -27,7 +32,7 @@ class ObfPost:
         self.shared_key = passwordhash[:8].encode('utf-8')
         self.header = passwordhash[8:20].encode('utf-8')
         self.trailer = passwordhash[20:32].encode('utf-8')
-        
+
         self.url = url
         url_parsed = urllib.parse.urlparse(url)
         self.url_base = '%s://%s' % (url_parsed.scheme, url_parsed.netloc)
@@ -48,6 +53,14 @@ class ObfPost:
 
         # Init additional headers list
         self.additional_headers = config.additional_headers
+
+        for header in headers:
+            header_name, header_value = header.split(": ", 1)
+            self.additional_headers.append((header_name, header_value))
+
+        if user is not None:
+            user_basic_token = base64.b64encode(user.encode('utf8')).decode('ascii')
+            self.additional_headers.append(("Authorization", f"Basic {user_basic_token}"))
 
 
     def send(self, original_payload, additional_handlers = []):
@@ -102,7 +115,7 @@ class ObfPost:
             dlog.debug('\n'.join(matched_debug))
 
         matched = self.re_response.search(response)
-    
+
         if matched and matched.group(1):
 
             response = zlib.decompress(

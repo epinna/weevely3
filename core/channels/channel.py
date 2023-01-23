@@ -47,8 +47,7 @@ class Channel:
 
         # Create channel instance
         self.channel_loaded = channel_object(
-            self.session['url'],
-            self.session['password']
+            self.session
         )
 
         self.channel_name = channel_name

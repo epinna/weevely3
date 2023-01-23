@@ -163,7 +163,8 @@ class Session(dict):
 
 class SessionFile(Session):
 
-    def __init__(self, dbpath, volatile = False):
+    def __init__(self, dbpath, volatile = False, *argc, **kwarg):
+        super().__init__(*argc, **kwarg)
 
         try:
             with open(dbpath, 'r') as dbfile:
@@ -195,7 +196,8 @@ class SessionFile(Session):
 
 class SessionURL(Session):
 
-    def __init__(self, url, password, volatile = False):
+    def __init__(self, url, password, volatile = False, *argc, **kwarg):
+        super().__init__(*argc, **kwarg)
 
         if not os.path.isdir(sessions_path):
             os.makedirs(sessions_path)
