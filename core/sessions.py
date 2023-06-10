@@ -13,16 +13,12 @@ import atexit
 import ast
 import pprint
 
-print_filters = (
-    'debug',
-    'channel',
-    'proxy'
-)
-
-set_filters = (
-    'debug',
-    'channel',
-    'proxy'
+arg_blacklist = (
+    'default_shell',
+    'password',
+    'command',
+    'path',
+    'url',
 )
 
 class Session(dict):
@@ -37,22 +33,26 @@ class Session(dict):
             )
 
     def print_to_user(self, module_filter = ''):
-
         dlog.info(pprint.pformat(self))
 
+        for arg in self.get_stored_args(module_filter):
+            log.info(messages.sessions.set_s_s % arg)
+
+    def get_stored_args(self, term = ''):
+        args = []
+
         for mod_name, mod_value in self.items():
-
+            # Is a module, print all the storable stored_arguments
             if isinstance(mod_value, dict):
-                mod_args = mod_value.get('stored_args')
-
-                # Is a module, print all the storable stored_arguments
-                for argument, arg_value in mod_args.items():
-                    if not module_filter or ("%s.%s" % (mod_name, argument)).startswith(module_filter):
-                        log.info(messages.sessions.set_module_s_s_s % (mod_name, argument, arg_value))
-            else:
-                # If is not a module, just print if matches with print_filters
-                if any(f for f in print_filters if f == mod_name and f.startswith(module_filter)):
-                    log.info(messages.sessions.set_s_s % (mod_name, mod_value))
+                for argument, arg_value in mod_value.get('stored_args', {}).items():
+                    path = ("%s.%s" % (mod_name, argument))
+                    if not term or path.startswith(term):
+                        args.append((path, arg_value))
+            # If is not a module, just print if matches with print_filters
+            elif mod_name not in arg_blacklist and mod_name.startswith(term):
+                args.append((mod_name, mod_value))
+        
+        return args
 
     def get_connection_info(self):
      return template.Template(messages.sessions.connection_info).render(
@@ -119,7 +119,7 @@ class Session(dict):
                 log.info(messages.sessions.unset_module_s_s % (module_name, arg_name))
         else:
             module_name = module_argument
-            if module_name not in self and module_name not in set_filters:
+            if module_name in arg_blacklist or module_name not in self:
                 log.warning(messages.sessions.error_session_s_not_modified % (module_name))
             else:
                 self[module_name] = None
@@ -155,7 +155,7 @@ class Session(dict):
             log.info(messages.sessions.set_module_s_s_s % (module_name, arg_name, value))
         else:
             module_name = module_argument
-            if module_name not in self and module_name not in set_filters:
+            if module_name in arg_blacklist or module_name not in self:
                 log.warning(messages.sessions.error_session_s_not_modified % (module_name))
             else:
                 self[module_name] = value
@@ -264,6 +264,7 @@ class SessionURL(Session):
                         'debug': False,
                         'channel': None,
                         'default_shell': None,
+                        'proxy': None,
                     }
                 )
 

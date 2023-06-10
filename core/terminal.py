@@ -285,6 +285,10 @@ class Terminal(CmdModules):
         """Command "show" which prints session variables"""
 
         self.session.print_to_user(line)
+    
+    def complete_set(self, text, line, begidx, endidx):
+        if line.count(' ') < 2:
+            return [a[0] for a in self.session.get_stored_args(text)]
 
     def do_set(self, line, cmd):
         """Command "set" to set session variables."""
