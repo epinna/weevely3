@@ -148,8 +148,8 @@ class Module:
 
         try:
             user_args = self.argparser.parse_args(argv)
-        except SystemExit:
-            raise ArgparseError()
+        except SystemExit as e:
+            raise ArgparseError(e)
 
         # The new arg must win over the stored one if:
         # new arg is not none and the value of the old one 
