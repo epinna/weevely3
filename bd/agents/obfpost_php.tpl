@@ -12,7 +12,7 @@ $c=strlen($k);$l=strlen($t);$o="";
 for($i=0;$i<$l;){
 for($j=0;($j<$c&&$i<$l);$j++,$i++)
 {
-$o.=$t{$i}^$k{$j};
+$o.=$t[$i]^$k[$j];
 }
 }
 return $o;
