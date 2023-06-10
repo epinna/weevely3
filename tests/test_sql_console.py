@@ -11,7 +11,7 @@ import os
 def setUpModule():
     try:
         # This workaround fixes https://github.com/docker/for-linux/issues/72
-        subprocess.check_output("""find /var/lib/mysql -type f -exec touch {} \; && service mysql start""", shell=True)
+        subprocess.check_output("""find /var/lib/mysql -type f -exec touch {} \; && service mariadb start""", shell=True)
     except Exception as e:
         print('[!] Failed mysql')
         print(subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True))
