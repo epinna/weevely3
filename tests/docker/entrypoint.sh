@@ -12,7 +12,7 @@ find -type f -name '*.pyc' -exec rm -f {} \;
 python ./weevely.py generate "$PWD" "$AGENT"
 
 service apache2 start
-service mysql start
+service mariadb start
 
 # Grant root user to connect from network socket
 mysql -u root --password=root -e "grant all privileges on *.* to 'root'@'localhost' identified by 'root'; flush privileges;"
