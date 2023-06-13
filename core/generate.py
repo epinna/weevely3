@@ -3,6 +3,7 @@ from mako.template import Template
 from core.weexceptions import FatalException
 from core import messages
 import os
+import base64
 
 def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 
@@ -42,8 +43,12 @@ def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
 def save_generated(obfuscated, output):
 
     try:
-        with open(output, 'w') as genfile:
-            genfile.write(obfuscated)
+        if obfuscated[:4] == 'b64:':
+            with open(output, 'wb') as genfile:
+                genfile.write(base64.b64decode(obfuscated[4:]))
+        else:
+            with open(output, 'w') as genfile:
+                genfile.write(obfuscated)
     except Exception as e:
         raise FatalException(
             messages.generic.error_creating_file_s_s %
