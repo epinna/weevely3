@@ -15,11 +15,14 @@ from core.loggers import log
 from core import modules
 import utils
 from core import messages
+from enum import IntEnum
 import re
 import os
+import base64
 import _thread
 
-class Os:
+
+class Os(IntEnum):
     """Represent the operating system vector compatibility.
 
     It is passed as vectors `target` argument.
@@ -31,9 +34,14 @@ class Os:
     * `Os.WIN` if the vector is compatible only with Microsoft Windows enviroinments
 
     """
-    ANY = 0
-    NIX = 1
-    WIN = 2
+    ANY: int = 0
+    NIX: int = 1
+    WIN: int = 2
+
+    @classmethod
+    def has(cls, value):
+        return value in cls._value2member_map_
+
 
 class ModuleExec:
 
@@ -46,7 +54,7 @@ class ModuleExec:
 
         name (str): This vector name.
 
-        target (Os): The operating system supported by the vector.
+        target (.Os): The operating system supported by the vector.
 
         postprocess (func): The function which postprocess the execution result.
 
@@ -63,7 +71,7 @@ class ModuleExec:
         else:
             raise DevException(messages.vectors.wrong_payload_type)
 
-        if not isinstance(target, int) or not target < 3:
+        if not Os.has(target):
             raise DevException(messages.vectors.wrong_target_type)
 
         if not callable(postprocess) and postprocess is not None:
@@ -305,3 +313,52 @@ class ShellCmd(PhpCode):
             background=background,
             catch_errors=catch_errors,
         )
+
+
+class PythonCode(ShellCmd):
+    """This vector contains python code.
+
+    The code is executed via the module `shell_sh`. Inherit `ModuleExec`.
+
+    Args:
+        payload (str): Script to execute.
+
+        name (str): This vector name.
+
+        target (Os): The operating system supported by the vector.
+
+        postprocess (func): The function which postprocess the execution result.
+
+        arguments (list of str): Additional arguments for `shell_sh`
+
+        background (bool): Execute in a separate thread on `run()`
+    """
+
+    def __init__(self, payload, name, **kwargs):
+
+        if not isinstance(payload, str):
+            raise DevException(messages.vectors.wrong_payload_type)
+
+        ModuleExec.__init__(
+            self,
+            module='shell_sh',
+            arguments=[payload],
+            name=name,
+            **kwargs
+        )
+
+    def format(self, values):
+        payload = Template(self.arguments[0]).render(**values)
+        lines = [line for line in payload.split('\n') if line.strip()]
+
+        if len(lines) == 0:
+            return []
+
+        # Remove excess indentations
+        spaces = len(re.search(r'^( *)', lines[0]).group(1))
+        if spaces:
+            lines = [line[spaces:] for line in lines]
+        payload = '\n'.join(lines)
+
+        b64 = base64.b64encode(payload.encode('utf-8')).decode('utf-8')
+        return ['echo', b64, '|base64 -d|python - 2>&1']
