@@ -22,10 +22,9 @@ base_folder = base_folder
 class TestGenerators(TestCase):
 
     def test_generators(self):
-
-        for i in range(0, 100):
+        for i in range(0, 200):
             self._randomize_bd()
-            obfuscated = generate(self.password.decode('utf-8'))
+            obfuscated = generate(self.password.decode('utf-8'), self.obfuscator)
             save_generated(obfuscated, self.path)
 
             self.channel = Channel(
@@ -52,10 +51,11 @@ class TestGenerators(TestCase):
                 self.channel.send(
                     'echo("%s");' %
                     payload.decode('utf-8'))[0],
-                payload)
+                payload, f'Obfuscator failed: {self.obfuscator}')
 
     @classmethod
     def _randomize_bd(cls):
+        cls.obfuscator = 'obfusc1_php' if random.randint(0, 100) > 50 else 'phar'
         cls.password = utils.strings.randstr(10)
         password_hash = hashlib.md5(cls.password).hexdigest().lower()
         filename = '%s_%s.php' % (
