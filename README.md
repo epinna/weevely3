@@ -52,6 +52,7 @@ The agent is a small, polymorphic PHP script hardly detected by AV and the commu
 | :audit_etcpasswd            |  Read /etc/passwd with different techniques.
 | :audit_phpconf              |  Audit PHP configuration.
 | :shell_sh                   |  Execute shell commands.
+| :shell_ssh                  |  Execute shell commands through SSH.
 | :shell_su                   |  Execute commands with su.
 | :shell_php                  |  Execute PHP commands.
 | :system_extensions          |  Collect PHP and webserver extension list.
