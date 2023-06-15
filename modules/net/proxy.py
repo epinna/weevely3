@@ -346,7 +346,7 @@ class Proxy(Module):
             { 'name' : '-no-background', 'action' : 'store_true', 'default' : False, 'help' : 'Run foreground' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         log.warning(messages.module_net_proxy.proxy_starting_s_i % ( self.args['lhost'], self.args['lport'] ))
         log.warning(messages.module_net_proxy.proxy_set_proxy)

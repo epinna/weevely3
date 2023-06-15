@@ -39,7 +39,7 @@ class Tar(Module):
           { 'name' : '-j', 'action' : 'store_true', 'default' : False, 'help' : 'Simulate tar -xj for bzip2 compressed archives' },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         if self.args.get('z'):
             ModuleExec('file_gzip', [ '--keep', '--decompress', self.args['rtar'] ]).run()

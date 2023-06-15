@@ -50,7 +50,7 @@ class Download(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Check remote file existance
         if not ModuleExec('file_check', [ self.args.get('rpath'), 'readable' ]).run():

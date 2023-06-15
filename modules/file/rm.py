@@ -23,7 +23,7 @@ class Rm(Module):
           { 'name' : 'rpath', 'help' : 'Remote file path' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Run unlink
         return PhpCode("""(unlink('${rpath}') && print(1)) || print(0);""",

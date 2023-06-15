@@ -44,7 +44,7 @@ class Upload(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'file_put_contents' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         content_orig = self.args.get('content')
 

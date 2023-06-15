@@ -94,7 +94,7 @@ class Upload2web(Module):
 
         return absolute_path_file, url_file
 
-    def run(self):
+    def run(self, **kwargs):
 
         file_upload_args = [ self.args['rpath'] ]
 

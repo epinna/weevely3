@@ -25,7 +25,7 @@ class Enum(Module):
           { 'name' : '-print', 'help' : 'Print the paths not found too', 'action' : 'store_true', 'default' : False }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         paths = []
 

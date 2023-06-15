@@ -99,7 +99,7 @@ class Curl(Module):
         if self.args['header']:
             self.args['header'] = [ str2hex(x) for x in self.args['header'] ]
 
-    def run(self):
+    def run(self, **kwargs):
 
         headers = []
         saved = None

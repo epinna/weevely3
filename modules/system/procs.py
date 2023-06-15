@@ -19,7 +19,7 @@ class Procs(Module):
         )
 
 
-    def run(self):
+    def run(self, **kwargs):
 
         return PhpCode("""
             class UIDMap {

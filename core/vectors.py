@@ -54,7 +54,7 @@ class ModuleExec:
 
     """
 
-    def __init__(self, module, arguments, name = '', target = 0, postprocess = None, background = False):
+    def __init__(self, module, arguments, name='', target=Os.ANY, postprocess=None, background=False, catch_errors=True):
 
         self.name = name if name else utils.strings.randstr()
 
@@ -73,6 +73,7 @@ class ModuleExec:
         self.target = target
         self.postprocess = postprocess
         self.background = background
+        self.catch_errors = catch_errors
 
     def format(self, values):
         """Format the arguments.
@@ -109,16 +110,17 @@ class ModuleExec:
         try:
             formatted = self.format(format_args)
         except TypeError as e:
-            import traceback; log.debug(traceback.format_exc())
+            import traceback
+            log.debug(traceback.format_exc())
             raise DevException(messages.vectors.wrong_arguments_type)
 
         # The background argument is set at vector init in order
         # to threadify vectors also if called by VectorList methods.
         if self.background:
-            _thread.start_new_thread(modules.loaded[self.module].run_argv, (formatted, ))
+            _thread.start_new_thread(modules.loaded[self.module].run_argv, (formatted, self.catch_errors,))
             result = None
         else:
-            result = modules.loaded[self.module].run_argv(formatted)
+            result = modules.loaded[self.module].run_argv(formatted, self.catch_errors)
 
         if self.postprocess:
             result = self.postprocess(result)
@@ -148,7 +150,6 @@ class ModuleExec:
 
 
 class PhpCode(ModuleExec):
-
     """This vector contains PHP code.
 
     The PHP code is executed via the module `shell_php`. Inherit `ModuleExec`.
@@ -167,19 +168,19 @@ class PhpCode(ModuleExec):
         background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = [], background = False):
-
+    def __init__(self, payload, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True):
         if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         ModuleExec.__init__(
             self,
-            module = 'shell_php',
-            arguments = [ payload ] + arguments,
-            name = name,
-            target = target,
-            postprocess = postprocess,
-            background = background
+            module='shell_php',
+            arguments=[payload] + arguments,
+            name=name,
+            target=target,
+            postprocess=postprocess,
+            background=background,
+            catch_errors=catch_errors,
         )
 
     def format(self, values):
@@ -197,12 +198,12 @@ class PhpCode(ModuleExec):
         """
 
         return [
-                    Template(arg).render(**values)
-                    for arg in self.arguments
-                ]
+            Template(arg).render(**values)
+            for arg in self.arguments
+        ]
+
 
 class PhpFile(PhpCode):
-
     """This vector contains PHP code imported from a template.
 
     The PHP code in the given template is executed via the module `shell_php`.
@@ -222,7 +223,7 @@ class PhpFile(PhpCode):
         background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload_path, name = None, target = 0, postprocess = None, arguments = [], background = False):
+    def __init__(self, payload_path, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True):
 
         if not isinstance(payload_path, str):
             raise DevException(messages.vectors.wrong_payload_type)
@@ -237,12 +238,13 @@ class PhpFile(PhpCode):
 
         ModuleExec.__init__(
             self,
-            module = 'shell_php',
-            arguments = [ payload ] + arguments,
-            name = name,
-            target = target,
-            postprocess = postprocess,
-            background = background
+            module='shell_php',
+            arguments=[payload] + arguments,
+            name=name,
+            target=target,
+            postprocess=postprocess,
+            background=background,
+            catch_errors=catch_errors,
         )
 
     def format(self, values):
@@ -262,15 +264,15 @@ class PhpFile(PhpCode):
         """
 
         return [
-                 Template(
-                        text = arg,
-                        lookup = TemplateLookup(directories = [ self.folder ]),
-                        ).render(**values)
-                 for arg in self.arguments
-                ]
+            Template(
+                text=arg,
+                lookup=TemplateLookup(directories=[self.folder]),
+            ).render(**values)
+            for arg in self.arguments
+        ]
+
 
 class ShellCmd(PhpCode):
-
     """This vector contains a shell command.
 
     The shell command is executed via the module `shell_sh`. Inherit `ModuleExec`.
@@ -289,17 +291,17 @@ class ShellCmd(PhpCode):
         background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload, name = None, target = 0, postprocess = None, arguments = [], background = False):
-
+    def __init__(self, payload, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True):
         if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         ModuleExec.__init__(
             self,
-            module = 'shell_sh',
-            arguments = [ payload ] + arguments,
-            name = name,
-            target = target,
-            postprocess = postprocess,
-            background = background
+            module='shell_sh',
+            arguments=[payload] + arguments,
+            name=name,
+            target=target,
+            postprocess=postprocess,
+            background=background,
+            catch_errors=catch_errors,
         )

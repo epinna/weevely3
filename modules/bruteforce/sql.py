@@ -42,7 +42,7 @@ class Sql(Module):
           { 'name' : '-fpwds', 'help' : 'Local file path containing password list' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         self.args['users'] = self.args.get('users', [])
         if self.args.get('fusers'):

@@ -106,7 +106,7 @@ class Info(Module):
              'default': self.default_provider}
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         vectors = self.args.get('info')
 

@@ -22,7 +22,7 @@ class Suidsgid(Module):
           { 'name' : '-only-sgid', 'help' : 'Find only sgid', 'action' : 'store_true', 'default' : False },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         result = ShellCmd(
           payload = """find ${rpath} -type f ${ '-perm -04000' if not only_sgid else '' } ${ '-o' if not only_suid and not only_sgid else '' } ${ '-perm -02000' if not only_suid else '' }""",

@@ -54,7 +54,7 @@ class Find(Module):
           { 'name' : '-case', 'help' : 'Case sensitive', 'action' : 'store_true', 'default' : False },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
         result = self.vectors.get_result(
                     self.args['vector'],
                     self.args

@@ -53,6 +53,11 @@ class Channel:
 
         self.channel_name = channel_name
 
+        self.err_token = utils.strings.randstr(6) + b'ERR'
+        self.re_error = re.compile(
+            b"%s(.*?)%s" % (self.err_token, self.err_token), re.DOTALL
+        )
+
     def _get_proxy(self):
 
         url_dissected = url_dissector.findall(
@@ -98,13 +103,21 @@ class Channel:
 
         return handlers
 
-    def send(self, payload):
+    def send(self, payload, catch_errors=True):
 
         response = b''
         code = 200
         error = ''
 
         human_error = ''
+
+        virgin_payload = payload
+        if catch_errors:
+            # Wrap payload in try/catch to handle remote errors
+            token = self.err_token.decode('utf-8')
+            payload = 'try {' + payload + '}catch(Exception $e){' \
+                    + f'echo "{token}".$e->getTrace()[0]["function"].": ".$e->getMessage()."{token}";' \
+                    + '}'
 
         try:
             response = self.channel_loaded.send(
@@ -141,20 +154,38 @@ class Channel:
 
         if response:
             dlog.info('RESPONSE: %s' % repr(response))
-        else:
-            response = b''
-            command_last_chars = utils.prettify.shorten(
-                                    payload.rstrip(),
-                                    keep_trailer = 10
-                                )
-            if (
-                command_last_chars and
-                command_last_chars[-1] not in ( ';', '}' )
-                ):
-                log.warning(messages.module_shell_php.missing_php_trailer_s % command_last_chars)
 
-        if error or human_error:
-            log.debug('[ERR] %s [%s]' % (error, code))
+        if response and catch_errors:
+            # Parse remote errors
+            remote_errors = self.re_error.findall(response)
+            if remote_errors:
+                response = self.re_error.sub(b'', response)
+                error = b'\n'.join(remote_errors).decode('utf-8', 'replace')
+                code = 500
+
+        self._detect_syntax_error(virgin_payload)
+
+        if human_error:
             log.warning(human_error)
+            return response, code, error
+
+        if error and code:
+            log.warning('[ERR:%s] %s' % (code, error))
+            return response, code, error
 
         return response, code, error
+
+    def _detect_syntax_error(self, payload):
+        """Detect syntax errors and warn user
+        @TODO detect before sending, and ask confirmation
+        @TODO use proper linter for corresponding vector
+        """
+        command_last_chars = utils.prettify.shorten(
+            payload.rstrip(),
+            keep_trailer=10
+        )
+        if (
+                command_last_chars and
+                command_last_chars[-1] not in (';', '}')
+        ):
+            log.warning(messages.module_shell_php.missing_php_trailer_s % command_last_chars)

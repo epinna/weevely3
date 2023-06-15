@@ -41,7 +41,7 @@ class Extensions(Module):
             'nargs' : '+' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         result = self.vectors.get_results(
             names = self.args.get('info', [])
