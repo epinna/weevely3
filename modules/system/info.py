@@ -43,7 +43,7 @@ class Info(Module):
             [
                 PhpCode("print(@$_SERVER['DOCUMENT_ROOT']);", 'document_root'),
                 PhpCode("@print(getcwd());", 'pwd'),
-                PhpCode("print(dirname(__FILE__));", 'script_folder'),
+                PhpCode("print(empty(Phar::running(false))?__DIR__:dirname(Phar::running(false)));", 'script_folder'),
                 PhpCode("print(@$_SERVER['SCRIPT_NAME']);", 'script'),
                 PhpCode("print(@$_SERVER['PHP_SELF']);", 'php_self'),
                 PhpCode("""
@@ -62,8 +62,9 @@ class Info(Module):
                 PhpCode("print(@ini_get('disable_functions'));", 'disable_functions'),
                 PhpCode("print(@php_ini_loaded_file());", 'ini_path'),
                 PhpCode("print(@sys_get_temp_dir());", 'tmp_path'),
-                PhpCode("print(@disk_free_space(__DIR__));", 'free_space',
-                        postprocess=lambda x: utils.prettify.format_size(int(x))),
+                PhpCode("print(@disk_free_space(dirname(empty(Phar::running(false))?__DIR__:Phar::running(false))));", 'free_space',
+                        postprocess=lambda x: utils.prettify.format_size(int(x))
+                        ),
                 PhpCode("print(@ini_get('safe_mode') ? 1 : 0);", 'safe_mode',
                         postprocess=lambda x: True if x == '1' else False),
                 PhpCode("print(@$_SERVER['SERVER_SOFTWARE']);", 'server_soft'),

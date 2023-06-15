@@ -10,7 +10,14 @@ PWD="`python -c 'from tests import config;print(config.password)'`"
 mkdir -p "$BASE_FOLDER"
 find -type f -name '*.pyc' -exec rm -f {} \;
 python ./weevely.py generate "$PWD" "$AGENT"
+python ./weevely.py generate -obfuscator phar "$PWD" "$BASE_FOLDER"agent.phar
 
+a2enmod actions fcgid alias proxy_fcgi
+
+update-alternatives --set php /usr/bin/php7.4
+
+service php7.4-fpm start
+service php8.2-fpm start
 service apache2 start
 service mariadb start
 

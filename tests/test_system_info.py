@@ -3,8 +3,6 @@ from testfixtures import log_capture
 from core.weexceptions import ArgparseError
 from core import modules
 from core.sessions import SessionURL
-from core import messages
-import logging
 import os
 
 class SystemInfo(BaseTest):
