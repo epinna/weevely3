@@ -1,7 +1,5 @@
 from core.vectors import PhpFile, ModuleExec
 from core.module import Module
-from core import messages
-from core import modules
 from core.loggers import log
 import os
 
@@ -34,7 +32,8 @@ class Tar(Module):
         self.register_arguments([
           { 'name' : 'rtar', 'help' : 'Remote Tar file' },
           { 'name' : 'rfiles', 'help' : 'Remote files to compress. If decompressing, set destination folder.', 'nargs' : '+' },
-          { 'name' : '--decompress', 'action' : 'store_true', 'default' : False, 'help' : 'Simulate tar -x' },
+          { 'name' : '-x', 'dest': 'decompress', 'action' : 'store_true', 'default' : False, 'help' : 'Extract/decompress' },
+          { 'name' : '-o', 'dest': 'overwrite', 'action' : 'store_true', 'default' : False, 'help' : 'Overwrite' },
           { 'name' : '-z', 'action' : 'store_true', 'default' : False, 'help' : 'Simulate tar -xz for gzip compressed archives' },
           { 'name' : '-j', 'action' : 'store_true', 'default' : False, 'help' : 'Simulate tar -xj for bzip2 compressed archives' },
         ])
