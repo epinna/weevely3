@@ -8,21 +8,31 @@ Normally, the following methods have to be overridden:
 * `init()`: This defines the basic module initialization. The `init()` method normally calls `register_info()`, `register_vectors()` and `register_arguments()`.
 * `check()`: This is called at the first run. Check and set the module status.
 * `run()`: This function is called on module run.
-
 """
 
-from core.vectorlist import VectorList
-from core.vectors import ModuleExec
-from core.weexceptions import DevException, ArgparseError
-from core.loggers import log
+import argparse
+import shlex
+
+import utils
 from core import argparsers
 from core import messages
-from mako.template import Template
 from core import modules
-import shlex
-import utils
-import ast
-import os
+from core.loggers import log
+from core.vectorlist import VectorList
+from core.weexceptions import DevException, ArgparseError
+
+
+class Formatter(argparse.ArgumentDefaultsHelpFormatter):
+    def _format_description(self, desc):
+        lines = desc.split('\n')
+        head = lines[0]
+        n = len(head)
+        return head + '\n' + '=' * n + '\n' + '\n'.join(['  ' + l for l in lines[1:]]) + '\n'
+
+    def add_text(self, text):
+        if text is not argparse.SUPPRESS and text is not None:
+            self._add_item(self._format_description, [text])
+
 
 class Status:
     """Represent the module statuses.
@@ -67,8 +77,9 @@ class Module:
 
         # HelpParser is a slightly changed `ArgumentParser`
         self.argparser = argparsers.HelpParser(
-            prog = self.name,
-            description = self.__doc__
+            prog=self.name,
+            description=self.__doc__,
+            formatter_class=Formatter,
         )
 
         # Arguments dictionary is initially empty
