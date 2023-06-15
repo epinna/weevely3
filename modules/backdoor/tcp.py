@@ -5,6 +5,9 @@ from core import messages
 import urllib.parse
 import telnetlib
 import time
+import signal
+import sys
+
 
 class Tcp(Module):
     """Spawn a shell on a TCP port."""
@@ -72,11 +75,11 @@ class Tcp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
+        urlparsed = urllib.parse.urlparse(self.session['url'])
 
         # Run all the vectors
         for vector in self.vectors:
-
             # Skip vector if -vector is specified but does not match
             if self.args.get('vector') and self.args.get('vector') != vector.name:
                 continue
@@ -85,12 +88,13 @@ class Tcp(Module):
             vector.run(self.args)
 
             # If set, skip autoconnect
-            if self.args.get('no_autoconnect'): continue
+            if self.args.get('no_autoconnect'):
+                continue
+
+            log.info('*** Auto-connecting ***')
 
             # Give some time to spawn the shell
             time.sleep(1)
-
-            urlparsed = urllib.parse.urlparse(self.session['url'])
 
             if not urlparsed.hostname:
                 log.debug(
@@ -99,10 +103,25 @@ class Tcp(Module):
                 continue
 
             try:
-                telnetlib.Telnet(urlparsed.hostname, self.args['port'], timeout = 5).interact()
+                tn = telnetlib.Telnet(urlparsed.hostname, self.args['port'], timeout=5)
 
-                # If telnetlib does not rise an exception, we can assume that
-                # ended correctly and return from `run()`
+                def exit_shell(signum, frame):
+                    sys.stdout.write('\n')    # Go to next line
+                    tn.eof = True             # Hide telnet
+                    tn.write(b'\nexit\n'*10)  # Insure shell is dead
+
+                # Handle Ctrl-C to automatically close shell
+                original_sigint_handler = signal.getsignal(signal.SIGINT)
+                signal.signal(signal.SIGINT, exit_shell)
+
+                tn.interact()
+
+                # Try to exit as many shells as possible in case of Ctrl-D
+                tn.write(b'exit\n'*10)
+                tn.close()
+
+                # Reset Ctrl-C
+                signal.signal(signal.SIGINT, original_sigint_handler)
                 return
             except Exception as e:
                 log.debug(

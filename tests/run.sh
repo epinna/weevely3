@@ -27,7 +27,7 @@ done
 
 # Build weevely container
 docker build -f tests/docker/Dockerfile . -t weevely
-docker run  --rm --net=weevely-testnet --name weevely-inst -v `pwd`:/app/ -p 80:80 -d weevely
+docker run  --rm --net=weevely-testnet --name weevely-inst -v `pwd`:/app/ -p 80:80 -p 1337:1337 -d weevely
 
 # Wait until the http server is serving
 until $(curl --output /dev/null --silent --head http://localhost/); do
