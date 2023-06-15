@@ -45,7 +45,7 @@ class Dump(Module):
             {'name': '-vector', 'choices': self.vectors.get_names(), 'default': 'mysqldump_php'}
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         self.args['table'] = self.args.get('table', '')
 

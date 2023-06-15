@@ -38,7 +38,7 @@ class Php(Module):
         command = 'echo(%s);' % rand
         response, code, error = channel.send(command)
 
-        if rand == response.decode('utf-8'):
+        if response and rand == response.decode('utf-8'):
             status = Status.RUN
         else:
             # The PHP shell should never return FAIL
@@ -80,7 +80,7 @@ class Php(Module):
 
         return status
 
-    def run(self):
+    def run(self, **kwargs):
         """ Run module """
 
         # This is an unusual slack setup at every execution
@@ -97,7 +97,7 @@ class Php(Module):
         log.debug('PAYLOAD %s' % command)
 
         # Send command
-        response, code, error = self.channel.send(command)
+        response, code, error = self.channel.send(command, **kwargs)
 
         if self.args.get('raw_response'):
             return response

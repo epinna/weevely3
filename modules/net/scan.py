@@ -42,7 +42,7 @@ class Scan(Module):
           { 'name' : '-ports-per-request', 'help' : SUPPRESS, 'type' : int, 'default' : 5 },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         ## Address handling
 

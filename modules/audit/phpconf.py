@@ -187,7 +187,7 @@ class Phpconf(Module):
 
         return result
 
-    def run(self):
+    def run(self, **kwargs):
 
         self.os_type = ModuleExec('system_info', ['-info', 'os']).load_result_or_run('os')
         self.php_version = ModuleExec('system_info', ['-info', 'php_version']).load_result_or_run('php_version')

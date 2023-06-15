@@ -26,7 +26,7 @@ class Ls(Module):
           { 'name' : 'dir', 'help' : 'Target folder', 'nargs' : '?', 'default' : '.' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         return PhpCode("""
                 $p="${dir}";

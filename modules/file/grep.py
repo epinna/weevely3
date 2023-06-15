@@ -59,7 +59,7 @@ $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.rep
             { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'grep_php' },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         files = []
 

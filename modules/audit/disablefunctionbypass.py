@@ -132,7 +132,7 @@ class Disablefunctionbypass(Module):
         return query_random_str in result_request
 
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Terminate if shell_sh is active
         if self.session['shell_sh']['status'] == Status.RUN:

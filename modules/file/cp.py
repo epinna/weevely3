@@ -43,7 +43,7 @@ class Cp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         vector_name, result = self.vectors.find_first_result(
             names = [ self.args.get('vector') ],

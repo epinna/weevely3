@@ -26,7 +26,7 @@ class Cd(Module):
           { 'name' : 'dir', 'help' : 'Target folder', 'nargs' : '?' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # When no folder is specified, change folder to SCRIPT_NAME to
         # simulate the bash behaviour. If not available, use current dir.

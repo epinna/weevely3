@@ -81,7 +81,7 @@ class Reversetcp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Run all the vectors
         for vector in self.vectors:

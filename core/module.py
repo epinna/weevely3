@@ -126,7 +126,7 @@ class Module:
         # Data is returned for the testing of _cmdline calls
         return result
 
-    def run_argv(self, argv):
+    def run_argv(self, argv, catch_errors=True):
         """Execute the module.
 
         Get arguments list as argument. The arguments are parsed with getopt,
@@ -136,6 +136,7 @@ class Module:
 
         Args:
             argv (list of str): The list of arguments.
+            catch_errors (bool): Whether to catch remote errors or not. Passed to the base channel
 
         Returns:
             Object. The result of the module execution.
@@ -188,8 +189,7 @@ class Module:
             if stored_arg_key != None and stored_arg_value != self.args.get(stored_arg_key):
                 self.args[stored_arg_key] = stored_arg_value
 
-
-        return self.run()
+        return self.run(catch_errors=catch_errors)
 
     def run_alias(self, args, cmd):
         """Execute the module to replace a missing terminal command.
@@ -251,7 +251,7 @@ class Module:
 
         return Status.RUN
 
-    def run(self):
+    def run(self, catch_errors=True):
         """Module execution.
 
         Called at every module executions.

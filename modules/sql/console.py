@@ -99,7 +99,7 @@ class Console(Module):
                 ]
             }
 
-    def run(self):
+    def run(self, **kwargs):
 
         # The vector name is given by the db type
         vector = self.args.get('dbms')

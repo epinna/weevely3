@@ -28,7 +28,7 @@ class Phpproxy(Module):
             { 'name' : '-no-autoremove', 'action' : 'store_true', 'default' : False, 'help' : 'Do not autoremove on exit' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         with open(os.path.join(self.folder, 'poxy.php'), 'r') as proxyfile:
             proxycontent = proxyfile.read()

@@ -37,7 +37,7 @@ class Gzip(Module):
           { 'name' : '--keep', 'action' : 'store_true', 'default' : False, 'help' : 'Keep (don\'t delete) input files' },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # The correct execution returns something only on errors
         result_err = self.vectors.get_result(

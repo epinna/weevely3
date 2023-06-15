@@ -44,7 +44,7 @@ class Clearlog(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : "clearlog" },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         return self.vectors.get_result(
          name = self.args['vector'],
