@@ -11,18 +11,16 @@ Normally, the following methods have to be overridden:
 
 """
 
-from core.vectorlist import VectorList
-from core.vectors import ModuleExec
-from core.weexceptions import DevException, ArgparseError
-from core.loggers import log
+import shlex
+
+import utils
 from core import argparsers
 from core import messages
-from mako.template import Template
 from core import modules
-import shlex
-import utils
-import ast
-import os
+from core.loggers import log
+from core.vectorlist import VectorList
+from core.weexceptions import DevException, ArgparseError
+
 
 class Status:
     """Represent the module statuses.
@@ -43,6 +41,7 @@ class Status:
 class Module:
 
     aliases = []
+    arguments = []
 
     def __init__(self, session, name, folder):
         """Module object constructor.
@@ -73,8 +72,52 @@ class Module:
 
         # Arguments dictionary is initially empty
         self.args = {}
-
         self.init()
+
+        self._register_arguments(self.arguments)
+
+    def complete(self, text) -> []:
+        names = []
+
+        for a in self.arguments:
+            name = a.get('name')
+            if isinstance(name, list):
+                name = name[0]
+            name = name.strip('-')
+            if name.startswith(text):
+                names.append(f'{name} ')
+
+        return names
+
+    def register_arguments(self, arguments):
+        self.arguments = arguments
+
+    def _register_arguments(self, arguments):
+        """Register the module arguments.
+
+        Register arguments to be added to the argparse parser.
+
+        Args:
+            arguments (list of dict): List of dictionaries in the form
+            `[{ 'name' : 'arg1', 'opt' : '', .. }, {'name' : 'arg2', 'opt' : '', .. }]`
+            to be passed to the `ArgumentParser.add_argument()` method.
+        """
+
+        try:
+            for arg_opts in arguments:
+
+                # Handle if the argument registration is done before
+                # The vector registration. This should at least warn
+                if arg_opts.get('choices') == []:
+                    log.warn(messages.module.error_choices_s_s_empty % (self.name,
+                                                                        arg_name))
+
+                self.argparser.add_argument(
+                    arg_opts['name'],
+                    **dict((k, v) for k, v in arg_opts.items() if k != 'name')
+                )
+        except Exception as e:
+            raise DevException(messages.module.error_setting_arguments_s % (e))
 
     def run_cmdline(self, line, cmd = ''):
         """Execute the module from command line.
@@ -305,33 +348,6 @@ class Module:
 
         if not self.argparser.description:
             raise DevException(messages.module.error_module_missing_description)
-
-    def register_arguments(self, arguments = []):
-        """Register the module arguments.
-
-        Register arguments to be added to the argparse parser.
-
-        Args:
-            arguments (list of dict): List of dictionaries in the form
-            `[{ 'name' : 'arg1', 'opt' : '', .. }, {'name' : 'arg2', 'opt' : '', .. }]`
-            to be passed to the `ArgumentParser.add_argument()` method.
-        """
-
-        try:
-            for arg_opts in arguments:
-
-                # Handle if the argument registration is done before
-                # The vector registration. This should at least warn
-                if arg_opts.get('choices') == []:
-                    log.warn(messages.module.error_choices_s_s_empty % (self.name,
-                                                                        arg_name))
-
-                self.argparser.add_argument(
-                    arg_opts['name'],
-                    **dict((k, v) for k, v in arg_opts.items() if k != 'name')
-                )
-        except Exception as e:
-            raise DevException(messages.module.error_setting_arguments_s % (e))
 
 
     def register_vectors(self, vectors):

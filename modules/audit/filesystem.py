@@ -1,12 +1,12 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
 from core.loggers import log
-from core import modules
-import utils
+from core.module import Module
+from core.vectors import ModuleExec
+
 
 class Filesystem(Module):
-
     """Audit the file system for weak permissions."""
+
+    check_functions = []
 
     def init(self):
 

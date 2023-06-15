@@ -1,17 +1,19 @@
-from core import messages
-from core.weexceptions import FatalException
+import ast
+import atexit
+import glob
+import logging
+import os
+import pprint
+import urllib.parse
+
+import yaml
 from mako import template
+
+from core import messages
 from core.config import sessions_path, sessions_ext
 from core.loggers import log, dlog, stream_handler
 from core.module import Status
-import os
-import yaml
-import glob
-import logging
-import urllib.parse
-import atexit
-import ast
-import pprint
+from core.weexceptions import FatalException
 
 arg_blacklist = (
     'default_shell',
@@ -48,11 +50,19 @@ class Session(dict):
                     path = ("%s.%s" % (mod_name, argument))
                     if not term or path.startswith(term):
                         args.append((path, arg_value))
-            # If is not a module, just print if matches with print_filters
+            # If is not a module, just print if not in blacklist
             elif mod_name not in arg_blacklist and mod_name.startswith(term):
                 args.append((mod_name, mod_value))
         
         return args
+
+    def complete(self, text):
+        names = []
+        for name, val in self.items():
+            if not isinstance(val, dict) and name not in arg_blacklist and name.startswith(text):
+                names.append(name)
+
+        return names
 
     def get_connection_info(self):
      return template.Template(messages.sessions.connection_info).render(
