@@ -18,6 +18,7 @@ update-alternatives --set php /usr/bin/php7.4
 
 service php7.4-fpm start
 service php8.2-fpm start
+service ssh start
 service apache2 start
 service mariadb start
 
