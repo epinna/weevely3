@@ -22,7 +22,7 @@ class Etcpasswd(Module):
             { 'name' : '-vector', 'choices' : ( 'posix_getpwuid', 'file', 'fread', 'file_get_contents', 'base64' ) }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         pwdresult = ''
         vector = self.args.get('vector')

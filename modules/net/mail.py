@@ -26,7 +26,7 @@ class Mail(Module):
           { 'name' : 'sender', 'help' : 'Set sender of the mail. ' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         return PhpCode("""(mail('${to}', '${subject}', '${message}', 'From: ${sender}') && print(1)) || print(0);""",
                         postprocess = lambda x: True if x == '1' else False

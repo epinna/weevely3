@@ -57,7 +57,7 @@ class Touch(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names(), 'default' : 'php_touch' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Handle the cloning of the oldest timestamp in folder
         if self.args.get('oldest_file_ts'):

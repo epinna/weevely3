@@ -134,7 +134,7 @@ class Filesystem(Module):
                 and not f.endswith('old')
                 and any(p for p in files_paths if p and p in f)]
 
-    def run(self):
+    def run(self, **kwargs):
 
         results = {}
 

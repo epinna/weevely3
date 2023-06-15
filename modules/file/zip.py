@@ -37,7 +37,7 @@ class Zip(Module):
           { 'name' : '--decompress', 'action' : 'store_true', 'default' : False, 'help' : 'Simulate unzip' },
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # The correct execution returns something only on errors
         result_err = self.vectors.get_result(

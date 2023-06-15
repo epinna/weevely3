@@ -41,7 +41,7 @@ class Edit(Module):
           { 'name' : '-editor', 'help' : 'Choose editor', 'default' : 'vim' }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Get a temporary file name
         suffix = re.sub('[\W]+', '_', self.args['rpath'])

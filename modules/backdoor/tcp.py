@@ -7,7 +7,6 @@ import telnetlib
 import time
 
 class Tcp(Module):
-
     """Spawn a shell on a TCP port."""
 
     def init(self):

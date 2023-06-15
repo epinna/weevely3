@@ -25,7 +25,7 @@ class Read(Module):
           { 'name' : '-vector', 'choices' : ( 'file', 'fread', 'file_get_contents', 'base64' ) }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Get a temporary file name
         temp_file = tempfile.NamedTemporaryFile()

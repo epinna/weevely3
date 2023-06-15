@@ -108,9 +108,10 @@ class Sh(Module):
             self.session['shell_sh']['stored_args']['vector'] = vector_name
             return Status.RUN
         else:
+            # Check safe_mode and disable_functions
             return Status.FAIL
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Join the command list and
 

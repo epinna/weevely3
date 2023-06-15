@@ -31,7 +31,7 @@ class Mount(Module):
         ])
 
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Check binary
         binary_path = spawn.find_executable(
