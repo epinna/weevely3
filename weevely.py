@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-from core.terminal import Terminal
-from core.weexceptions import FatalException
-from core.loggers import log, dlog
-from core.sessions import SessionURL, SessionFile
-from core.config import agent_templates_folder_path, obfuscators_templates_folder_path
-from core import generate
-from core import modules
-from core import messages
-from core.argparsers import CliParser
-import pprint
 import glob
 import os
+import pprint
 import sys
+
+from core import generate
+from core import messages
+from core import modules
+from core.argparsers import CliParser
+from core.config import agent_templates_folder_path, obfuscators_templates_folder_path
+from core.loggers import log, dlog
+from core.sessions import SessionURL, SessionFile
+from core.terminal import Terminal
+from core.weexceptions import FatalException
 
 if sys.stdout.encoding is None:
     print("Please set PYTHONIOENCODING=UTF-8 running 'export PYTHONIOENCODING=UTF-8' before starting Weevely.")
@@ -30,11 +31,13 @@ def main(arguments):
 
         generate.save_generated(obfuscated, arguments.path)
 
-        log.info(
-        messages.generate.generated_backdoor_with_password_s_in_s_size_i %
-        (arguments.path,
-        arguments.password, len(obfuscated))
-        )
+        if arguments.path != '-':
+            log.info(messages.generate.generated_backdoor_with_password_s_in_s_size_i %
+                     (arguments.path,
+                      arguments.password,
+                      len(obfuscated)
+                      )
+                     )
 
         return
 
