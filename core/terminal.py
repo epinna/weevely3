@@ -1,198 +1,168 @@
-from core.weexceptions import FatalException, ChannelException
-from core.loggers import log, dlog
-from core import messages
-from core import modules
-from core import config
-from core.module import Status
-import utils
+import string
+from urllib.parse import urlparse
+
 from mako import template
+from prompt_toolkit import PromptSession, HTML
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.history import FileHistory
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.key_binding.bindings import named_commands
+from prompt_toolkit.output import ColorDepth
+from prompt_toolkit.styles import Style
 
-try:
-    import gnureadline as readline
-except ImportError:
-    import readline
+from core import messages, modules, config
+from core.loggers import log
+from core.module import Status
+from core.weexceptions import ChannelException
 
-import cmd
-import glob
-import os
-import shlex
-import atexit
-import sys
-
-class CmdModules(cmd.Cmd):
-
-    identchars = cmd.Cmd.identchars + ':'
-    doc_header = "Modules and commands (type :help <module>):"
-    nohelp = "[!] No help on %s"
-
-    def complete(self, text, state):
-        """Return the next possible completion for 'text'.
-
-        If a command has not been entered, then complete against command list.
-        Otherwise try to call complete_<command> to get list of completions.
-        """
-        if state == 0:
-            origline = readline.get_line_buffer()
-
-            # Offer completion just for commands that starts
-            # with the trigger :
-            if origline and not origline.startswith(':'):
-                return None
-
-            line = origline.lstrip().lstrip(':')
-
-            stripped = len(origline) - len(line)
-            begidx = readline.get_begidx() - stripped
-            endidx = readline.get_endidx() - stripped
-            if begidx>0:
-                cmd, args, foo = self.parseline(line)
-                if cmd == '':
-                    compfunc = self.completedefault
-                else:
-                    try:
-                        compfunc = getattr(self, 'complete_' + cmd)
-                    except AttributeError:
-                        compfunc = self.completedefault
-            else:
-                compfunc = self.completenames
-            self.completion_matches = compfunc(text, line, begidx, endidx)
-        try:
-            if self.completion_matches[state].startswith('alias_'):
-                if self.session.get('default_shell') == 'shell_php':
-                    return self.completion_matches[state][6:]
-                else:
-                    return ''
-            else:
-                return self.completion_matches[state]
-        except IndexError:
-            return None
-
-    def onecmd(self, line):
-        """Interpret the argument as though it had been typed in response
-        to the prompt.
-
-        This may be overridden, but should not normally need to be;
-        see the precmd() and postcmd() methods for useful execution hooks.
-        The return value is a flag indicating whether interpretation of
-        commands by the interpreter should stop.
-
-        """
-        cmd, arg, line = self.parseline(line)
-        if not line:
-            return self.emptyline()
-        if cmd in (None, ''):
-            return self.default(line)
-        self.lastcmd = line
-        if line == 'EOF' :
-            #self.lastcmd = ''
-            raise EOFError()
-        if cmd:
-            # Try running module  command
-            try:
-                func = getattr(self, 'do_' + cmd.lstrip(':'))
-            except AttributeError:
-                # If there is no module command, check if we have a PHP shelli
-                # And in case try running alias command
-                if self.session.get('default_shell') == 'shell_php' or cmd.lstrip(':') == 'cd':
-                    try:
-                        func = getattr(self, 'do_alias_' + cmd.lstrip(':'))
-                    except AttributeError:
-                        pass
-                    else:
-                        return func(arg, cmd)
-            else:
-                return func(arg, cmd)
-
-        return self.default(line)
-
-    def _print_modules(self):
-
-        data = []
-        for module_group, names in modules.loaded_tree.items():
-            for module_name in names:
-                data.append([ ':%s' % module_name, modules.loaded[module_name].info.get('description', '') ])
-
-        if data: log.info(utils.prettify.tablify(data, table_border = False))
-
-    def _print_command_replacements(self):
-
-        data = []
-        for module_name, module in modules.loaded.items():
-            if module.aliases:
-                data.append([ ', '.join(module.aliases), module_name ])
-
-        if data: log.info(utils.prettify.tablify(data, table_border = False))
-
-    def do_help(self, arg, command):
-        """Fixed help."""
-
-        print()
-
-        self._print_modules()
-
-        if self.session['shell_sh']['status'] == Status.RUN: print(); return
-
-        log.info(messages.terminal.help_no_shell)
-        self._print_command_replacements()
-
-        print()
+IDENTCHARS = string.ascii_letters + string.digits + '_'
 
 
-class Terminal(CmdModules):
+class CustomCompleter(Completer):
+    terminal = dict()
 
-    """Weevely Terminal"""
+    def __init__(self, terminal):
+        self.terminal = terminal
+
+    def get_completions(self, document, complete_event):
+        for attr in dir(self.terminal):
+            module = ''
+            alias = False
+            if attr.startswith('do_alias_'):
+                module = ':'+attr[9:]
+                alias = True
+            elif attr.startswith('do_'):
+                module = ':'+attr[3:]
+
+            classname = ('alias' if alias else 'module')
+            if module and module.startswith(document.text):
+                yield Completion(module,
+                                 start_position=-document.cursor_position,
+                                 style=f'class:completion-menu.completion.{classname}',
+                                 selected_style=f'class:completion-menu.completion.current.{classname}',
+                                 )
+
+
+class Terminal:
+    session = dict()
+    kb = KeyBindings()
+    style = Style.from_dict({
+        'bottom-toolbar': 'noreverse',
+        'bottom-toolbar.text': 'bg:#ff0000',
+        'rprompt': 'bg:#ff0066 #000000',
+        'username': '#999999 bold',
+        'at': '#00aa00',
+        'colon': '#ffffff',
+        'pound': '#00aa00',
+        'host': '#ff00ff',
+        'path': 'ansicyan',
+        'mode': '#ff0000',
+        'gutter': '#999999',
+        'label': '#00aa00 bold',
+        'value': '#33ff66',
+
+        'completion-menu': 'bg:#96d0f7 #000000',
+        'completion-menu.completion.current': 'bg:#0077ff #000000',
+        'completion-menu.completion.alias': 'bg:#1a9cf2',
+    })
 
     def __init__(self, session):
-
-        cmd.Cmd.__init__(self)
-
         self.session = session
-        self.prompt = 'weevely> '
+        self.prompt_session = PromptSession(history=FileHistory(config.history_path))
+        self.completer = CustomCompleter(self)
 
-        # Load all available modules
         self._load_modules()
+        self._print_intro()
 
-        # Load history file
-        self._load_history()
-
-        # Set a nice intro
-        self.intro = template.Template(
-            messages.terminal.welcome_to_s
-        ).render(
-            path = self.session.get('path'),
-            conn_info = session.get_connection_info(),
-            version = messages.version,
-            default_shell = self.session.get('default_shell')
-        )
-
-    def emptyline(self):
-        """Disable repetition of last command."""
-
-        pass
+    def cmdloop(self):
+        while True:
+            try:
+                line = self.prompt_session.prompt(self.get_prompt_message,
+                                                  color_depth=ColorDepth.TRUE_COLOR,
+                                                  complete_while_typing=True,
+                                                  reserve_space_for_menu=10,
+                                                  completer=self.completer,
+                                                  key_bindings=self.kb,
+                                                  style=self.style,
+                                                  )
+                line = self.precmd(line)
+                self.onecmd(line)
+            except KeyboardInterrupt:
+                # Quit when pressing Ctrl-C while prompt is empty
+                if len(self.prompt_session.default_buffer.text) == 0:
+                    raise EOFError
 
     def precmd(self, line):
-        """Before to execute a line commands. Confirm shell availability and get basic system infos """
+        self.init_default_shell()
+        return line
 
-        dlog.info('>>>> %s' % line)
+    def onecmd(self, line):
+        if not line:
+            return
 
-        # Skip slack check is not a remote command
-        if not line or any(
-                        line.startswith(cmnd) for cmnd in (
-                            ':set',
-                            ':unset',
-                            ':show',
-                            ':help'
-                        )
-                    ):
-            return line
+        cmd, args, line = self.parseline(line)
 
+        try:
+            func = getattr(self, 'do_' + cmd.lstrip(':'))
+            return func(args, cmd)
+        except AttributeError:
+            return self.default(line)
+
+    def default(self, line):
+        if not line:
+            return
+
+        default_shell = self.session.get('default_shell')
+
+        if not default_shell:
+            return
+
+        result = modules.loaded[default_shell].run_argv([line])
+
+        if not result:
+            return
+
+        # Clean trailing newline if existent to prettify output
+        result = result[:-1] if (
+                isinstance(result, str) and
+                result.endswith('\n')
+        ) else result
+
+        print(result)
+
+    def parseline(self, line):
+        """Parse the line into a command name and a string containing
+        the arguments.  Returns a tuple containing (command, args, line).
+        'command' and 'args' may be None if the line couldn't be parsed.
+        """
+        line = line.strip()
+
+        if line and line[0] == ':':
+            line = line[1:]
+
+        if not line:
+            return None, None, line
+        elif line[0] == '?':
+            line = 'help ' + line[1:]
+        elif line[0] == '!':
+            if hasattr(self, 'do_shell'):
+                line = 'shell ' + line[1:]
+            else:
+                return None, None, line
+        i, n = 0, len(line)
+        while i < n and line[i] in IDENTCHARS: i = i + 1
+        cmd, arg = line[:i], line[i:].strip()
+        return cmd, arg, line
+
+    def init_default_shell(self):
         # Trigger the shell_sh/shell_php probe if
         # 1. We never tried to raise shells (shell_sh = IDLE)
         # 2. The basic intepreter shell_php is not running.
         if (
-            self.session['shell_sh']['status'] == Status.IDLE or
-            self.session['shell_php']['status'] != Status.RUN
-            ):
+                self.session['shell_sh']['status'] == Status.IDLE or
+                self.session['shell_php']['status'] != Status.RUN
+        ):
 
             # We're implying that no shell is set, so reset default shell
             self.session['default_shell'] = None
@@ -223,14 +193,14 @@ class Terminal(CmdModules):
 
         # TODO: do not print this every loop
         # Print an introductory string with php shell
-        #if self.session.get('default_shell') == 'shell_php':
+        # if self.session.get('default_shell') == 'shell_php':
         #    log.info(messages.terminal.welcome_no_shell)
         #    self._print_command_replacements()
         #    log.info('\nweevely> %s' % line)
 
         # Get hostname and whoami if not set
         if not self.session['system_info']['results'].get('hostname'):
-            modules.loaded['system_info'].run_argv([ "-info", "hostname"])
+            modules.loaded['system_info'].run_argv(["-info", "hostname"])
 
         if not self.session['system_info']['results'].get('whoami'):
             modules.loaded['system_info'].run_argv(["-info", "whoami"])
@@ -240,46 +210,38 @@ class Terminal(CmdModules):
         if not self.session['file_cd']['results'].get('cwd'):
             self.do_file_cd(".")
 
-        return line
+    def get_prompt_message(self):
+        shell = self.session.get('default_shell')
+        pound = '?'
+        if not shell:
+            pound = 'weevely>'
+        elif shell == 'shell_sh':
+            pound = '$'
+        elif shell == 'shell_php':
+            pound = 'PHP>'
 
-    def postcmd(self, stop, line):
+        info = self.session.get_connection_info()
 
-        default_shell = self.session.get('default_shell')
+        if not shell or len(info.get('user')) == 0:
+            return [
+                ('class:pound', pound),
+                ('class:space', ' '),
+            ]
 
-        if not default_shell:
-            self.prompt = 'weevely> '
-        else:
-            if default_shell == 'shell_sh':
-                prompt = '$'
-            elif default_shell == 'shell_php':
-                prompt = 'PHP>'
-            else:
-                prompt = '?'
+        msg = []
 
-            # Build next prompt, last command could have changed the cwd
-            self.prompt = '%s %s ' % (self.session.get_connection_info(), prompt)
+        msg.extend([
+            ('class:username', info.get('user')),
+            ('class:at', '@'),
+            ('class:host', info.get('host')),
+            ('class:colon', ':'),
+            ('class:path', info.get('path')),
+            ('class:space', ' '),
+            ('class:pound', pound),
+            ('class:space', ' '),
+        ])
 
-
-    def default(self, line):
-        """Default command line send."""
-
-        if not line: return
-
-        default_shell = self.session.get('default_shell')
-
-        if not default_shell: return
-
-        result = modules.loaded[default_shell].run_argv([line])
-
-        if not result: return
-
-        # Clean trailing newline if existent to prettify output
-        result = result[:-1] if (
-                isinstance(result, str) and
-                result.endswith('\n')
-            ) else result
-
-        log.info(result)
+        return msg
 
     def do_show(self, line, cmd):
         """Command "show" which prints session variables"""
@@ -292,7 +254,8 @@ class Terminal(CmdModules):
         try:
             args = shlex.split(line)
         except Exception as e:
-            import traceback; log.debug(traceback.format_exc())
+            import traceback;
+            log.debug(traceback.format_exc())
             log.warning(messages.generic.error_parsing_command_s % str(e))
 
         # Set the setting
@@ -321,36 +284,53 @@ class Terminal(CmdModules):
 
             # Set module.do_terminal_module() function as terminal
             # self.do_modulegroup_modulename()
-            setattr(
-                Terminal, 'do_%s' %
-                (module_name), module_class.run_cmdline)
+            setattr(Terminal, 'do_%s' % (module_name), module_class.run_cmdline)
 
             # Set module.do_alias() function as terminal
             # self.do_alias() for every defined `Module.aliases`.
             for alias in module_class.aliases:
                 setattr(
                     Terminal, 'do_alias_%s' %
-                    (alias), module_class.run_alias)
+                              (alias), module_class.run_alias)
                 setattr(
                     Terminal, 'help_%s' %
-                    (alias), module_class.help)
+                              (alias), module_class.help)
 
             # Set module.help() function as terminal
             # self.help_modulegroup_modulename()
             setattr(
                 Terminal, 'help_%s' %
-                (module_name), module_class.help)
+                          (module_name), module_class.help)
 
-    def _load_history(self):
-        """Load history file and register dump on exit."""
+    def _print_intro(self):
+        info = self.session.get_connection_info()
 
-        # Create a file without truncating it in case it exists.
-        open(config.history_path, 'a').close()
+        hostname = info.get('host')
+        if not hostname:
+            urlparsed = urlparse(info.get('url'))
+            if urlparsed and urlparsed.netloc:
+                hostname = urlparsed.netloc
+            else:
+                hostname = 'undefined host'
 
-        readline.set_history_length(100)
-        try:
-            readline.read_history_file(config.history_path)
-        except IOError:
-            pass
-        atexit.register(readline.write_history_file,
-            config.history_path)
+        print_formatted_text(HTML(template.Template(
+            messages.terminal.welcome_to_s
+        ).render(
+            path=self.session.get('path'),
+            version=messages.version,
+            default_shell=self.session.get('default_shell'),
+            url=info.get('url'),
+            user=info.get('user'),
+            hostname=hostname,
+            conn_path=info.get('path'),
+        )), style=self.style)
+
+    @staticmethod
+    @kb.add('enter')
+    def _enter_key(event) -> None:
+        buff = event.current_buffer
+        if buff.complete_state:
+            named_commands.complete(event)
+            buff.insert_text(' ')
+        else:
+            named_commands.accept_line(event)
