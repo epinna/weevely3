@@ -88,7 +88,7 @@ if __name__ == '__main__':
     generateparser.add_argument(
         '-obfuscator', #The obfuscation method
         choices = obfuscators_available,
-        default = 'obfusc1_php'
+        default = 'phar'
         )
     generateparser.add_argument(
         '-agent', #The agent channel type
