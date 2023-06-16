@@ -54,9 +54,9 @@ class Terminal:
         self.completer = CustomCompleter(self)
 
         self._load_modules()
-        self._print_intro()
 
     def cmdloop(self):
+        self._print_intro()
         while True:
             try:
                 line = self.prompt_session.prompt(self.get_prompt_message,
