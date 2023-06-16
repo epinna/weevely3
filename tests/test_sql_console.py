@@ -1,12 +1,14 @@
-from tests.base_test import BaseTest
+import subprocess
+import unittest
+
 from testfixtures import log_capture
+
+from core import messages
 from core import modules
 from core.sessions import SessionURL
-from core import messages
 from tests import config
-import unittest
-import subprocess
-import os
+from tests.base_test import BaseTest
+
 
 def setUpModule():
     try:
@@ -45,13 +47,17 @@ class MySQLConsole(BaseTest):
                                     messages.module_sql_console.check_credentials),
                          log_captured.records[-2].msg)
 
-
     def test_wronglogin(self):
-
         wrong_login = '-user bogus -passwd bogus -query "select \'A\';"'
 
         # Using run_cmdline to test the outputs
         self.assertIn('Access denied for user', self.run_cmdline(wrong_login)['error'])
+
+    def test_wrong_port(self):
+        wrong_port = ['-user', config.sql_user, '-passwd', config.sql_passwd, '-port', '1234', '-query', 'select 1234;']
+
+        # Using run_cmdline to test the outputs
+        self.assertIn('Cannot assign requested address', self.run_argv(wrong_port)['error'])
 
     def test_login(self):
 
