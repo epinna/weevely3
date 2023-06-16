@@ -1,11 +1,12 @@
-from core.weexceptions import FatalException, ChannelException
-from core.loggers import log, dlog
+from mako import template
+
+import utils
+from core import config
 from core import messages
 from core import modules
-from core import config
+from core.loggers import log, dlog
 from core.module import Status
-import utils
-from mako import template
+from core.weexceptions import ChannelException
 
 try:
     import gnureadline as readline
@@ -13,11 +14,9 @@ except ImportError:
     import readline
 
 import cmd
-import glob
-import os
 import shlex
 import atexit
-import sys
+
 
 class CmdModules(cmd.Cmd):
 
@@ -285,6 +284,26 @@ class Terminal(CmdModules):
         """Command "show" which prints session variables"""
 
         self.session.print_to_user(line)
+
+    def completenames_and_args(self, text):
+        names = []
+
+        mod_text, arg_text = text.split('.') if '.' in text else (text, '',)
+
+        for n in self.completenames(mod_text):
+            if n.startswith(mod_text):
+                if n in modules.loaded:
+                    mod = modules.loaded[n]
+                    if mod_text == n:
+                        names.extend([f'{n}.{o}' for o in mod.complete(arg_text)])
+                    elif len(mod.arguments):
+                        names.append(f'{n}.')
+        return names
+
+    def complete_set(self, text, line, begidx, endidx):
+        if line.count(' ') < 2:
+            res = self.session.complete(text) + self.completenames_and_args(text)
+            return res
 
     def do_set(self, line, cmd):
         """Command "set" to set session variables."""
