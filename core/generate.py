@@ -5,7 +5,8 @@ from core import messages
 import os
 import base64
 
-def generate(password, obfuscator = 'obfusc1_php', agent = 'obfpost_php'):
+
+def generate(password, obfuscator = 'phar', agent = 'obfpost_php'):
 
     obfuscator_path = os.path.join(
         obfuscators_templates_folder_path,
