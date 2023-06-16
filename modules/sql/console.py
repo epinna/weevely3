@@ -1,9 +1,11 @@
+import re
+
 import utils
 from core import messages
 from core.loggers import log
 from core.module import Module
 from core.vectors import PhpCode
-import re
+
 
 class Console(Module):
     """Execute SQL query or run console."""
@@ -22,11 +24,11 @@ class Console(Module):
         self.register_vectors(
             [
                 PhpCode(
-                    """mysqli_report(MYSQLI_REPORT_OFF);if($s=mysqli_connect('${host}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};echo @mysqli_error($s);@mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error();""",
+                    """mysqli_report(MYSQLI_REPORT_OFF);if($s=mysqli_connect('${host}:${port}','${user}','${passwd}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};echo @mysqli_error($s);@mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error();""",
                     name='mysql',
                 ),
                 PhpCode(
-                    """mysqli_report(MYSQLI_REPORT_OFF);if($s=mysqli_connect('${host}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};echo @mysqli_error($s);@mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error();""",
+                    """mysqli_report(MYSQLI_REPORT_OFF);if($s=mysqli_connect('${host}:${port}','${user}','${passwd}','${database}')){$r=mysqli_query($s,'${query}');if($r){$f=mysqli_fetch_fields($r);foreach($f as $v){echo $v->name.'${linsep}';};echo '${colsep}';while($c=mysqli_fetch_row($r)){echo implode('${linsep}',$c);echo '${linsep}${colsep}';}};echo @mysqli_error($s);@mysqli_close($s);}echo '${errsep}'.@mysqli_connect_error();""",
                     name='mysql_database',
                 ),
                 PhpCode(
@@ -34,11 +36,11 @@ class Console(Module):
                     name="mysql_fallback"
                 ),
                 PhpCode(
-                    """if(pg_connect('host=${host} user=${user} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
+                    """if(pg_connect('host=${host} port=${port} user=${user} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
                     name="pgsql"
                 ),
                 PhpCode(
-                    """if(pg_connect('host=${host} user=${user} dbname=${database} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
+                    """if(pg_connect('host=${host} port=${port} user=${user} dbname=${database} password=${passwd}')){$r=pg_query('${query}');if($r){while($c=pg_fetch_row($r)){foreach($c as $key=>$value){echo $value.'${linsep}';}echo '${colsep}';}};pg_close();}echo '${errsep}'.@pg_last_error();""",
                     name="pgsql_database"
                 ),
                 PhpCode(
@@ -54,6 +56,7 @@ class Console(Module):
             {'name': '-host', 'help': 'Db host (default: localhost)', 'nargs': '?', 'default': 'localhost'},
             {'name': '-dbms', 'help': 'Db type', 'choices': ('mysql', 'pgsql'), 'default': 'mysql'},
             {'name': '-database', 'help': 'Database name'},
+            {'name': '-port', 'help': 'Port number', 'type': int, 'default': 0},
             {'name': '-query', 'help': 'Execute a single query'},
             {'name': '-encoding', 'help': 'Db text encoding', 'default': 'utf-8'},
         ])
@@ -71,6 +74,10 @@ class Console(Module):
 
         # Escape ' in query strings
         self.args['query'] = self.args['query'].replace('\\', '\\\\').replace('\'', '\\\'')
+
+        # Set default port depending on selected dbms
+        if self.args['port'] <= 0:
+            self.args['port'] = '5432' if self.args['dbms'] == 'pgsql' else '3306'
 
         result = self.vectors.get_result(vector, args)
 
