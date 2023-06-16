@@ -1,12 +1,17 @@
-from tests.config import base_folder, base_url
-from core.generate import generate, save_generated
-from core.channels.channel import Channel
-from unittest import TestCase
-import subprocess
-import utils
-import random
+from contextlib import redirect_stdout
 import hashlib
 import os
+import random
+import subprocess
+from contextlib import redirect_stdout
+from io import TextIOWrapper, BytesIO
+from unittest import TestCase
+
+import utils
+from core.channels.channel import Channel
+from core.generate import generate, save_generated
+from tests.config import base_folder, base_url
+
 
 def setUpModule():
     subprocess.check_output("""
@@ -22,6 +27,15 @@ base_folder = base_folder
 class TestGenerators(TestCase):
 
     def test_generators(self):
+        with TextIOWrapper(buffer=BytesIO()) as buf, redirect_stdout(buf):
+            obfuscated = generate('dummy', 'phar')
+            save_generated(obfuscated, '-')
+            buf.buffer.seek(0)
+            output = buf.buffer.read()
+
+        self.assertTrue(output.startswith(b'<?php'))
+        self.assertIn(b'__HALT_COMPILER(); ?>', output)
+
         for i in range(0, 200):
             self._randomize_bd()
             obfuscated = generate(self.password.decode('utf-8'), self.obfuscator)
