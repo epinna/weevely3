@@ -1,10 +1,12 @@
-from core.vectors import PythonCode, ShellCmd, Os
-from core.module import Module
-from core.loggers import log
-from core import messages
-import urllib.parse
 import telnetlib
 import time
+import urllib.parse
+
+from core import messages
+from core.loggers import log
+from core.module import Module
+from core.vectors import PythonCode, ShellCmd, Os
+
 
 class Tcp(Module):
     """Spawn a shell on a TCP port."""
@@ -72,7 +74,7 @@ class Tcp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self):
+    def run(self, **kwargs):
 
         # Run all the vectors
         for vector in self.vectors:

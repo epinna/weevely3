@@ -1,17 +1,17 @@
+import shlex
 import string
 from urllib.parse import urlparse
 
 from mako import template
-from prompt_toolkit import PromptSession, HTML
-from prompt_toolkit import print_formatted_text
+from prompt_toolkit import PromptSession
 from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.key_binding.bindings import named_commands
 from prompt_toolkit.output import ColorDepth
-from prompt_toolkit.styles import Style
 
-from core import messages, modules, config
+import utils
+from core import messages, modules, config, style
 from core.loggers import log
 from core.module import Status
 from core.weexceptions import ChannelException
@@ -30,10 +30,10 @@ class CustomCompleter(Completer):
             module = ''
             alias = False
             if attr.startswith('do_alias_'):
-                module = ':'+attr[9:]
+                module = ':' + attr[9:]
                 alias = True
             elif attr.startswith('do_'):
-                module = ':'+attr[3:]
+                module = ':' + attr[3:]
 
             classname = ('alias' if alias else 'module')
             if module and module.startswith(document.text):
@@ -47,25 +47,6 @@ class CustomCompleter(Completer):
 class Terminal:
     session = dict()
     kb = KeyBindings()
-    style = Style.from_dict({
-        'bottom-toolbar': 'noreverse',
-        'bottom-toolbar.text': 'bg:#ff0000',
-        'rprompt': 'bg:#ff0066 #000000',
-        'username': '#999999 bold',
-        'at': '#00aa00',
-        'colon': '#ffffff',
-        'pound': '#00aa00',
-        'host': '#ff00ff',
-        'path': 'ansicyan',
-        'mode': '#ff0000',
-        'gutter': '#999999',
-        'label': '#00aa00 bold',
-        'value': '#33ff66',
-
-        'completion-menu': 'bg:#96d0f7 #000000',
-        'completion-menu.completion.current': 'bg:#0077ff #000000',
-        'completion-menu.completion.alias': 'bg:#1a9cf2',
-    })
 
     def __init__(self, session):
         self.session = session
@@ -84,7 +65,7 @@ class Terminal:
                                                   reserve_space_for_menu=10,
                                                   completer=self.completer,
                                                   key_bindings=self.kb,
-                                                  style=self.style,
+                                                  style=style.default_style,
                                                   )
                 line = self.precmd(line)
                 self.onecmd(line)
@@ -94,6 +75,9 @@ class Terminal:
                     raise EOFError
 
     def precmd(self, line):
+        if line == 'exit':
+            raise EOFError
+
         self.init_default_shell()
         return line
 
@@ -129,7 +113,7 @@ class Terminal:
                 result.endswith('\n')
         ) else result
 
-        print(result)
+        log.info(result)
 
     def parseline(self, line):
         """Parse the line into a command name and a string containing
@@ -213,25 +197,30 @@ class Terminal:
     def get_prompt_message(self):
         shell = self.session.get('default_shell')
         pound = '?'
+        host = ''
         if not shell:
-            pound = 'weevely>'
+            host = 'weevely'
+            pound = '>'
         elif shell == 'shell_sh':
             pound = '$'
         elif shell == 'shell_php':
             pound = 'PHP>'
 
         info = self.session.get_connection_info()
+        user = info.get('user')
 
-        if not shell or len(info.get('user')) == 0:
+        if not shell or len(user) == 0:
             return [
+                ('class:host', host),
                 ('class:pound', pound),
                 ('class:space', ' '),
             ]
 
         msg = []
+        userclass = 'class:username' + ('.root' if user == 'root' else '')
 
         msg.extend([
-            ('class:username', info.get('user')),
+            (userclass, user),
             ('class:at', '@'),
             ('class:host', info.get('host')),
             ('class:colon', ':'),
@@ -243,18 +232,23 @@ class Terminal:
 
         return msg
 
+    def do_help(self, line, cmd):
+        self._print_modules(line)
+
+        if self.session['shell_sh']['status'] != Status.RUN:
+            log.info(messages.terminal.help_no_shell)
+            self._print_command_replacements()
+
     def do_show(self, line, cmd):
         """Command "show" which prints session variables"""
-
         self.session.print_to_user(line)
 
     def do_set(self, line, cmd):
         """Command "set" to set session variables."""
-
         try:
             args = shlex.split(line)
         except Exception as e:
-            import traceback;
+            import traceback
             log.debug(traceback.format_exc())
             log.warning(messages.generic.error_parsing_command_s % str(e))
 
@@ -268,7 +262,6 @@ class Terminal:
 
     def do_unset(self, line, cmd):
         """Command "unset" to unset session variables."""
-
         # Print all settings that startswith args[0]
         if not line:
             log.warning(messages.terminal.unset_usage)
@@ -279,7 +272,6 @@ class Terminal:
 
     def _load_modules(self):
         """Load all modules assigning corresponding do_* functions."""
-
         for module_name, module_class in modules.loaded.items():
 
             # Set module.do_terminal_module() function as terminal
@@ -313,7 +305,7 @@ class Terminal:
             else:
                 hostname = 'undefined host'
 
-        print_formatted_text(HTML(template.Template(
+        log.info(template.Template(
             messages.terminal.welcome_to_s
         ).render(
             path=self.session.get('path'),
@@ -323,7 +315,28 @@ class Terminal:
             user=info.get('user'),
             hostname=hostname,
             conn_path=info.get('path'),
-        )), style=self.style)
+        ))
+
+    def _print_modules(self, term):
+        for module_group, names in modules.loaded_tree.items():
+            elements = []
+            for module_name in names:
+                if term in module_name:
+                    elements.append([':%s' % module_name, modules.loaded[module_name].info.get('description', '')])
+
+            if not term or len(elements):
+                log.info('<label>%s</label>' % module_group.capitalize())
+                log.info(utils.prettify.tablify(elements, table_border=False))
+                print()
+
+    def _print_command_replacements(self):
+        data = []
+        for module_name, module in modules.loaded.items():
+            if module.aliases:
+                data.append([', '.join(module.aliases), module_name])
+
+        if data:
+            log.info(utils.prettify.tablify(data, table_border=False))
 
     @staticmethod
     @kb.add('enter')

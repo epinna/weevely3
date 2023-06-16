@@ -42,11 +42,11 @@ PHP code and modules execution are available. Use the following
 command replacements to simulate an unrestricted shell.
 """
     help_no_shell = """
-The system shell interpreter is not available in this session, use the
-following command replacements to simulate a unrestricted shell.
+<warning>The system shell interpreter is not available in this session, use the
+following command replacements to simulate a unrestricted shell.</warning>
 """
     welcome_to_s = """
-<gutter>[+]</gutter> <label>Weevely</label> <underline><value>${version}</value></underline>
+    <label>Weevely</label> <underline><value>${version}</value></underline>
 
 <gutter>[+]</gutter> <label>Target:</label>\t<value>${'%s@' % user if user else ''}${hostname}${':%s' % conn_path if conn_path and conn_path != '.' else ''}</value>
 <gutter>[+]</gutter> <label>Session:</label>\t<value>${path}</value>
@@ -54,8 +54,8 @@ following command replacements to simulate a unrestricted shell.
 <gutter>[+]</gutter> <label>Shell:</label>\t<value>${ 'System shell' if default_shell == 'shell_sh' else 'PHP interpreter'}</value>
 % endif
 
-<gutter>[+]</gutter> Browse the filesystem or execute commands starts the connection
-<gutter>[+]</gutter> to the target. Type :help for more information.
+  Browse the filesystem or execute commands to initiate the connection to the target.
+  Type :help for more information.
 """
     set_usage = 'Set session variable (run :show to print). Usage:\n:set <variable> \'<value>\''
     unset_usage = 'Unset session variable (run :show to print). Usage:\n:unset <variable>'
