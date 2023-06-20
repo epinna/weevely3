@@ -9,7 +9,7 @@ PWD="`python -c 'from tests import config;print(config.password)'`"
 # Generic environment setting install
 mkdir -p "$BASE_FOLDER"
 find -type f -name '*.pyc' -exec rm -f {} \;
-python ./weevely.py generate -obfuscator obfusc1_php "$PWD" "$AGENT"
+python ./weevely.py generate -o obfusc1_php "$PWD" "$AGENT"
 python ./weevely.py generate "$PWD" "$BASE_FOLDER"agent.phar
 
 a2enmod actions fcgid alias proxy_fcgi

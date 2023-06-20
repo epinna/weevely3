@@ -1,5 +1,6 @@
 import shlex
 import string
+import sys
 from urllib.parse import urlparse
 
 from mako import template
@@ -50,28 +51,36 @@ class Terminal:
 
     def __init__(self, session):
         self.session = session
-        self.prompt_session = PromptSession(history=FileHistory(config.history_path))
         self.completer = CustomCompleter(self)
 
         self._load_modules()
 
     def cmdloop(self):
+        prompt_session = PromptSession(
+            message=self.get_prompt_message,
+            history=FileHistory(config.history_path),
+            color_depth=ColorDepth.TRUE_COLOR,
+            complete_while_typing=True,
+            reserve_space_for_menu=10,
+            completer=self.completer,
+            key_bindings=self.kb,
+            style=style.default_style,
+        )
         self._print_intro()
+
+        if sys.stdin.isatty():
+            prompt = prompt_session.prompt
+        else:
+            prompt = sys.stdin.readline
+
         while True:
             try:
-                line = self.prompt_session.prompt(self.get_prompt_message,
-                                                  color_depth=ColorDepth.TRUE_COLOR,
-                                                  complete_while_typing=True,
-                                                  reserve_space_for_menu=10,
-                                                  completer=self.completer,
-                                                  key_bindings=self.kb,
-                                                  style=style.default_style,
-                                                  )
+                line = prompt()
                 line = self.precmd(line)
                 self.onecmd(line)
             except KeyboardInterrupt:
                 # Quit when pressing Ctrl-C while prompt is empty
-                if len(self.prompt_session.default_buffer.text) == 0:
+                if len(prompt_session.default_buffer.text) == 0:
                     raise EOFError
 
     def precmd(self, line):
