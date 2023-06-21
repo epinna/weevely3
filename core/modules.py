@@ -1,9 +1,49 @@
-from core import config
 import glob
 import os
 
+import click
+
+from core import config
+
 loaded = {}
 loaded_tree = {}
+plugin_folder = os.path.join(os.path.dirname(__file__), 'modules')
+
+
+class Manager(click.Group):
+
+    def __init__(self, **attrs):
+        attrs['invoke_without_command'] = True
+        super().__init__(**attrs)
+        self.help = 'BLABLABLA'
+
+    def list_commands(self, ctx):
+        rv = []
+        for filename in os.listdir(plugin_folder):
+            if filename.endswith('.py') and filename != '__init__.py':
+                rv.append(filename[:-3])
+        rv.sort()
+        return rv
+
+    def get_command(self, ctx, name):
+        ns = {}
+        fn = os.path.join(plugin_folder, name + '.py')
+        try:
+            with open(fn) as f:
+                code = compile(f.read(), fn, 'exec')
+                eval(code, ns, ns)
+        except FileNotFoundError:
+            return
+        return ns['cli']
+
+    def run(self, name, ctx=None, **kwargs):
+        if not ctx:
+            ctx = click.get_current_context()
+        cmd = self.get_command(ctx, name)
+
+        if not cmd:
+            return False  # @TODO raise instead ?
+        return ctx.forward(cmd, **kwargs)
 
 def load_modules(session):
     """ Load all modules """

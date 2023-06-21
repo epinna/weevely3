@@ -12,7 +12,7 @@ class Ssh(Module):
   py.pexpect      |  No    | Rarely installed
   py.subprocess   |  Yes   | Stores clear passwd on disk temporarily
 
-/!\\ When using py.subprocess vector the password is stored in a file at <ASKPASS> /!\\
+/!\\ When using py.subprocess vector the password is stored in a file at ASKPASS /!\\
     As a result the file gets truncated, chmod and then removed. Becareful !
     This file has to be executable, you have to insure it spawns on a partition
     that allows execution (ie. not mounted with `noexec`).

@@ -1,17 +1,18 @@
+import ast
+import atexit
+import glob
+import logging
+import os
+import pprint
+import urllib.parse
+
+import yaml
+
 from core import messages
-from core.weexceptions import FatalException
-from mako import template
 from core.config import sessions_path, sessions_ext
 from core.loggers import log, dlog, stream_handler
 from core.module import Status
-import os
-import yaml
-import glob
-import logging
-import urllib.parse
-import atexit
-import ast
-import pprint
+from core.weexceptions import FatalException
 
 print_filters = (
     'debug',
@@ -55,12 +56,12 @@ class Session(dict):
                     log.info(messages.sessions.set_s_s % (mod_name, mod_value))
 
     def get_connection_info(self):
-     return template.Template(messages.sessions.connection_info).render(
-         url = self['url'],
-         user = self['system_info']['results'].get('whoami', ''),
-         host = self['system_info']['results'].get('hostname', ''),
-         path = self['file_cd']['results'].get('cwd', '.')
-     )
+        return {
+            'url': self['url'],
+            'user': self['system_info']['results'].get('whoami', ''),
+            'host': self['system_info']['results'].get('hostname', ''),
+            'path': self['file_cd']['results'].get('cwd', '.')
+        }
 
     def load_session(self, data):
         """

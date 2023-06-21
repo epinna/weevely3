@@ -29,18 +29,6 @@ class sessions:
     unset_s = '%s is now unset'
     error_loading_sessions = 'Session loading error'
     error_session_s_not_modified = 'Error setting session variable \'%s\''
-    connection_info = """<%!
-from urllib.parse import urlparse
-%><%
-if not host:
-    urlparsed = urlparse(url)
-    if urlparsed and urlparsed.netloc:
-        hostname = urlparsed.netloc
-    else:
-        hostname = 'undefined host'
-else:
-    hostname = host
-%>${'%s@' % user if user else ''}${hostname}${':%s' % path if path and path != '.' else ''}"""
 
 class channels:
     error_loading_channel_s = 'Error loading channel \'%s\''
@@ -54,20 +42,20 @@ PHP code and modules execution are available. Use the following
 command replacements to simulate an unrestricted shell.
 """
     help_no_shell = """
-The system shell interpreter is not available in this session, use the
-following command replacements to simulate a unrestricted shell.
+<warning>The system shell interpreter is not available in this session, use the
+following command replacements to simulate a unrestricted shell.</warning>
 """
     welcome_to_s = """
-[+] weevely ${version}
+    <label>Weevely</label> <underline><value>${version}</value></underline>
 
-[+] Target:\t${conn_info}
-[+] Session:\t${path}
+<gutter>[+]</gutter> <label>Target:</label>\t<value>${'%s@' % user if user else ''}${hostname}${':%s' % conn_path if conn_path and conn_path != '.' else ''}</value>
+<gutter>[+]</gutter> <label>Session:</label>\t<value>${path}</value>
 % if default_shell:
-[+] Shell:\t${ 'System shell' if default_shell == 'shell_sh' else 'PHP interpreter'}
+<gutter>[+]</gutter> <label>Shell:</label>\t<value>${ 'System shell' if default_shell == 'shell_sh' else 'PHP interpreter'}</value>
 % endif
 
-[+] Browse the filesystem or execute commands starts the connection
-[+] to the target. Type :help for more information.
+  Browse the filesystem or execute commands to initiate the connection to the target.
+  Type :help for more information.
 """
     set_usage = 'Set session variable (run :show to print). Usage:\n:set <variable> \'<value>\''
     unset_usage = 'Unset session variable (run :show to print). Usage:\n:unset <variable>'

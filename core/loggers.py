@@ -1,14 +1,18 @@
-import logging.handlers
 import logging
-import sys
-import core.config
+import logging.handlers
 import os
+import xml
+
+from prompt_toolkit import print_formatted_text
+from prompt_toolkit.formatted_text import HTML
+
+import core.config
+from core import style
 
 log = None
 logfile = None
 
 class WeevelyFormatter(logging.Formatter):
-
     FORMATS = {
         # logging.DEBUG :"[D][%(module)s.%(funcName)s:%(lineno)d] %(message)s",
         logging.DEBUG: "[D][%(module)s] %(message)s",
@@ -21,6 +25,18 @@ class WeevelyFormatter(logging.Formatter):
     def format(self, record):
         self._fmt = self.FORMATS.get(record.levelno, self.FORMATS['DEFAULT'])
         return logging.Formatter.format(self, record)
+
+
+class StderrHandler(logging.Handler):
+    def __init__(self):
+        super().__init__()
+        self.formatter = WeevelyFormatter()
+
+    def emit(self, record: logging.LogRecord) -> None:
+        try:
+            print_formatted_text(HTML(record.msg), style=style.default_style)
+        except xml.parsers.expat.ExpatError:
+            print(record.msg)
 
 
 if not os.path.isdir(core.config.base_path):
@@ -40,6 +56,7 @@ file_handler.setFormatter(WeevelyFormatter())
 
 """Initialize the normal handler"""
 stream_handler = logging.StreamHandler()
+stream_handler = StderrHandler()
 stream_handler.setFormatter(WeevelyFormatter())
 
 """Initialize the standard logger"""
