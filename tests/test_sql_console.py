@@ -57,7 +57,7 @@ class MySQLConsole(BaseTest):
         wrong_port = ['-user', config.sql_user, '-passwd', config.sql_passwd, '-port', '1234', '-query', 'select 1234;']
 
         # Using run_cmdline to test the outputs
-        self.assertIn('Cannot assign requested address', self.run_argv(wrong_port)['error'])
+        self.assertIn('Connection refused', self.run_argv(wrong_port)['error'])
 
     def test_login(self):
 

@@ -134,7 +134,9 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         try:
-            self.connection = ssl.wrap_socket(self.connection, keyfile=self.certkey, certfile=certpath, server_side=True)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.load_cert_chain(certpath, self.certkey)
+            self.connection = context.wrap_socket(self.connection, server_side=True)
             self.rfile = self.connection.makefile("rb", self.rbufsize)
             self.wfile = self.connection.makefile("wb", self.wbufsize)
         except Exception as e:
