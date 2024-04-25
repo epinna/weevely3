@@ -1,4 +1,4 @@
-version = '4.0.1'
+version = '4.0.2'
 
 class generic:
     file_s_not_found = "File '%s' not found"
