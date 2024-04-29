@@ -59,7 +59,9 @@ def main(arguments):
     if not arguments.cmd:
         Terminal(session).cmdloop()
     else:
-        Terminal(session).onecmd(arguments.cmd)
+        term = Terminal(session)
+        term.precmd(arguments.cmd)
+        term.onecmd(arguments.cmd)
 
 if __name__ == '__main__':
 
