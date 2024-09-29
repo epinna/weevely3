@@ -77,7 +77,7 @@ class Console(Module):
 
         # Set default port depending on selected dbms
         if self.args['port'] <= 0:
-            self.args['port'] = '5432' if self.args['dbms'] == 'pgsql' else '3306'
+            self.args['port'] = 5432 if self.args['dbms'] == 'pgsql' else 3306
 
         result = self.vectors.get_result(vector, args)
 
