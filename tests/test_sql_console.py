@@ -76,3 +76,28 @@ class MySQLConsole(BaseTest):
             self.run_argv(login + ['-query', 'SELECT CURRENT_USER();'])['result'][1][0][:len(config.sql_user)],
             config.sql_user
         )
+
+    @log_capture()
+    def test_console(self, log_captured):
+        queries = [
+            'SELECT USER();',
+        ]
+        step = 0
+        def mocked_input(*args):
+            nonlocal queries, step
+            if step >= len(queries):
+                return 'exit'
+            q = queries[step]
+            step += 1
+            return q
+
+        with unittest.mock.patch('builtins.input', mocked_input):
+            res = self.run_argv(['-user', config.sql_user, '-passwd', config.sql_passwd ])
+
+            self.assertEqual(res['error'], False)
+            self.assertEqual(res['result'], 'sql_console exited.')
+            self.assertEqual(log_captured.check_present(('log', 'INFO', f"""+----------------+
+| USER()         |
++----------------+
+| {config.sql_user}@localhost |
++----------------+""")), None)
