@@ -27,7 +27,7 @@ class Su(Module):
                 ShellCmd(
                     """expect -c 'spawn su -c "${command}" "${user}"; expect -re "assword"; send "${ passwd }\r\n"; expect eof;'""",
                     name="sh_expect",
-                    postprocess=lambda x: re.findall('Password: (?:\r\n)?([\s\S]+)', x)[0] if 'Password: ' in x else ''
+                    postprocess=lambda x: re.findall(r'Password: (?:\r\n)?([\s\S]+)', x)[0] if 'Password: ' in x else ''
                 ),
                 PythonCode(
                     """

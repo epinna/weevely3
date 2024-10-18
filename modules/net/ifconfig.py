@@ -34,7 +34,7 @@ class Ifconfig(Module):
             log.debug(messages.module_net_ifconfig.error_no_s_execution_result % ifconfig_path)
             return {}
 
-        ifaces = re.findall('^(\S+).*?inet addr:(\S+).*?Mask:(\S+)', result, re.S | re.M)
+        ifaces = re.findall(r'^(\S+).*?inet addr:(\S+).*?Mask:(\S+)', result, re.S | re.M)
 
         if not ifaces:
             log.debug(messages.module_net_ifconfig.error_parsing_s_execution_result % ifconfig_path)

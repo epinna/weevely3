@@ -148,9 +148,9 @@ class Console(Module):
 
             if not query:
                 continue
-            if query in ['quit', '\q', 'exit']:
+            if query in ['quit', r'\q', 'exit']:
                 return {"result": "sql_console exited.", "error": False}
-            m = re.findall("^use\s+([\w_]+);?$", query, re.IGNORECASE)
+            m = re.findall(r"^use\s+([\w_]+);?$", query, re.IGNORECASE)
             if len(m):
                 database = m[0]
                 self.args.update({"database": database})

@@ -111,7 +111,7 @@ class Filesystem(Module):
 
         files_paths = [ 'shadow', 'ap-secrets',
                       'mysql/debian.cnf', 'sa_key$', 'keys',
-                      '\.gpg', 'sudoers' ]
+                      r'\.gpg', 'sudoers' ]
 
         return [ f for f in readable_files
                 if f and any(p for p in files_paths if p and p in f)]

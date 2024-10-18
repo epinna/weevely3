@@ -37,7 +37,7 @@ class Grep(Module):
                 ]
             ),
             PhpCode(
-                payload = """% if invert:
+                payload = r"""% if invert:
 $m=file_get_contents("${rfile}");$a=preg_replace("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }".PHP_EOL."?/m${ '' if case else 'i'}","",$m);if($a)print($a);
 % else:
 $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }/m${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));
