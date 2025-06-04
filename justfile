@@ -25,3 +25,8 @@ uninstall:
 format:
 	#!/bin/bash
 	ruff format src
+
+# build packages
+build:
+	#!/bin/bash
+	uv build
