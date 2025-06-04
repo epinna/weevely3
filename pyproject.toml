@@ -1,6 +1,6 @@
 [project]
 name = "weevely"
-version = "4.0.2"
+version = "5.0.0"
 description = "Weaponized web shell"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -20,9 +20,9 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project.urls]
-Documentation = "https://github.com/epinna/weevely3/wiki"
-Repository = "https://github.com/epinna/weevely3"
-Tracker = "https://github.com/epinna/weevely3/-/issues"
+Documentation = "https://github.com/antirais/weevely/wiki"
+Repository = "https://github.com/antirais/weevely"
+Tracker = "https://github.com/antirais/weevely/-/issues"
 
 [project.scripts]
 weevely = "weevely.main:cli"
