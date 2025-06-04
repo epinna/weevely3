@@ -26,7 +26,18 @@ format:
 	#!/bin/bash
 	ruff format src
 
+# clean build files
+clean:
+	#!/bin/bash
+	rm -rf dist
+
+
 # build packages
 build:
 	#!/bin/bash
-	uv build
+	uv build --wheel
+
+# install built whl packages
+install-build: build
+	#!/bin/bash
+	uv tool install --force dist/*.whl
