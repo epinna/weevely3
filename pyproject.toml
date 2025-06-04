@@ -13,10 +13,10 @@ dependencies = [
 	"pyOpenSSL",
 ]
 
-[tool.setuptools]
-py-modules = [
-	"bd",
-	"core",
-	"modules",
-	"utils"
-]
+[project.urls]
+Documentation = "https://github.com/antirais/weevely3"
+Repository = "https://github.com/antirais/weevely3"
+Tracker = "https://github.com/antirais/weevely3/-/issues"
+
+[project.scripts]
+weevely3 = "weevely.main:cli"
