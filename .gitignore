@@ -18,6 +18,7 @@ build/
 .ropeproject/
 .venv/
 .python-version
+.*_cache/
 
 # Distribution / packaging
 .Python
