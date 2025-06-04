@@ -14,11 +14,14 @@ help:
 # install in editable mode
 dev:
 	#!/bin/bash
-	echo -e "{{YELLOW}}[+] {{MAGENTA}}{{NAME}} {{BLUE}}{{DATE}}{{NORMAL}}"
 	uv tool install -e . --force
 
 # uninstall package
 uninstall:
 	#!/bin/bash
-	echo -e "{{YELLOW}}[+] {{MAGENTA}}{{NAME}} {{BLUE}}{{DATE}}{{NORMAL}}"
 	uv tool uninstall weevely
+
+# format code
+format:
+	#!/bin/bash
+	ruff format src
