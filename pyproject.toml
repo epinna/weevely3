@@ -11,6 +11,7 @@ dependencies = [
 	"python-dateutil",
 	"PySocks",
 	"pyOpenSSL",
+	"argcomplete>=3.6.2",
 ]
 
 [build-system]
@@ -23,7 +24,7 @@ Repository = "https://github.com/epinna/weevely3"
 Tracker = "https://github.com/epinna/weevely3/-/issues"
 
 [project.scripts]
-weevely3 = "weevely.main:cli"
+weevely = "weevely.main:cli"
 
 [tool.ruff]
 target-version = "py313"

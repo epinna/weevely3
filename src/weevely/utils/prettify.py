@@ -1,5 +1,4 @@
 import prettytable
-import types
 
 
 def tablify(data, table_border=True, header=False):

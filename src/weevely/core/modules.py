@@ -36,3 +36,7 @@ def load_modules(session):
         if not tree_group:
             loaded_tree[module_group] = []
         loaded_tree[module_group].append("%s_%s" % (module_group, module_name))
+
+
+print(f"{loaded=}")
+print(f"{loaded_tree=}")

@@ -12,10 +12,10 @@ response in the way we want with `find_first_result()`.
 
 """
 
-from core import messages
-from core.loggers import log
-from core.vectors import Os
-from core.weexceptions import DevException
+from . import messages
+from .loggers import log
+from .vectors import Os
+from .weexceptions import DevException
 
 
 class VectorList(list):

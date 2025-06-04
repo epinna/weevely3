@@ -1,14 +1,14 @@
 from mako import template
 
-import utils
+from weevely import utils
 
-from core import config
-from core import messages
-from core import modules
-from core.loggers import dlog
-from core.loggers import log
-from core.module import Status
-from core.weexceptions import ChannelException
+from . import config
+from . import messages
+from . import modules
+from .loggers import dlog
+from .loggers import log
+from .module import Status
+from .weexceptions import ChannelException
 
 
 try:

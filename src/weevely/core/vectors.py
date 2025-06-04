@@ -18,12 +18,12 @@ from enum import IntEnum
 from mako.lookup import TemplateLookup
 from mako.template import Template
 
-import utils
+from weevely import utils
 
-from core import messages
-from core import modules
-from core.loggers import log
-from core.weexceptions import DevException
+from . import messages
+from . import modules
+from .loggers import log
+from .weexceptions import DevException
 
 
 class Os(IntEnum):

@@ -1,11 +1,15 @@
-from core.weexceptions import FatalException
-from core import messages
-from core import config
+import os
 import random
 import string
-import utils
-import urllib.request, urllib.error, urllib.parse
-import os
+import urllib.error
+import urllib.parse
+import urllib.request
+
+from weevely import utils
+from weevely.core import config
+from weevely.core import messages
+from weevely.core.weexceptions import FatalException
+
 
 agents_list_path = "utils/_http/user-agents.txt"
 

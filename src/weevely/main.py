@@ -4,19 +4,21 @@ import os
 import pprint
 import sys
 
-from core import generate
-from core import messages
-from core import modules
-from core.argparsers import CliParser
-from core.config import agent_templates_folder_path
-from core.config import obfuscators_templates_folder_path
-from core.loggers import dlog
-from core.loggers import log
-from core.sessions import SessionFile
-from core.sessions import SessionURL
-from core.terminal import Terminal
-from core.weexceptions import ArgparseError
-from core.weexceptions import FatalException
+import argcomplete
+
+from weevely.core import generate
+from weevely.core import messages
+from weevely.core import modules
+from weevely.core.argparsers import CliParser
+from weevely.core.config import agent_templates_folder_path
+from weevely.core.config import obfuscators_templates_folder_path
+from weevely.core.loggers import dlog
+from weevely.core.loggers import log
+from weevely.core.sessions import SessionFile
+from weevely.core.sessions import SessionURL
+from weevely.core.terminal import Terminal
+from weevely.core.weexceptions import ArgparseError
+from weevely.core.weexceptions import FatalException
 
 
 if sys.stdout.encoding is None:
@@ -94,6 +96,7 @@ def cli():
     )
 
     parser.set_default_subparser("terminal")
+    argcomplete.autocomplete(parser)
 
     try:
         arguments = parser.parse_args()

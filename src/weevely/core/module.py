@@ -13,15 +13,15 @@ Normally, the following methods have to be overridden:
 import argparse
 import shlex
 
-import utils
+from weevely import utils
 
-from core import argparsers
-from core import messages
-from core import modules
-from core.loggers import log
-from core.vectorlist import VectorList
-from core.weexceptions import ArgparseError
-from core.weexceptions import DevException
+from . import argparsers
+from . import messages
+from . import modules
+from .loggers import log
+from .vectorlist import VectorList
+from .weexceptions import ArgparseError
+from .weexceptions import DevException
 
 
 class Formatter(argparse.ArgumentDefaultsHelpFormatter):
