@@ -1,7 +1,5 @@
-from core.vectors import PhpCode
-from core.module import Module
-from core import messages
-import random
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Extensions(Module):
@@ -50,5 +48,4 @@ class Extensions(Module):
         info = self.args.get("info")
         if info and len(info) == 1:
             return result[info[0]]
-        else:
-            return result
+        return result

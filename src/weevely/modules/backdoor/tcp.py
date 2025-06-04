@@ -1,10 +1,14 @@
-from core.vectors import PythonCode, ShellCmd, Os
-from core.module import Module
-from core.loggers import log
-from core import messages
-import urllib.parse
-import telnetlib
 import time
+import urllib.parse
+
+import telnetlib3 as telnetlib
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import Os
+from weevely.core.vectors import PythonCode
+from weevely.core.vectors import ShellCmd
 
 
 class Tcp(Module):

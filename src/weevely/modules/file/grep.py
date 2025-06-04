@@ -1,8 +1,9 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core.loggers import log
-from core import messages
-from core import modules
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import ShellCmd
 
 
 class Grep(Module):
@@ -29,7 +30,7 @@ class Grep(Module):
                     ],
                 ),
                 PhpCode(
-                    payload="""% if invert:
+                    payload=r"""% if invert:
 $m=file_get_contents("${rfile}");$a=preg_replace("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }".PHP_EOL."?/m${ '' if case else 'i'}","",$m);if($a)print($a);
 % else:
 $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.replace('/','\/')}${'' if regex.endswith('$') else '.*' }/m${ '' if case else 'i'}",file_get_contents('${rfile}'),$m);if($m) print(implode(PHP_EOL,$m[0]));
@@ -111,16 +112,15 @@ $m=Array();preg_match_all("/${'' if regex.startswith('^') else '.*' }${regex.rep
                     # If output is redirected, just append to output_str
                     output_str += result_str
 
-                else:
-                    # Else, print it out
-                    if len(files) > 1:
-                        # Print filepath:line if there are multiple files
+                # Else, print it out
+                elif len(files) > 1:
+                    # Print filepath:line if there are multiple files
 
-                        for line in result_list:
-                            log.info("%s:%s" % (rfile, line))
-                    else:
-                        # Else, just print the lines
-                        log.info("\n".join(result_list))
+                    for line in result_list:
+                        log.info(f"{rfile}:{line}")
+                else:
+                    # Else, just print the lines
+                    log.info("\n".join(result_list))
 
                 results[rfile] = result_list
 

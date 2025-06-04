@@ -1,7 +1,8 @@
-from core.vectors import PhpCode
-from core.module import Module
 import datetime
-import utils
+
+from weevely import utils
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Check(Module):
@@ -13,21 +14,21 @@ class Check(Module):
         # Declared here since is used by multiple vectors
         payload_perms = (
             "$f='${rpath}';if(@file_exists($f)){print('e');if(@is_readable($f))print('r');"
-            + "if(@is_writable($f))print('w');if(@is_executable($f))print('x');}"
+            "if(@is_writable($f))print('w');if(@is_executable($f))print('x');}"
+            "$f='${rpath}';if(@file_exists($f)){print('e');if(@is_readable($f))print('r');"
+            "if(@is_writable($f))print('w');if(@is_executable($f))print('x');}"
         )
 
         self.register_vectors(
             [
-                PhpCode(payload_perms, "exists", postprocess=lambda x: True if "e" in x else False),
+                PhpCode(payload_perms, "exists", postprocess=lambda x: "e" in x),
                 PhpCode("print(md5_file('${rpath}'));", "md5"),
                 PhpCode(payload_perms, "perms"),
-                PhpCode(payload_perms, "readable", postprocess=lambda x: True if "r" in x else False),
-                PhpCode(payload_perms, "writable", postprocess=lambda x: True if "w" in x else False),
-                PhpCode(payload_perms, "executable", postprocess=lambda x: True if "x" in x else False),
-                PhpCode(
-                    "print(is_file('${rpath}') ? 1 : 0);", "file", postprocess=lambda x: True if x == "1" else False
-                ),
-                PhpCode("print(is_dir('${rpath}') ? 1 : 0);", "dir", postprocess=lambda x: True if x == "1" else False),
+                PhpCode(payload_perms, "readable", postprocess=lambda x: "r" in x),
+                PhpCode(payload_perms, "writable", postprocess=lambda x: "w" in x),
+                PhpCode(payload_perms, "executable", postprocess=lambda x: "x" in x),
+                PhpCode("print(is_file('${rpath}') ? 1 : 0);", "file", postprocess=lambda x: x == "1"),
+                PhpCode("print(is_dir('${rpath}') ? 1 : 0);", "dir", postprocess=lambda x: x == "1"),
                 PhpCode(
                     "print(filesize('${rpath}'));", "size", postprocess=lambda x: utils.prettify.format_size(int(x))
                 ),

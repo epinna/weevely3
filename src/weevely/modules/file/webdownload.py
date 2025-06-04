@@ -1,8 +1,6 @@
-from core.vectors import PhpCode, ShellCmd
-from core.module import Module
-from core import messages
-import random
-import datetime
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import ShellCmd
 
 
 class Webdownload(Module):

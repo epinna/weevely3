@@ -1,9 +1,11 @@
 import re
 
-from core import messages
-from core.loggers import log
-from core.module import Module, Status
-from core.vectors import ShellCmd, PythonCode
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.module import Status
+from weevely.core.vectors import PythonCode
+from weevely.core.vectors import ShellCmd
 
 
 class Su(Module):
@@ -19,7 +21,9 @@ class Su(Module):
                 ShellCmd(
                     """expect -c 'spawn su -c "${command}" "${user}"; expect -re "assword"; send "${ passwd }\r\n"; expect eof;'""",
                     name="sh_expect",
-                    postprocess=lambda x: re.findall("Password: (?:\r\n)?([\s\S]+)", x)[0] if "Password: " in x else "",
+                    postprocess=lambda x: re.findall("Password: (?:\r\n)?([\\s\\S]+)", x)[0]
+                    if "Password: " in x
+                    else "",
                 ),
                 PythonCode(
                     """
@@ -82,18 +86,15 @@ class Su(Module):
                 self.session["shell_sh"]["status"] == Status.FAIL
                 or
                 # Or if the result is correct
-                self.session["shell_sh"]["status"] == Status.RUN
-                and result
-                and result.rstrip() == self.args["user"]
+                (self.session["shell_sh"]["status"] == Status.RUN and result and result.rstrip() == self.args["user"])
             ),
         )
 
         if self.session["shell_sh"]["status"] == Status.RUN and result and result.rstrip() == self.args["user"]:
             self.session["shell_su"]["stored_args"]["vector"] = vector_name
             return Status.RUN
-        else:
-            log.warn(messages.module_shell_su.error_su_executing)
-            return Status.IDLE
+        log.warn(messages.module_shell_su.error_su_executing)
+        return Status.IDLE
 
     def run(self, **kwargs):
         # Join the command list and

@@ -1,6 +1,5 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Mail(Module):
@@ -23,5 +22,5 @@ class Mail(Module):
     def run(self, **kwargs):
         return PhpCode(
             """(mail('${to}', '${subject}', '${message}', 'From: ${sender}') && print(1)) || print(0);""",
-            postprocess=lambda x: True if x == "1" else False,
+            postprocess=lambda x: x == "1",
         ).run(self.args)

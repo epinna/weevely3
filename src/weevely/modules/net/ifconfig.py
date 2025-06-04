@@ -1,10 +1,12 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
-from core import messages
-from core.loggers import log
-from utils.ipaddr import IPNetwork
 import re
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import Os
+from weevely.core.vectors import ShellCmd
+from weevely.utils.ipaddr import IPNetwork
 
 
 class Ifconfig(Module):
@@ -22,7 +24,7 @@ class Ifconfig(Module):
             log.debug(messages.module_net_ifconfig.error_no_s_execution_result % ifconfig_path)
             return {}
 
-        ifaces = re.findall("^(\S+).*?inet addr:(\S+).*?Mask:(\S+)", result, re.S | re.M)
+        ifaces = re.findall(r"^(\S+).*?inet addr:(\S+).*?Mask:(\S+)", result, re.S | re.M)
 
         if not ifaces:
             log.debug(messages.module_net_ifconfig.error_parsing_s_execution_result % ifconfig_path)
@@ -35,7 +37,9 @@ class Ifconfig(Module):
                 networks[iface[0]] = IPNetwork("%s/%s" % (iface[1], iface[2]))
             except Exception as e:
                 log.debug(messages.module_net_ifconfig.error_interpeting_s_execution_result_s % (ifconfig_path, str(e)))
-                pass
+                networks[iface[0]] = IPNetwork("%s/%s" % (iface[1], iface[2]))
+            except Exception as e:
+                log.debug(messages.module_net_ifconfig.error_interpeting_s_execution_result_s % (ifconfig_path, str(e)))
 
         return networks
 

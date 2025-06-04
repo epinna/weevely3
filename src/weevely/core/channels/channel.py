@@ -1,5 +1,6 @@
 import re
 import ssl
+import traceback
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -9,12 +10,12 @@ from urllib.error import URLError
 
 import socks
 import sockshandler
-import utils
 
-from core import messages
-from core.loggers import dlog
-from core.loggers import log
-from core.weexceptions import ChannelException
+from weevely import utils
+from weevely.core import messages
+from weevely.core.loggers import dlog
+from weevely.core.loggers import log
+from weevely.core.weexceptions import ChannelException
 
 
 url_dissector = re.compile(
@@ -42,12 +43,13 @@ class Channel:
 
         try:
             # Import module
-            module = __import__("core.channels.%s.%s" % (module_name, module_name), fromlist=["*"])
-
+            module = __import__(f"weevely.core.channels.{module_name}.{module_name}", fromlist=["*"])
+            print(module)
             # Import object
             channel_object = getattr(module, channel_name)
-        except:
-            raise ChannelException(messages.channels.error_loading_channel_s % (channel_name))
+        except Exception as e:
+            traceback.print_exc()
+            raise ChannelException(messages.channels.error_loading_channel_s % (channel_name)) from e
 
         self.session = session
 

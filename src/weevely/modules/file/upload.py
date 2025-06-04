@@ -1,10 +1,11 @@
-from core.vectors import PhpCode, ModuleExec
-from core.module import Module
-from core import messages
-from core.loggers import log
-import random
-import hashlib
 import base64
+import hashlib
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpCode
 
 
 class Upload(Module):
@@ -44,14 +45,14 @@ class Upload(Module):
             lpath = self.args.get("lpath")
             if not lpath:
                 log.warning(messages.module_file_upload.error_content_lpath_required)
-                return
+                return None
 
             try:
                 with open(lpath, "rb") as contentfile:
                     content_orig = contentfile.read()
             except Exception as e:
                 log.warning(messages.generic.error_loading_file_s_s % (lpath, str(e)))
-                return
+                return None
         else:
             content_orig = content_orig.encode("utf-8")
 
@@ -60,7 +61,7 @@ class Upload(Module):
         # Check remote file existence
         if not self.args["force"] and ModuleExec("file_check", [self.args["rpath"], "exists"]).run():
             log.warning(messages.generic.error_file_s_already_exists % self.args["rpath"])
-            return
+            return None
 
         vector_name, result = self.vectors.find_first_result(
             format_args=self.args, condition=lambda result: True if result == "1" else False
@@ -68,10 +69,10 @@ class Upload(Module):
 
         if not ModuleExec("file_check", [self.args["rpath"], "exists"]).run():
             log.warning(messages.module_file_upload.failed_upload_file)
-            return
+            return None
 
         if not (ModuleExec("file_check", [self.args["rpath"], "md5"]).run() == hashlib.md5(content_orig).hexdigest()):
             log.warning(messages.module_file_upload.failed_md5_check)
-            return
+            return None
 
         return True

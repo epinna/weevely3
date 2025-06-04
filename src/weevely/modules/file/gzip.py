@@ -1,9 +1,8 @@
-from core.vectors import PhpFile, ModuleExec
-from core.module import Module
-from core import messages
-from core import modules
-from core.loggers import log
 import os
+
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpFile
 
 
 class Gzip(Module):
@@ -40,6 +39,6 @@ class Gzip(Module):
 
         if result_err:
             log.warn(result_err)
-            return
+            return None
 
         return True

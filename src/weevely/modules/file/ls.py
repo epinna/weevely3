@@ -1,8 +1,6 @@
-from core.vectors import PhpCode
-from core.module import Module
-from core.loggers import log
-from core import messages
-import random
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Ls(Module):

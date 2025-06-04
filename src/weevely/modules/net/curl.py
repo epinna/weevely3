@@ -1,12 +1,11 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, PhpFile, Os
-from core.module import Module
-from core import modules
-from core import messages
-from utils.strings import str2hex
-from core.loggers import log
 import os
-from ast import literal_eval
-import urllib.request, urllib.parse, urllib.error
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpFile
+from weevely.utils.strings import str2hex
 
 
 class Curl(Module):
@@ -123,7 +122,7 @@ class Curl(Module):
         if not (vector_name and result):
             log.warning(messages.module_net_curl.unexpected_response)
             return None, headers, saved
-        elif not b"\r\n" * 2 in result:
+        if b"\r\n" * 2 not in result:
             # If something is returned but there is \r\n*2, we consider
             # everything as header. It happen with responses 204 No contents
             # that end with \r\n\r (wtf).

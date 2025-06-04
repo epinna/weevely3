@@ -1,10 +1,10 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
-from core import messages
-from core.loggers import log
-import urllib.parse
 import os
+import urllib.parse
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Upload2web(Module):
@@ -43,7 +43,7 @@ class Upload2web(Module):
         url_folder_pieces = script_url_path_folder.split(os.sep)
         folder_pieces = script_folder.split(os.sep)
 
-        for pieceurl, piecefolder in zip(reversed(url_folder_pieces), reversed(folder_pieces)):
+        for pieceurl, piecefolder in zip(reversed(url_folder_pieces), reversed(folder_pieces), strict=False):
             if pieceurl == piecefolder:
                 folder_pieces.pop()
                 url_folder_pieces.pop()
@@ -122,3 +122,5 @@ class Upload2web(Module):
         if self.args.get("simulate") or ModuleExec("file_upload", file_upload_args).run():
             # Guess URL from rpath
             return [self._map_file2web(self.args["rpath"])]
+
+        return None

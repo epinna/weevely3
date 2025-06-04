@@ -1,14 +1,16 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import messages
-from core.loggers import log
-import dateutil.parser
 import datetime
-import time
-import random
-import hashlib
-import base64
 import os
+import time
+
+import dateutil.parser
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import Os
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import ShellCmd
 
 
 class Touch(Module):
@@ -68,18 +70,18 @@ class Touch(Module):
                 )
             except:
                 log.warn(messages.module_file_touch.error_invalid_timestamp_format)
-                return
+                return None
 
         if not self.args.get("epoch_ts"):
             log.warn(messages.module_file_touch.error_source_timestamp_required)
-            return
+            return None
 
         self.vectors.get_result(self.args["vector"], self.args)
 
         # Verify execution
         if not self.args["epoch_ts"] == ModuleExec("file_check", [self.args.get("rpath"), "time"]).run():
             log.warn(messages.module_file_touch.failed_touch_file)
-            return
+            return None
 
         return self.args["epoch_ts"]
 

@@ -1,7 +1,9 @@
-from core.vectors import PhpCode, ModuleExec
-from core.module import Module
-from core import messages
 import re
+
+from weevely.core import messages
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpCode
 
 
 class Phpconf(Module):
@@ -148,10 +150,8 @@ class Phpconf(Module):
 
         for ftype, flist in functions.items():
             func_found = PhpCode(
-                (
-                    'foreach ( Array("${ \'", "\'.join(functions) }") as $f) '
-                    + 'if(function_exists($f)&&is_callable($f)) print($f. "\\n");'
-                )
+                'foreach ( Array("${ \'", "\'.join(functions) }") as $f) '
+                'if(function_exists($f)&&is_callable($f)) print($f. "\\n");'
             ).run({"functions": flist})
 
             if func_found:

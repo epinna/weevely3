@@ -1,13 +1,14 @@
-from core.vectors import ModuleExec
-from core.module import Module, Status
-from core import modules
-from core import messages
-from core.loggers import log
-from distutils import spawn
-from mako import template
-import tempfile
-import subprocess
 import atexit
+import shutil
+import subprocess
+import tempfile
+
+from mako import template
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Mount(Module):
@@ -35,7 +36,7 @@ class Mount(Module):
 
     def run(self, **kwargs):
         # Check binary
-        binary_path = spawn.find_executable(self.args["httpfs_binary"])
+        binary_path = shutil.which(self.args["httpfs_binary"])
 
         if not binary_path:
             log.error(messages.module_file_mount.httpfs_s_not_found % self.args["httpfs_binary"])

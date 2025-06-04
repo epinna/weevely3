@@ -1,8 +1,8 @@
-from core.vectors import PhpCode, ModuleExec
-from core.module import Module
-from core import messages
-from core.loggers import log
-import random
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpCode
 
 
 class Cd(Module):

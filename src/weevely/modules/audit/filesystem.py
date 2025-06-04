@@ -1,8 +1,6 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core.loggers import log
-from core import modules
-import utils
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Filesystem(Module):
@@ -83,7 +81,11 @@ class Filesystem(Module):
 
         readable_files = ModuleExec("file_find", ["-readable", "/etc/"]).run()
 
-        files_paths = ["shadow", "ap-secrets", "mysql/debian.cnf", "sa_key$", "keys", "\.gpg", "sudoers"]
+        files_paths = ["shadow", "ap-secrets", "mysql/debian.cnf", "sa_key$", "keys", r"\.gpg", "sudoers"]
+
+        readable_files = ModuleExec("file_find", ["-readable", "/etc/"]).run()
+
+        files_paths = ["shadow", "ap-secrets", "mysql/debian.cnf", "sa_key$", "keys", r"\.gpg", "sudoers"]
 
         return [f for f in readable_files if f and any(p for p in files_paths if p and p in f)]
 

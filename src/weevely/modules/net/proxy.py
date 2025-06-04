@@ -1,38 +1,33 @@
-from core.loggers import log, dlog
-from core import messages
-from core.vectors import ModuleExec
-from core.module import Module
-from core.config import base_path
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from tempfile import gettempdir
-from socketserver import ThreadingMixIn
-from urllib.parse import urlparse, urlunparse, ParseResult
-from io import StringIO
-from http.client import HTTPResponse
-import threading
-import re
 import os
-import sys
+import re
+import select
 import socket
 import ssl
-import select
-import http.client
-import urllib.parse
+import sys
 import threading
 import time
-import json
-import re
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from socketserver import ThreadingMixIn
+import urllib.parse
+
+from http.client import HTTPResponse
+from http.server import BaseHTTPRequestHandler
+from http.server import HTTPServer
 from io import BytesIO
-from subprocess import Popen, PIPE
-from html.parser import HTMLParser
+from socketserver import ThreadingMixIn
+from subprocess import PIPE
+from subprocess import Popen
 from tempfile import mkdtemp
 
+from weevely.core import messages
+from weevely.core.config import base_path
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+
+
 re_valid_ip = re.compile(
-    "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
 )
-re_valid_hostname = re.compile("^(([a-zA-Z0-9\-]+)\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$")
+re_valid_hostname = re.compile(r"^(([a-zA-Z0-9\-]+)\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$")
 
 temp_certdir = mkdtemp()
 
@@ -194,7 +189,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         address[1] = int(address[1]) or 443
         try:
             s = socket.create_connection(address, timeout=self.timeout)
-        except Exception as e:
+        except Exception:
             self.send_error(502)
             return
         self.send_response(200, "Connection Established")
@@ -236,7 +231,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         assert scheme in ("http", "https")
         if netloc:
             req.headers["Host"] = netloc
-        setattr(req, "headers", self.filter_headers(req.headers))
+        req.headers = self.filter_headers(req.headers)
 
         net_curl_args = ["-X", self.command, "-i"]
 
@@ -272,12 +267,12 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         res.begin()
 
         version_table = {10: "HTTP/1.0", 11: "HTTP/1.1"}
-        setattr(res, "headers", res.msg)
-        setattr(res, "response_version", version_table[res.version])
+        res.headers = res.msg
+        res.response_version = version_table[res.version]
 
         # support streaming
-        if not "Content-Length" in res.headers and "no-store" in res.headers.get("Cache-Control", ""):
-            setattr(res, "headers", self.filter_headers(res.headers))
+        if "Content-Length" not in res.headers and "no-store" in res.headers.get("Cache-Control", ""):
+            res.headers = self.filter_headers(res.headers)
             self.relay_streaming(res)
             return
 
@@ -288,7 +283,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
             self.send_error(500)
             return
 
-        setattr(res, "headers", self.filter_headers(res.headers))
+        res.headers = self.filter_headers(res.headers)
 
         respstring = "%s %d %s\r\n" % (self.protocol_version, res.status, res.reason)
         self.wfile.write(respstring.encode("utf-8"))
@@ -308,7 +303,7 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
                     break
                 self.wfile.write(chunk)
             self.wfile.flush()
-        except socket.error:
+        except OSError:
             # connection closed by client
             pass
 

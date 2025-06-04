@@ -1,5 +1,8 @@
-from core.module import Module, Status
-from core.vectors import PhpCode, PythonCode, Os
+from weevely.core.module import Module
+from weevely.core.module import Status
+from weevely.core.vectors import Os
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import PythonCode
 
 
 class Ssh(Module):
@@ -137,8 +140,7 @@ class Ssh(Module):
         def is_valid(result):
             return (
                 self.session["shell_php"]["status"] != Status.RUN  # Stop if shell_php is not running
-                or result
-                and "ModuleNotFound" not in result
+                or (result and "ModuleNotFound" not in result)
             )  # Or if the result is correct
 
         (vector_name, result) = self.vectors.find_first_result(
@@ -150,8 +152,7 @@ class Ssh(Module):
             if "vector" not in self.args or not self.args["vector"]:
                 self.args["vector"] = vector_name
             return Status.RUN
-        else:
-            return Status.FAIL
+        return Status.FAIL
 
     def run(self, **kwargs):
         self.args["user"], self.args["host"], self.args["port"] = self._parse_address(self.args["address"])
@@ -170,6 +171,9 @@ class Ssh(Module):
         trailing_port = 22
         port = self.args.get("port")
         if ":" in host:
+            host, trailing_port = host.split(":", 1)
+
+        if not port:
             host, trailing_port = host.split(":", 1)
 
         if not port:  #

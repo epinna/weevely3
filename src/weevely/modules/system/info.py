@@ -1,9 +1,9 @@
-from core.vectors import PhpCode
-from core.module import Module
-from core import messages
-from core.loggers import log
-from core import modules
-import utils
+from weevely import utils
+from weevely.core import messages
+from weevely.core import modules
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Info(Module):
@@ -125,12 +125,10 @@ class Info(Module):
         info = self.args.get("info")
         if info and len(info) == 1:
             return result[info[0]]
-        else:
-            return result
+        return result
 
     def run_alias(self, args, cmd):
         if self.session["default_shell"] != "shell_sh":
             log.debug(messages.module.running_the_alias_s % self.name)
             return self.run_cmdline("-info %s" % cmd)
-        else:
-            modules.loaded["shell_sh"].run_cmdline("%s -- %s" % (cmd, args))
+        modules.loaded["shell_sh"].run_cmdline("%s -- %s" % (cmd, args))

@@ -189,6 +189,15 @@ wheels = [
 ]
 
 [[package]]
+name = "telnetlib3"
+version = "2.0.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/ef/af/0fadfddd1764e627f4ba9c7381caaf121795ed459a1cc3d0fbb89a187954/telnetlib3-2.0.4.tar.gz", hash = "sha256:dbcbc16456a0e03a62431be7cfefff00515ab2f4ce2afbaf0d3a0e51a98c948d", size = 72422, upload-time = "2023-07-23T16:07:12.818Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/78/4d/9c87bdd58ac7df008d27b2cf0b0757a0beccb45a59d4354049302a4fe4f8/telnetlib3-2.0.4-py2.py3-none-any.whl", hash = "sha256:b3c0f984a7fb1b6ee16e6fdaa410c56389b0dc492174a99c6661b1ba4c9d457d", size = 93264, upload-time = "2023-07-23T16:07:11.381Z" },
+]
+
+[[package]]
 name = "wcwidth"
 version = "0.2.13"
 source = { registry = "https://pypi.org/simple" }
@@ -198,7 +207,7 @@ wheels = [
 ]
 
 [[package]]
-name = "weevely3"
+name = "weevely"
 version = "4.0.2"
 source = { editable = "." }
 dependencies = [
@@ -209,6 +218,7 @@ dependencies = [
     { name = "pysocks" },
     { name = "python-dateutil" },
     { name = "pyyaml" },
+    { name = "telnetlib3" },
 ]
 
 [package.metadata]
@@ -220,4 +230,5 @@ requires-dist = [
     { name = "pysocks" },
     { name = "python-dateutil" },
     { name = "pyyaml" },
+    { name = "telnetlib3", specifier = ">=2.0.4" },
 ]

@@ -1,7 +1,7 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
 import tempfile
+
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Read(Module):

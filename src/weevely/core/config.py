@@ -1,15 +1,13 @@
-import os
-import sys
+from pathlib import Path
 
 
-# Base path for log files and sessions
-base_path = "~/.weevely/"
+base_path = Path("~/.weevely/").expanduser()
 
 # History path
-history_path = "~/.weevely/history"
+history_path = base_path / "history"
 
 # Session path
-sessions_path = "~/.weevely/sessions/"
+sessions_path = base_path / "sessions"
 sessions_ext = ".session"
 
 # Supported Channels
@@ -37,9 +35,7 @@ obfuscators_templates_folder_path = "bd/obfuscators/"
 #######################################
 # Resolve given paths - DO NOT CHANGE #
 #######################################
-base_path = os.path.expanduser(base_path)
-history_path = os.path.expanduser(history_path)
-sessions_path = os.path.expanduser(sessions_path)
-weevely_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-agent_templates_folder_path = os.path.join(weevely_path, agent_templates_folder_path)
-obfuscators_templates_folder_path = os.path.join(weevely_path, obfuscators_templates_folder_path)
+# weevely_path = Path(sys.argv[0]).resolve().parent
+weevely_path = Path(__file__).resolve().parent.parent
+agent_templates_folder_path = weevely_path / agent_templates_folder_path
+obfuscators_templates_folder_path = weevely_path / obfuscators_templates_folder_path

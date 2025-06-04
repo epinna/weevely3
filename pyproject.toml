@@ -1,5 +1,5 @@
 [project]
-name = "weevely3"
+name = "weevely"
 version = "4.0.2"
 description = "Weaponized web shell"
 readme = "README.md"
@@ -12,6 +12,7 @@ dependencies = [
 	"PySocks",
 	"pyOpenSSL",
 	"argcomplete>=3.6.2",
+	"telnetlib3>=2.0.4",
 ]
 
 [build-system]

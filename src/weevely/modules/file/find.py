@@ -1,9 +1,9 @@
-from core.vectors import PhpFile, ShellCmd
-from core.module import Module
-from core.loggers import log
-from core import messages
-import random
 import os
+
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpFile
+from weevely.core.vectors import ShellCmd
 
 
 class Find(Module):

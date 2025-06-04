@@ -1,5 +1,6 @@
-from core.vectors import ShellCmd, PhpCode
-from core.module import Module
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import ShellCmd
 
 
 class Clearlog(Module):

@@ -1,10 +1,13 @@
-from mako.template import Template
-from core.module import Module, Status
-from core.channels.channel import Channel
-from core import config
-from core.loggers import log
-from core.argparsers import SUPPRESS
 import random
+
+from mako.template import Template
+
+from weevely.core import config
+from weevely.core.argparsers import SUPPRESS
+from weevely.core.channels.channel import Channel
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.module import Status
 
 
 class Php(Module):
@@ -93,5 +96,4 @@ class Php(Module):
 
         if self.args.get("raw_response"):
             return response
-        else:
-            return response.decode("utf-8", "replace")
+        return response.decode("utf-8", "replace")

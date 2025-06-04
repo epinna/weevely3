@@ -1,9 +1,10 @@
-from core.vectors import PythonCode, ShellCmd, Os
-from modules.backdoor._reversetcp.tcpserver import TcpServer
-from core.module import Module
-from core.loggers import log
-from core import messages
-import socket
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import Os
+from weevely.core.vectors import PythonCode
+from weevely.core.vectors import ShellCmd
+from weevely.modules.backdoor._reversetcp.tcpserver import TcpServer
 
 
 class Reversetcp(Module):
@@ -103,6 +104,6 @@ class Reversetcp(Module):
             # Run tcp server for the vector
             try:
                 tcpserver = TcpServer(self.args["port"])
-            except socket.timeout as e:
+            except TimeoutError:
                 log.debug(messages.module_backdoor_reversetcp.error_timeout)
                 continue

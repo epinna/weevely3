@@ -9,10 +9,10 @@ import urllib.parse
 import urllib.request
 import zlib
 
-import utils
-
-from core import config
-from core.loggers import dlog
+from weevely import utils
+from weevely.core import config
+from weevely.core.loggers import dlog
+from weevely.core.loggers import log
 
 
 PREPEND = utils.strings.randstr(16, charset=string.printable)
@@ -25,14 +25,14 @@ class ObfPost:
         # used to check header, footer, and encrypt the payload.
         password = password.encode("utf-8")
 
-        passwordhash = hashlib.md5(password).hexdigest().lower()
+        passwordhash = hashlib.md5(password).hexdigest().lower()  # noqa: S324
         self.shared_key = passwordhash[:8].encode("utf-8")
         self.header = passwordhash[8:20].encode("utf-8")
         self.trailer = passwordhash[20:32].encode("utf-8")
 
         self.url = url
         url_parsed = urllib.parse.urlparse(url)
-        self.url_base = "%s://%s" % (url_parsed.scheme, url_parsed.netloc)
+        self.url_base = f"{url_parsed.scheme}://{url_parsed.netloc}"
 
         # init regexp for the returning data
         self.re_response = re.compile(b"%s(.*)%s" % (self.header, self.trailer), re.DOTALL)
@@ -65,9 +65,9 @@ class ObfPost:
                 additional_ua = h[1]
                 break
 
-        opener.addheaders = [("User-Agent", (additional_ua if additional_ua else self.agent))] + self.additional_headers
+        opener.addheaders = [("User-Agent", additional_ua if additional_ua else self.agent), *self.additional_headers]
 
-        dlog.debug("[R] %s..." % (wrapped_payload[0:32]))
+        dlog.debug(f"[R] {wrapped_payload[0:32]}...")
 
         url = self.url if not config.add_random_param_nocache else utils.http.add_random_url_param(self.url)
 
@@ -91,6 +91,6 @@ class ObfPost:
         matched = self.re_response.search(response)
 
         if matched and matched.group(1):
-            response = zlib.decompress(utils.strings.sxor(base64.b64decode(matched.group(1)), self.shared_key))
+            return zlib.decompress(utils.strings.sxor(base64.b64decode(matched.group(1)), self.shared_key))
 
-            return response
+        return None

@@ -1,7 +1,9 @@
-from core.vectors import PhpFile, ModuleExec
-from core.module import Module
-from core.loggers import log
 import os
+
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpFile
 
 
 class Tar(Module):
@@ -68,6 +70,6 @@ class Tar(Module):
 
         if result_err:
             log.warn(result_err)
-            return
+            return None
 
         return True

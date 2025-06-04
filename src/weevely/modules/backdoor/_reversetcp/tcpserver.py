@@ -1,8 +1,9 @@
-from core import messages
-from core.loggers import log
+import select
 import socket
 import sys
-import select
+
+from weevely.core import messages
+from weevely.core.loggers import log
 
 
 class TcpServer:
@@ -32,13 +33,13 @@ class TcpServer:
             server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
                 server.setsockopt(socket.SOL_SOCKET, socket.TCP_NODELAY, 1)
-            except socket.error:
+            except OSError:
                 # log.debug("Warning: unable to set TCP_NODELAY...")
                 pass
 
             try:
                 server.bind(("0.0.0.0", self.port))
-            except socket.error as e:
+            except OSError as e:
                 log.error(messages.module_backdoor_reversetcp.error_binding_socket_s % str(e))
                 return
 
@@ -48,7 +49,7 @@ class TcpServer:
 
             try:
                 self.socket, address = server.accept()
-            except socket.timeout as e:
+            except TimeoutError:
                 server.close()
                 raise
 
@@ -70,7 +71,7 @@ class TcpServer:
                     buf = self.socket.recv(100)
                 if buf == "":
                     return
-            except socket.error:
+            except OSError:
                 pass
             while 1:
                 r, w, e = select.select([sys.stdin], [], [], 0)

@@ -1,9 +1,11 @@
-from core.vectors import PhpFile, ShellCmd
-from core.module import Module
-from core.loggers import log
-from core import messages
-import tempfile
 import os
+import tempfile
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpFile
+from weevely.core.vectors import ShellCmd
 
 
 class Dump(Module):

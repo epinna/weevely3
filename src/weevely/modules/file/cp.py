@@ -1,6 +1,7 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
+from weevely.core.module import Module
+from weevely.core.vectors import Os
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import ShellCmd
 
 
 class Cp(Module):
@@ -34,10 +35,7 @@ class Cp(Module):
         vector_name, result = self.vectors.find_first_result(
             names=[self.args.get("vector")],
             format_args=self.args,
-            condition=lambda result: True if result == "1" else False,
+            condition=lambda result: result == "1",
         )
 
-        if vector_name and result:
-            return True
-
-        return False
+        return bool(vector_name and result)

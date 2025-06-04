@@ -1,5 +1,5 @@
-from core.vectors import ShellCmd
-from core.module import Module
+from weevely.core.module import Module
+from weevely.core.vectors import ShellCmd
 
 
 class Suidsgid(Module):
@@ -27,3 +27,5 @@ class Suidsgid(Module):
 
         if result:
             return result.split("\n")
+
+        return None

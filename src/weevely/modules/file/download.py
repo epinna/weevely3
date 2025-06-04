@@ -1,10 +1,13 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import messages
-from core.loggers import log
-import random
-import hashlib
 import base64
+import hashlib
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import Os
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import ShellCmd
 
 
 class Download(Module):
@@ -34,7 +37,7 @@ class Download(Module):
         # Check remote file existance
         if not ModuleExec("file_check", [self.args.get("rpath"), "readable"]).run():
             log.warning(messages.module_file_download.failed_download_file)
-            return
+            return None
 
         # Get the remote file MD5. If this is not available, still do a basic check
         # to see if the output is decodable as base64 string.
@@ -51,7 +54,7 @@ class Download(Module):
         # Check if find_first_result failed
         if not vector_name:
             log.warning(messages.module_file_download.failed_download_file)
-            return
+            return None
 
         # Dump to local file
         lpath = self.args.get("lpath")
@@ -62,10 +65,9 @@ class Download(Module):
                 resultfile.write(result_decoded)
         except Exception as e:
             log.warning(messages.generic.error_loading_file_s_s % (lpath, str(e)))
-            return
+            return None
 
         return result_decoded
 
     def print_result(self, result):
         """Override print_result to avoid to print the content"""
-        pass

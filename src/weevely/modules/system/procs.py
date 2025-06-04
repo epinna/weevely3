@@ -1,5 +1,5 @@
-from core.module import Module
-from core.vectors import PhpCode
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Procs(Module):

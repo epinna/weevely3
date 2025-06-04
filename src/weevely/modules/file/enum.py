@@ -1,8 +1,7 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
-from core import messages
-from core.loggers import log
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Enum(Module):
@@ -25,11 +24,11 @@ class Enum(Module):
         lpath = self.args.get("lpath_list")
         if lpath:
             try:
-                with open(lpath, "r") as lfile:
+                with open(lpath) as lfile:
                     paths = lfile.read().split("\n")
             except Exception as e:
                 log.warning(messages.generic.error_loading_file_s_s % (lpath, str(e)))
-                return
+                return None
 
         paths += self.args.get("paths") if self.args.get("paths") else []
 
@@ -45,6 +44,10 @@ class Enum(Module):
     def print_result(self, result):
         if not result:
             return
+
+    def print_result(self, result):
+        if not result:
+            return None
 
         result_verbose = {}
 

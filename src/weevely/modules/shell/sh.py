@@ -1,10 +1,9 @@
-from core.vectors import PhpCode
-from core.module import Module, Status
-from core.loggers import log
-from core.vectors import Os
-from core import messages
-from core import modules
 import random
+
+from weevely.core.module import Module
+from weevely.core.module import Status
+from weevely.core.vectors import Os
+from weevely.core.vectors import PhpCode
 
 
 class Sh(Module):
@@ -106,17 +105,15 @@ class Sh(Module):
                 self.session["shell_php"]["status"] != Status.RUN
                 or
                 # Or if the result is correct
-                result
-                and result.rstrip() == check_digits
+                (result and result.rstrip() == check_digits)
             ),
         )
 
         if self.session["shell_php"]["status"] == Status.RUN and result and result.rstrip() == check_digits:
             self.session["shell_sh"]["stored_args"]["vector"] = vector_name
             return Status.RUN
-        else:
-            # Check safe_mode and disable_functions
-            return Status.FAIL
+        # Check safe_mode and disable_functions
+        return Status.FAIL
 
     def run(self, **kwargs):
         # Join the command list and

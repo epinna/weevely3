@@ -1,10 +1,9 @@
 import re
 
-import utils
-from core import messages
-from core.loggers import log
-from core.module import Module
-from core.vectors import PhpCode
+from weevely import utils
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Console(Module):
@@ -81,16 +80,13 @@ class Console(Module):
         # If there is not errstr, something gone really bad (e.g. functions not callable)
         if errsep not in result:
             return {"error": messages.module_sql_console.unexpected_response, "result": []}
-        else:
-            # Split result by errsep
-            result, error = result.split(errsep)
+        # Split result by errsep
+        result, error = result.split(errsep)
 
-            return {
-                "error": error,
-                "result": [
-                    line.split(linsep) for line in result.replace(linsep + colsep, colsep).split(colsep) if line
-                ],
-            }
+        return {
+            "error": error,
+            "result": [line.split(linsep) for line in result.replace(linsep + colsep, colsep).split(colsep) if line],
+        }
 
     def run(self, **kwargs):
         # The vector name is given by the db type
@@ -122,17 +118,18 @@ class Console(Module):
 
         # Console loop
         while True:
-            query = input("{}:{} SQL> ".format(user, database)).strip()
+            query = input(f"{user}:{database} SQL> ").strip()
 
             if not query:
                 continue
-            if query in ["quit", "\q", "exit"]:
+            if query in ["quit", r"\q", "exit"]:
                 return {"result": "sql_console exited.", "error": False}
-            m = re.findall("^use\s+([\w_]+);?$", query, re.IGNORECASE)
+            m = re.findall(r"^use\s+([\w_]+);?$", query, re.IGNORECASE)
             if len(m):
                 database = m[0]
                 self.args.update({"database": database})
-                print("databse changed to {}.".format(database))
+                print(f"databse changed to {database}.")
+                print(f"databse changed to {database}.")
                 continue
             self.args["query"] = query
             result = self._query(vector, self.args)

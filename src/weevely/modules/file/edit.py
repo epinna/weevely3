@@ -1,13 +1,12 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core.loggers import log
-from core import modules
-from core import messages
-import tempfile
-import subprocess
 import hashlib
-import base64
 import re
+import subprocess
+import tempfile
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
 
 
 class Edit(Module):
@@ -29,7 +28,7 @@ class Edit(Module):
 
     def run(self, **kwargs):
         # Get a temporary file name
-        suffix = re.sub("[\W]+", "_", self.args["rpath"])
+        suffix = re.sub(r"[\W]+", "_", self.args["rpath"])
         temp_file = tempfile.NamedTemporaryFile(suffix=suffix)
         lpath = temp_file.name
 
@@ -45,7 +44,7 @@ class Edit(Module):
             # Exit with no result
             # The error should already been printed by file_download exec
             if result_download == None:
-                return
+                return None
 
             # Store original md5
             md5_orig = hashlib.md5(open(lpath, "rb").read()).hexdigest()
@@ -57,7 +56,7 @@ class Edit(Module):
             if md5_orig == hashlib.md5(open(lpath, "rb").read()).hexdigest():
                 log.debug(messages.module_file_edit.unmodified_file)
                 temp_file.close()
-                return
+                return None
 
         else:
             subprocess.check_call([self.args["editor"], lpath])

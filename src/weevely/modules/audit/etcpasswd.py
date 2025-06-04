@@ -1,6 +1,6 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
+from weevely.core.module import Module
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpCode
 
 
 class Etcpasswd(Module):
@@ -30,7 +30,7 @@ class Etcpasswd(Module):
             pwdresult = ModuleExec("file_read", ["/etc/passwd"] + arg_vector).run()
 
         if not pwdresult:
-            return
+            return None
 
         result = ""
         for line in pwdresult.split("\n"):
@@ -39,10 +39,8 @@ class Etcpasswd(Module):
                 uid = int(fields[2])
                 shell = fields[6]
 
-                if (
-                    self.args.get("real")
-                    and ((uid == 0 or uid > 999) and "false" not in shell)
-                    or not self.args.get("real")
+                if (self.args.get("real") and ((uid == 0 or uid > 999) and "false" not in shell)) or not self.args.get(
+                    "real"
                 ):
                     result += line + "\n"
 

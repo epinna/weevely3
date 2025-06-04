@@ -1,11 +1,10 @@
-from core.vectors import PhpFile
-from core.module import Module
-from core.argparsers import SUPPRESS
-from core import modules
-from core.loggers import log
-from core import messages
-import utils
 import os
+
+from weevely import utils
+from weevely.core.argparsers import SUPPRESS
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpFile
 
 
 class Scan(Module):

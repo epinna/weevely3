@@ -1,9 +1,9 @@
-from core.vectors import PhpFile
-from core.module import Module
-from core import modules
-from core import messages
-from core.loggers import log
 import os
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.vectors import PhpFile
 
 
 class Sql(Module):
@@ -40,21 +40,21 @@ class Sql(Module):
         self.args["users"] = self.args.get("users", [])
         if self.args.get("fusers"):
             try:
-                self.args["users"] += open(self.args["fusers"], "r").read().split(os.linesep)
+                self.args["users"] += open(self.args["fusers"]).read().split(os.linesep)
             except Exception as e:
                 log.warning(messages.generic.error_loading_file_s_s % (self.args["fusers"], str(e)))
-                return
+                return None
 
         self.args["pwds"] = self.args.get("pwds", [])
         if self.args.get("fpwds"):
             try:
-                self.args["pwds"] += open(self.args["fpwds"], "r").read().split(os.linesep)
+                self.args["pwds"] += open(self.args["fpwds"]).read().split(os.linesep)
             except Exception as e:
                 log.warning(messages.generic.error_loading_file_s_s % (self.args["fpwds"], str(e)))
-                return
+                return None
 
         if not self.args["users"] or not self.args["pwds"]:
             log.error("Error, no users or passwords loaded")
-            return
+            return None
 
         return self.vectors.get_result(name=self.args["service"], format_args=self.args)

@@ -5,6 +5,9 @@ from . import messages
 from .weexceptions import ArgparseError
 
 
+SUPPRESS = argparse.SUPPRESS
+
+
 class HelpParser(argparse.ArgumentParser):
     """
     Override `error` method of `argparse.ArgumentParser`

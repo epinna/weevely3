@@ -1,6 +1,5 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module
-from core import modules
+from weevely.core.module import Module
+from weevely.core.vectors import PhpCode
 
 
 class Rm(Module):

