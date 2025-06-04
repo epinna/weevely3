@@ -1,0 +1,22 @@
+[project]
+name = "weevely3"
+version = "4.0.2"
+description = "Weaponized web shell"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+	"prettytable",
+	"Mako",
+	"PyYAML",
+	"python-dateutil",
+	"PySocks",
+	"pyOpenSSL",
+]
+
+[tool.setuptools]
+py-modules = [
+	"bd",
+	"core",
+	"modules",
+	"utils"
+]
