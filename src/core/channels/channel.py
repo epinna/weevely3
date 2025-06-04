@@ -10,18 +10,18 @@ import re
 import ssl
 
 url_dissector = re.compile(
-    r'^(https?|socks4|socks5)://'  # http:// or https://
+    r"^(https?|socks4|socks5)://"  # http:// or https://
     # domain...
-    r'((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|'
-    r'localhost|'  # localhost...
-    r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # ...or ip
-    r':(\d+)?'  # optional port
-    r'(?:/?|[/?]\S+)$',
-    re.IGNORECASE
+    r"((?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+(?:[A-Z]{2,6}\.?|[A-Z0-9-]{2,}\.?)|"
+    r"localhost|"  # localhost...
+    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
+    r":(\d+)?"  # optional port
+    r"(?:/?|[/?]\S+)$",
+    re.IGNORECASE,
 )
 
-class Channel:
 
+class Channel:
     def __init__(self, channel_name, session):
         """
         Import and instanciate dynamically the channel.
@@ -34,9 +34,7 @@ class Channel:
 
         try:
             # Import module
-            module = __import__(
-                'core.channels.%s.%s' %
-                (module_name, module_name), fromlist=["*"])
+            module = __import__("core.channels.%s.%s" % (module_name, module_name), fromlist=["*"])
 
             # Import object
             channel_object = getattr(module, channel_name)
@@ -46,84 +44,69 @@ class Channel:
         self.session = session
 
         # Create channel instance
-        self.channel_loaded = channel_object(
-            self.session['url'],
-            self.session['password']
-        )
+        self.channel_loaded = channel_object(self.session["url"], self.session["password"])
 
         self.channel_name = channel_name
 
-        self.err_token = utils.strings.randstr(6) + b'ERR'
-        self.re_error = re.compile(
-            b"%s(.*?)%s" % (self.err_token, self.err_token), re.DOTALL
-        )
+        self.err_token = utils.strings.randstr(6) + b"ERR"
+        self.re_error = re.compile(b"%s(.*?)%s" % (self.err_token, self.err_token), re.DOTALL)
 
     def _get_proxy(self):
-
-        url_dissected = url_dissector.findall(
-            self.session['proxy']
-        )
+        url_dissected = url_dissector.findall(self.session["proxy"])
 
         if url_dissected and len(url_dissected[0]) == 3:
             protocol, host, port = url_dissected[0]
-            if protocol == 'socks5':
+            if protocol == "socks5":
                 return (socks.PROXY_TYPE_SOCKS5, host, int(port))
-            if protocol == 'socks4':
+            if protocol == "socks4":
                 return (socks.PROXY_TYPE_SOCKS4, host, int(port))
-            if protocol.startswith('http'):
+            if protocol.startswith("http"):
                 return (socks.PROXY_TYPE_HTTP, host, int(port))
 
         return None, None, None
 
     def _additional_handlers(self):
-
         handlers = []
 
-        if self.session.get('proxy'):
+        if self.session.get("proxy"):
             protocol, host, port = self._get_proxy()
 
             if protocol and host and port:
-                handlers.append(
-                    sockshandler.SocksiPyHandler(
-                        protocol,
-                        host,
-                        port
-                    )
-                )
+                handlers.append(sockshandler.SocksiPyHandler(protocol, host, port))
             else:
                 raise ChannelException(messages.channels.error_proxy_format)
 
         # Skip certificate checks
         ctx = ssl.create_default_context()
         ctx.check_hostname = False
-        ctx.set_ciphers('DEFAULT@SECLEVEL=1')
+        ctx.set_ciphers("DEFAULT@SECLEVEL=1")
         ctx.verify_mode = ssl.CERT_NONE
-        
+
         handlers.append(urllib.request.HTTPSHandler(context=ctx))
 
         return handlers
 
     def send(self, payload, catch_errors=True):
-
-        response = b''
+        response = b""
         code = 200
-        error = ''
+        error = ""
 
-        human_error = ''
+        human_error = ""
 
         virgin_payload = payload
         if catch_errors:
             # Wrap payload in try/catch to handle remote errors
-            token = self.err_token.decode('utf-8')
-            payload = 'try {' + payload + '}catch(Exception $e){' \
-                    + f'echo "{token}".$e->getTrace()[0]["function"].": ".$e->getMessage()."{token}";' \
-                    + '}'
+            token = self.err_token.decode("utf-8")
+            payload = (
+                "try {"
+                + payload
+                + "}catch(Exception $e){"
+                + f'echo "{token}".$e->getTrace()[0]["function"].": ".$e->getMessage()."{token}";'
+                + "}"
+            )
 
         try:
-            response = self.channel_loaded.send(
-                payload,
-                self._additional_handlers()
-            )
+            response = self.channel_loaded.send(payload, self._additional_handlers())
         except socks.ProxyError as e:
             if e.socket_err and e.socket_err.errno:
                 code = e.socket_err.errno
@@ -153,14 +136,14 @@ class Channel:
             human_error = messages.module_shell_php.error_URLError_network
 
         if response:
-            dlog.info('RESPONSE: %s' % repr(response))
+            dlog.info("RESPONSE: %s" % repr(response))
 
         if response and catch_errors:
             # Parse remote errors
             remote_errors = self.re_error.findall(response)
             if remote_errors:
-                response = self.re_error.sub(b'', response)
-                error = b'\n'.join(remote_errors).decode('utf-8', 'replace')
+                response = self.re_error.sub(b"", response)
+                error = b"\n".join(remote_errors).decode("utf-8", "replace")
                 code = 500
 
         self._detect_syntax_error(virgin_payload)
@@ -170,7 +153,7 @@ class Channel:
             return response, code, error
 
         if error and code:
-            log.warning('[ERR:%s] %s' % (code, error))
+            log.warning("[ERR:%s] %s" % (code, error))
             return response, code, error
 
         return response, code, error
@@ -180,12 +163,6 @@ class Channel:
         @TODO detect before sending, and ask confirmation
         @TODO use proper linter for corresponding vector
         """
-        command_last_chars = utils.prettify.shorten(
-            payload.rstrip(),
-            keep_trailer=10
-        )
-        if (
-                command_last_chars and
-                command_last_chars[-1] not in (';', '}')
-        ):
+        command_last_chars = utils.prettify.shorten(payload.rstrip(), keep_trailer=10)
+        if command_last_chars and command_last_chars[-1] not in (";", "}"):
             log.warning(messages.module_shell_php.missing_php_trailer_s % command_last_chars)

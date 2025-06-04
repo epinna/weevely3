@@ -34,6 +34,7 @@ class Os(IntEnum):
     * `Os.WIN` if the vector is compatible only with Microsoft Windows enviroinments
 
     """
+
     ANY: int = 0
     NIX: int = 1
     WIN: int = 2
@@ -44,7 +45,6 @@ class Os(IntEnum):
 
 
 class ModuleExec:
-
     """This vector contains commands to execute other modules.
 
     Args:
@@ -62,8 +62,9 @@ class ModuleExec:
 
     """
 
-    def __init__(self, module, arguments, name='', target=Os.ANY, postprocess=None, background=False, catch_errors=True):
-
+    def __init__(
+        self, module, arguments, name="", target=Os.ANY, postprocess=None, background=False, catch_errors=True
+    ):
         self.name = name if name else utils.strings.randstr()
 
         if isinstance(arguments, list):
@@ -97,9 +98,9 @@ class ModuleExec:
 
         """
 
-        return [ Template(arg).render(**values) for arg in self.arguments ]
+        return [Template(arg).render(**values) for arg in self.arguments]
 
-    def run(self, format_args = {}):
+    def run(self, format_args={}):
         """Run the module with the formatted payload.
 
         Render the contained payload with mako and pass the result
@@ -119,13 +120,20 @@ class ModuleExec:
             formatted = self.format(format_args)
         except TypeError as e:
             import traceback
+
             log.debug(traceback.format_exc())
             raise DevException(messages.vectors.wrong_arguments_type)
 
         # The background argument is set at vector init in order
         # to threadify vectors also if called by VectorList methods.
         if self.background:
-            _thread.start_new_thread(modules.loaded[self.module].run_argv, (formatted, self.catch_errors,))
+            _thread.start_new_thread(
+                modules.loaded[self.module].run_argv,
+                (
+                    formatted,
+                    self.catch_errors,
+                ),
+            )
             result = None
         else:
             result = modules.loaded[self.module].run_argv(formatted, self.catch_errors)
@@ -135,7 +143,7 @@ class ModuleExec:
 
         return result
 
-    def load_result_or_run(self, result_name, format_args = {}):
+    def load_result_or_run(self, result_name, format_args={}):
         """Load a result stored in module session or run the module.
 
         Return the variable stored or run the `self.run` method.
@@ -150,11 +158,12 @@ class ModuleExec:
 
         """
 
-        result = modules.loaded[self.module].session[self.module]['results'].get(result_name)
+        result = modules.loaded[self.module].session[self.module]["results"].get(result_name)
 
-        if result: return result
-        else: return self.run(format_args)
-
+        if result:
+            return result
+        else:
+            return self.run(format_args)
 
 
 class PhpCode(ModuleExec):
@@ -176,13 +185,15 @@ class PhpCode(ModuleExec):
         background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True):
+    def __init__(
+        self, payload, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True
+    ):
         if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         ModuleExec.__init__(
             self,
-            module='shell_php',
+            module="shell_php",
             arguments=[payload] + arguments,
             name=name,
             target=target,
@@ -205,10 +216,7 @@ class PhpCode(ModuleExec):
 
         """
 
-        return [
-            Template(arg).render(**values)
-            for arg in self.arguments
-        ]
+        return [Template(arg).render(**values) for arg in self.arguments]
 
 
 class PhpFile(PhpCode):
@@ -231,13 +239,14 @@ class PhpFile(PhpCode):
         background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload_path, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True):
-
+    def __init__(
+        self, payload_path, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True
+    ):
         if not isinstance(payload_path, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         try:
-            with open(payload_path, 'r') as templatefile:
+            with open(payload_path, "r") as templatefile:
                 payload = templatefile.read()
         except Exception as e:
             raise DevException(messages.generic.error_loading_file_s_s % (payload_path, e))
@@ -246,7 +255,7 @@ class PhpFile(PhpCode):
 
         ModuleExec.__init__(
             self,
-            module='shell_php',
+            module="shell_php",
             arguments=[payload] + arguments,
             name=name,
             target=target,
@@ -299,13 +308,15 @@ class ShellCmd(PhpCode):
         background (bool): Execute in a separate thread on `run()`
     """
 
-    def __init__(self, payload, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True):
+    def __init__(
+        self, payload, name=None, target=0, postprocess=None, arguments=[], background=False, catch_errors=True
+    ):
         if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
         ModuleExec.__init__(
             self,
-            module='shell_sh',
+            module="shell_sh",
             arguments=[payload] + arguments,
             name=name,
             target=target,
@@ -335,30 +346,23 @@ class PythonCode(ShellCmd):
     """
 
     def __init__(self, payload, name, **kwargs):
-
         if not isinstance(payload, str):
             raise DevException(messages.vectors.wrong_payload_type)
 
-        ModuleExec.__init__(
-            self,
-            module='shell_sh',
-            arguments=[payload],
-            name=name,
-            **kwargs
-        )
+        ModuleExec.__init__(self, module="shell_sh", arguments=[payload], name=name, **kwargs)
 
     def format(self, values):
         payload = Template(self.arguments[0]).render(**values)
-        lines = [line for line in payload.split('\n') if line.strip()]
+        lines = [line for line in payload.split("\n") if line.strip()]
 
         if len(lines) == 0:
             return []
 
         # Remove excess indentations
-        spaces = len(re.search(r'^( *)', lines[0]).group(1))
+        spaces = len(re.search(r"^( *)", lines[0]).group(1))
         if spaces:
             lines = [line[spaces:] for line in lines]
-        payload = '\n'.join(lines)
+        payload = "\n".join(lines)
 
-        b64 = base64.b64encode(payload.encode('utf-8')).decode('utf-8')
-        return ['echo', b64, '|base64 -d|python - 2>&1']
+        b64 = base64.b64encode(payload.encode("utf-8")).decode("utf-8")
+        return ["echo", b64, "|base64 -d|python - 2>&1"]

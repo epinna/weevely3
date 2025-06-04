@@ -6,29 +6,18 @@ import random
 
 
 class Ls(Module):
-
     """List directory content."""
 
-    aliases = [ 'ls', 'dir' ]
+    aliases = ["ls", "dir"]
 
     def init(self):
+        self.register_info({"author": ["Emilio Pinna"], "license": "GPLv3"})
 
-        self.register_info(
-            {
-                'author': [
-                    'Emilio Pinna'
-                ],
-                'license': 'GPLv3'
-            }
-        )
-
-        self.register_arguments([
-          { 'name' : 'dir', 'help' : 'Target folder', 'nargs' : '?', 'default' : '.' }
-        ])
+        self.register_arguments([{"name": "dir", "help": "Target folder", "nargs": "?", "default": "."}])
 
     def run(self, **kwargs):
-
-        return PhpCode("""
+        return PhpCode(
+            """
                 $p="${dir}";
                 if(@is_dir($p)){
                     $d=@opendir($p);
@@ -39,8 +28,9 @@ class Ls(Module):
                         print(join(PHP_EOL,$a));
                     }
                 }""",
-                postprocess = lambda x: x.split('\n') if x else []
-               ).run(self.args)
+            postprocess=lambda x: x.split("\n") if x else [],
+        ).run(self.args)
 
     def print_result(self, result):
-        if result: log.info('\n'.join(result))
+        if result:
+            log.info("\n".join(result))

@@ -23,18 +23,12 @@ class Ssh(Module):
 """
 
     def init(self):
-        self.register_info(
-            {
-                'author': [
-                    'ZanyMonk'
-                ],
-                'license': 'GPLv3'
-            }
-        )
+        self.register_info({"author": ["ZanyMonk"], "license": "GPLv3"})
 
         self.register_vectors(
             [
-                PhpCode("""
+                PhpCode(
+                    """
                     if(function_exists("ssh2_connect")){
                         if($c = ssh2_connect("${host}","${port}")){
                             if(ssh2_auth_password($c,"${user}","${password}")){
@@ -46,9 +40,10 @@ class Ssh(Module):
                         }else{echo "Could not connect.";}
                     }else{echo "ModuleNotFound";}
                     """,
-                        name="php",
-                        ),
-                PythonCode("""
+                    name="php",
+                ),
+                PythonCode(
+                    """
                     import paramiko
                     c = paramiko.SSHClient()
                     c.set_missing_host_key_policy(paramiko.MissingHostKeyPolicy())
@@ -57,9 +52,11 @@ class Ssh(Module):
                     i.close()
                     for l in iter(o.readline, ""):
                         print(l,end="")
-                    """, "py.paramiko"
-                           ),
-                PythonCode("""
+                    """,
+                    "py.paramiko",
+                ),
+                PythonCode(
+                    """
                     from pexpect import pxssh
                     s = pxssh.pxssh()
                     s.options = dict(StrictHostKeyChecking="no", UserKnownHostsFile="/dev/null")
@@ -69,10 +66,11 @@ class Ssh(Module):
                     s.prompt()
                     print(s.before[len(c) + 2:].decode("utf-8","replace"), end="")
                     """,
-                           name="py.pexpect",
-                           target=Os.NIX,
-                           ),
-                PythonCode("""
+                    name="py.pexpect",
+                    target=Os.NIX,
+                ),
+                PythonCode(
+                    """
                     import os,subprocess as s
                     with open("${askpass}", "w") as f:
                         f.write("echo '${password}'")
@@ -91,20 +89,26 @@ class Ssh(Module):
                     os.unlink("${askpass}")
                     print((o if o else e).decode("utf-8","replace"), end="")
                     """,
-                           name="py.subprocess",
-                           ),
-            ])
+                    name="py.subprocess",
+                ),
+            ]
+        )
 
-        self.register_arguments([
-            {'name': 'address', 'help': 'user@host[:port]'},
-            {'name': 'password', 'help': 'User\'s password'},
-            {'name': 'command', 'help': 'Shell command', 'nargs': '+'},
-            {'name': '-askpass', 'default': '/tmp/.p',
-             'help': 'SSH_ASKPASS location (/!\\ will be overwritten and removed /!\\)'},
-            {'name': '-port', 'default': 0, 'type': int, 'help': 'SSH server port'},
-            {'name': '-stderr', 'default': ' 2>&1'},
-            {'name': '-vector', 'choices': self.vectors.get_names()},
-        ])
+        self.register_arguments(
+            [
+                {"name": "address", "help": "user@host[:port]"},
+                {"name": "password", "help": "User's password"},
+                {"name": "command", "help": "Shell command", "nargs": "+"},
+                {
+                    "name": "-askpass",
+                    "default": "/tmp/.p",
+                    "help": "SSH_ASKPASS location (/!\\ will be overwritten and removed /!\\)",
+                },
+                {"name": "-port", "default": 0, "type": int, "help": "SSH server port"},
+                {"name": "-stderr", "default": " 2>&1"},
+                {"name": "-vector", "choices": self.vectors.get_names()},
+            ]
+        )
 
     def setup(self):
         """Probe all vectors to find a working system-like function.
@@ -121,55 +125,52 @@ class Ssh(Module):
         """
 
         args_check = {
-            'host': '127.0.0.1',
-            'user': 'root',
-            'password': 'root',
-            'port': 54321,
-            'command': 'whoami',
-            'stderr': '',
-            'askpass': '/tmp/.p',
+            "host": "127.0.0.1",
+            "user": "root",
+            "password": "root",
+            "port": 54321,
+            "command": "whoami",
+            "stderr": "",
+            "askpass": "/tmp/.p",
         }
 
         def is_valid(result):
-            return (self.session['shell_php']['status'] != Status.RUN or  # Stop if shell_php is not running
-                    result and 'ModuleNotFound' not in result)  # Or if the result is correct
+            return (
+                self.session["shell_php"]["status"] != Status.RUN  # Stop if shell_php is not running
+                or result
+                and "ModuleNotFound" not in result
+            )  # Or if the result is correct
 
-        (vector_name,
-         result) = self.vectors.find_first_result(
-            names=[self.args.get('vector', '')],
-            format_args=args_check,
-            condition=is_valid
+        (vector_name, result) = self.vectors.find_first_result(
+            names=[self.args.get("vector", "")], format_args=args_check, condition=is_valid
         )
 
-        if self.session['shell_php']['status'] == Status.RUN and result:
-            self.session['shell_ssh']['stored_args']['vector'] = vector_name
-            if 'vector' not in self.args or not self.args['vector']:
-                self.args['vector'] = vector_name
+        if self.session["shell_php"]["status"] == Status.RUN and result:
+            self.session["shell_ssh"]["stored_args"]["vector"] = vector_name
+            if "vector" not in self.args or not self.args["vector"]:
+                self.args["vector"] = vector_name
             return Status.RUN
         else:
             return Status.FAIL
 
     def run(self, **kwargs):
-        self.args['user'], self.args['host'], self.args['port'] = self._parse_address(self.args['address'])
+        self.args["user"], self.args["host"], self.args["port"] = self._parse_address(self.args["address"])
 
-        self.args['command'] = ' '.join(self.args['command']).replace('"', '\\"')
+        self.args["command"] = " ".join(self.args["command"]).replace('"', '\\"')
 
-        return self.vectors.get_result(
-            name=self.args['vector'],
-            format_args=self.args
-        )
+        return self.vectors.get_result(name=self.args["vector"], format_args=self.args)
 
     def _parse_address(self, address):
-        user = self.session['system_info']['results'].get('whoami', '')
+        user = self.session["system_info"]["results"].get("whoami", "")
         host = address
 
-        if '@' in address:
-            user, host = address.split('@', 1)
+        if "@" in address:
+            user, host = address.split("@", 1)
 
         trailing_port = 22
-        port = self.args.get('port')
-        if ':' in host:
-            host, trailing_port = host.split(':', 1)
+        port = self.args.get("port")
+        if ":" in host:
+            host, trailing_port = host.split(":", 1)
 
         if not port:  #
             port = trailing_port

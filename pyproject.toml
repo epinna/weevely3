@@ -17,13 +17,6 @@ dependencies = [
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.package-dir]
-bd = "src/bd"
-core = "src/core"
-modules = "src/modules"
-utils = "src/utils"
-weevely = "src/weevely"
-
 [project.urls]
 Documentation = "https://github.com/epinna/weevely3/wiki"
 Repository = "https://github.com/epinna/weevely3"
@@ -31,3 +24,122 @@ Tracker = "https://github.com/epinna/weevely3/-/issues"
 
 [project.scripts]
 weevely3 = "weevely.main:cli"
+
+[tool.ruff]
+target-version = "py313"
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fix = true
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "tests",
+    "vendor",
+]
+
+# Same as Black.
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "F",    # pyflake
+    "E",    # pycodestyle error
+    "W",    # pycodestyle warnings
+    "I",    # isort
+    "UP",   # pyupgrade
+    "YTT",  # flake8-2020
+    "S",    # flake8-bandit
+    "FBT",  # flake8-boolean-trap
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "EXE",  # flake8-executable
+    "ISC",  # flake8-implicit-str-concat
+    "G",    # flake8-logging-format
+    "PIE",  # flake8-pie
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+    "SIM",  # flake8-simplify
+    "PTH",  # flake8-use-pathlib
+    "ERA",  # eradicate
+    "PL",   # pylint
+    "TRY",  # tryceratops
+    "FLY",  # flynt
+    "PERF", # Perflint
+    "RUF",  # Ruff-specific rules
+]
+ignore = [
+    "FBT002",  # https://docs.astral.sh/ruff/rules/boolean-default-value-positional-argument/
+    "G004",    # https://docs.astral.sh/ruff/rules/#flake8-logging-format-g
+    "TRY003",  # https://docs.astral.sh/ruff/rules/raise-vanilla-args/
+    "PERF203", # https://docs.astral.sh/ruff/rules/try-except-in-loop/#try-except-in-loop-perf203
+    "PLW2901", # https://docs.astral.sh/ruff/rules/redefined-loop-name/
+    "ISC001",  # https://docs.astral.sh/ruff/rules/single-line-implicit-string-concatenation/
+    "S113",    # https://docs.astral.sh/ruff/rules/request-without-timeout/
+]
+fixable = ["ALL"]
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint.pylint]
+max-args = 12
+max-branches = 20
+max-statements = 64
+
+# https://docs.astral.sh/ruff/settings/#isort
+[tool.ruff.lint.isort]
+case-sensitive = true
+# classes =
+# combine-as-imports = true
+# constants =
+# detect-same-package = true
+# extra-standard-library =
+force-single-line = true
+# force-sort-within-sections = true
+# force-to-top =
+# force-wrap-aliases =
+# forced-separate = []
+# known-first-party =
+# known-local-folder =
+# known-third-party =
+lines-after-imports = 2
+lines-between-types = 1
+# no-lines-before =
+# order-by-type = true
+# relative-imports-order =
+# required-imports =
+# section-order =
+# sections =
+# single-line-exclusions =
+# split-on-trailing-comma =
+# variables =
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = [
+    "F401", # imported but unused
+]
+
+[tool.mypy]
+ignore_missing_imports = true

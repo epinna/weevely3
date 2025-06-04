@@ -24,10 +24,10 @@ from core.weexceptions import DevException, ArgparseError
 
 class Formatter(argparse.ArgumentDefaultsHelpFormatter):
     def _format_description(self, desc):
-        lines = desc.split('\n')
+        lines = desc.split("\n")
         head = lines[0]
         n = len(head)
-        return head + '\n' + '=' * n + '\n' + '\n'.join(['  ' + l for l in lines[1:]]) + '\n'
+        return head + "\n" + "=" * n + "\n" + "\n".join(["  " + l for l in lines[1:]]) + "\n"
 
     def add_text(self, text):
         if text is not argparse.SUPPRESS and text is not None:
@@ -50,8 +50,8 @@ class Status:
     RUN = 1
     FAIL = 2
 
-class Module:
 
+class Module:
     aliases = []
 
     def __init__(self, session, name, folder):
@@ -69,11 +69,7 @@ class Module:
 
         # init session db for current session
         if name not in self.session:
-            self.session[self.name] = {
-                'stored_args': {},
-                'results': {},
-                'status': Status.IDLE
-            }
+            self.session[self.name] = {"stored_args": {}, "results": {}, "status": Status.IDLE}
 
         # HelpParser is a slightly changed `ArgumentParser`
         self.argparser = argparsers.HelpParser(
@@ -87,7 +83,7 @@ class Module:
 
         self.init()
 
-    def run_cmdline(self, line, cmd = ''):
+    def run_cmdline(self, line, cmd=""):
         """Execute the module from command line.
 
         Get command line string as argument. Called from terminal.
@@ -106,7 +102,9 @@ class Module:
         try:
             command = shlex.split(line)
         except Exception as e:
-            import traceback; log.debug(traceback.format_exc())
+            import traceback
+
+            log.debug(traceback.format_exc())
             log.warn(messages.generic.error_parsing_command_s % str(e))
             return
 
@@ -123,16 +121,13 @@ class Module:
             return
 
         except Exception as e:
-            import traceback; log.debug(traceback.format_exc())
+            import traceback
+
+            log.debug(traceback.format_exc())
             log.warn(messages.module.error_module_exec_error_s % str(e))
             return
 
-        self.print_result(
-            result[:-1] if (
-                isinstance(result, str) and
-                result.endswith('\n')
-            ) else result
-        )
+        self.print_result(result[:-1] if (isinstance(result, str) and result.endswith("\n")) else result)
 
         # Data is returned for the testing of _cmdline calls
         return result
@@ -155,7 +150,7 @@ class Module:
         """
 
         # Merge stored arguments with line arguments
-        stored_args = self.session[self.name]['stored_args']
+        stored_args = self.session[self.name]["stored_args"]
         self.args = {}
 
         try:
@@ -164,15 +159,16 @@ class Module:
             raise ArgparseError(e)
 
         # The new arg must win over the stored one if:
-        # new arg is not none and the value of the old one 
+        # new arg is not none and the value of the old one
         # is not just the default value
-        
+
         for newarg_key, newarg_value in user_args.__dict__.items():
-                        
             # Pick the default argument of the current arg
-            default_value = next((action.default for action in self.argparser._actions if action.dest == newarg_key), None)
+            default_value = next(
+                (action.default for action in self.argparser._actions if action.dest == newarg_key), None
+            )
             stored_value = stored_args.get(newarg_key)
-                        
+
             if newarg_value != None and newarg_value != default_value:
                 self.args[newarg_key] = newarg_value
             elif stored_value != None:
@@ -181,21 +177,21 @@ class Module:
                 self.args[newarg_key] = default_value
 
         # If module status is IDLE, launch setup()
-        if self.session[self.name]['status'] == Status.IDLE:
-            self.session[self.name]['status'] = self.setup()
+        if self.session[self.name]["status"] == Status.IDLE:
+            self.session[self.name]["status"] = self.setup()
 
             # If setup still not set the status to RUN, return
-            if self.session[self.name]['status'] != Status.RUN:
+            if self.session[self.name]["status"] != Status.RUN:
                 return
 
         # If module status is FAIL, return
-        if self.session[self.name]['status'] == Status.FAIL:
+        if self.session[self.name]["status"] == Status.FAIL:
             log.debug(messages.module.module_s_inactive % self.name)
             return
 
         # Setup() could has been stored additional args, so all the updated
         # stored arguments are applied to args
-        stored_args = self.session[self.name]['stored_args']
+        stored_args = self.session[self.name]["stored_args"]
         for stored_arg_key, stored_arg_value in stored_args.items():
             if stored_arg_key != None and stored_arg_value != self.args.get(stored_arg_key):
                 self.args[stored_arg_key] = stored_arg_value
@@ -221,13 +217,11 @@ class Module:
 
         """
 
-        if self.session['default_shell'] != 'shell_sh':
+        if self.session["default_shell"] != "shell_sh":
             log.debug(messages.module.running_the_alias_s % self.name)
             return self.run_cmdline(args)
         else:
-            modules.loaded['shell_sh'].run_cmdline(
-                '%s -- %s' % (cmd, args)
-            )
+            modules.loaded["shell_sh"].run_cmdline("%s -- %s" % (cmd, args))
 
     def init(self):
         """Module initialization.
@@ -286,7 +280,7 @@ class Module:
         Normally does not need to be overridden.
         """
 
-        self.run_argv([ '-h' ])
+        self.run_argv(["-h"])
 
     def register_info(self, info):
         """Register the module basic information.
@@ -306,18 +300,14 @@ class Module:
 
         self.info = info
 
-        self.info['description'] = (
-            info.get('description')
-            if info.get('description')
-            else self.__doc__.strip()
-        )
+        self.info["description"] = info.get("description") if info.get("description") else self.__doc__.strip()
 
-        self.argparser.description = self.info.get('description')
+        self.argparser.description = self.info.get("description")
 
         if not self.argparser.description:
             raise DevException(messages.module.error_module_missing_description)
 
-    def register_arguments(self, arguments = []):
+    def register_arguments(self, arguments=[]):
         """Register the module arguments.
 
         Register arguments to be added to the argparse parser.
@@ -330,20 +320,16 @@ class Module:
 
         try:
             for arg_opts in arguments:
-
                 # Handle if the argument registration is done before
                 # The vector registration. This should at least warn
-                if arg_opts.get('choices') == []:
-                    log.warn(messages.module.error_choices_s_s_empty % (self.name,
-                                                                        arg_name))
+                if arg_opts.get("choices") == []:
+                    log.warn(messages.module.error_choices_s_s_empty % (self.name, arg_name))
 
                 self.argparser.add_argument(
-                    arg_opts['name'],
-                    **dict((k, v) for k, v in arg_opts.items() if k != 'name')
+                    arg_opts["name"], **dict((k, v) for k, v in arg_opts.items() if k != "name")
                 )
         except Exception as e:
             raise DevException(messages.module.error_setting_arguments_s % (e))
-
 
     def register_vectors(self, vectors):
         """Register the module vectors.
@@ -371,9 +357,8 @@ class Module:
 
         """
 
-        if result not in (None, ''):
+        if result not in (None, ""):
             log.info(utils.prettify.tablify(result, header=header))
-
 
     def _store_result(self, field, value):
         """Store persistent module result.
@@ -386,9 +371,9 @@ class Module:
             value (obj): The result to store.
         """
 
-        self.session[self.name]['results'][field] = value
+        self.session[self.name]["results"][field] = value
 
-    def _get_stored_result(self, field, module = None, default=None):
+    def _get_stored_result(self, field, module=None, default=None):
         """Get stored module result.
 
         Get the modle result stored in the session structure.
@@ -403,7 +388,6 @@ class Module:
         """
 
         if module is not None:
-            return self.session[module][
-                'results'].get(field, default)
+            return self.session[module]["results"].get(field, default)
         else:
             return self.session.get(field, default)

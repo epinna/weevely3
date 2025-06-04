@@ -5,21 +5,20 @@ import sys
 
 SUPPRESS = argparse.SUPPRESS
 
-class HelpParser(argparse.ArgumentParser):
 
+class HelpParser(argparse.ArgumentParser):
     """
     Override `error` method of `argparse.ArgumentParser`
     in order to print the complete help on error.
     """
 
     def error(self, message):
-        sys.stderr.write('error: %s\n' % message)
+        sys.stderr.write("error: %s\n" % message)
         self.print_help()
         raise ArgparseError(message)
 
 
 class CliParser(argparse.ArgumentParser):
-
     def set_default_subparser(self, name, args=None):
         """default subparser selection. Call after setup, just before parse_args()
         name: is the name of the subparser to call by default
@@ -30,7 +29,7 @@ class CliParser(argparse.ArgumentParser):
         """
         subparser_found = False
         for arg in sys.argv[1:]:
-            if arg in ['-h', '--help']:  # global help if no subparser
+            if arg in ["-h", "--help"]:  # global help if no subparser
                 break
         else:
             for x in self._subparsers._actions:
@@ -48,9 +47,6 @@ class CliParser(argparse.ArgumentParser):
                     args.insert(0, name)
 
     def error(self, message):
-        sys.stderr.write(
-            messages.generic.weevely_s_error_s_usage % (
-                messages.version, message)
-        )
-        #self.print_help()
+        sys.stderr.write(messages.generic.weevely_s_error_s_usage % (messages.version, message))
+        # self.print_help()
         raise ArgparseError(message)

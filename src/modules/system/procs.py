@@ -3,24 +3,14 @@ from core.vectors import PhpCode
 
 
 class Procs(Module):
-
     """List running processes."""
 
-    aliases = [ 'ps' ]
+    aliases = ["ps"]
 
     def init(self):
-        self.register_info(
-            {
-                'author': [
-                    'paddlesteamer'
-                ],
-                'license': 'GPLv3'
-            }
-        )
-
+        self.register_info({"author": ["paddlesteamer"], "license": "GPLv3"})
 
     def run(self, **kwargs):
-
         return PhpCode("""
             class UIDMap {
                 private $map = array();
@@ -177,7 +167,3 @@ class Procs(Module):
 
             main();
         """).run()
-
-
-
-
