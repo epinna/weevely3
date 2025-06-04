@@ -13,6 +13,17 @@ dependencies = [
 	"pyOpenSSL",
 ]
 
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.package-dir]
+bd = "src/bd"
+core = "src/core"
+modules = "src/modules"
+utils = "src/utils"
+weevely = "src/weevely"
+
 [project.urls]
 Documentation = "https://github.com/antirais/weevely3"
 Repository = "https://github.com/antirais/weevely3"
