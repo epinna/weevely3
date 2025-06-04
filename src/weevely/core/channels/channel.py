@@ -44,7 +44,6 @@ class Channel:
         try:
             # Import module
             module = __import__(f"weevely.core.channels.{module_name}.{module_name}", fromlist=["*"])
-            print(module)
             # Import object
             channel_object = getattr(module, channel_name)
         except Exception as e:
