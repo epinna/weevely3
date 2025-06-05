@@ -1,10 +1,10 @@
-<%! import hashlib, utils, string %><%
+<%! import hashlib, weevely, string %><%
 passwordhash = hashlib.md5(password.encode('utf-8')).hexdigest().lower()
 key = passwordhash[:8]
 header = passwordhash[8:20]
 footer = passwordhash[20:32]
 
-PREPEND = utils.strings.randstr(16, charset = string.digits + string.ascii_letters).decode('utf-8')
+PREPEND = weevely.utils.strings.randstr(16, charset = string.digits + string.ascii_letters).decode('utf-8')
 %>$k="${key}";$kh="${header}";$kf="${footer}";$p="${PREPEND}";
 <%text>
 function x($t,$k){

