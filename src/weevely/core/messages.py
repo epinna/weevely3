@@ -1,4 +1,4 @@
-version = "5.0.0"
+version = "4.0.2"
 
 
 class generic:
