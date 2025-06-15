@@ -15,6 +15,14 @@ dependencies = [
 	"telnetlib3>=2.0.4",
 ]
 
+[project.optional-dependencies]
+test = [
+    "coverage>=7.9.1",
+    "paramiko>=3.5.1",
+    "pexpect>=4.9.0",
+    "testfixtures>=8.3.0",
+]
+
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"

@@ -7,9 +7,9 @@ from contextlib import redirect_stdout
 from io import TextIOWrapper, BytesIO
 from unittest import TestCase
 
-import utils
-from core.channels.channel import Channel
-from core.generate import generate, save_generated
+from weevely import utils
+from weevely.core.channels.channel import Channel
+from weevely.core.generate import generate, save_generated
 from tests.config import base_folder, base_url
 
 

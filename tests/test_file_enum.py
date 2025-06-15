@@ -1,10 +1,10 @@
 from testfixtures import log_capture
 from tests.base_test import BaseTest
-from core.sessions import SessionURL
-from core import modules
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
 from tests import config
-import utils
-from core import messages
+from weevely import utils
+from weevely.core import messages
 import subprocess
 import tempfile
 import os
@@ -53,14 +53,14 @@ class FileEnum(BaseTest):
         self.assertEqual(self.run_argv( self.files_rel[:3] ), {
                     self.files_rel[0] :  'ex',
                     self.files_rel[1] :  'ew',
-                    self.files_rel[2] :  'e' 
+                    self.files_rel[2] :  'e'
         })
 
         # Enum self.files_rel[:2] + bogus passed with arguments
         self.assertEqual(self.run_argv( self.files_rel[:3] + [ 'bogus' ] ), {
                     self.files_rel[0] :  'ex',
                     self.files_rel[1] :  'ew',
-                    self.files_rel[2] :  'e' 
+                    self.files_rel[2] :  'e'
         })
 
         # Enum self.files_rel[:2] + bogus passed with arguments and -print
@@ -80,7 +80,7 @@ class FileEnum(BaseTest):
         self.assertEqual(self.run_argv( [ '-lpath-list', temp_file.name ] ), {
             self.files_rel[0] :  'ex',
             self.files_rel[1] :  'ew',
-            self.files_rel[2] :  'e' 
+            self.files_rel[2] :  'e'
         })
         temp_file.close()
 
@@ -91,7 +91,7 @@ class FileEnum(BaseTest):
         self.assertEqual(self.run_argv( [ '-lpath-list', temp_file.name ] ), {
             self.files_rel[0] : 'ex' ,
             self.files_rel[1] : 'ew' ,
-            self.files_rel[2] : 'e' 
+            self.files_rel[2] : 'e'
         })
         temp_file.close()
 

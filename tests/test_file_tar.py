@@ -1,10 +1,10 @@
 from testfixtures import log_capture
 from tests.base_test import BaseTest
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-import utils
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely import utils
+from weevely.core import messages
 import subprocess
 import os
 
@@ -40,33 +40,33 @@ class FileTar(BaseTest):
         'test_file_tar/dir1/dir2/dir3',
         'test_file_tar/dir1/dir2/dir3/dir4',
     ]
-    folders_abs = [ 
-        os.path.join(config.base_folder, f) 
-        for f in folders_rel 
+    folders_abs = [
+        os.path.join(config.base_folder, f)
+        for f in folders_rel
     ]
-    
+
     files_rel = [
         'test_file_tar/dir1/f1',
         'test_file_tar/dir1/dir2/f2',
         'test_file_tar/dir1/dir2/dir3/f3',
         'test_file_tar/dir1/dir2/dir3/dir4/f4',
     ]
-    files_abs = [ 
-        os.path.join(config.base_folder, f) 
-        for f in files_rel 
+    files_abs = [
+        os.path.join(config.base_folder, f)
+        for f in files_rel
     ]
-        
+
     tars_rel = [
         'test_file_tar/test_0.tar'
     ]
-    tars_abs = [ 
-        os.path.join(config.base_folder, f) 
-        for f in tars_rel 
+    tars_abs = [
+        os.path.join(config.base_folder, f)
+        for f in tars_rel
     ]
-    
+
     other_file_rel = 'test_file_tar/f5'
-    other_file_abs = os.path.join(config.base_folder, other_file_rel) 
-    
+    other_file_abs = os.path.join(config.base_folder, other_file_rel)
+
     def setUp(self):
         self.session = SessionURL(
                     self.url,
@@ -128,25 +128,25 @@ class FileTar(BaseTest):
 
     @log_capture()
     def test_already_exists(self, log_captured):
-    
+
             # Create a new tar with other_file, with the name test_0.tar
         self.assertIsNone(self.run_argv(['test_file_tar/test_0.tar', self.other_file_rel]));
         self.assertEqual(log_captured.records[-1].msg,
                          "File 'test_file_tar/test_0.tar' already exists, skipping compressing")
-    
+
 
     @log_capture()
     def test_unexistant_decompress(self, log_captured):
-    
+
         self.assertIsNone(self.run_argv(['-x', '-o', 'bogus', '.']));
         self.assertEqual(log_captured.records[-1].msg,
                          "Skipping file 'bogus', check existance and permission")
-    
-    
+
+
     # @log_capture()
     # def test_unexistant_compress(self, log_captured):
     #
     #     self.assertIsNone(self.run_argv(['bogus.tar', 'bogus']));
     #     self.assertEqual(log_captured.records[-1].msg,
     #                      "File 'bogus.tar' not created, check existance and permission")
-    
+

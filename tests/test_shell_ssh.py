@@ -1,5 +1,5 @@
-from core import modules
-from core.sessions import SessionURL
+from weevely.core import modules
+from weevely.core.sessions import SessionURL
 from tests.base_test import BaseTest
 from tests.config import su_user, su_passwd
 

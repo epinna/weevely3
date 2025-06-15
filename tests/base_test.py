@@ -1,5 +1,5 @@
 from unittest import TestCase
-from . import config
+from tests import config
 from os import environ
 
 

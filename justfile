@@ -31,6 +31,10 @@ clean:
 	#!/bin/bash
 	rm -rf dist
 
+# run tests
+test cmd="":
+	#!/bin/bash
+	sudo tests/run.sh {{cmd}}
 
 # build packages
 build:

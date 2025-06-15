@@ -1,8 +1,8 @@
 from tests.base_test import BaseTest
 from testfixtures import log_capture
-from core.weexceptions import ArgparseError
-from core import modules
-from core.sessions import SessionURL
+from weevely.core.weexceptions import ArgparseError
+from weevely.core import modules
+from weevely.core.sessions import SessionURL
 import os
 
 class SystemInfo(BaseTest):
