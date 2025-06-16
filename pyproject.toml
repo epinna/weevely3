@@ -61,10 +61,6 @@ exclude = [
     "buck-out",
     "build",
     "dist",
-    "node_modules",
-    "venv",
-    "tests",
-    "vendor",
 ]
 
 # Same as Black.
