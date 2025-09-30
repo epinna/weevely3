@@ -285,11 +285,21 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
 
         res.headers = self.filter_headers(res.headers)
 
+        if 'Content-Length' not in res.headers:
+            res.headers['Content-Length'] = str(len(res_body))
+
         respstring = "%s %d %s\r\n" % (self.protocol_version, res.status, res.reason)
         self.wfile.write(respstring.encode("utf-8"))
         self.wfile.write(res.headers.as_bytes())
         self.wfile.write(res_body)
         self.wfile.flush()
+
+        if isinstance(self.connection, ssl.SSLSocket):
+            try:
+                self.connection.unwrap()
+            except:
+                pass
+        self.close_connection = True
 
     def relay_streaming(self, res):
         respstring = "%s %d %s\r\n" % (self.protocol_version, res.status, res.reason)
@@ -306,6 +316,13 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         except OSError:
             # connection closed by client
             pass
+        finally:
+            if isinstance(self.connection, ssl.SSLSocket):
+                try:
+                    self.connection.unwrap()
+                except:
+                    pass
+            self.close_connection = True
 
     do_HEAD = do_GET
     do_POST = do_GET
@@ -327,6 +344,8 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         )
         for k in hop_by_hop:
             del headers[k]
+        
+        headers["connection"] = "close"
 
         return headers
 
@@ -337,10 +356,11 @@ class ProxyRequestHandler(BaseHTTPRequestHandler):
         respstring = "%s %d %s\r\n" % (self.protocol_version, 200, "OK")
         self.wfile.write(respstring.encode("utf-8"))
         self.send_header("Content-Type", "application/x-x509-ca-cert")
-        self.send_header("Content-Length", len(data))
+        self.send_header("Content-Length", str(len(data)))
         self.send_header("Connection", "close")
         self.end_headers()
         self.wfile.write(data)
+        self.close_connection = True
 
 
 def run_proxy2(
@@ -350,7 +370,7 @@ def run_proxy2(
     hostname="127.0.0.1",
     port="8080",
 ):
-    server_address = (hostname, port)
+    server_address = (hostname, int(port))
 
     HandlerClass.protocol_version = protocol
     httpd = ServerClass(server_address, HandlerClass)
