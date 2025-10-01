@@ -15,8 +15,6 @@ class Check(Module):
         payload_perms = (
             "$f='${rpath}';if(@file_exists($f)){print('e');if(@is_readable($f))print('r');"
             "if(@is_writable($f))print('w');if(@is_executable($f))print('x');}"
-            "$f='${rpath}';if(@file_exists($f)){print('e');if(@is_readable($f))print('r');"
-            "if(@is_writable($f))print('w');if(@is_executable($f))print('x');}"
         )
 
         self.register_vectors(

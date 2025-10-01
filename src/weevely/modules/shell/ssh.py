@@ -174,9 +174,6 @@ class Ssh(Module):
             host, trailing_port = host.split(":", 1)
 
         if not port:
-            host, trailing_port = host.split(":", 1)
-
-        if not port:  #
             port = trailing_port
-
+        
         return user, host, port
