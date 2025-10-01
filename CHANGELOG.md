@@ -1,7 +1,14 @@
 # Change Log
 
-## [v4.0.2] - 
+## [v4.0.3] - 2025-10-01
+### Added
+- Allow installation using `uv`
 
+### Fixed
+- Fix outdated dependencies in `backdoor_tcp`
+- Fix HTTPS support in `net_proxy` module
+
+## [v4.0.2] - 
 ### Fixed
 - Broken file_edit #133
 

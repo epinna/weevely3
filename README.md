@@ -1,21 +1,5 @@
-Weevely
-=======
-
-[![Build Status](https://travis-ci.org/epinna/weevely3.svg?branch=master)](https://travis-ci.org/epinna/weevely3)
-
-## Name
-
-Weevely - Weaponized web shell
-
-## Usage
-
-```
-weevely generate <password> <path>
-weevely <URL> <password> [cmd]
-```
-  
+# Weevely - Weaponized web shell
 ## Description
-
 Weevely is a web shell designed for post-exploitation purposes that can be extended over the network at runtime.
 
 Upload weevely PHP agent to a target web server to get remote shell access to it. It has more than 30 modules to assist administrative tasks, maintain access, provide situational awareness, elevate privileges, and spread into the target network.
@@ -26,8 +10,13 @@ Read the [Getting Started](https://github.com/epinna/weevely3/wiki/Getting-Start
 
 Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and use cases.
 
-### Features
+## Usage
+```
+weevely generate <password> <path>
+weevely <URL> <password> [cmd]
+```
 
+### Features
 * Shell access to the target
 * SQL console pivoting on the target
 * HTTP/HTTPS proxy to browse through the target
@@ -39,11 +28,9 @@ Browse the [Wiki](https://github.com/epinna/weevely3/wiki) to read examples and 
 * Bruteforce SQL accounts pivoting on the target
 
 ### Agent
-
 The agent is a small, polymorphic PHP script hardly detected by AV and the communication protocol is obfuscated within HTTP requests.
 
 ### Modules
-
 | Module                      | Description
 | --------------------------- | ------------------------------------------ |
 | :audit_filesystem           | Audit the file system for weak permissions.
@@ -92,5 +79,4 @@ The agent is a small, polymorphic PHP script hardly detected by AV and the commu
 | :net_ifconfig               |  Get network interfaces addresses.
 
 ### Development
-
 Weevely is easily extendible to implement internal audit, account enumerator, sensitive data scraper, network scanner, make the modules work as a HTTP or SQL client and do a whole lot of other cool stuff.
