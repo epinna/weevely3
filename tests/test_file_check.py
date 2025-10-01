@@ -1,9 +1,9 @@
 from tests.base_test import BaseTest
 from testfixtures import log_capture
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely.core import messages
 import subprocess
 import datetime
 import logging
@@ -33,7 +33,7 @@ class FileCheck(BaseTest):
         'test_file_check/dir1/dir2/dir3/write-executable',
         'test_file_check/dir1/dir2/dir3/0333/0444',
     ]
-    
+
     folders_rel = [
         'test_file_check/dir1/',
         'test_file_check/dir1/dir2/',
@@ -44,7 +44,7 @@ class FileCheck(BaseTest):
     def setUp(self):
         session = SessionURL(self.url, self.password, volatile = True)
         modules.load_modules(session)
-        
+
         self.file_0_time = int(subprocess.check_output(
             'stat -c %%Y "%s"' % (os.path.join(config.base_folder, 'test_file_check/dir1/0777')),
             shell=True)

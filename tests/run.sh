@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
- 
+
 # Load docker defaults and check conf
 docker info
 
 # Change folder to the root folder
 PARENTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )"/../ && pwd )"
-cd $PARENTDIR
+cd "$PARENTDIR"
 
 # Delete any instance if previously existent
 docker rm -f httpbin-inst || echo ''
@@ -21,16 +21,18 @@ docker pull kennethreitz/httpbin
 docker run -p 8888:80 --net=weevely-testnet --rm --name httpbin-inst -d kennethreitz/httpbin
 
 # Wait until the http server is serving
-until $(curl --output /dev/null --silent --head http://localhost:8888/); do
+until curl --output /dev/null --silent --head http://localhost:8888/; do
+    echo "waiting for the http://localhost:8888/ service to start..."
     sleep 1
 done
 
 # Build weevely container
 docker build -f tests/docker/Dockerfile . -t weevely
-docker run  --rm --net=weevely-testnet --name weevely-inst -v `pwd`:/app/ -p 80:80 -d weevely
+docker run --rm --net=weevely-testnet --name weevely-inst -v "$(pwd):/app/" -p 80:80 -d weevely
 
 # Wait until the http server is serving
-until $(curl --output /dev/null --silent --head http://localhost/); do
+until curl --output /dev/null --silent --head http://localhost/; do
+    echo "waiting for the http://localhost/ service to start..."
     sleep 1
 done
 
@@ -46,6 +48,6 @@ else
   done
 fi
 
-docker rm -f weevely-inst 
+docker rm -f weevely-inst
 docker rm -f httpbin-inst
 docker network rm weevely-testnet

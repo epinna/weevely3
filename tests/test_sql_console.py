@@ -3,9 +3,9 @@ import unittest
 
 from testfixtures import log_capture
 
-from core import messages
-from core import modules
-from core.sessions import SessionURL
+from weevely.core import messages
+from weevely.core import modules
+from weevely.core.sessions import SessionURL
 from tests import config
 from tests.base_test import BaseTest
 
@@ -13,7 +13,7 @@ from tests.base_test import BaseTest
 def setUpModule():
     try:
         # This workaround fixes https://github.com/docker/for-linux/issues/72
-        subprocess.check_output("""find /var/lib/mysql -type f -exec touch {} \; && service mariadb start""", shell=True)
+        subprocess.check_output(r"""find /var/lib/mysql -type f -exec touch {} \; && service mariadb start""", shell=True)
     except Exception as e:
         print('[!] Failed mysql')
         print(subprocess.check_output("""grep "" /var/log/mysql/*""", shell=True))

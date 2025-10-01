@@ -1,10 +1,10 @@
 from testfixtures import log_capture
 from tests.base_test import BaseTest
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-import utils
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely import utils
+from weevely.core import messages
 import subprocess
 import os
 
@@ -25,7 +25,7 @@ class FileCd(BaseTest):
         'test_file_cd/dir1/dir2',
         'test_file_cd/dir1/dir2/dir3',
         'test_file_cd/dir1/dir2/dir3/dir4',
-    ) ] 
+    ) ]
 
     def setUp(self):
         self.session = SessionURL(

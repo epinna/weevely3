@@ -1,10 +1,10 @@
 from tests.base_test import BaseTest
-from core.weexceptions import FatalException
+from weevely.core.weexceptions import FatalException
 from testfixtures import log_capture
-from core.terminal import Terminal
-from core.sessions import SessionURL, SessionFile
-from core import modules
-from core import messages
+from weevely.core.terminal import Terminal
+from weevely.core.sessions import SessionURL, SessionFile
+from weevely.core import modules
+from weevely.core import messages
 import subprocess
 
 def setUpModule():
@@ -65,7 +65,7 @@ class TerminalTest(BaseTest):
         # Test to open a session from wrong files
         for path in self.brokensessionfiles:
             self.assertRaises(FatalException, lambda: SessionFile(path))
-                
+
     @log_capture()
     def test_run_wrong_pass(self, log_captured):
 
@@ -146,7 +146,7 @@ class TerminalTest(BaseTest):
         self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'system'), log_captured)
 
         self._assert_exec(':set shell_sh.vector passthru', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)
-        self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)        
+        self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)
         self._assert_exec('echo 1', '1', log_captured)
         self._assert_exec(':show shell_sh.vector', messages.sessions.set_module_s_s_s % ('shell_sh', 'vector', 'passthru'), log_captured)
 

@@ -1,10 +1,10 @@
 from testfixtures import log_capture
 from tests.base_test import BaseTest
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-import utils
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely import utils
+from weevely.core import messages
 import subprocess
 import os
 
@@ -32,14 +32,14 @@ config = config
 ), shell=True)
 
 class FindPerms(BaseTest):
-    
+
     folders_rel = [
         'test_file_find/dir1',
         'test_file_find/dir1/0777',
         'test_file_find/dir1/0777/dir3',
         'test_file_find/dir1/0777/dir3/dir4',
     ]
-    
+
     files_rel = [
         'test_file_find/dir1/0111-exec',
         'test_file_find/dir1/0777/0222-write',

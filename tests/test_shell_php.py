@@ -1,8 +1,8 @@
 from tests.base_test import BaseTest
 from testfixtures import log_capture
-from core import modules
-from core.sessions import SessionURL
-from core import messages
+from weevely.core import modules
+from weevely.core.sessions import SessionURL
+from weevely.core import messages
 
 
 class ShellPHP(BaseTest):

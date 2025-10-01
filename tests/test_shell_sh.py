@@ -1,10 +1,10 @@
 from tests.base_test import BaseTest
-from core.weexceptions import ArgparseError
-from core.vectors import PhpCode
-from core.vectors import Os
-from core import modules
-from core.sessions import SessionURL
-from core import messages
+from weevely.core.weexceptions import ArgparseError
+from weevely.core.vectors import PhpCode
+from weevely.core.vectors import Os
+from weevely.core import modules
+from weevely.core.sessions import SessionURL
+from weevely.core import messages
 import logging
 import os
 

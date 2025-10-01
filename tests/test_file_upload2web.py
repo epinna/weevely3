@@ -1,10 +1,10 @@
 from testfixtures import log_capture
 from tests.base_test import BaseTest
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-import utils
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely import utils
+from weevely.core import messages
 import subprocess
 import tempfile
 import os
@@ -16,9 +16,9 @@ rm -rf "$BASE_FOLDER"
 
 mkdir -p "$BASE_FOLDER/0777/0555/0777/0555"
 chown www-data: -R "$BASE_FOLDER/"
-chmod 0777 "$BASE_FOLDER/0777" 
+chmod 0777 "$BASE_FOLDER/0777"
 chmod 0777 "$BASE_FOLDER/0777/0555/0777/"
-chmod 0555 "$BASE_FOLDER/0777/0555" 
+chmod 0555 "$BASE_FOLDER/0777/0555"
 chmod 0555 "$BASE_FOLDER/0777/0555/0777/0555"
 """.format(
 config = config
@@ -47,7 +47,7 @@ class UploadWeb(BaseTest):
 
 
     def _get_path_url(self, folder_deepness, filename):
-        
+
         rurl = os.path.sep.join([
                             config.base_url.rstrip('/'),
                             self.folders_rel[folder_deepness].strip('/'),

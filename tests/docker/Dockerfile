@@ -17,10 +17,14 @@ RUN bash -c "debconf-set-selections <<< 'mysql-server mysql-server/root_password
 RUN bash -c "debconf-set-selections <<< 'mysql-server mysql-server/root_password_again password root'"
 RUN apt-get -y install default-mysql-server
 
-COPY requirements.txt /app/
-RUN pip install -r /app/requirements.txt
+ENV PYTHONDONTWRITEBYTECODE=true
+RUN pip install --upgrade pip
+
+COPY . /app/
+RUN pip install . --root-user-action ignore
+
 # Additional libraries for testing
-RUN pip install testfixtures coverage pexpect paramiko
+RUN pip install .[test] --root-user-action ignore
 
 # Add unprivileged testuser:testuser user
 RUN echo 'testuser:$1$xyz$iqgi.17OXQwhicZgFC1OZ.:1001:1002:,,,:/home/testuser:/bin/bash' >> /etc/passwd
@@ -30,5 +34,4 @@ RUN chown testuser:users /home/testuser
 RUN phpenmod ssh2
 
 COPY tests/docker/000-default.conf /etc/apache2/sites-enabled/000-default.conf
-
-ENTRYPOINT "/app/tests/docker/entrypoint.sh"
+ENTRYPOINT ["/app/tests/docker/entrypoint.sh"]

@@ -1,9 +1,9 @@
 from tests.base_test import BaseTest
 from testfixtures import log_capture
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely.core import messages
 import subprocess
 import logging
 import tempfile
@@ -33,15 +33,15 @@ class Curl(BaseTest):
         self.url = 'http://httpbin-inst'
 
         self.vector_list = modules.loaded['net_curl'].vectors.get_names()
-        
+
         # Install pecl_http is complex and php-version dependant, so
-        # let's just skip this vector test. 
+        # let's just skip this vector test.
         self.vector_list.remove('php_httprequest1')
 
         self.run_argv = modules.loaded['net_curl'].run_argv
 
     def _json_result(self, args):
-        
+
         result = self.run_argv(args)[0]
         try:
             return result if not result else json.loads(result)
@@ -49,9 +49,9 @@ class Curl(BaseTest):
             self.fail(result)
 
     def _headers_result(self, args):
-        
+
         return self.run_argv(args)[1]
-        
+
     def test_sent_data(self):
 
         for vect in self.vector_list:
@@ -70,7 +70,7 @@ class Curl(BaseTest):
                 self._json_result([ url, '-X', 'PUT', '-vector', vect ])['url']
             )
 
-            # OPTIONS request - there is nothing to test OPTIONS in 
+            # OPTIONS request - there is nothing to test OPTIONS in
             # httpbin, but still it's an accepted VERB which returns 200 OK
             url = self.url + '/anything'
             self.assertEqual(
@@ -192,11 +192,11 @@ class Curl(BaseTest):
 
             result, headers, saved = self.run_argv([ self.url + '/post', '-vector', vect, '--data', 'FIND=THIS', '-o', temp_file.name, '-local' ])
             self.assertTrue(saved)
-            
+
             json_result = json.loads(result)
             with open(temp_file.name) as f:
                 json_saved = json.load(f)
-                
+
             self.assertEqual(json_result, json_saved)
 
         temp_file.close()

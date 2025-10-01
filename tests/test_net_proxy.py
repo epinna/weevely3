@@ -1,8 +1,8 @@
 from tests.base_test import BaseTest
 from tests import config
-from core.sessions import SessionURL
-from core import modules
-from core import messages
+from weevely.core.sessions import SessionURL
+from weevely.core import modules
+from weevely.core import messages
 import subprocess
 import logging
 import tempfile
@@ -22,7 +22,7 @@ class Proxy(BaseTest):
         self.url = 'http://httpbin-inst'
 
         modules.loaded['net_proxy'].run_argv([ '-lhost', '0.0.0.0', '-lport', '8080' ])
-        
+
 
     def run_argv(self, arguments, unquoted_args = ''):
 
@@ -34,7 +34,7 @@ class Proxy(BaseTest):
         return result
 
     def _json_result(self, args, unquoted_args = ''):
-        
+
         result = self.run_argv(args, unquoted_args).decode('utf-8')
 
         return result if not result else json.loads(result)
@@ -55,7 +55,7 @@ class Proxy(BaseTest):
             b'Google',
             self.run_argv([ 'https://www.google.com' ], unquoted_args='--cacert ~/.weevely/certs/ca.crt')
         )
-        
+
         # HTTPS without cacert
         try:
             self.run_argv([ 'https://www.google.com' ])
@@ -78,7 +78,7 @@ class Proxy(BaseTest):
             self._json_result([ url, '-X', 'PUT' ])['url']
         )
 
-        # OPTIONS request - there is nothing to test OPTIONS in 
+        # OPTIONS request - there is nothing to test OPTIONS in
         # httpbin, but still it's an accepted VERB which returns 200 OK
         url = self.url + '/anything'
         self.assertEqual(
@@ -99,8 +99,8 @@ class Proxy(BaseTest):
             {'C1': 'bogus', 'C2' : 'bogus2'},
             self._json_result([ url, '-b', 'C1=bogus;C2=bogus2' ])['cookies']
         )
-        
-        
+
+
         # POST request with data
         url = self.url + '/post'
         result = self._json_result([ url, '--data', 'f1=data1&f2=data2' ])

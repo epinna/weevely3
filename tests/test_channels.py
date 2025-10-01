@@ -1,17 +1,16 @@
 from tests.base_test import BaseTest
-from core.channels.channel import Channel
-from core.weexceptions import DevException
-import utils
-from core.generate import generate, save_generated
+from weevely.core.channels.channel import Channel
+from weevely.core.weexceptions import DevException
+from weevely import utils
+from weevely.core.generate import generate, save_generated
 import os
 import random
 import unittest
 from tests import config
-from core.loggers import stream_handler
+from weevely.core.loggers import stream_handler
 import logging
 import subprocess
 import tempfile
-import core.config
 import socket
 
 def _get_google_ip():
@@ -63,4 +62,4 @@ class AgentDEFAULTObfuscatorDefault(ObfPostChannel):
 
     def test_10000_50000_requests(self):
         self._incremental_requests(10000, 50000, 9000, 30000)
-        
+
